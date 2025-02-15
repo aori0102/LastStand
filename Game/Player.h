@@ -4,6 +4,7 @@
 
 using namespace std;
 
+class ReloadUI;
 class Player : public GameObject {
 
 private:
@@ -16,6 +17,8 @@ private:
 
 	void Render();
 	void HandleActions();
+
+	ReloadUI* reloadUI;
 
 public:
 

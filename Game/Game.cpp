@@ -6,9 +6,6 @@
 #include <Enemy.h>
 
 // Constants
-const string GAME_NAME = "what the fuck";
-const int WINDOW_WIDTH = 1280;
-const int WINDOW_HEIGHT = 720;
 
 // Initialize static component
 SDL_Window* Game::gWindow = nullptr;
@@ -20,6 +17,8 @@ unordered_set<GameObject*> Game::gameObjectSet = {};
 float Game::time = 0.0f;
 float Game::deltaTime = 0.0f;
 vector<Game::ActionState> Game::mouseButtonState = vector<Game::ActionState>(static_cast<int>(MouseButton::Total));
+Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
+string Game::gameName = "Last Stand";
 
 bool Game::Initialize() {
 
@@ -36,11 +35,11 @@ bool Game::Initialize() {
 
 	// Create window
 	gWindow = SDL_CreateWindow(
-		GAME_NAME.c_str(),
+		gameName.c_str(),
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		WINDOW_WIDTH,
-		WINDOW_HEIGHT,
+		windowResolution.x,
+		windowResolution.y,
 		SDL_WINDOW_SHOWN);
 
 	if (!gWindow) {
@@ -104,6 +103,8 @@ void Game::Loop() {
 		// Handle game object
 		auto it = gameObjectSet.begin();
 
+		cout << "Frame\n";
+
 		while (it != gameObjectSet.end()) {
 
 			(*it)->Update();
@@ -111,6 +112,8 @@ void Game::Loop() {
 			it++;
 
 		}
+
+		cout << "Present\n";
 
 		// Update renderer data
 		SDL_RenderPresent(gRenderer);
@@ -261,7 +264,7 @@ void Game::InitializeGameObject() {
 	// Player
 	Player* player = new Player;
 	player->name = "Player";
-	
+
 	Enemy* enemy = new Enemy;
 
 }
@@ -305,5 +308,14 @@ void Game::DrawLine(Vector2 start, Vector2 end, SDL_Color color) {
 	SetRenderDrawColor(color);
 
 	SDL_RenderDrawLineF(gRenderer, start.x, start.y, end.x, end.y);
+
+}
+
+void Game::DrawRectangle(SDL_FRect* quad, bool fill) {
+
+	if (fill)
+		SDL_RenderFillRectF(gRenderer, quad);
+	else
+		SDL_RenderDrawRectF(gRenderer, quad);
 
 }

@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <Type.h>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -40,6 +41,10 @@ private:
 
 public:
 
+	// const
+	static string gameName;
+	static Vector2 windowResolution;
+
 	// Game component
 	static SDL_Window* gWindow;
 	static SDL_Renderer* gRenderer;
@@ -54,6 +59,7 @@ public:
 	static Vector2 GetMouseInput();
 	static void SetRenderDrawColor(SDL_Color color);
 	static void DrawLine(Vector2 start, Vector2 end, SDL_Color color);
+	static void DrawRectangle(SDL_FRect* quad, bool fill = false);
 	static ActionState GetMouseState(MouseButton mouseButton);
 
 	// Initialization

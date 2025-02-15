@@ -5,6 +5,7 @@
 #include <Projectile.h>
 #include <Physics.h>
 #include <Item.h>
+#include <PlayerUI.h>
 
 const string PLAYER_SPRITE_PATH = "./Asset/Character.png";
 
@@ -26,7 +27,9 @@ Player::Player() {
 	Inventory* inventory = AddComponent<Inventory>();
 
 	// Add a firearm to the inventory
-	inventory->AddItem(new Firearm(8, 20, 400.0f));
+	Firearm* firearm = new Firearm(8, 20, 400.0f, 5.0f);
+	inventory->AddItem(firearm);
+	reloadUI = new ReloadUI(firearm);
 
 }
 
