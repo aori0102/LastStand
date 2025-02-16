@@ -27,8 +27,6 @@ private:
 
 public:
 
-	static void CheckForCollision(GameObject* gameObject, Vector2& movementVector);
-
 	static void RegisterBoxCollider(BoxCollider* boxCollider);
 	static void UnregisterBoxCollider(BoxCollider* boxCollider);
 

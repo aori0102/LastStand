@@ -92,10 +92,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 			// Validate collision (Final)
 			if (onCollisionBound.Top() <= otherBound.Bottom() && onCollisionBound.Bottom() >= otherBound.Top()) {
 
-				Game::SetRenderDrawColor(Color::GREEN);
-				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
-				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
-
 				distance = (contactPoint - start).Magnitude();
 
 				// Check if this collision comes first
@@ -146,10 +142,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 
 			// Validate collision (Final)
 			if (onCollisionBound.Top() <= otherBound.Bottom() && onCollisionBound.Bottom() >= otherBound.Top()) {
-
-				Game::SetRenderDrawColor(Color::GREEN);
-				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
-				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
 
 				distance = (contactPoint - start).Magnitude();
 
@@ -202,10 +194,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 			// Validate collision (Final)
 			if (onCollisionBound.Left() <= otherBound.Right() && onCollisionBound.Right() >= otherBound.Left()) {
 
-				Game::SetRenderDrawColor(Color::GREEN);
-				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
-				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
-
 				distance = (contactPoint - start).Magnitude();
 
 				// Check if this collision comes first
@@ -256,10 +244,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 
 			// Validate collision (Final)
 			if (onCollisionBound.Left() <= otherBound.Right() && onCollisionBound.Right() >= otherBound.Left()) {
-
-				Game::SetRenderDrawColor(Color::GREEN);
-				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
-				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
 
 				distance = (contactPoint - start).Magnitude();
 
@@ -398,110 +382,5 @@ bool Physics::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2
 		*newEnd = start + (end - start) * t1;
 
 	return t0 != 0.0f || t1 != 1.0f;
-
-}
-
-void Physics::CheckForCollision(GameObject* gameObject, Vector2& movementVector) {
-	// AABB PRINCIPLE
-
-	if (movementVector == Vector2::zero)
-		return;
-
-	// Get component
-	Transform* transform = gameObject->GetComponent<Transform>();
-	BoxCollider* collider = gameObject->GetComponent<BoxCollider>();
-
-	if (!collider)
-		return;
-
-	// Get the first collider's bound
-	Bound startBound = collider->GetBound();
-	Bound destinationBound = startBound;
-	destinationBound.center += movementVector;
-
-	// Get movement magnitude. This value will be used to
-	// compare whether a collision should happen before another
-	float magnitude = movementVector.Magnitude();
-
-	// Origin and destination based on actual transform position
-	Vector2 origin = transform->position;
-	Vector2 destination = origin + movementVector;
-
-	// The offset from the bound's center to the actual transform position
-	Vector2 offset = origin - startBound.center;
-
-	// Iterate through colliders
-	for (BoxCollider* otherCollider : boxColliderSet) {
-
-		// Skip if the same
-		if (collider == otherCollider)
-			continue;
-
-		if (!otherCollider)
-			throw new exception("Box collider set handled wrongly. Accessed NULL collider");
-
-		// Get the other bound
-		Bound otherBound = otherCollider->GetBound();
-
-		// Pre-check (followed AABB rule)
-		if (destinationBound.Left() > otherBound.Right() ||
-			destinationBound.Right() < otherBound.Left() ||
-			destinationBound.Top() > otherBound.Bottom() ||
-			destinationBound.Bottom() < otherBound.Top())
-			continue;
-
-		// ----------------------------
-		// Check for collision
-		// ----------------------------
-		cout << "Checking for collision...\n";
-		// Use for determining which collision comes first
-		float finalCollisionTime = FLT_MAX;
-		float tempCollisionTime;		// Use for calculation
-		// Whether a collision happened
-		bool isCollided = false;
-		// The point at which the collision happens. Use to pre-determine contact
-		// point for further calculation
-		Vector2 collisionPoint = Vector2::zero;
-		// Final reset
-		Vector2 finalContactPoint = Vector2::zero;
-
-		// ----------------------------------------------------------
-		// This collider's TOP side hit the other's BOTTOM side
-		// ----------------------------------------------------------
-		// Determine collision point (revert to the actual transform of this collider)
-		collisionPoint.y = (otherBound.center + otherBound.extents + startBound.extents).y;	// Center
-		collisionPoint.y += offset.y;		// To actual transform
-
-		// Calculate collision time
-		tempCollisionTime = (origin - collisionPoint).y / (origin - destination).y;
-
-		// Validate collision time
-		if (tempCollisionTime >= 0.0f && tempCollisionTime <= 1.0f && tempCollisionTime < finalCollisionTime) {
-
-			// Complete contact point calculation
-			collisionPoint = origin * (1.0f - tempCollisionTime) + destination * tempCollisionTime;
-
-			// Check if it actually collided
-			if (collisionPoint.x <= otherBound.Right() || collisionPoint.x + startBound.extents.x * 2.0f >= otherBound.Left()) {
-
-				// A collision has happened
-				isCollided = true;
-
-				// Update contact point
-				finalContactPoint = collisionPoint;
-
-			}
-
-		}
-
-		// Finalize movement
-		if (isCollided) {
-
-			movementVector = finalContactPoint - origin;
-			movementVector *= MOVEMENT_PERCENTAGE;
-
-		}
-
-	}
 
 }

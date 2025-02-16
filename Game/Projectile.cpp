@@ -15,17 +15,17 @@ Projectile::Projectile(Vector2 initPosition, Vector2 initScale, Vector2 initDire
 	direction = initDirection;
 	velocity = initVelocity;
 
-	spawnTime = Game::time;
+	spawnTime = Game::GetTime();
 
 }
 
 void Projectile::Update() {
 
-	GetComponent<Transform>()->Translate(direction.Normalize() * Game::deltaTime * velocity, false);
+	GetComponent<Transform>()->Translate(direction.Normalize() * Game::GetDeltaTime() * velocity, false);
 
 	Render();
 
-	if (Game::time >= spawnTime + EXIST_TIME)
+	if (Game::GetTime() >= spawnTime + EXIST_TIME)
 		GameObject::Destroy(this);
 
 }
@@ -34,10 +34,10 @@ void Projectile::Render() {
 
 	Transform* transform = GetComponent<Transform>();
 
-	Game::SetRenderDrawColor(Color::WHITE);
 	SDL_FRect quad = { transform->position.x, transform->position.y, transform->scale.x, transform->scale.y };
 
-	SDL_RenderFillRectF(Game::gRenderer, &quad);
+	Game::SetRenderDrawColor(Color::YELLOW);
+	Game::DrawRectangle(&quad, true);
 
 	GetComponent<BoxCollider>()->Debug();
 

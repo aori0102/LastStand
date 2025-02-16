@@ -53,7 +53,7 @@ void Player::Update() {
 	Transform* transform = GetComponent<Transform>();
 
 	// Apply movement
-	transform->Translate(input.Normalize() * movementSpeed * Game::deltaTime);
+	transform->Translate(input.Normalize() * movementSpeed * Game::GetDeltaTime());
 
 	// Calculate rotation
 	forward = (Game::GetMouseInput() - transform->position).Normalize();

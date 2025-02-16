@@ -110,7 +110,8 @@ void BoxCollider::Debug() {
 		transform->scale.y
 	};
 
-	SDL_RenderDrawRectF(Game::gRenderer, &quad);
+	Game::SetRenderDrawColor(Color::GREEN);
+	Game::DrawRectangle(&quad);
 
 }
 

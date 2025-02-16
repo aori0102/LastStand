@@ -128,7 +128,7 @@ public:
 	Text(GameObject* initOwner);
 	~Text();
 
-	bool LoadText(string text, Color color);
+	bool LoadText(string text, Color color, int fontSize);
 
 	void Render() override;
 

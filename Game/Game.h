@@ -42,8 +42,6 @@ private:
 
 	static ActionState* FindKeyState(SDL_Keycode keycode);
 
-public:
-
 	// const
 	static string gameName;
 	static Vector2 windowResolution;
@@ -58,6 +56,8 @@ public:
 	static float time;
 	static float deltaTime;
 
+public:
+
 	static ActionState GetKeyState(SDL_Keycode keycode);
 	static Vector2 GetMouseInput();
 	static ActionState GetMouseState(MouseButton mouseButton);
@@ -67,6 +67,7 @@ public:
 	static void DrawLine(Vector2 start, Vector2 end, Color color);
 	static void DrawRectangle(SDL_FRect* quad, bool fill = false);
 	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2 clip = Vector2(1.0f, 1.0f), float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 
 	// Initialization
 	static bool Initialize();
@@ -76,6 +77,11 @@ public:
 	static void InitializeGameObject();
 	static void RegisterGameObject(GameObject* gameObject);
 	static void UnregisterGameObject(GameObject* gameObject);
+
+	// Getter
+	static float GetTime();
+	static float GetDeltaTime();
+	static Vector2 GetResolution();
 
 };
 
@@ -94,5 +100,7 @@ public:
 	static const Color RED;
 	static const Color GREEN;
 	static const Color BLUE;
+	static const Color YELLOW;
+	static const Color BLACK;
 
 };

@@ -13,6 +13,8 @@ const Color Color::RED = Color(255, 0, 0, 255);
 const Color Color::GREEN = Color(0, 255, 0, 255);
 const Color Color::BLUE = Color(0, 0, 255, 255);
 const Color Color::WHITE = Color(255, 255, 255, 255);
+const Color Color::YELLOW = Color(255, 255, 0, 255);
+const Color Color::BLACK = Color(0, 0, 0, 255);
 
 // Initialize static component
 SDL_Window* Game::gWindow = nullptr;
@@ -41,6 +43,12 @@ SDL_Color Color::ToSDLColor() {
 	return { r, g, b, a };
 
 }
+
+float Game::GetTime() { return time; }
+
+float Game::GetDeltaTime() { return deltaTime; }
+
+Vector2 Game::GetResolution() { return windowResolution; }
 
 bool Game::Initialize() {
 
@@ -375,5 +383,11 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2
 		&center,
 		flip
 	);
+
+}
+
+SDL_Texture* Game::CreateTexture(SDL_Surface* loadedSurface) {
+
+	return SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
 
 }

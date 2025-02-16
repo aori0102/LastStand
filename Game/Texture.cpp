@@ -58,15 +58,9 @@ bool Image::LoadImage(string path) {
 
 	}
 
-	// Get size
-	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
-	GetOwner()->GetComponent<Transform>()->scale = textureDimension;
-
-	// Create image texture
-	SDL_Texture* loadedTexture = SDL_CreateTextureFromSurface(Game::gRenderer, loadedSurface);
-
-	// Validate texture
-	if (!loadedTexture) {
+	// Create image texture and validate
+	texture = Game::CreateTexture(loadedSurface);
+	if (!texture) {
 
 		cout << "Cannot get texture. SDL Error: " << SDL_GetError() << endl;
 		return false;
@@ -74,7 +68,8 @@ bool Image::LoadImage(string path) {
 	}
 
 	// Finish up
-	texture = loadedTexture;
+	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
+	GetOwner()->GetComponent<Transform>()->scale = textureDimension;
 
 	// Clean
 	SDL_FreeSurface(loadedSurface);
@@ -119,11 +114,12 @@ Text::~Text() {
 
 }
 
-bool Text::LoadText(string text, Color color) {
+bool Text::LoadText(string text, Color color, int fontSize) {
 
 	FreeTexture();
 
 	// Load text
+	TTF_SetFontSize(font, fontSize);
 	SDL_Surface* loadedSurface = TTF_RenderText_Blended(font, text.c_str(), color.ToSDLColor());
 
 	// Validate
@@ -135,7 +131,7 @@ bool Text::LoadText(string text, Color color) {
 	}
 
 	// Apply texture and validate
-	texture = SDL_CreateTextureFromSurface(Game::gRenderer, loadedSurface);
+	texture = Game::CreateTexture(loadedSurface);
 	if (!texture) {
 
 		cout << "Error loading texture. SDL Error: " << SDL_GetError() << endl;

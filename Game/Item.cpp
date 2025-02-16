@@ -4,7 +4,7 @@
 #include <Game.h>
 #include <PlayerUI.h>
 
-const float BULLET_VELOCITY = 2000.0f;
+const float BULLET_VELOCITY = 7000.0f;
 const Vector2 BULLET_SCALE = Vector2(10.0f, 10.0f);
 
 Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime) {
@@ -52,7 +52,7 @@ void Firearm::Use(Player* player) {
 		return;
 
 	// If is still in the delay
-	if (Game::time < lastShotTick + shotDelay)
+	if (Game::GetTime() < lastShotTick + shotDelay)
 		return;
 
 	// Get the direction the player is facing
@@ -64,7 +64,7 @@ void Firearm::Use(Player* player) {
 	// Fire
 	new Projectile(origin, BULLET_SCALE, direction, BULLET_VELOCITY);
 	currentAmmo--;
-	lastShotTick = Game::time;
+	lastShotTick = Game::GetTime();
 
 }
 
@@ -74,14 +74,14 @@ void Firearm::Reload() {
 		return;
 
 	isReloading = true;
-	reloadStartTick = Game::time;
+	reloadStartTick = Game::GetTime();
 	currentAmmo = ammoCapacity;
 
 }
 
 void Firearm::Update() {
 
-	if (isReloading && Game::time >= reloadStartTick + reloadTime)
+	if (isReloading && Game::GetTime() >= reloadStartTick + reloadTime)
 		isReloading = false;
 
 }
@@ -94,7 +94,7 @@ float Firearm::GetReloadingProgress() const {
 	if (reloadTime == 0.0f)
 		throw new exception("Reload time of firearm is 0s. Why?");
 
-	return ((Game::time - reloadStartTick) / reloadTime);
+	return ((Game::GetTime() - reloadStartTick) / reloadTime);
 
 }
 
