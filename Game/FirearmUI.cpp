@@ -2,6 +2,8 @@
 #include <Item.h>
 #include <Game.h>
 #include <SDL.h>
+#include <GameComponent.h>
+#include <string>
 
 const Vector2 RELOAD_BAR_SIZE = Vector2(100.0f, 30.0f);
 const Vector2 RELOAD_OUTLINE_SIZE = Vector2(110.0f, 40.0f);
@@ -34,12 +36,41 @@ void ReloadUI::Update() {
 			RELOAD_BAR_SIZE.y
 		};
 
-		cout << linkedFirearm->GetReloadingProgress();
-
 		Game::SetRenderDrawColor(Color::WHITE);
 		Game::DrawRectangle(&outlineQuad, false);
 		Game::DrawRectangle(&fillQuad, true);
 
 	}
+
+}
+
+FirearmUI::FirearmUI(Firearm* initFirearm) {
+
+	if (!linkedFirearm)
+		throw new exception("Initialize firearm UI with null firearm");
+	
+	linkedFirearm = initFirearm;
+	previousAmmo = linkedFirearm->GetCurrentAmmo();
+
+	AddComponent<Text>();
+
+}
+
+void FirearmUI::Update() {
+
+	int ammo = linkedFirearm->GetCurrentAmmo();
+	Text* text = GetComponent<Text>();
+
+	if (ammo != previousAmmo) {
+
+		// Update UI and data
+		previousAmmo = ammo;
+
+		text->LoadText(to_string(ammo), Color::WHITE);
+
+	}
+
+	text->position = Vector2(700.0, 600.f);
+	text->Render();
 
 }

@@ -6,6 +6,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
+#include <SDL_ttf.h>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ class Transform;
 class GameObject;
 class Item;
 class Player;
+class Color;
 
 class GameComponent {
 
@@ -75,18 +77,34 @@ enum class ImageFill {
 
 };
 
-class Image : public GameComponent {
+class Texture {
 
-private:
+protected:
 
 	SDL_Texture* texture;
 
-	Vector2 imageDimension;	// Original image's dimension
+	Vector2 textureDimension;
+
+	Texture();
 
 public:
 
 	Vector2 position;
 	Vector2 size;
+
+	virtual void Render();
+
+	void FreeTexture();
+
+	SDL_Texture* GetTexture();
+	Vector2 GetTextureDimension();
+
+};
+
+class Image : public GameComponent, public Texture {
+
+public:
+
 	Vector2 pivot;
 	float angle;
 	float fillAmount;
@@ -98,9 +116,22 @@ public:
 
 	bool LoadImage(string path);
 
-	void Render();
+	void Render() override;
 
-	void FreeImage();
+};
+
+class Text : public GameComponent, public Texture {
+
+private:
+
+	TTF_Font* font;
+
+public:
+
+	Text(GameObject* initOwner);
+	~Text();
+
+	bool LoadText(string text, Color color);
 
 };
 

@@ -2,7 +2,7 @@
 
 const string ENEMY_SPRITE_PATH = "./Asset/Zombie.png";
 
-// Health bar attribute
+// Health bar data
 const Vector2 HEALTH_BAR_SCALE = Vector2(100.0f, 10.0f);
 const float HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const string HEALTH_BAR_PATH = "./Asset/HealthBar.png";

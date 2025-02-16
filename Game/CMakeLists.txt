@@ -6,7 +6,6 @@ set(SOURCES
     "Game.cpp"
     "Player.cpp"
     "Type.cpp"
-    "Image.cpp"
     "Projectile.cpp"
     "GameComponent.cpp"
     "Enemy.cpp"
@@ -14,7 +13,8 @@ set(SOURCES
     "Humanoid.cpp"
     "Item.cpp"
     "Inventory.cpp"
-    "ReloadUI.cpp"
+    "FirearmUI.cpp"
+    "Texture.cpp"
 )
 
 # Add this directory as a static library

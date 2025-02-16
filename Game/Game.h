@@ -20,6 +20,9 @@ enum class MouseButton {
 };
 
 class GameObject;
+class Texture;
+class Color;
+
 class Game {
 
 public:
@@ -57,10 +60,13 @@ public:
 
 	static ActionState GetKeyState(SDL_Keycode keycode);
 	static Vector2 GetMouseInput();
-	static void SetRenderDrawColor(SDL_Color color);
-	static void DrawLine(Vector2 start, Vector2 end, SDL_Color color);
-	static void DrawRectangle(SDL_FRect* quad, bool fill = false);
 	static ActionState GetMouseState(MouseButton mouseButton);
+
+	// Rendering
+	static void SetRenderDrawColor(Color color);
+	static void DrawLine(Vector2 start, Vector2 end, Color color);
+	static void DrawRectangle(SDL_FRect* quad, bool fill = false);
+	static void RenderCopy(Texture* texture, Vector2 clip = Vector2(1.0f, 1.0f), float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	// Initialization
 	static bool Initialize();
@@ -77,10 +83,16 @@ class Color {
 
 public:
 
-	static constexpr SDL_Color TRANSPARENT = { 0, 0, 0, 0 };
-	static constexpr SDL_Color WHITE = { 255, 255, 255, 255 };
-	static constexpr SDL_Color RED = { 255, 0, 0, 255 };
-	static constexpr SDL_Color GREEN = { 0, 255, 0, 255 };
-	static constexpr SDL_Color BLUE = { 0, 0, 255, 255 };
+	Uint8 r, g, b, a;
+
+	Color(Uint8 initR, Uint8 initG, Uint8 initB, Uint8 initA);
+
+	SDL_Color ToSDLColor();
+
+	static const Color TRANSPARENT;
+	static const Color WHITE;
+	static const Color RED;
+	static const Color GREEN;
+	static const Color BLUE;
 
 };

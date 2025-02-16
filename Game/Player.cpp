@@ -30,6 +30,17 @@ Player::Player() {
 	Firearm* firearm = new Firearm(8, 20, 400.0f, 5.0f);
 	inventory->AddItem(firearm);
 	reloadUI = new ReloadUI(firearm);
+	firearmUI = new FirearmUI(firearm);
+
+}
+
+Player::~Player() {
+
+	delete reloadUI;
+	reloadUI = nullptr;
+
+	delete firearmUI;
+	firearmUI = nullptr;
 
 }
 

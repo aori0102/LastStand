@@ -2,10 +2,17 @@
 #include <GameComponent.h>
 #include <Player.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <SDL.h>
 #include <Enemy.h>
+#include <iostream>
 
-// Constants
+// Colors
+const Color Color::TRANSPARENT = Color(0, 0, 0, 0);
+const Color Color::RED = Color(255, 0, 0, 255);
+const Color Color::GREEN = Color(0, 255, 0, 255);
+const Color Color::BLUE = Color(0, 0, 255, 255);
+const Color Color::WHITE = Color(255, 255, 255, 255);
 
 // Initialize static component
 SDL_Window* Game::gWindow = nullptr;
@@ -19,6 +26,21 @@ float Game::deltaTime = 0.0f;
 vector<Game::ActionState> Game::mouseButtonState = vector<Game::ActionState>(static_cast<int>(MouseButton::Total));
 Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
 string Game::gameName = "Last Stand";
+
+Color::Color(Uint8 initR, Uint8 initG, Uint8 initB, Uint8 initA) {
+
+	r = initR;
+	g = initG;
+	b = initB;
+	a = initA;
+
+}
+
+SDL_Color Color::ToSDLColor() {
+
+	return { r, g, b, a };
+
+}
 
 bool Game::Initialize() {
 
@@ -70,6 +92,15 @@ bool Game::Initialize() {
 
 	} else
 		cout << "SDL2 Image initialized" << endl;
+
+	// Initialize TTF
+	if (TTF_Init() == -1) {
+
+		cout << "Failed to initialize SDL2 TTF. TTF Error: " << TTF_GetError() << endl;
+		return false;
+
+	} else
+		cout << "SDL2 TTF initialized" << endl;
 
 	// Success, terminate
 	cout << "Done!" << endl;
@@ -275,7 +306,7 @@ Vector2 Game::GetMouseInput() {
 
 }
 
-void Game::SetRenderDrawColor(SDL_Color color) {
+void Game::SetRenderDrawColor(Color color) {
 
 	SDL_SetRenderDrawColor(gRenderer, color.r, color.g, color.b, color.a);
 
@@ -299,7 +330,7 @@ Game::ActionState Game::GetMouseState(MouseButton mouseButton) {
 
 }
 
-void Game::DrawLine(Vector2 start, Vector2 end, SDL_Color color) {
+void Game::DrawLine(Vector2 start, Vector2 end, Color color) {
 
 	SetRenderDrawColor(color);
 
@@ -313,5 +344,38 @@ void Game::DrawRectangle(SDL_FRect* quad, bool fill) {
 		SDL_RenderFillRectF(gRenderer, quad);
 	else
 		SDL_RenderDrawRectF(gRenderer, quad);
+
+}
+
+void Game::RenderCopy(Texture* texture, Vector2 clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
+
+	Vector2 texturePosition = texture->position;
+	Vector2 textureSize = texture->size;
+	Vector2 textureDimension = texture->GetTextureDimension();
+
+	SDL_FRect quad = {
+		texturePosition.x - pivot.x * textureSize.x,
+		texturePosition.y - pivot.y * textureSize.y,
+		textureSize.x * clip.x,
+		textureSize.y * clip.y
+	};
+
+	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
+	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
+	SDL_FPoint center = { textureDimension.x * pivot.x, textureDimension.y * pivot.y };
+
+	clip.x = Math::Clamp(clip.x, 0.0f, 1.0f);
+	clip.y = Math::Clamp(clip.y, 0.0f, 1.0f);
+	SDL_Rect clipRect = { 0, 0, textureDimension.x * clip.x, textureDimension.y * clip.y };
+
+	SDL_RenderCopyExF(
+		gRenderer,
+		texture->GetTexture(),
+		&clipRect,
+		&quad,
+		angle,
+		&center,
+		flip
+	);
 
 }

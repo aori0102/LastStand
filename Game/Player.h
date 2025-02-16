@@ -5,6 +5,7 @@
 using namespace std;
 
 class ReloadUI;
+class FirearmUI;
 class Player : public GameObject {
 
 private:
@@ -19,10 +20,12 @@ private:
 	void HandleActions();
 
 	ReloadUI* reloadUI;
+	FirearmUI* firearmUI;
 
 public:
-
+	
 	Player();
+	~Player();
 
 	void Update() override;
 	Vector2 GetForward() const;

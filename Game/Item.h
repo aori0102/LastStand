@@ -36,5 +36,6 @@ public:
 
 	bool IsReloading() const;
 	float GetReloadingProgress() const;
+	int GetCurrentAmmo() const;
 
 };

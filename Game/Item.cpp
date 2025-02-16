@@ -82,3 +82,9 @@ float Firearm::GetReloadingProgress() const {
 	return ((Game::time - reloadStartTick) / reloadTime);
 
 }
+
+int Firearm::GetCurrentAmmo() const {
+
+	return currentAmmo;
+
+}
