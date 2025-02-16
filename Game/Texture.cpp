@@ -13,8 +13,6 @@ Texture::Texture() {
 	texture = nullptr;
 
 	textureDimension = Vector2::zero;
-	position = Vector2::zero;
-	size = Vector2::zero;
 
 }
 
@@ -28,12 +26,6 @@ void Texture::FreeTexture() {
 SDL_Texture* Texture::GetTexture() { return texture; }
 
 Vector2 Texture::GetTextureDimension() { return textureDimension; }
-
-void Texture::Render() {
-
-	Game::RenderCopy(this);
-
-}
 
 Image::Image(GameObject* initOwner) : GameComponent(initOwner) {
 
@@ -67,8 +59,8 @@ bool Image::LoadImage(string path) {
 	}
 
 	// Get size
-	size = Vector2(loadedSurface->w, loadedSurface->h);
-	textureDimension = size;
+	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
+	GetOwner()->GetComponent<Transform>()->scale = textureDimension;
 
 	// Create image texture
 	SDL_Texture* loadedTexture = SDL_CreateTextureFromSurface(Game::gRenderer, loadedSurface);
@@ -100,8 +92,12 @@ void Image::Render() {
 	else if (imageFill == ImageFill::Horizontal)
 		clip.x = fillAmount;
 
+	Transform* transform = GetOwner()->GetComponent<Transform>();
+
 	Game::RenderCopy(
 		this,
+		transform->position,
+		transform->scale,
 		clip,
 		angle,
 		pivot
@@ -148,11 +144,19 @@ bool Text::LoadText(string text, Color color) {
 	}
 
 	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
-	size = textureDimension;
+	GetOwner()->GetComponent<Transform>()->scale = textureDimension;
 
 	// Clean up
 	SDL_FreeSurface(loadedSurface);
 
 	return true;
+
+}
+
+void Text::Render() {
+
+	Transform* transform = GetOwner()->GetComponent<Transform>();
+
+	Game::RenderCopy(this, transform->position, transform->scale);
 
 }

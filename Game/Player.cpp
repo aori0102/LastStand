@@ -29,18 +29,6 @@ Player::Player() {
 	// Add a firearm to the inventory
 	Firearm* firearm = new Firearm(8, 20, 400.0f, 5.0f);
 	inventory->AddItem(firearm);
-	reloadUI = new ReloadUI(firearm);
-	firearmUI = new FirearmUI(firearm);
-
-}
-
-Player::~Player() {
-
-	delete reloadUI;
-	reloadUI = nullptr;
-
-	delete firearmUI;
-	firearmUI = nullptr;
 
 }
 
@@ -86,7 +74,7 @@ void Player::Render() {
 
 	Image* playerSprite = GetComponent<Image>();
 
-	playerSprite->position = GetComponent<Transform>()->position;
+	playerSprite->GetOwner()->GetComponent<Transform>()->position = GetComponent<Transform>()->position;
 	playerSprite->Render();
 
 	GetComponent<BoxCollider>()->Debug();

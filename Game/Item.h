@@ -11,6 +11,8 @@ public:
 
 };
 
+class ReloadUI;
+class FirearmUI;
 class Firearm : public GameObject, public Item {
 
 private:
@@ -26,9 +28,14 @@ private:
 	bool isReloading;
 	float reloadStartTick;
 
+	// UI
+	ReloadUI* reloadUI;
+	FirearmUI* firearmUI;
+
 public:
 
 	Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime);
+	~Firearm();
 
 	void Use(Player* player) override;
 	void Update() override;

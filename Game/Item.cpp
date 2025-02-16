@@ -2,6 +2,7 @@
 #include <Player.h>
 #include <Projectile.h>
 #include <Game.h>
+#include <PlayerUI.h>
 
 const float BULLET_VELOCITY = 2000.0f;
 const Vector2 BULLET_SCALE = Vector2(10.0f, 10.0f);
@@ -18,6 +19,21 @@ Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, flo
 	lastShotTick = 0.0f;
 	isReloading = false;
 	reloadStartTick = 0.0f;
+
+	reloadUI = new ReloadUI(this);
+	firearmUI = new FirearmUI(this);
+
+	firearmUI->GetComponent<Transform>()->position = Vector2(700.0f, 700.0f);
+
+}
+
+Firearm::~Firearm() {
+
+	delete reloadUI;
+	reloadUI = nullptr;
+
+	delete firearmUI;
+	firearmUI = nullptr;
 
 }
 
@@ -49,7 +65,6 @@ void Firearm::Use(Player* player) {
 	new Projectile(origin, BULLET_SCALE, direction, BULLET_VELOCITY);
 	currentAmmo--;
 	lastShotTick = Game::time;
-	cout << currentAmmo << " bullet left" << endl;
 
 }
 

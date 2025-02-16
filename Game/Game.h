@@ -66,7 +66,7 @@ public:
 	static void SetRenderDrawColor(Color color);
 	static void DrawLine(Vector2 start, Vector2 end, Color color);
 	static void DrawRectangle(SDL_FRect* quad, bool fill = false);
-	static void RenderCopy(Texture* texture, Vector2 clip = Vector2(1.0f, 1.0f), float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2 clip = Vector2(1.0f, 1.0f), float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	// Initialization
 	static bool Initialize();

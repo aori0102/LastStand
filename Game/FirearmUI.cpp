@@ -70,7 +70,7 @@ void FirearmUI::Update() {
 
 	}
 
-	text->position = Vector2(700.0, 600.f);
+	text->GetOwner()->GetComponent<Transform>()->position = Vector2(700.0, 600.f);
 	text->Render();
 
 }

@@ -19,13 +19,9 @@ private:
 	void Render();
 	void HandleActions();
 
-	ReloadUI* reloadUI;
-	FirearmUI* firearmUI;
-
 public:
 	
 	Player();
-	~Player();
 
 	void Update() override;
 	Vector2 GetForward() const;

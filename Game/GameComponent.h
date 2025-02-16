@@ -89,10 +89,7 @@ protected:
 
 public:
 
-	Vector2 position;
-	Vector2 size;
-
-	virtual void Render();
+	virtual void Render() = 0;
 
 	void FreeTexture();
 
@@ -132,6 +129,8 @@ public:
 	~Text();
 
 	bool LoadText(string text, Color color);
+
+	void Render() override;
 
 };
 

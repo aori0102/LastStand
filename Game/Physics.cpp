@@ -17,7 +17,6 @@ void Physics::RegisterBoxCollider(BoxCollider* boxCollider) {
 
 void Physics::UnregisterBoxCollider(BoxCollider* boxCollider) {
 
-	cout << "Deleting " << boxCollider << endl;
 	boxColliderSet.erase(boxCollider);
 
 }
@@ -81,7 +80,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 		// Validate collision (Broad)
 		collisionTime = (start - contactPoint).x / (start - end).x;
 		if (collisionTime >= 0.0f && collisionTime <= 1.0f && movementVector.x > 0.0f) {
-
+			
 			// Calculate collision y
 			contactPoint.y = slope * (minX - thisBound.center.x) + thisBound.center.y;
 
@@ -93,9 +92,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 			// Validate collision (Final)
 			if (onCollisionBound.Top() <= otherBound.Bottom() && onCollisionBound.Bottom() >= otherBound.Top()) {
 
-				// There is a collision
-				isCollided = true;
-
 				Game::SetRenderDrawColor(Color::GREEN);
 				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
 				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
@@ -104,12 +100,15 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 
 				// Check if this collision comes first
 				if (distance < distanceToCollision) {
+					
+					// There is a collision
+					isCollided = true;
 
 					distanceToCollision = distance;
+					finalCollider = otherCollier;
 					if (hitInfo) {
 
 						hitInfo->otherCollider = otherCollier;
-						finalCollider = otherCollier;
 						hitInfo->contactPoint = contactPoint;
 
 					}
@@ -148,9 +147,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 			// Validate collision (Final)
 			if (onCollisionBound.Top() <= otherBound.Bottom() && onCollisionBound.Bottom() >= otherBound.Top()) {
 
-				// There is a collision
-				isCollided = true;
-
 				Game::SetRenderDrawColor(Color::GREEN);
 				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
 				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
@@ -160,11 +156,14 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 				// Check if this collision comes first
 				if (distance < distanceToCollision) {
 
+					// There is a collision
+					isCollided = true;
+
 					distanceToCollision = distance;
+					finalCollider = otherCollier;
 					if (hitInfo) {
 
 						hitInfo->otherCollider = otherCollier;
-						finalCollider = otherCollier;
 						hitInfo->contactPoint = contactPoint;
 
 					}
@@ -180,7 +179,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 		// ---------------------------------------
 		// If the movement vector is horizontal and the center is
 		// on the same line as minY, no collision is possible
-		if (slope == 0 && minY== thisBound.center.y)
+		if (slope == 0.0f && minY == thisBound.center.y)
 			continue;
 
 		// The intersection of minY and movement line is the center
@@ -190,7 +189,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 
 		// Validate collision (Broad)
 		collisionTime = (start - contactPoint).y / (start - end).y;
-		if (collisionTime >= 0.0f && collisionTime <= 1.0f && movementVector.y >0.0f) {
+		if (collisionTime >= 0.0f && collisionTime <= 1.0f && movementVector.y > 0.0f) {
 
 			// Calculate collision x
 			contactPoint.x = (minY - thisBound.center.y) / slope + thisBound.center.x;
@@ -201,10 +200,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 			onCollisionBound.extents = thisBound.extents;
 
 			// Validate collision (Final)
-			if (onCollisionBound.Left()<=otherBound.Right()&&onCollisionBound.Right() >=otherBound.Left()) {
-
-				// There is a collision
-				isCollided = true;
+			if (onCollisionBound.Left() <= otherBound.Right() && onCollisionBound.Right() >= otherBound.Left()) {
 
 				Game::SetRenderDrawColor(Color::GREEN);
 				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
@@ -215,11 +211,14 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 				// Check if this collision comes first
 				if (distance < distanceToCollision) {
 
+					// There is a collision
+					isCollided = true;
+
 					distanceToCollision = distance;
+					finalCollider = otherCollier;
 					if (hitInfo) {
 
 						hitInfo->otherCollider = otherCollier;
-						finalCollider = otherCollier;
 						hitInfo->contactPoint = contactPoint;
 
 					}
@@ -235,7 +234,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 		// ---------------------------------------
 		// If the movement vector is horizontal and the center is
 		// on the same line as maxY, no collision is possible
-		if (slope == 0 && maxY == thisBound.center.y)
+		if (slope == 0.0f && maxY == thisBound.center.y)
 			continue;
 
 		// The intersection of maxY and movement line is the center
@@ -258,9 +257,6 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 			// Validate collision (Final)
 			if (onCollisionBound.Left() <= otherBound.Right() && onCollisionBound.Right() >= otherBound.Left()) {
 
-				// There is a collision
-				isCollided = true;
-
 				Game::SetRenderDrawColor(Color::GREEN);
 				SDL_RenderDrawLineF(Game::gRenderer, 0.0f, contactPoint.y, 2000.0f, contactPoint.y);
 				SDL_RenderDrawLineF(Game::gRenderer, contactPoint.x, 0.0f, contactPoint.x, 2000.0f);
@@ -270,11 +266,14 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 				// Check if this collision comes first
 				if (distance < distanceToCollision) {
 
+					// There is a collision
+					isCollided = true;
+
 					distanceToCollision = distance;
+					finalCollider = otherCollier;
 					if (hitInfo) {
 
 						hitInfo->otherCollider = otherCollier;
-						finalCollider = otherCollier;
 						hitInfo->contactPoint = contactPoint;
 
 					}

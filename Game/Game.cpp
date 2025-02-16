@@ -347,22 +347,20 @@ void Game::DrawRectangle(SDL_FRect* quad, bool fill) {
 
 }
 
-void Game::RenderCopy(Texture* texture, Vector2 clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
+void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2 clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
 
-	Vector2 texturePosition = texture->position;
-	Vector2 textureSize = texture->size;
 	Vector2 textureDimension = texture->GetTextureDimension();
 
 	SDL_FRect quad = {
-		texturePosition.x - pivot.x * textureSize.x,
-		texturePosition.y - pivot.y * textureSize.y,
-		textureSize.x * clip.x,
-		textureSize.y * clip.y
+		position.x - pivot.x * scale.x,
+		position.y - pivot.y * scale.y,
+		scale.x * clip.x,
+		scale.y * clip.y
 	};
 
 	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
 	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
-	SDL_FPoint center = { textureDimension.x * pivot.x, textureDimension.y * pivot.y };
+	SDL_FPoint center = { scale.x * pivot.x, scale.y * pivot.y };
 
 	clip.x = Math::Clamp(clip.x, 0.0f, 1.0f);
 	clip.y = Math::Clamp(clip.y, 0.0f, 1.0f);
