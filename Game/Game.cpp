@@ -103,8 +103,6 @@ void Game::Loop() {
 		// Handle game object
 		auto it = gameObjectSet.begin();
 
-		cout << "Frame\n";
-
 		while (it != gameObjectSet.end()) {
 
 			(*it)->Update();
@@ -112,8 +110,6 @@ void Game::Loop() {
 			it++;
 
 		}
-
-		cout << "Present\n";
 
 		// Update renderer data
 		SDL_RenderPresent(gRenderer);

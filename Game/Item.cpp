@@ -76,6 +76,9 @@ bool Firearm::IsReloading() const { return isReloading; }
 
 float Firearm::GetReloadingProgress() const {
 
-	return (Game::time - reloadStartTick / reloadTime);
+	if (reloadTime == 0.0f)
+		throw new exception("Reload time of firearm is 0s. Why?");
+
+	return ((Game::time - reloadStartTick) / reloadTime);
 
 }

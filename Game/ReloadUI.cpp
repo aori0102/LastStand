@@ -20,8 +20,6 @@ void ReloadUI::Update() {
 
 	if (linkedFirearm->IsReloading()) {
 
-		cout << "Render UI\n";
-
 		SDL_FRect outlineQuad = {
 			(Game::windowResolution.x - RELOAD_OUTLINE_SIZE.x) / 2.0f,
 			RELOAD_BAR_CENTER_Y + (Game::windowResolution.y - RELOAD_OUTLINE_SIZE.y) / 2.0f,
@@ -36,9 +34,11 @@ void ReloadUI::Update() {
 			RELOAD_BAR_SIZE.y
 		};
 
-		Game::SetRenderDrawColor(Color::RED);
-		//Game::DrawRectangle(&outlineQuad, false);
-		//Game::DrawRectangle(&fillQuad, true);
+		cout << linkedFirearm->GetReloadingProgress();
+
+		Game::SetRenderDrawColor(Color::WHITE);
+		Game::DrawRectangle(&outlineQuad, false);
+		Game::DrawRectangle(&fillQuad, true);
 
 	}
 
