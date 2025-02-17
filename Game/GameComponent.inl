@@ -33,3 +33,12 @@ T* GameObject::AddComponent() {
 	return static_cast<T*>(component);
 
 }
+
+template<class T>
+bool GameObject::IsA() {
+
+	T* type = dynamic_cast<T*>(this);
+
+	return type != nullptr;
+
+}

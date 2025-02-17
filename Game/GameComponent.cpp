@@ -66,7 +66,9 @@ void GameObject::ObjectUpdate() {
 
 	while (it != deletionSet.end()) {
 
-		delete* it;
+		(*it)->OnDestroy();
+
+		delete (*it);
 
 		it++;
 

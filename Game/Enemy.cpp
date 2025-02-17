@@ -1,4 +1,6 @@
 #include <Enemy.h>
+#include <Game.h>
+#include <GameManager.h>
 
 const string ENEMY_SPRITE_PATH = "./Asset/Zombie.png";
 
@@ -7,7 +9,7 @@ const Vector2 HEALTH_BAR_SCALE = Vector2(100.0f, 10.0f);
 const float HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const string HEALTH_BAR_PATH = "./Asset/HealthBar.png";
 
-Enemy::Enemy() {
+Enemy::Enemy(GameObject* initTarget) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = Vector2(500.0, 200.0f);
@@ -25,10 +27,13 @@ Enemy::Enemy() {
 	healthBar = new GameObject();
 	Image* healthBar_image = healthBar->AddComponent<Image>();
 	healthBar_image->LoadImage(HEALTH_BAR_PATH);
-	healthBar_image->GetOwner()->GetComponent<Transform>()->scale= HEALTH_BAR_SCALE;
+	healthBar_image->GetOwner()->GetComponent<Transform>()->scale = HEALTH_BAR_SCALE;
 	healthBar_image->imageFill = ImageFill::Horizontal;
 	healthBar_image->fillAmount = 1.0f;
 	healthBar_image->showOnScreen = false;
+
+	target = initTarget;
+	movementSpeed = 300.0f;
 
 }
 
@@ -53,6 +58,22 @@ void Enemy::Render() {
 
 void Enemy::Update() {
 
+	if (target) {
+
+		Transform* transform = GetComponent<Transform>();
+
+		transform->Translate(
+			(target->GetComponent<Transform>()->position - transform->position).Normalize() * Game::GetDeltaTime() * movementSpeed
+		);
+
+	}
+
 	Render();
+
+}
+
+void Enemy::OnDestroy() {
+
+	GameManager::ReportDead(this);
 
 }

@@ -15,7 +15,6 @@ class Transform;
 class GameObject;
 class Item;
 class Player;
-class Color;
 
 class GameComponent {
 
@@ -62,6 +61,9 @@ public:
 	template<class T>
 	T* AddComponent();
 
+	template<class T>
+	bool IsA();
+
 	static void ObjectUpdate();
 
 	static void Destroy(GameObject* gameObject);
@@ -107,6 +109,7 @@ public:
 	Vector2 pivot;
 	float angle;
 	float fillAmount;
+	Color backgroundColor;
 
 	ImageFill imageFill;
 

@@ -21,7 +21,6 @@ Player::Player() {
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
 
 	Transform* transform = AddComponent<Transform>();
-	transform->position = Vector2(100.0f, 100.0f);
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();

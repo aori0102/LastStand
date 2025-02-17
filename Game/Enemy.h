@@ -9,11 +9,15 @@ private:
 	void Render();
 
 	GameObject* healthBar;
+	GameObject* target;
+
+	float movementSpeed;
 
 public:
 
-	Enemy();
+	Enemy(GameObject* initTarget);
 
 	void Update() override;
+	void OnDestroy() override;
 
 };

@@ -15,6 +15,7 @@ set(SOURCES
     "Inventory.cpp"
     "FirearmUI.cpp"
     "Texture.cpp"
+    "GameManager.cpp"
 )
 
 # Add this directory as a static library

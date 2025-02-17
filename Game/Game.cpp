@@ -6,18 +6,10 @@
 #include <SDL.h>
 #include <Enemy.h>
 #include <iostream>
+#include <GameManager.h>
 
 // Background path
 const string BACKGROUND_PATH = "./Asset/Background.png";
-
-// Colors
-const Color Color::TRANSPARENT = Color(0, 0, 0, 0);
-const Color Color::RED = Color(255, 0, 0, 255);
-const Color Color::GREEN = Color(0, 255, 0, 255);
-const Color Color::BLUE = Color(0, 0, 255, 255);
-const Color Color::WHITE = Color(255, 255, 255, 255);
-const Color Color::YELLOW = Color(255, 255, 0, 255);
-const Color Color::BLACK = Color(0, 0, 0, 255);
 
 // Initialize static component
 SDL_Window* Game::gWindow = nullptr;
@@ -34,21 +26,6 @@ string Game::gameName = "Last Stand";
 Vector2 Game::cameraPosition = Vector2::zero;
 GameObject* Game::cameraFocusObject = nullptr;
 GameObject* Game::background = nullptr;
-
-Color::Color(Uint8 initR, Uint8 initG, Uint8 initB, Uint8 initA) {
-
-	r = initR;
-	g = initG;
-	b = initB;
-	a = initA;
-
-}
-
-SDL_Color Color::ToSDLColor() {
-
-	return { r, g, b, a };
-
-}
 
 float Game::GetTime() { return time; }
 
@@ -96,6 +73,8 @@ bool Game::Initialize() {
 
 	} else
 		cout << "Renderer created." << endl;
+
+	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
 	// Initialize IMG
 	int imgFlag = IMG_INIT_PNG;
@@ -157,6 +136,8 @@ void Game::Loop() {
 			it++;
 
 		}
+
+		GameManager::Update();
 
 		// Update renderer data
 		SDL_RenderPresent(gRenderer);
@@ -310,12 +291,27 @@ void Game::InitializeGameObject() {
 	LetCameraFocus(player);
 
 	// Enemy
-	Enemy* enemy = new Enemy;
+	Enemy* enemy1 = new Enemy(player);
+	enemy1->GetComponent<Transform>()->position = Vector2(100.0f, 200.0f);
+	Enemy* enemy2 = new Enemy(player);
+	enemy2->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
+	Enemy* enemy5 = new Enemy(player);
+	enemy5->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
+	Enemy* enemy6 = new Enemy(player);
+	enemy6->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
+	Enemy* enemy7 = new Enemy(player);
+	enemy7->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
+	Enemy* enemy3 = new Enemy(player);
+	enemy3->GetComponent<Transform>()->position = Vector2(100.0f, 2000.0f);
+	Enemy* enemy4 = new Enemy(player);
+	enemy4->GetComponent<Transform>()->position = Vector2(725.0f, 415.0f);
 
 	// Background
 	background = new GameObject;
 	Image* backgroundImage = background->AddComponent<Image>();
 	backgroundImage->LoadImage(BACKGROUND_PATH);
+
+	GameManager::InitializeObject();
 
 }
 
@@ -463,9 +459,6 @@ void Game::UpdateCameraAndBackground() {
 	// Render background
 	background->GetComponent<Transform>()->position = cameraPosition.Inverse();
 	background->GetComponent<Image>()->Render();
-
-	cout << background->GetComponent<Transform>()->position.x;
-	cout << " " << background->GetComponent<Transform>()->position.y << endl;
 
 }
 

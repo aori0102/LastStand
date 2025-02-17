@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include <Game.h>
 #include <cmath>
+#include <Type.h>
 
 // Font data
 const string FONT_PATH = "./Asset/Font.ttf";
@@ -36,6 +37,8 @@ Image::Image(GameObject* initOwner) : GameComponent(initOwner) {
 
 	imageFill = ImageFill::None;
 	fillAmount = 1.0f;
+
+	backgroundColor = Color::WHITE;
 
 }
 
@@ -83,23 +86,45 @@ bool Image::LoadImage(string path) {
 
 void Image::Render() {
 
-	Vector2 clip(1.0f, 1.0f);
-	if (imageFill == ImageFill::Vertical)
-		clip.y = fillAmount;
-	else if (imageFill == ImageFill::Horizontal)
-		clip.x = fillAmount;
-
 	Transform* transform = GetOwner()->GetComponent<Transform>();
 
-	Game::RenderCopy(
-		this,
-		transform->position,
-		transform->scale,
-		showOnScreen,
-		clip,
-		angle,
-		pivot
-	);
+	if (texture) {
+
+		Vector2 clip(1.0f, 1.0f);
+		if (imageFill == ImageFill::Vertical)
+			clip.y = fillAmount;
+		else if (imageFill == ImageFill::Horizontal)
+			clip.x = fillAmount;
+
+		Game::RenderCopy(
+			this,
+			transform->position,
+			transform->scale,
+			showOnScreen,
+			clip,
+			angle,
+			pivot
+		);
+
+	} else {
+
+		// No image texture, render background instead
+		Game::SetRenderDrawColor(backgroundColor);
+		SDL_FRect quad = {
+			transform->position.x - transform->scale.x * pivot.x,
+			transform->position.y - transform->scale.y * pivot.y,
+			transform->scale.x,
+			transform->scale.y
+		};
+
+		if (imageFill == ImageFill::Vertical)
+			quad.h *= fillAmount;
+		else if (imageFill == ImageFill::Horizontal)
+			quad.w *= fillAmount;
+
+		Game::DrawRectangle(&quad, showOnScreen, true);
+
+	}
 
 }
 

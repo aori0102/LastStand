@@ -97,23 +97,3 @@ public:
 	static void LetCameraFocus(GameObject* gameObject);
 
 };
-
-class Color {
-
-public:
-
-	Uint8 r, g, b, a;
-
-	Color(Uint8 initR, Uint8 initG, Uint8 initB, Uint8 initA);
-
-	SDL_Color ToSDLColor();
-
-	static const Color TRANSPARENT;
-	static const Color WHITE;
-	static const Color RED;
-	static const Color GREEN;
-	static const Color BLUE;
-	static const Color YELLOW;
-	static const Color BLACK;
-
-};
