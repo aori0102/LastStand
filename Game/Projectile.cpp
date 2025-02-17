@@ -34,10 +34,8 @@ void Projectile::Render() {
 
 	Transform* transform = GetComponent<Transform>();
 
-	SDL_FRect quad = { transform->position.x, transform->position.y, transform->scale.x, transform->scale.y };
-
 	Game::SetRenderDrawColor(Color::YELLOW);
-	Game::DrawRectangle(&quad, true);
+	Game::DrawRectangle(transform->position, transform->scale / 2.0f, false);
 
 	GetComponent<BoxCollider>()->Debug();
 

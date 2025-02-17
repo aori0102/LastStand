@@ -14,6 +14,8 @@ Texture::Texture() {
 
 	textureDimension = Vector2::zero;
 
+	showOnScreen = true;
+
 }
 
 void Texture::FreeTexture() {
@@ -93,6 +95,7 @@ void Image::Render() {
 		this,
 		transform->position,
 		transform->scale,
+		showOnScreen,
 		clip,
 		angle,
 		pivot
@@ -153,6 +156,6 @@ void Text::Render() {
 
 	Transform* transform = GetOwner()->GetComponent<Transform>();
 
-	Game::RenderCopy(this, transform->position, transform->scale);
+	Game::RenderCopy(this, transform->position, transform->scale, showOnScreen);
 
 }

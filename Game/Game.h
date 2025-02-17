@@ -56,6 +56,15 @@ private:
 	static float time;
 	static float deltaTime;
 
+	// Camera
+	static Vector2 cameraPosition;
+	static GameObject* cameraFocusObject;
+
+	static void UpdateCameraAndBackground();
+
+	// Background
+	static GameObject* background;
+
 public:
 
 	static ActionState GetKeyState(SDL_Keycode keycode);
@@ -64,9 +73,10 @@ public:
 
 	// Rendering
 	static void SetRenderDrawColor(Color color);
-	static void DrawLine(Vector2 start, Vector2 end, Color color);
-	static void DrawRectangle(SDL_FRect* quad, bool fill = false);
-	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2 clip = Vector2(1.0f, 1.0f), float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	static void DrawLine(Vector2 position, Vector2 direction, float maxDistance, Color color);
+	static void DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill = false);
+	static void DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill = false);
+	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Vector2 clip = Vector2(1.0f, 1.0f), float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 
 	// Initialization
@@ -82,6 +92,9 @@ public:
 	static float GetTime();
 	static float GetDeltaTime();
 	static Vector2 GetResolution();
+
+	// Camera control
+	static void LetCameraFocus(GameObject* gameObject);
 
 };
 

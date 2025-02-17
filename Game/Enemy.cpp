@@ -19,6 +19,7 @@ Enemy::Enemy() {
 	Image* enemySprite = AddComponent<Image>();
 	enemySprite->LoadImage(ENEMY_SPRITE_PATH);
 	enemySprite->pivot = Vector2(0.5f, 0.5f);
+	enemySprite->showOnScreen = false;
 
 	// Initialize health bar
 	healthBar = new GameObject();
@@ -27,6 +28,7 @@ Enemy::Enemy() {
 	healthBar_image->GetOwner()->GetComponent<Transform>()->scale= HEALTH_BAR_SCALE;
 	healthBar_image->imageFill = ImageFill::Horizontal;
 	healthBar_image->fillAmount = 1.0f;
+	healthBar_image->showOnScreen = false;
 
 }
 

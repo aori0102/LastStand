@@ -31,6 +31,7 @@ public:
 	bool operator!=(const Vector2& other);
 	
 	Vector2 Normalize();
+	Vector2 Inverse();
 	float Magnitude() const;
 	float Dot(const Vector2& other) const;
 	static float Dot(const Vector2& first, const Vector2& second);

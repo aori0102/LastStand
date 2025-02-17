@@ -101,17 +101,11 @@ void BoxCollider::FlushComponent() {
 
 void BoxCollider::Debug() {
 
-	Game::SetRenderDrawColor(Color::GREEN);
 	Transform* transform = GetOwner()->GetComponent<Transform>();
-	SDL_FRect quad = {
-		transform->position.x + localPosition.x - transform->scale.x / 2.0f,
-		transform->position.y + localPosition.y - transform->scale.y / 2.0f,
-		transform->scale.x,
-		transform->scale.y
-	};
 
 	Game::SetRenderDrawColor(Color::GREEN);
-	Game::DrawRectangle(&quad);
+	Bound bound = GetBound();
+	Game::DrawRectangle(bound.center, bound.extents, false);
 
 }
 

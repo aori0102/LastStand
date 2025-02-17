@@ -41,8 +41,8 @@ void ReloadUI::Update() {
 		};
 
 		Game::SetRenderDrawColor(Color::WHITE);
-		Game::DrawRectangle(&outlineQuad, false);
-		Game::DrawRectangle(&fillQuad, true);
+		Game::DrawRectangle(&outlineQuad, true, false);
+		Game::DrawRectangle(&fillQuad, true, true);
 
 	}
 

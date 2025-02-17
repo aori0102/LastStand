@@ -16,6 +16,7 @@ Player::Player() {
 	Image* playerSprite = AddComponent<Image>();
 	playerSprite->LoadImage(PLAYER_SPRITE_PATH);
 	playerSprite->pivot = Vector2(0.5f, 0.5f);
+	playerSprite->showOnScreen = false;
 
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
 
@@ -60,8 +61,7 @@ void Player::Update() {
 	GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
 
 	// Render line of sight
-	Vector2 sightEndPoint = transform->position + forward.Normalize() * 1000.0f;
-	Game::DrawLine(transform->position, sightEndPoint, Color::GREEN);
+	Game::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
 
 	HandleActions();
 

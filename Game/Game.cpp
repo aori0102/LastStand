@@ -7,6 +7,9 @@
 #include <Enemy.h>
 #include <iostream>
 
+// Background path
+const string BACKGROUND_PATH = "./Asset/Background.png";
+
 // Colors
 const Color Color::TRANSPARENT = Color(0, 0, 0, 0);
 const Color Color::RED = Color(255, 0, 0, 255);
@@ -28,6 +31,9 @@ float Game::deltaTime = 0.0f;
 vector<Game::ActionState> Game::mouseButtonState = vector<Game::ActionState>(static_cast<int>(MouseButton::Total));
 Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
 string Game::gameName = "Last Stand";
+Vector2 Game::cameraPosition = Vector2::zero;
+GameObject* Game::cameraFocusObject = nullptr;
+GameObject* Game::background = nullptr;
 
 Color::Color(Uint8 initR, Uint8 initG, Uint8 initB, Uint8 initA) {
 
@@ -138,6 +144,8 @@ void Game::Loop() {
 		// Clear renderer data
 		Game::SetRenderDrawColor(Color::TRANSPARENT);
 		SDL_RenderClear(gRenderer);
+
+		UpdateCameraAndBackground();
 
 		// Handle game object
 		auto it = gameObjectSet.begin();
@@ -299,8 +307,15 @@ void Game::InitializeGameObject() {
 	// Player
 	Player* player = new Player;
 	player->name = "Player";
+	LetCameraFocus(player);
 
+	// Enemy
 	Enemy* enemy = new Enemy;
+
+	// Background
+	background = new GameObject;
+	Image* backgroundImage = background->AddComponent<Image>();
+	backgroundImage->LoadImage(BACKGROUND_PATH);
 
 }
 
@@ -310,7 +325,7 @@ Vector2 Game::GetMouseInput() {
 
 	SDL_GetMouseState(&x, &y);
 
-	return Vector2(x, y);
+	return Vector2(x, y) + cameraPosition - windowResolution / 2.0f;
 
 }
 
@@ -338,15 +353,25 @@ Game::ActionState Game::GetMouseState(MouseButton mouseButton) {
 
 }
 
-void Game::DrawLine(Vector2 start, Vector2 end, Color color) {
+void Game::DrawLine(Vector2 position, Vector2 direction, float maxDistance, Color color) {
 
 	SetRenderDrawColor(color);
 
-	SDL_RenderDrawLineF(gRenderer, start.x, start.y, end.x, end.y);
+	Vector2 renderPosition = position - cameraPosition + windowResolution / 2.0f;
+	Vector2 renderEnd = renderPosition + direction.Normalize() * maxDistance;
+
+	SDL_RenderDrawLineF(gRenderer, renderPosition.x, renderPosition.y, renderEnd.x, renderEnd.y);
 
 }
 
-void Game::DrawRectangle(SDL_FRect* quad, bool fill) {
+void Game::DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill) {
+
+	Vector2 renderTopLeft =
+		!onScreen ? (Vector2(quad->x, quad->y) - cameraPosition + windowResolution / 2.0f)
+		: Vector2(quad->x, quad->y);
+
+	quad->x = renderTopLeft.x;
+	quad->y = renderTopLeft.y;
 
 	if (fill)
 		SDL_RenderFillRectF(gRenderer, quad);
@@ -355,16 +380,50 @@ void Game::DrawRectangle(SDL_FRect* quad, bool fill) {
 
 }
 
-void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2 clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
+void Game::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill) {
 
-	Vector2 textureDimension = texture->GetTextureDimension();
+	Vector2 renderCenter =
+		!onScreen ? (center - cameraPosition + windowResolution / 2.0f)
+		: center;
 
 	SDL_FRect quad = {
-		position.x - pivot.x * scale.x,
-		position.y - pivot.y * scale.y,
+		renderCenter.x - extents.x,
+		renderCenter.y - extents.y,
+		extents.x * 2.0f,
+		extents.y * 2.0f
+	};
+
+	if (fill)
+		SDL_RenderFillRectF(gRenderer, &quad);
+	else
+		SDL_RenderDrawRectF(gRenderer, &quad);
+
+}
+
+void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Vector2 clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
+
+	// Calculate camera's area
+
+	// Render quad
+	Vector2 renderPosition =
+		!onScreen ? (position - cameraPosition + windowResolution / 2.0f)
+		: position;
+	SDL_FRect quad = {
+		renderPosition.x - pivot.x * scale.x,
+		renderPosition.y - pivot.y * scale.y,
 		scale.x * clip.x,
 		scale.y * clip.y
 	};
+
+	// Broad check if texture is out of camera view, if so, skip rendering
+	if (quad.x > windowResolution.x ||
+		quad.y > windowResolution.y ||
+		quad.x + quad.w < 0.0f ||
+		quad.y + quad.h < 0.0f
+		)
+		return;
+
+	Vector2 textureDimension = texture->GetTextureDimension();
 
 	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
 	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
@@ -389,5 +448,29 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, Vector2
 SDL_Texture* Game::CreateTexture(SDL_Surface* loadedSurface) {
 
 	return SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+
+}
+
+void Game::UpdateCameraAndBackground() {
+
+	if (!cameraFocusObject)
+		return;
+
+	// Get focus object component and update camera
+	Transform* focusTransform = cameraFocusObject->GetComponent<Transform>();
+	cameraPosition = focusTransform->position;
+
+	// Render background
+	background->GetComponent<Transform>()->position = cameraPosition.Inverse();
+	background->GetComponent<Image>()->Render();
+
+	cout << background->GetComponent<Transform>()->position.x;
+	cout << " " << background->GetComponent<Transform>()->position.y << endl;
+
+}
+
+void Game::LetCameraFocus(GameObject* gameObject) {
+
+	cameraFocusObject = gameObject;
 
 }

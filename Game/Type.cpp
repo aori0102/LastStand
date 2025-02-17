@@ -126,6 +126,12 @@ bool Vector2::operator!=(const Vector2& other) {
 
 }
 
+Vector2 Vector2::Inverse() {
+
+	return Vector2(-x, -y);
+
+}
+
 float Math::Clamp(float value, float lowerBound, float UpperBound) {
 
 	return min(max(value, lowerBound), UpperBound);
