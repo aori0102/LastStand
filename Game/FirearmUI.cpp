@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <GameComponent.h>
 #include <string>
+#include <Texture.h>
 
 // Reload UI
 const Vector2 RELOAD_BAR_SIZE = Vector2(100.0f, 30.0f);
@@ -16,7 +17,7 @@ const int AMMO_FONT_SIZE = 30;
 ReloadUI::ReloadUI(Firearm* initFirearm) {
 
 	if (!initFirearm)
-		throw new exception("Initializing reload UI with a null linkedFirearm");
+		throw new exception("Initializing reload UI with a null firearm");
 
 	linkedFirearm = initFirearm;
 
@@ -25,24 +26,24 @@ ReloadUI::ReloadUI(Firearm* initFirearm) {
 void ReloadUI::Update() {
 
 	if (linkedFirearm->IsReloading()) {
-
+		// Render a box indicating the reload progress when
+		// the firearm reloads
 		SDL_FRect outlineQuad = {
-			(Game::GetResolution().x - RELOAD_OUTLINE_SIZE.x) / 2.0f,
-			RELOAD_BAR_CENTER_Y + (Game::GetResolution().y - RELOAD_OUTLINE_SIZE.y) / 2.0f,
+			(Game::WindowResolution().x - RELOAD_OUTLINE_SIZE.x) / 2.0f,
+			RELOAD_BAR_CENTER_Y + (Game::WindowResolution().y - RELOAD_OUTLINE_SIZE.y) / 2.0f,
 			RELOAD_OUTLINE_SIZE.x,
 			RELOAD_OUTLINE_SIZE.y
 		};
 
 		SDL_FRect fillQuad = {
-			(Game::GetResolution().x - RELOAD_BAR_SIZE.x) / 2.0f,
-			RELOAD_BAR_CENTER_Y + (Game::GetResolution().y - RELOAD_BAR_SIZE.y) / 2.0f,
+			(Game::WindowResolution().x - RELOAD_BAR_SIZE.x) / 2.0f,
+			RELOAD_BAR_CENTER_Y + (Game::WindowResolution().y - RELOAD_BAR_SIZE.y) / 2.0f,
 			RELOAD_BAR_SIZE.x * linkedFirearm->GetReloadingProgress(),
 			RELOAD_BAR_SIZE.y
 		};
 
-		Game::SetRenderDrawColor(Color::WHITE);
-		Game::DrawRectangle(&outlineQuad, true, false);
-		Game::DrawRectangle(&fillQuad, true, true);
+		Game::DrawRectangle(&outlineQuad, true, false, Color::WHITE);
+		Game::DrawRectangle(&fillQuad, true, true, Color::WHITE);
 
 	}
 
@@ -54,7 +55,7 @@ FirearmUI::FirearmUI(Firearm* initFirearm) {
 		throw new exception("Initialize firearm UI with null firearm");
 
 	linkedFirearm = initFirearm;
-	previousAmmo = linkedFirearm->GetCurrentAmmo();
+	previousAmmo = linkedFirearm->CurrentAmmo();
 
 	Text* text = AddComponent<Text>();
 	text->LoadText(to_string(previousAmmo), Color::WHITE, AMMO_FONT_SIZE);
@@ -63,7 +64,8 @@ FirearmUI::FirearmUI(Firearm* initFirearm) {
 
 void FirearmUI::Update() {
 
-	int ammo = linkedFirearm->GetCurrentAmmo();
+	// Render the firearm's ammo count
+	int ammo = linkedFirearm->CurrentAmmo();
 	Text* text = GetComponent<Text>();
 
 	if (ammo != previousAmmo) {
@@ -75,10 +77,10 @@ void FirearmUI::Update() {
 
 	}
 
-	Transform* textTransform = text->GetOwner()->GetComponent<Transform>();
+	Transform* textTransform = text->GetComponent<Transform>();
 	textTransform->position = Vector2(
-		Game::GetResolution().x - textTransform->scale.x,
-		Game::GetResolution().y - textTransform->scale.y
+		Game::WindowResolution().x - textTransform->scale.x,
+		Game::WindowResolution().y - textTransform->scale.y
 	);
 	text->Render();
 

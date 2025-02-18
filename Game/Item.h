@@ -3,6 +3,9 @@
 #include <GameComponent.h>
 
 class Player;
+class ReloadUI;
+class FirearmUI;
+
 class Item {
 
 public:
@@ -11,8 +14,6 @@ public:
 
 };
 
-class ReloadUI;
-class FirearmUI;
 class Firearm : public GameObject, public Item {
 
 private:
@@ -43,6 +44,6 @@ public:
 
 	bool IsReloading() const;
 	float GetReloadingProgress() const;
-	int GetCurrentAmmo() const;
+	int CurrentAmmo() const;
 
 };

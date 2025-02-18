@@ -12,6 +12,7 @@ class GameManager {
 
 private:
 
+	// Entity
 	static Player* player;
 	static unordered_set<Enemy*> enemySet;
 
@@ -23,7 +24,7 @@ private:
 	static const int BASE_EXP;			// Base experience to get from level 0 to 1
 	static const float EXP_MULTIPLIER;	// How much greater the exp to progress to next level
 
-	// UI
+	// UI elements
 	static GameObject* infoBackground;
 	static GameObject* moneyLabel;
 	static GameObject* moneyText;

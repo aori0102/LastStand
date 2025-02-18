@@ -20,7 +20,7 @@ void Inventory::UseCurrent(Player* player) {
 
 }
 
-Item* Inventory::GetCurrentItem() {
+Item* Inventory::HoldingItem() {
 
 	return holdingItem;
 

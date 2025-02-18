@@ -7,32 +7,35 @@
 #include <Enemy.h>
 #include <iostream>
 #include <GameManager.h>
+#include <Texture.h>
+
+// Initialize static component
+bool Game::gQuit = false;
+float Game::time = 0.0f;
+float Game::deltaTime = 0.0f;
+SDL_Window* Game::gWindow = nullptr;
+SDL_Renderer* Game::gRenderer = nullptr;
+SDL_Event* Game::gEvent = new SDL_Event;
+unordered_map<SDL_Keycode, Game::ActionState> Game::keyStateDictionary = {};
+unordered_map<MouseButton, Game::ActionState> Game::mouseButtonStateDictionary = {};
+unordered_set<GameObject*> Game::gameObjectSet = {};
+Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
+Vector2 Game::cameraPosition = Vector2::zero;
+string Game::gameName = "Last Stand";
+GameObject* Game::cameraFocusObject = nullptr;
+GameObject* Game::background = nullptr;
 
 // Background path
 const string BACKGROUND_PATH = "./Asset/Background.png";
 
-// Initialize static component
-SDL_Window* Game::gWindow = nullptr;
-SDL_Renderer* Game::gRenderer = nullptr;
-SDL_Event* Game::gEvent = new SDL_Event;
-bool Game::gQuit = false;
-unordered_map<SDL_Keycode, Game::ActionState> Game::keyStateDictionary = {};
-unordered_set<GameObject*> Game::gameObjectSet = {};
-float Game::time = 0.0f;
-float Game::deltaTime = 0.0f;
-vector<Game::ActionState> Game::mouseButtonState = vector<Game::ActionState>(static_cast<int>(MouseButton::Total));
-Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
-string Game::gameName = "Last Stand";
-Vector2 Game::cameraPosition = Vector2::zero;
-GameObject* Game::cameraFocusObject = nullptr;
-GameObject* Game::background = nullptr;
+// Getter
+float Game::Time() { return time; }
 
-float Game::GetTime() { return time; }
+float Game::DeltaTime() { return deltaTime; }
 
-float Game::GetDeltaTime() { return deltaTime; }
+Vector2 Game::WindowResolution() { return windowResolution; }
 
-Vector2 Game::GetResolution() { return windowResolution; }
-
+// Method
 bool Game::Initialize() {
 
 	// Initialize SDL2
@@ -73,7 +76,7 @@ bool Game::Initialize() {
 
 	} else
 		cout << "Renderer created." << endl;
-
+	// Renderer settings
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
 	// Initialize IMG
@@ -105,8 +108,8 @@ void Game::Loop() {
 
 	while (!gQuit) {
 
-		// Flush the game object before-hand
-		GameObject::ObjectUpdate();
+		// Flush the game object beforehand
+		GameObject::CleanUpCache();
 
 		// Update time
 		float currentTime = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
@@ -114,16 +117,14 @@ void Game::Loop() {
 		time = currentTime;
 
 		// Poll event
-		while (SDL_PollEvent(gEvent) != 0) {
-
+		while (SDL_PollEvent(gEvent) != 0)
 			HandleEvent();
 
-		}
-
 		// Clear renderer data
-		Game::SetRenderDrawColor(Color::TRANSPARENT);
+		SetRenderDrawColor(Color::TRANSPARENT);
 		SDL_RenderClear(gRenderer);
 
+		// Camera and background
 		UpdateCameraAndBackground();
 
 		// Handle game object
@@ -143,6 +144,24 @@ void Game::Loop() {
 		SDL_RenderPresent(gRenderer);
 
 	}
+
+}
+
+void Game::Close() {
+
+	// Flush game objects and components
+
+	// Close window and renderer
+	SDL_DestroyWindow(gWindow);
+	gWindow = nullptr;
+
+	SDL_DestroyRenderer(gRenderer);
+	gRenderer = nullptr;
+
+	// Close SDL libraries
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
 
 }
 
@@ -211,8 +230,8 @@ void Game::HandleEvent() {
 			break;
 
 		// Set button state
-		mouseButtonState[mouseIndex].started = true;
-		mouseButtonState[mouseIndex].canceled = false;
+		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].started = true;
+		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].canceled = false;
 		break;
 
 	}
@@ -244,8 +263,8 @@ void Game::HandleEvent() {
 			break;
 
 		// Set button state
-		mouseButtonState[mouseIndex].canceled = true;
-		mouseButtonState[mouseIndex].started = false;
+		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].canceled = true;
+		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].started = false;
 		break;
 
 	}
@@ -262,6 +281,17 @@ Game::ActionState* Game::FindKeyState(SDL_Keycode keycode) {
 		return nullptr;
 
 	return &keyStateDictionary[keycode];
+
+}
+
+Game::ActionState* Game::FindMouseButtonState(MouseButton mouseButton) {
+
+	auto it = mouseButtonStateDictionary.find(mouseButton);
+
+	if (it == mouseButtonStateDictionary.end())
+		return nullptr;
+
+	return &mouseButtonStateDictionary[mouseButton];
 
 }
 
@@ -285,27 +315,6 @@ Game::ActionState Game::GetKeyState(SDL_Keycode keycode) {
 
 void Game::InitializeGameObject() {
 
-	// Player
-	Player* player = new Player;
-	player->name = "Player";
-	LetCameraFocus(player);
-
-	// Enemy
-	Enemy* enemy1 = new Enemy(player);
-	enemy1->GetComponent<Transform>()->position = Vector2(100.0f, 200.0f);
-	Enemy* enemy2 = new Enemy(player);
-	enemy2->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy5 = new Enemy(player);
-	enemy5->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy6 = new Enemy(player);
-	enemy6->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy7 = new Enemy(player);
-	enemy7->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy3 = new Enemy(player);
-	enemy3->GetComponent<Transform>()->position = Vector2(100.0f, 2000.0f);
-	Enemy* enemy4 = new Enemy(player);
-	enemy4->GetComponent<Transform>()->position = Vector2(725.0f, 415.0f);
-
 	// Background
 	background = new GameObject;
 	Image* backgroundImage = background->AddComponent<Image>();
@@ -315,13 +324,19 @@ void Game::InitializeGameObject() {
 
 }
 
+Vector2 Game::ScreenToWorldPosition(Vector2 screenPosition) {
+
+	return screenPosition + cameraPosition - windowResolution / 2.0f;
+
+}
+
 Vector2 Game::GetMouseInput() {
 
 	int x, y;
 
 	SDL_GetMouseState(&x, &y);
 
-	return Vector2(x, y) + cameraPosition - windowResolution / 2.0f;
+	return Vector2(x, y);
 
 }
 
@@ -345,7 +360,19 @@ void Game::UnregisterGameObject(GameObject* gameObject) {
 
 Game::ActionState Game::GetMouseState(MouseButton mouseButton) {
 
-	return mouseButtonState[static_cast<int>(mouseButton)];
+	// Find the key
+	ActionState* mouseButtonState = FindMouseButtonState(mouseButton);
+
+	// Create a key state if not already
+	if (!mouseButtonState) {
+
+		mouseButtonState = new ActionState;
+		mouseButtonStateDictionary[mouseButton] = *mouseButtonState;
+		delete mouseButtonState;
+
+	}
+
+	return mouseButtonStateDictionary[mouseButton];
 
 }
 
@@ -360,7 +387,9 @@ void Game::DrawLine(Vector2 position, Vector2 direction, float maxDistance, Colo
 
 }
 
-void Game::DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill) {
+void Game::DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill, Color color) {
+
+	SetRenderDrawColor(color);
 
 	Vector2 renderTopLeft =
 		!onScreen ? (Vector2(quad->x, quad->y) - cameraPosition + windowResolution / 2.0f)
@@ -376,7 +405,9 @@ void Game::DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill) {
 
 }
 
-void Game::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill) {
+void Game::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color) {
+
+	SetRenderDrawColor(color);
 
 	Vector2 renderCenter =
 		!onScreen ? (center - cameraPosition + windowResolution / 2.0f)
@@ -418,13 +449,15 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool on
 		quad.y + quad.h < 0.0f
 		)
 		return;
+	
+	Vector2 textureDimension = texture->TextureDimension();
 
-	Vector2 textureDimension = texture->GetTextureDimension();
-
+	// Center of texture
 	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
 	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
 	SDL_FPoint center = { scale.x * pivot.x, scale.y * pivot.y };
 
+	// Clipping texture
 	clip.x = Math::Clamp(clip.x, 0.0f, 1.0f);
 	clip.y = Math::Clamp(clip.y, 0.0f, 1.0f);
 	SDL_Rect clipRect = { 0, 0, textureDimension.x * clip.x, textureDimension.y * clip.y };

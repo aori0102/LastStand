@@ -6,6 +6,7 @@
 #include <Physics.h>
 #include <Item.h>
 #include <PlayerUI.h>
+#include <Texture.h>
 
 const string PLAYER_SPRITE_PATH = "./Asset/Character.png";
 
@@ -53,10 +54,10 @@ void Player::Update() {
 	Transform* transform = GetComponent<Transform>();
 
 	// Apply movement
-	transform->Translate(input.Normalize() * movementSpeed * Game::GetDeltaTime());
+	transform->Translate(input.Normalize() * movementSpeed * Game::DeltaTime());
 
 	// Calculate rotation
-	forward = (Game::GetMouseInput() - transform->position).Normalize();
+	forward = (Game::ScreenToWorldPosition(Game::GetMouseInput()) - transform->position).Normalize();
 	GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
 
 	// Render line of sight
@@ -73,18 +74,14 @@ void Player::Render() {
 
 	Image* playerSprite = GetComponent<Image>();
 
-	playerSprite->GetOwner()->GetComponent<Transform>()->position = GetComponent<Transform>()->position;
+	playerSprite->GetComponent<Transform>()->position = GetComponent<Transform>()->position;
 	playerSprite->Render();
 
 	GetComponent<BoxCollider>()->Debug();
 
 }
 
-Vector2 Player::GetForward() const {
-
-	return forward;
-
-}
+Vector2 Player::Forward() const { return forward; }
 
 void Player::HandleActions() {
 
@@ -99,7 +96,7 @@ void Player::HandleActions() {
 	if (Game::GetKeyState(SDLK_r).started) {
 
 		// Get the item
-		Firearm* firearm = dynamic_cast<Firearm*>(inventory->GetCurrentItem());
+		Firearm* firearm = dynamic_cast<Firearm*>(inventory->HoldingItem());
 
 		// Reload
 		if (firearm)

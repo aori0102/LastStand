@@ -7,29 +7,22 @@ Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 
 }
 
-void Humanoid::SetMaxHealth(float newMaxHealth) {
-
-	maxHealth = newMaxHealth;
-
-}
-
 void Humanoid::Damage(float amount) {
 
 	health -= amount;
 
 	if (health <= 0.0f)
-		GameObject::Destroy(GetOwner());
+		GameObject::Destroy(Owner());
 
 }
 
-float Humanoid::GetHealth() {
+void Humanoid::Heal(float amount) {
 
-	return health;
+	health += amount;
 
-}
-
-float Humanoid::GetMaxHealth() {
-
-	return maxHealth;
+	if (health > maxHealth)
+		health = maxHealth;
 
 }
+
+float Humanoid::Health() const { return health; }

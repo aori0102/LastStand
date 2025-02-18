@@ -1,4 +1,4 @@
-#include <GameComponent.h>
+#include <Texture.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <Game.h>
@@ -26,9 +26,11 @@ void Texture::FreeTexture() {
 
 }
 
+// Dunno if it should be like this
+// Maybe should be applied with shared ptr
 SDL_Texture* Texture::GetTexture() { return texture; }
 
-Vector2 Texture::GetTextureDimension() { return textureDimension; }
+Vector2 Texture::TextureDimension() const { return textureDimension; }
 
 Image::Image(GameObject* initOwner) : GameComponent(initOwner) {
 
@@ -74,7 +76,7 @@ bool Image::LoadImage(string path) {
 
 	// Finish up
 	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
-	GetOwner()->GetComponent<Transform>()->scale = textureDimension;
+	Owner()->GetComponent<Transform>()->scale = textureDimension;
 
 	// Clean
 	SDL_FreeSurface(loadedSurface);
@@ -86,16 +88,18 @@ bool Image::LoadImage(string path) {
 
 void Image::Render() {
 
-	Transform* transform = GetOwner()->GetComponent<Transform>();
+	Transform* transform = Owner()->GetComponent<Transform>();
 
 	if (texture) {
 
+		// Format
 		Vector2 clip(1.0f, 1.0f);
 		if (imageFill == ImageFill::Vertical)
 			clip.y = fillAmount;
 		else if (imageFill == ImageFill::Horizontal)
 			clip.x = fillAmount;
 
+		// Render
 		Game::RenderCopy(
 			this,
 			transform->position,
@@ -109,7 +113,6 @@ void Image::Render() {
 	} else {
 
 		// No image texture, render background instead
-		Game::SetRenderDrawColor(backgroundColor);
 		SDL_FRect quad = {
 			transform->position.x - transform->scale.x * pivot.x,
 			transform->position.y - transform->scale.y * pivot.y,
@@ -122,7 +125,7 @@ void Image::Render() {
 		else if (imageFill == ImageFill::Horizontal)
 			quad.w *= fillAmount;
 
-		Game::DrawRectangle(&quad, showOnScreen, true);
+		Game::DrawRectangle(&quad, showOnScreen, true, backgroundColor);
 
 	}
 
@@ -137,6 +140,9 @@ Text::Text(GameObject* initOwner) : GameComponent(initOwner) {
 }
 
 Text::~Text() {
+
+	TTF_CloseFont(font);
+	font = nullptr;
 
 	FreeTexture();
 
@@ -168,7 +174,7 @@ bool Text::LoadText(string text, Color color, int fontSize) {
 	}
 
 	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
-	GetOwner()->GetComponent<Transform>()->scale = textureDimension;
+	Owner()->GetComponent<Transform>()->scale = textureDimension;
 
 	// Clean up
 	SDL_FreeSurface(loadedSurface);
@@ -179,7 +185,7 @@ bool Text::LoadText(string text, Color color, int fontSize) {
 
 void Text::Render() {
 
-	Transform* transform = GetOwner()->GetComponent<Transform>();
+	Transform* transform = Owner()->GetComponent<Transform>();
 
 	Game::RenderCopy(this, transform->position, transform->scale, showOnScreen);
 

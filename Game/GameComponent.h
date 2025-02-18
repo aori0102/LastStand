@@ -1,12 +1,10 @@
 #pragma once
 
-#include <SDL.h>
 #include <Type.h>
 #include <iostream>
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
-#include <SDL_ttf.h>
 
 using namespace std;
 
@@ -22,13 +20,21 @@ private:
 
 	GameObject* owner;
 
-public:
+protected:
 
 	GameComponent(GameObject* initOwner);
 
-	GameObject* GetOwner();
+public:
 
-	virtual void FlushComponent();
+	GameObject* Owner();
+
+	virtual void OnComponentDestroyed();
+
+	template<class T>
+	T* GetComponent();
+
+	template<class T>
+	T* AddComponent();
 
 };
 
@@ -38,7 +44,7 @@ private:
 
 	unordered_map<type_index, GameComponent*> componentMap;
 
-	// The queue to delete game objects
+	// The set to delete game objects
 	static unordered_set<GameObject*> deletionSet;
 
 public:
@@ -46,6 +52,7 @@ public:
 	string name;
 
 	GameObject();
+	GameObject(string initName);
 	~GameObject();
 
 	virtual void Update();
@@ -64,80 +71,13 @@ public:
 	template<class T>
 	bool IsA();
 
-	static void ObjectUpdate();
+	static void CleanUpCache();
 
 	static void Destroy(GameObject* gameObject);
 
 };
+#include "GameObject.inl"
 #include "GameComponent.inl"
-
-enum class ImageFill {
-
-	Horizontal,
-	Vertical,
-	None,
-
-};
-
-class Texture {
-
-protected:
-
-	SDL_Texture* texture;
-
-	Vector2 textureDimension;
-
-	Texture();
-
-public:
-
-	bool showOnScreen;
-
-	virtual void Render() = 0;
-
-	void FreeTexture();
-
-	SDL_Texture* GetTexture();
-	Vector2 GetTextureDimension();
-
-};
-
-class Image : public GameComponent, public Texture {
-
-public:
-
-	Vector2 pivot;
-	float angle;
-	float fillAmount;
-	Color backgroundColor;
-
-	ImageFill imageFill;
-
-	Image(GameObject* initOwner);
-	~Image();
-
-	bool LoadImage(string path);
-
-	void Render() override;
-
-};
-
-class Text : public GameComponent, public Texture {
-
-private:
-
-	TTF_Font* font;
-
-public:
-
-	Text(GameObject* initOwner);
-	~Text();
-
-	bool LoadText(string text, Color color, int fontSize);
-
-	void Render() override;
-
-};
 
 class Transform : public GameComponent {
 
@@ -162,18 +102,22 @@ enum class Layer {
 
 class BoxCollider : public GameComponent {
 
-public:
+private:
 
 	Layer layer;
+
+public:
+
 	Vector2 localPosition;	// The position relative to the game object's transform
 
 	BoxCollider(GameObject* initOwner);
+	BoxCollider(GameObject* initOwner, Layer initLayer);
 
 	void Debug();
 
 	Bound GetBound();
 
-	void FlushComponent() override;
+	void OnComponentDestroyed() override;
 
 };
 
@@ -182,17 +126,17 @@ class Humanoid : public GameComponent {
 private:
 
 	float health;
-	float maxHealth;
 
 public:
 
+	float maxHealth;
+
 	Humanoid(GameObject* initOwner);
 
-	void SetMaxHealth(float newMaxHealth);
-	float GetHealth();
-	float GetMaxHealth();
+	float Health() const;
 
 	void Damage(float amount);
+	void Heal(float amount);
 
 };
 
@@ -208,6 +152,6 @@ public:
 
 	void AddItem(Item* newItem);
 	void UseCurrent(Player* player);
-	Item* GetCurrentItem();
+	Item* HoldingItem();
 
 };

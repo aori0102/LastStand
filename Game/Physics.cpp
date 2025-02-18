@@ -273,8 +273,8 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 	// Call colliders upon collision
 	if (finalCollider) {
 
-		finalCollider->GetOwner()->OnCollisionEnter(collider);
-		collider->GetOwner()->OnCollisionEnter(finalCollider);
+		finalCollider->Owner()->OnCollisionEnter(collider);
+		collider->Owner()->OnCollisionEnter(finalCollider);
 
 	}
 

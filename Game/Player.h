@@ -2,10 +2,9 @@
 
 #include <GameComponent.h>
 
-using namespace std;
-
 class ReloadUI;
 class FirearmUI;
+
 class Player : public GameObject {
 
 private:
@@ -24,6 +23,6 @@ public:
 	Player();
 
 	void Update() override;
-	Vector2 GetForward() const;
+	Vector2 Forward() const;
 
 };

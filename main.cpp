@@ -9,6 +9,7 @@ int main(int argc, char* args[]) {
 
 	if (!Game::Initialize())
 		return -1;
+
 	try {
 
 		Game::InitializeGameObject();

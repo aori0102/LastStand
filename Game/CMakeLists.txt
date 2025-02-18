@@ -16,6 +16,9 @@ set(SOURCES
     "FirearmUI.cpp"
     "Texture.cpp"
     "GameManager.cpp"
+    "GameObject.cpp"
+    "Transform.cpp"
+    "BoxCollider.cpp"
 )
 
 # Add this directory as a static library

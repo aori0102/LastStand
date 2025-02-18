@@ -11,6 +11,7 @@ private:
 
 	Vector2 direction;
 	float velocity;
+	float damage;
 
 	float spawnTime;		// Control when the object would be destroyed
 
@@ -18,7 +19,7 @@ private:
 
 public:
 
-	Projectile(Vector2 initPosition, Vector2 initScale, Vector2 initDirection, float initVelocity);
+	Projectile(Vector2 initPosition, Vector2 initScale, Vector2 initDirection, float initVelocity, float initDamage);
 
 	void Update() override;
 	void OnCollisionEnter(BoxCollider* collider) override;
