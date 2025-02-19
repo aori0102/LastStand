@@ -18,11 +18,16 @@ private:
 	void Render();
 	void HandleActions();
 
+	bool canInteract;
+
 public:
 	
 	Player();
 
 	void Update() override;
 	Vector2 Forward() const;
+
+	void DisableInteraction();
+	void EnableInteraction();
 
 };

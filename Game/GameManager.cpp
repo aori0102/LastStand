@@ -5,8 +5,10 @@
 #include <Game.h>
 #include <Texture.h>
 #include <GameComponent.h>
+#include <Shop.h>
 
 Player* GameManager::player = nullptr;
+Shop* GameManager::shop = nullptr;
 unordered_set<Enemy*> GameManager::enemySet = {};
 int GameManager::money = 0;
 int GameManager::experience = 0;
@@ -106,9 +108,12 @@ void GameManager::InitializeObject() {
 	);
 
 	// Player
-	Player* player = new Player;
+	player = new Player;
 	player->name = "Player";
 	Game::LetCameraFocus(player);
+
+	// Shop
+	shop = new Shop(player);
 
 	// Enemy
 	Enemy* enemy1 = new Enemy(player);

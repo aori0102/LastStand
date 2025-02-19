@@ -19,6 +19,8 @@ set(SOURCES
     "GameObject.cpp"
     "Transform.cpp"
     "BoxCollider.cpp"
+    "Shop.cpp"
+    "UIEvent.cpp"
 )
 
 # Add this directory as a static library

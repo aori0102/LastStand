@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include <Type.h>
 #include <GameComponent.h>
+#include <functional>
 
 enum class ImageFill {
 
@@ -70,5 +71,29 @@ public:
 	bool LoadText(string text, Color color, int fontSize);
 
 	void Render() override;
+
+};
+
+class Button : public GameComponent, public Texture {
+
+private:
+
+	bool isActive;
+
+public:
+
+	Color backgroundColor;
+
+	Button(GameObject* initOwner);
+
+	void Render() override;
+	Bound GetBound();
+
+	function<void()> OnClick;
+
+	bool IsActive() const;
+
+	void Disable();
+	void Enable();
 
 };

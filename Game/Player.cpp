@@ -14,6 +14,8 @@ Player::Player() {
 
 	movementSpeed = 700.0f;
 
+	canInteract = true;
+
 	Image* playerSprite = AddComponent<Image>();
 	playerSprite->LoadImage(PLAYER_SPRITE_PATH);
 	playerSprite->pivot = Vector2(0.5f, 0.5f);
@@ -35,35 +37,39 @@ Player::Player() {
 
 void Player::Update() {
 
-	// Input
-	Vector2 input(0.0f, 0.0f);
+	if (canInteract) {
 
-	if (Game::GetKeyState(SDLK_w).started)
-		input += Vector2::up;
+		// Input
+		Vector2 input(0.0f, 0.0f);
 
-	if (Game::GetKeyState(SDLK_a).started)
-		input += Vector2::left;
+		if (Game::GetKeyState(SDLK_w).performed)
+			input += Vector2::up;
 
-	if (Game::GetKeyState(SDLK_s).started)
-		input += Vector2::down;
+		if (Game::GetKeyState(SDLK_a).performed)
+			input += Vector2::left;
 
-	if (Game::GetKeyState(SDLK_d).started)
-		input += Vector2::right;
+		if (Game::GetKeyState(SDLK_s).performed)
+			input += Vector2::down;
 
-	// Get component
-	Transform* transform = GetComponent<Transform>();
+		if (Game::GetKeyState(SDLK_d).performed)
+			input += Vector2::right;
 
-	// Apply movement
-	transform->Translate(input.Normalize() * movementSpeed * Game::DeltaTime());
+		// Get component
+		Transform* transform = GetComponent<Transform>();
 
-	// Calculate rotation
-	forward = (Game::ScreenToWorldPosition(Game::GetMouseInput()) - transform->position).Normalize();
-	GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
+		// Apply movement
+		transform->Translate(input.Normalize() * movementSpeed * Game::DeltaTime());
 
-	// Render line of sight
-	Game::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
+		// Calculate rotation
+		forward = (Game::ScreenToWorldPosition(Game::GetMouseInput()) - transform->position).Normalize();
+		GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
 
-	HandleActions();
+		// Render line of sight
+		Game::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
+
+		HandleActions();
+
+	}
 
 	// Render
 	Render();
@@ -89,7 +95,7 @@ void Player::HandleActions() {
 	Inventory* inventory = GetComponent<Inventory>();
 
 	// Use action
-	if (Game::GetMouseState(MouseButton::Left).started)
+	if (Game::GetMouseState(MouseButton::Left).performed)
 		inventory->UseCurrent(this);
 
 	// Reload current firearm
@@ -103,5 +109,17 @@ void Player::HandleActions() {
 			firearm->Reload();
 
 	}
+
+}
+
+void Player::DisableInteraction() {
+
+	canInteract = false;
+
+}
+
+void Player::EnableInteraction() {
+
+	canInteract = true;
 
 }

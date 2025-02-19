@@ -7,6 +7,7 @@ using namespace std;
 class Player;
 class Enemy;
 class GameObject;
+class Shop;
 
 class GameManager {
 
@@ -15,6 +16,9 @@ private:
 	// Entity
 	static Player* player;
 	static unordered_set<Enemy*> enemySet;
+
+	// Systems
+	static Shop* shop;
 
 	// Player stats
 	static int money;

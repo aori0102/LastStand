@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <SDL.h>
+#include <iostream>
 
 using namespace std;
 
@@ -27,6 +28,8 @@ public:
 	Vector2 operator*=(const float& other);
 	Vector2 operator/(const float& other);
 	Vector2 operator/=(const float& other);
+
+	friend ostream& operator<<(ostream& os, const Vector2& other);
 
 	bool operator==(const Vector2& other);
 	bool operator!=(const Vector2& other);

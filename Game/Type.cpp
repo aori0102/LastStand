@@ -133,6 +133,14 @@ Vector2 Vector2::Inverse() {
 
 }
 
+ostream& operator<<(ostream& os, const Vector2& other) {
+
+	os << "(" << other.x << ", " << other.y;
+
+	return os;
+
+}
+
 float Math::Clamp(float value, float lowerBound, float UpperBound) {
 
 	return min(max(value, lowerBound), UpperBound);

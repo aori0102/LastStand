@@ -23,6 +23,10 @@ GameObject::GameObject(string initName) {
 
 	name = initName;
 
+	AddComponent<Transform>();
+
+	Game::RegisterGameObject(this);
+
 }
 
 GameObject::~GameObject() {

@@ -27,6 +27,7 @@ public:
 
 	struct ActionState {
 		bool started = false;
+		bool performed = false;
 		bool canceled = true;
 	};
 
@@ -55,6 +56,7 @@ private:
 	static float deltaTime;
 
 	static void HandleEvent();
+	static void UpdateEvent();
 
 	// Camera
 	static Vector2 cameraPosition;

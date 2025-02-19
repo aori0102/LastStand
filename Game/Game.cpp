@@ -8,6 +8,7 @@
 #include <iostream>
 #include <GameManager.h>
 #include <Texture.h>
+#include <UIEvent.h>
 
 // Initialize static component
 bool Game::gQuit = false;
@@ -117,8 +118,11 @@ void Game::Loop() {
 		time = currentTime;
 
 		// Poll event
+		UpdateEvent();
 		while (SDL_PollEvent(gEvent) != 0)
 			HandleEvent();
+
+		UIEvent::Update();
 
 		// Clear renderer data
 		SetRenderDrawColor(Color::TRANSPARENT);
@@ -165,8 +169,41 @@ void Game::Close() {
 
 }
 
-void Game::HandleEvent() {
+void Game::UpdateEvent() {
 
+	// Update the previous input event
+	auto it_key = keyStateDictionary.begin();
+	while (it_key != keyStateDictionary.end()) {
+
+		if (it_key->second.started) {
+
+			it_key->second.started = false;
+			it_key->second.performed = true;
+
+		}
+
+		it_key++;
+
+	}
+
+	auto it_mouse = mouseButtonStateDictionary.begin();
+	while (it_mouse != mouseButtonStateDictionary.end()) {
+
+		if (it_mouse->second.started) {
+
+			it_mouse->second.started = false;
+			it_mouse->second.performed = true;
+
+		}
+
+		it_mouse++;
+
+	}
+
+}
+
+void Game::HandleEvent() {
+	
 	switch (gEvent->type) {
 
 	case SDL_QUIT:
@@ -196,6 +233,7 @@ void Game::HandleEvent() {
 		if (keyState) {
 
 			keyState->canceled = true;
+			keyState->performed = false;
 			keyState->started = false;
 
 		}
@@ -232,6 +270,7 @@ void Game::HandleEvent() {
 		// Set button state
 		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].started = true;
 		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].canceled = false;
+		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].performed = false;
 		break;
 
 	}
@@ -265,6 +304,7 @@ void Game::HandleEvent() {
 		// Set button state
 		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].canceled = true;
 		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].started = false;
+		mouseButtonStateDictionary[static_cast<MouseButton>(mouseIndex)].performed = false;
 		break;
 
 	}
