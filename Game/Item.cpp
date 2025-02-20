@@ -5,16 +5,21 @@
 #include <PlayerUI.h>
 
 const float BULLET_VELOCITY = 7000.0f;
-const float BULLET_DAMAGE= 7.89f;
 const Vector2 BULLET_SCALE = Vector2(10.0f, 10.0f);
 
 Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime) {
 
-	damage = initDamage;
-	ammoCapacity = initAmmoCapacity;
-	currentAmmo = ammoCapacity;
+	// Base
+	baseAttributeMap[Attribute::Damage] = initDamage;
+	baseAttributeMap[Attribute::ReloadTime] = initReloadTime;
+	baseAttributeMap[Attribute::AmmoCapacity] = initAmmoCapacity;
+	currentAmmo = initAmmoCapacity;
 	fireRate = initFireRate;
-	reloadTime = initReloadTime;
+
+	// Multiplier
+	attributeMultiplierMap[Attribute::Damage] = 1.0f;
+	attributeMultiplierMap[Attribute::ReloadTime] = 1.0f;
+	attributeMultiplierMap[Attribute::AmmoCapacity] = 1.0f;
 
 	shotDelay = 60.0f / fireRate;
 	lastShotTick = 0.0f;
@@ -63,7 +68,7 @@ void Firearm::Use(Player* player) {
 	Vector2 origin = player->GetComponent<Transform>()->position;
 
 	// Fire
-	new Projectile(origin, BULLET_SCALE, direction, BULLET_VELOCITY,BULLET_DAMAGE);
+	new Projectile(origin, BULLET_SCALE, direction, BULLET_VELOCITY, baseAttributeMap[Attribute::Damage] * attributeMultiplierMap[Attribute::Damage]);
 	currentAmmo--;
 	lastShotTick = Game::Time();
 
@@ -76,21 +81,22 @@ void Firearm::Reload() {
 
 	isReloading = true;
 	reloadStartTick = Game::Time();
-	currentAmmo = ammoCapacity;
+	currentAmmo = baseAttributeMap[Attribute::AmmoCapacity] * attributeMultiplierMap[Attribute::AmmoCapacity];
 
 }
 
 void Firearm::Update() {
 
-	if (isReloading && Game::Time() >= reloadStartTick + reloadTime)
+	if (isReloading && Game::Time() >= reloadStartTick + baseAttributeMap[Attribute::ReloadTime] * attributeMultiplierMap[Attribute::ReloadTime])
 		isReloading = false;
 
 }
 
-
 bool Firearm::IsReloading() const { return isReloading; }
 
-float Firearm::GetReloadingProgress() const {
+float Firearm::GetReloadingProgress() {
+
+	float reloadTime = baseAttributeMap[Attribute::ReloadTime] * attributeMultiplierMap[Attribute::ReloadTime];
 
 	if (reloadTime == 0.0f)
 		throw new exception("Reload time of firearm is 0s. Why?");
@@ -102,5 +108,12 @@ float Firearm::GetReloadingProgress() const {
 int Firearm::CurrentAmmo() const {
 
 	return currentAmmo;
+
+}
+
+
+void Firearm::ModifyAttributeMultiplier(Attribute attribute, float amount) {
+
+	attributeMultiplierMap[attribute] = amount;
 
 }

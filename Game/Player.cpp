@@ -27,11 +27,9 @@ Player::Player() {
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
-	Inventory* inventory = AddComponent<Inventory>();
 
 	// Add a firearm to the inventory
-	Firearm* firearm = new Firearm(8, 20, 400.0f, 5.0f);
-	inventory->AddItem(firearm);
+	firearm = new Firearm(8, 20, 400.0f, 5.0f);
 
 }
 
@@ -39,33 +37,11 @@ void Player::Update() {
 
 	if (canInteract) {
 
-		// Input
-		Vector2 input(0.0f, 0.0f);
-
-		if (Game::GetKeyState(SDLK_w).performed)
-			input += Vector2::up;
-
-		if (Game::GetKeyState(SDLK_a).performed)
-			input += Vector2::left;
-
-		if (Game::GetKeyState(SDLK_s).performed)
-			input += Vector2::down;
-
-		if (Game::GetKeyState(SDLK_d).performed)
-			input += Vector2::right;
-
-		// Get component
 		Transform* transform = GetComponent<Transform>();
 
-		// Apply movement
-		transform->Translate(input.Normalize() * movementSpeed * Game::DeltaTime());
+		HandleMovement(transform);
 
-		// Calculate rotation
-		forward = (Game::ScreenToWorldPosition(Game::GetMouseInput()) - transform->position).Normalize();
-		GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
-
-		// Render line of sight
-		Game::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
+		HandleFacing(transform);
 
 		HandleActions();
 
@@ -89,26 +65,48 @@ void Player::Render() {
 
 Vector2 Player::Forward() const { return forward; }
 
-void Player::HandleActions() {
+void Player::HandleMovement(Transform* transform) {
 
-	// Get player inventory
-	Inventory* inventory = GetComponent<Inventory>();
+	// Input
+	Vector2 input(0.0f, 0.0f);
+
+	if (Game::GetKeyState(SDLK_w).performed)
+		input += Vector2::up;
+
+	if (Game::GetKeyState(SDLK_a).performed)
+		input += Vector2::left;
+
+	if (Game::GetKeyState(SDLK_s).performed)
+		input += Vector2::down;
+
+	if (Game::GetKeyState(SDLK_d).performed)
+		input += Vector2::right;
+
+	// Apply movement
+	transform->Translate(input.Normalize() * movementSpeed * Game::DeltaTime());
+
+}
+
+void Player::HandleFacing(Transform* transform) {
+
+	// Calculate rotation
+	forward = (Game::ScreenToWorldPosition(Game::GetMouseInput()) - transform->position).Normalize();
+	GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
+
+	// Render line of sight
+	Game::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
+
+}
+
+void Player::HandleActions() {
 
 	// Use action
 	if (Game::GetMouseState(MouseButton::Left).performed)
-		inventory->UseCurrent(this);
+		firearm->Use(this);
 
 	// Reload current firearm
-	if (Game::GetKeyState(SDLK_r).started) {
-
-		// Get the item
-		Firearm* firearm = dynamic_cast<Firearm*>(inventory->HoldingItem());
-
-		// Reload
-		if (firearm)
-			firearm->Reload();
-
-	}
+	if (Game::GetKeyState(SDLK_r).started)
+		firearm->Reload();
 
 }
 
@@ -123,3 +121,5 @@ void Player::EnableInteraction() {
 	canInteract = true;
 
 }
+
+Firearm* Player::GetFirearm() { return firearm; }

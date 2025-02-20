@@ -2,8 +2,7 @@
 
 #include <GameComponent.h>
 
-class ReloadUI;
-class FirearmUI;
+class Firearm;
 
 class Player : public GameObject {
 
@@ -17,8 +16,12 @@ private:
 
 	void Render();
 	void HandleActions();
+	void HandleMovement(Transform* transform);
+	void HandleFacing(Transform* transform);
 
 	bool canInteract;
+
+	Firearm* firearm;
 
 public:
 	
@@ -29,5 +32,7 @@ public:
 
 	void DisableInteraction();
 	void EnableInteraction();
+
+	Firearm* GetFirearm();
 
 };

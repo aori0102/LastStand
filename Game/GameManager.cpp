@@ -34,6 +34,17 @@ const string EXP_SLASH = " | ";
 const string LEVEL_PREFIX = "Level: ";
 const Vector2 EXPERIENCE_BAR_SCALE = Vector2(100.0f, 7.0f);
 
+bool GameManager::TrySpendMoney(int amount) {
+
+	if (amount > money)
+		return false;
+
+	money -= amount;
+	moneyText->GetComponent<Text>()->LoadText(to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
+	return true;
+
+}
+
 void GameManager::InitializeObject() {
 
 	// UI components

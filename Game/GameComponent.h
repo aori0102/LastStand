@@ -139,19 +139,3 @@ public:
 	void Heal(float amount);
 
 };
-
-class Inventory : public GameComponent {
-
-private:
-
-	Item* holdingItem;
-
-public:
-
-	Inventory(GameObject* initOwner);
-
-	void AddItem(Item* newItem);
-	void UseCurrent(Player* player);
-	Item* HoldingItem();
-
-};

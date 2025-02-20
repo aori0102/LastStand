@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameComponent.h>
+#include <unordered_map>
 
 class Player;
 class ReloadUI;
@@ -16,13 +17,24 @@ public:
 
 class Firearm : public GameObject, public Item {
 
+public:
+
+	enum class Attribute {
+
+		Damage,
+		ReloadTime,
+		AmmoCapacity
+
+	};
+
 private:
 
-	float damage;
-	int ammoCapacity;
+	unordered_map<Attribute, float> baseAttributeMap;
+	unordered_map<Attribute, float> attributeMultiplierMap;
+
 	int currentAmmo;
+
 	float fireRate;		// In rounds per minute
-	float reloadTime;
 
 	float shotDelay;	// Delay in seconds between shots
 	float lastShotTick;
@@ -43,7 +55,9 @@ public:
 	void Reload();
 
 	bool IsReloading() const;
-	float GetReloadingProgress() const;
+	float GetReloadingProgress();
 	int CurrentAmmo() const;
+
+	void ModifyAttributeMultiplier(Attribute attribute, float amount);
 
 };

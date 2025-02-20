@@ -3,12 +3,16 @@
 #include <Type.h>
 #include <Game.h>
 #include <Player.h>
+#include <GameManager.h>
 
 // Settings
 const Vector2 SHOP_BACKGROUND_SIZE = Vector2(800.0f, 500.0f);
 const Vector2 BUY_BUTTON_SIZE = Vector2(150.0f, 70.0f);
 const Vector2 NAVIGATION_BUTTON_SIZE = Vector2(250.0f, 60.0f);
 const Vector2 NAVIGATION_BUTTON_OFFSET = Vector2(5.0f, 5.0f);
+const Vector2 UPGRADE_BUTTON_SIZE = Vector2(700.0f, 80.0f);
+const float UPGRADE_BUTTON_VERTICAL_OFFSET = 15.0f;
+const float UPGRADE_BUTTON_TOP = 250.0f;
 
 Shop::Shop(Player* initPlayer) {
 
@@ -16,6 +20,164 @@ Shop::Shop(Player* initPlayer) {
 		throw new exception("Initialize shop with null player");
 
 	linkedPlayer = initPlayer;
+
+	shopMenuIndex = ShopMenuIndex::Firearm;
+
+	showShop = false;
+
+	InitializeUI();
+	InitializeUpgrades();
+
+}
+
+void Shop::Update() {
+
+	if (Game::GetKeyState(SDLK_TAB).started)
+		showShop = !showShop;
+
+	if (showShop) {
+
+		linkedPlayer->DisableInteraction();
+		Show();
+
+		if (shopMenuIndex == ShopMenuIndex::Firearm)
+			ShowFirearmMenu();
+
+	} else {
+
+		linkedPlayer->EnableInteraction();
+		Hide();
+
+		HideFirearmMenu();
+
+	}
+
+	if (!showShop)
+		return;
+
+	Render();
+
+	if (shopMenuIndex == ShopMenuIndex::Firearm)
+		RenderFirearmMenu();
+
+}
+
+void Shop::Show() {
+
+	buyButton->GetComponent<Button>()->Enable();
+
+	firearmButton->GetComponent<Button>()->Enable();
+
+	meleeButton->GetComponent<Button>()->Enable();
+
+	utilityButton->GetComponent<Button>()->Enable();
+
+}
+
+void Shop::Hide() {
+
+	buyButton->GetComponent<Button>()->Disable();
+
+	firearmButton->GetComponent<Button>()->Disable();
+
+	meleeButton->GetComponent<Button>()->Disable();
+
+	utilityButton->GetComponent<Button>()->Disable();
+
+}
+
+void Shop::Render() {
+
+	background->GetComponent<Image>()->Render();
+
+	buyButton->GetComponent<Button>()->Render();
+	buyButtonLabel->GetComponent<Text>()->Render();
+
+	firearmButton->GetComponent<Button>()->Render();
+	firearmButtonLabel->GetComponent<Text>()->Render();
+
+	meleeButton->GetComponent<Button>()->Render();
+	meleeButtonLabel->GetComponent<Text>()->Render();
+
+	utilityButton->GetComponent<Button>()->Render();
+	utilityButtonLabel->GetComponent<Text>()->Render();
+
+}
+
+void Shop::RenderFirearmMenu() {
+
+	damageUpgradeButton->GetComponent<Button>()->Render();
+	damageUpgradeButtonLabel->GetComponent<Text>()->Render();
+	damageUpgradeButtonAmountLabel->GetComponent<Text>()->Render();
+
+	reloadTimeUpgradeButton->GetComponent<Button>()->Render();
+	reloadTimeUpgradeButtonLabel->GetComponent<Text>()->Render();
+	reloadTimeUpgradeButtonAmountLabel->GetComponent<Text>()->Render();
+
+	ammoCapacityUpgradeButton->GetComponent<Button>()->Render();
+	ammoCapacityUpgradeButtonLabel->GetComponent<Text>()->Render();
+	ammoCapacityUpgradeButtonAmountLabel->GetComponent<Text>()->Render();
+
+}
+
+void Shop::ShowFirearmMenu() {
+
+	damageUpgradeButton->GetComponent<Button>()->Enable();
+
+}
+
+void Shop::HideFirearmMenu() {
+
+	damageUpgradeButton->GetComponent<Button>()->Disable();
+
+}
+
+Shop::FirearmUpgrade::FirearmUpgrade(Firearm::Attribute initAttribute, function<bool(float, float)> initBetterNode) {
+
+	name = "Upgrade";
+	description = "Upgrade description";
+	currentUpgrade = nullptr;
+	tailNode = nullptr;
+	attribute = initAttribute;
+	betterNode = initBetterNode;
+
+}
+
+void Shop::FirearmUpgrade::AddUpgrade(Shop::UpgradeNode* newUpgrade) {
+
+	if (!currentUpgrade) {
+
+		currentUpgrade = newUpgrade;
+		tailNode = newUpgrade;
+		return;
+
+	}
+
+	if (!newUpgrade || !betterNode)
+		throw new exception("Adding new upgrade worth less than previous one");
+
+	tailNode->next = newUpgrade;
+	tailNode = newUpgrade;
+
+}
+
+void Shop::FirearmUpgrade::UpgradeNext(Firearm* firearm) {
+
+	if (!currentUpgrade || !firearm)
+		return;
+
+	UpgradeNode* nextUpgrade = currentUpgrade->next;
+
+	firearm->ModifyAttributeMultiplier(attribute, currentUpgrade->amount);
+
+	cout << "Upgrading to next tier. New amount: " << currentUpgrade->amount << " for " << currentUpgrade->cost << " cost" << endl;
+
+	delete currentUpgrade;
+	currentUpgrade = nextUpgrade;
+
+}
+
+void Shop::InitializeUI() {
 
 	// Background
 	background = new GameObject("Background");
@@ -100,72 +262,143 @@ Shop::Shop(Player* initPlayer) {
 	Transform* utilityButtonLabel_transform = utilityButtonLabel->GetComponent<Transform>();
 	utilityButtonLabel_transform->position = utilityButton_transform->position;
 
-	showShop = false;
+	// Damage upgrade
+	damageUpgradeButton = new GameObject("Damage upgrade button");
+	Button* damageUpgradeButton_button = damageUpgradeButton->AddComponent<Button>();
+	damageUpgradeButton_button->backgroundColor = Color::WHITE;
+	damageUpgradeButton_button->OnClick = [this]() {
+		BuyUpgrade(Firearm::Attribute::Damage);
+		};
+	Transform* damageUpgradeButton_transform = damageUpgradeButton->GetComponent<Transform>();
+	damageUpgradeButton_transform->scale = UPGRADE_BUTTON_SIZE;
+	damageUpgradeButton_transform->position = Vector2(
+		background_transform->position.x,
+		UPGRADE_BUTTON_TOP
+	);
+
+	damageUpgradeButtonLabel = new GameObject("Damage upgrade button label");
+	Text* damageUpgradeButtonLabel_text = damageUpgradeButtonLabel->AddComponent<Text>();
+	damageUpgradeButtonLabel_text->LoadText("Damage upgrade", Color::BLUE, 24);
+	damageUpgradeButtonLabel_text->showOnScreen = true;
+	Transform* damageUpgradeButtonLabel_transform = damageUpgradeButtonLabel->GetComponent<Transform>();
+	damageUpgradeButtonLabel_transform->position = damageUpgradeButton_transform->position;
+
+	damageUpgradeButtonAmountLabel = new GameObject("Damage upgrade button amount label");
+	Text* damageUpgradeButtonAmountLabel_text = damageUpgradeButtonAmountLabel->AddComponent<Text>();
+	damageUpgradeButtonAmountLabel_text->LoadText("Damage upgrade", Color::BLUE, 24);
+	damageUpgradeButtonAmountLabel_text->showOnScreen = true;
+	Transform* damageUpgradeButtonAmountLabel_transform = damageUpgradeButtonAmountLabel->GetComponent<Transform>();
+	damageUpgradeButtonAmountLabel_transform->position = damageUpgradeButton_transform->position;
+
+	// Reload time upgrade
+	reloadTimeUpgradeButton = new GameObject("Reload time upgrade button");
+	Button* reloadTimeUpgradeButton_button = reloadTimeUpgradeButton->AddComponent<Button>();
+	reloadTimeUpgradeButton_button->backgroundColor = Color::WHITE;
+	reloadTimeUpgradeButton_button->OnClick = [this]() {
+		BuyUpgrade(Firearm::Attribute::ReloadTime);
+		};
+	Transform* reloadTimeUpgradeButton_transform = reloadTimeUpgradeButton->GetComponent<Transform>();
+	reloadTimeUpgradeButton_transform->scale = UPGRADE_BUTTON_SIZE;
+	reloadTimeUpgradeButton_transform->position = Vector2(
+		background_transform->position.x,
+		damageUpgradeButton_transform->position.y + (damageUpgradeButton_transform->scale + reloadTimeUpgradeButton_transform->scale).y / 2.0f + UPGRADE_BUTTON_VERTICAL_OFFSET
+	);
+
+	reloadTimeUpgradeButtonLabel = new GameObject("Reload time upgrade button label");
+	Text* reloadTimeUpgradeButtonLabel_text = reloadTimeUpgradeButtonLabel->AddComponent<Text>();
+	reloadTimeUpgradeButtonLabel_text->LoadText("Reload time upgrade", Color::BLUE, 24);
+	reloadTimeUpgradeButtonLabel_text->showOnScreen = true;
+	Transform* reloadTimeUpgradeButtonLabel_transform = reloadTimeUpgradeButtonLabel->GetComponent<Transform>();
+	reloadTimeUpgradeButtonLabel_transform->position = reloadTimeUpgradeButton_transform->position;
+
+	reloadTimeUpgradeButtonAmountLabel = new GameObject("Reload time upgrade button amount label");
+	Text* reloadTimeUpgradeButtonAmountLabel_text = reloadTimeUpgradeButtonAmountLabel->AddComponent<Text>();
+	reloadTimeUpgradeButtonAmountLabel_text->LoadText("Reload time upgrade", Color::BLUE, 24);
+	reloadTimeUpgradeButtonAmountLabel_text->showOnScreen = true;
+	Transform* reloadTimeUpgradeButtonAmountLabel_transform = reloadTimeUpgradeButtonAmountLabel->GetComponent<Transform>();
+	reloadTimeUpgradeButtonAmountLabel_transform->position = reloadTimeUpgradeButton_transform->position;
+
+	// Ammo capacity upgrade
+	ammoCapacityUpgradeButton = new GameObject("Ammo capacity upgrade button");
+	Button* ammoCapacityUpgradeButton_button = ammoCapacityUpgradeButton->AddComponent<Button>();
+	ammoCapacityUpgradeButton_button->backgroundColor = Color::WHITE;
+	ammoCapacityUpgradeButton_button->OnClick = [this]() {
+		BuyUpgrade(Firearm::Attribute::AmmoCapacity);
+		};
+	Transform* ammoCapacityUpgradeButton_transform = ammoCapacityUpgradeButton->GetComponent<Transform>();
+	ammoCapacityUpgradeButton_transform->scale = UPGRADE_BUTTON_SIZE;
+	ammoCapacityUpgradeButton_transform->position = Vector2(
+		background_transform->position.x,
+		reloadTimeUpgradeButton_transform->position.y + (reloadTimeUpgradeButton_transform->scale + ammoCapacityUpgradeButton_transform->scale).y / 2.0f + UPGRADE_BUTTON_VERTICAL_OFFSET
+	);
+
+	ammoCapacityUpgradeButtonLabel = new GameObject("Ammo capacity upgrade button label");
+	Text* ammoCapacityUpgradeButtonLabel_text = ammoCapacityUpgradeButtonLabel->AddComponent<Text>();
+	ammoCapacityUpgradeButtonLabel_text->LoadText("Ammo capacity upgrade", Color::BLUE, 24);
+	ammoCapacityUpgradeButtonLabel_text->showOnScreen = true;
+	Transform* ammoCapacityUpgradeButtonLabel_transform = ammoCapacityUpgradeButtonLabel->GetComponent<Transform>();
+	ammoCapacityUpgradeButtonLabel_transform->position = ammoCapacityUpgradeButton_transform->position;
+
+	ammoCapacityUpgradeButtonAmountLabel = new GameObject("Ammo capacity upgrade button amount label");
+	Text* ammoCapacityUpgradeButtonAmountLabel_text = ammoCapacityUpgradeButtonAmountLabel->AddComponent<Text>();
+	ammoCapacityUpgradeButtonAmountLabel_text->LoadText("Ammo capacity upgrade", Color::BLUE, 24);
+	ammoCapacityUpgradeButtonAmountLabel_text->showOnScreen = true;
+	Transform* ammoCapacityUpgradeButtonAmountLabel_transform = ammoCapacityUpgradeButtonAmountLabel->GetComponent<Transform>();
+	ammoCapacityUpgradeButtonAmountLabel_transform->position = ammoCapacityUpgradeButton_transform->position;
 
 }
 
-void Shop::Update() {
+void Shop::InitializeUpgrades() {
 
-	if (Game::GetKeyState(SDLK_TAB).started)
-		showShop = !showShop;
+	// Reload time
+	FirearmUpgrade* reloadTimeUpgrade = new FirearmUpgrade(
+		Firearm::Attribute::ReloadTime,
+		[](float newUp, float oldUp) { return newUp < oldUp; }
+	);
+	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(10, 0.9f));
+	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(24, 0.8f));
+	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(45, 0.7f));
+	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(69, 0.65f));
+	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(124, 0.6f));
+	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(372, 0.4f));
+	firearmUpgradeMap[Firearm::Attribute::ReloadTime] = reloadTimeUpgrade;
 
-	if (showShop) {
+	// Damage
+	FirearmUpgrade* damageUpgrade = new FirearmUpgrade(
+		Firearm::Attribute::Damage
+	);
+	damageUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
+	damageUpgrade->AddUpgrade(new UpgradeNode(25, 1.5f));
+	damageUpgrade->AddUpgrade(new UpgradeNode(64, 1.9f));
+	damageUpgrade->AddUpgrade(new UpgradeNode(189, 2.3f));
+	firearmUpgradeMap[Firearm::Attribute::Damage] = damageUpgrade;
 
-		linkedPlayer->DisableInteraction();
-		Show();
-
-	} else {
-
-		linkedPlayer->EnableInteraction();
-		Hide();
-
-	}
-
-	Render();
-
-}
-
-void Shop::Show() {
-
-	buyButton->GetComponent<Button>()->Enable();
-
-	firearmButton->GetComponent<Button>()->Enable();
-
-	meleeButton->GetComponent<Button>()->Enable();
-
-	utilityButton->GetComponent<Button>()->Enable();
-
-}
-
-void Shop::Hide() {
-
-	buyButton->GetComponent<Button>()->Disable();
-
-	firearmButton->GetComponent<Button>()->Disable();
-
-	meleeButton->GetComponent<Button>()->Disable();
-
-	utilityButton->GetComponent<Button>()->Disable();
+	// Ammo capacity        
+	FirearmUpgrade* ammoCapacityUpgrade = new FirearmUpgrade(
+		Firearm::Attribute::AmmoCapacity
+	);
+	ammoCapacityUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
+	ammoCapacityUpgrade->AddUpgrade(new UpgradeNode(54, 1.3f));
+	ammoCapacityUpgrade->AddUpgrade(new UpgradeNode(123, 1.5f));
+	ammoCapacityUpgrade->AddUpgrade(new UpgradeNode(256, 2.0f));
+	firearmUpgradeMap[Firearm::Attribute::AmmoCapacity] = ammoCapacityUpgrade;
 
 }
 
-void Shop::Render() {
+void Shop::BuyUpgrade(Firearm::Attribute attribute) {
 
-	if (!showShop)
-		return;
+	FirearmUpgrade* upgrade = firearmUpgradeMap[attribute];
 
-	background->GetComponent<Image>()->Render();
+	if (upgrade->NextUpgradeCost() >= 0 && GameManager::TrySpendMoney(upgrade->NextUpgradeCost()))
+		upgrade->UpgradeNext(linkedPlayer->GetFirearm());
 
-	buyButton->GetComponent<Button>()->Render();
-	buyButtonLabel->GetComponent<Text>()->Render();
+}
 
-	firearmButton->GetComponent<Button>()->Render();
-	firearmButtonLabel->GetComponent<Text>()->Render();
+int Shop::FirearmUpgrade::NextUpgradeCost() {
 
-	meleeButton->GetComponent<Button>()->Render();
-	meleeButtonLabel->GetComponent<Text>()->Render();
+	if (currentUpgrade)
+		return currentUpgrade->cost;
 
-	utilityButton->GetComponent<Button>()->Render();
-	utilityButtonLabel->GetComponent<Text>()->Render();
+	return -1;
 
 }

@@ -45,4 +45,6 @@ public:
 
 	static void Update();
 
+	static bool TrySpendMoney(int amount);
+
 };

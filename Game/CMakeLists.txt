@@ -12,7 +12,6 @@ set(SOURCES
     "Physics.cpp"
     "Humanoid.cpp"
     "Item.cpp"
-    "Inventory.cpp"
     "FirearmUI.cpp"
     "Texture.cpp"
     "GameManager.cpp"
