@@ -19,7 +19,7 @@ private:
 
 public:
 
-	Projectile(Vector2 initPosition, Vector2 initScale, Vector2 initDirection, float initVelocity, float initDamage);
+	Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage);
 
 	void Update() override;
 	void OnCollisionEnter(BoxCollider* collider) override;

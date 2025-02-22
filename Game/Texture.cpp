@@ -94,19 +94,34 @@ void Image::Render() {
 	if (texture) {
 
 		// Format
-		Vector2 clip(1.0f, 1.0f);
-		if (imageFill == ImageFill::Vertical)
-			clip.y = fillAmount;
-		else if (imageFill == ImageFill::Horizontal)
-			clip.x = fillAmount;
+		SDL_Rect clip = { 0, 0, textureDimension.x, textureDimension.y };
+
+		Vector2 position = transform->position;
+		Vector2 scale = transform->scale;
+
+		fillAmount = Math::Clamp(fillAmount, 0.0f, 1.0f);
+
+		if (imageFill == ImageFill::Vertical) {
+
+			clip.h *= fillAmount;
+			position.y -= (scale.y * (1.0f - fillAmount)) / 2.0f;
+			scale.y *= fillAmount;
+
+		} else if (imageFill == ImageFill::Horizontal) {
+
+			clip.w *= fillAmount;
+			position.x -= (scale.x * (1.0f - fillAmount)) / 2.0f;
+			scale.x *= fillAmount;
+
+		}
 
 		// Render
 		Game::RenderCopy(
 			this,
-			transform->position,
-			transform->scale,
+			position,
+			scale,
 			showOnScreen,
-			clip,
+			&clip,
 			angle,
 			pivot
 		);

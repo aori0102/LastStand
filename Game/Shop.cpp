@@ -123,12 +123,16 @@ void Shop::RenderFirearmMenu() {
 void Shop::ShowFirearmMenu() {
 
 	damageUpgradeButton->GetComponent<Button>()->Enable();
+	reloadTimeUpgradeButton->GetComponent<Button>()->Enable();
+	ammoCapacityUpgradeButton->GetComponent<Button>()->Enable();
 
 }
 
 void Shop::HideFirearmMenu() {
 
 	damageUpgradeButton->GetComponent<Button>()->Disable();
+	reloadTimeUpgradeButton->GetComponent<Button>()->Disable();
+	ammoCapacityUpgradeButton->GetComponent<Button>()->Disable();
 
 }
 

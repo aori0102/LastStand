@@ -11,7 +11,7 @@ class Item {
 
 public:
 
-	virtual void Use(Player* user) = 0;
+	virtual bool Use(Player* user) = 0;
 
 };
 
@@ -50,7 +50,7 @@ public:
 	Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime);
 	~Firearm();
 
-	void Use(Player* player) override;
+	bool Use(Player* player) override;
 	void Update() override;
 	void Reload();
 

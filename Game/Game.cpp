@@ -203,7 +203,7 @@ void Game::UpdateEvent() {
 }
 
 void Game::HandleEvent() {
-	
+
 	switch (gEvent->type) {
 
 	case SDL_QUIT:
@@ -467,19 +467,21 @@ void Game::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fi
 
 }
 
-void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Vector2 clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
+void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
 
 	// Calculate camera's area
 
 	// Render quad
+	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
+	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
 	Vector2 renderPosition =
 		!onScreen ? (position - cameraPosition + windowResolution / 2.0f)
 		: position;
 	SDL_FRect quad = {
 		renderPosition.x - pivot.x * scale.x,
 		renderPosition.y - pivot.y * scale.y,
-		scale.x * clip.x,
-		scale.y * clip.y
+		scale.x,
+		scale.y
 	};
 
 	// Broad check if texture is out of camera view, if so, skip rendering
@@ -489,23 +491,16 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool on
 		quad.y + quad.h < 0.0f
 		)
 		return;
-	
-	Vector2 textureDimension = texture->TextureDimension();
 
 	// Center of texture
-	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
-	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
 	SDL_FPoint center = { scale.x * pivot.x, scale.y * pivot.y };
 
 	// Clipping texture
-	clip.x = Math::Clamp(clip.x, 0.0f, 1.0f);
-	clip.y = Math::Clamp(clip.y, 0.0f, 1.0f);
-	SDL_Rect clipRect = { 0, 0, textureDimension.x * clip.x, textureDimension.y * clip.y };
 
 	SDL_RenderCopyExF(
 		gRenderer,
 		texture->GetTexture(),
-		&clipRect,
+		clip,
 		&quad,
 		angle,
 		&center,
@@ -517,6 +512,23 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool on
 SDL_Texture* Game::CreateTexture(SDL_Surface* loadedSurface) {
 
 	return SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+
+}
+
+SDL_Texture* Game::CreateTexture(Vector2 size) {
+
+	SDL_Texture* texture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
+
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
+	return texture;
+
+}
+
+void Game::ClearTexture(SDL_Texture* texture) {
+
+	SDL_DestroyTexture(texture);
+	texture = nullptr;
 
 }
 

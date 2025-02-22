@@ -5,7 +5,6 @@
 #include <PlayerUI.h>
 
 const float BULLET_VELOCITY = 7000.0f;
-const Vector2 BULLET_SCALE = Vector2(10.0f, 10.0f);
 
 Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime) {
 
@@ -43,23 +42,23 @@ Firearm::~Firearm() {
 
 }
 
-void Firearm::Use(Player* player) {
+bool Firearm::Use(Player* player) {
 
 	// Player is invalid
 	if (!player)
-		return;
+		return false;
 
 	// Ammo is insufficient
 	if (currentAmmo == 0)
-		return;
+		return false;
 
 	// Is reloading
 	if (isReloading)
-		return;
+		return false;
 
 	// If is still in the delay
 	if (Game::Time() < lastShotTick + shotDelay)
-		return;
+		return false;
 
 	// Get the direction the player is facing
 	Vector2 direction = player->Forward();
@@ -68,9 +67,11 @@ void Firearm::Use(Player* player) {
 	Vector2 origin = player->GetComponent<Transform>()->position;
 
 	// Fire
-	new Projectile(origin, BULLET_SCALE, direction, BULLET_VELOCITY, baseAttributeMap[Attribute::Damage] * attributeMultiplierMap[Attribute::Damage]);
+	new Projectile(origin, direction, BULLET_VELOCITY, baseAttributeMap[Attribute::Damage] * attributeMultiplierMap[Attribute::Damage]);
 	currentAmmo--;
 	lastShotTick = Game::Time();
+
+	return true;
 
 }
 

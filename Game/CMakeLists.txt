@@ -20,6 +20,7 @@ set(SOURCES
     "BoxCollider.cpp"
     "Shop.cpp"
     "UIEvent.cpp"
+    "Animation.cpp"
 )
 
 # Add this directory as a static library

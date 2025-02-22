@@ -7,8 +7,9 @@
 #include <Item.h>
 #include <PlayerUI.h>
 #include <Texture.h>
+#include <Animation.h>
 
-const string PLAYER_SPRITE_PATH = "./Asset/Character.png";
+const string PLAYER_SPRITE_PATH = "./Asset/PlayerSprite.png";
 
 Player::Player() {
 
@@ -30,6 +31,14 @@ Player::Player() {
 
 	// Add a firearm to the inventory
 	firearm = new Firearm(8, 20, 400.0f, 5.0f);
+
+	animationMap = {};
+
+	currentAnimationState = AnimationIndex::Idle;
+	currentAnimationStartTick = 0.0f;
+	currentAnimationTime = 0.0f;
+
+	InitializeAnimation();
 
 }
 
@@ -54,10 +63,21 @@ void Player::Update() {
 
 void Player::Render() {
 
-	Image* playerSprite = GetComponent<Image>();
+	if (currentAnimationState != AnimationIndex::Idle && Game::Time() >= currentAnimationStartTick + currentAnimationTime) {
 
-	playerSprite->GetComponent<Transform>()->position = GetComponent<Transform>()->position;
-	playerSprite->Render();
+		currentAnimationState = AnimationIndex::Idle;
+		currentAnimationTime = animationMap[AnimationIndex::Idle]->AnimationLength();
+		currentAnimationStartTick = Game::Time();
+
+	}
+
+	Transform* transform = GetComponent<Transform>();
+
+	animationMap[currentAnimationState]->RenderCurrent(
+		transform->position,
+		transform->scale,
+		-Math::RadToDeg(forward.Angle())
+	);
 
 	GetComponent<BoxCollider>()->Debug();
 
@@ -91,7 +111,6 @@ void Player::HandleFacing(Transform* transform) {
 
 	// Calculate rotation
 	forward = (Game::ScreenToWorldPosition(Game::GetMouseInput()) - transform->position).Normalize();
-	GetComponent<Image>()->angle = playerForwardAngle - Math::RadToDeg(forward.Angle());
 
 	// Render line of sight
 	Game::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
@@ -101,8 +120,17 @@ void Player::HandleFacing(Transform* transform) {
 void Player::HandleActions() {
 
 	// Use action
-	if (Game::GetMouseState(MouseButton::Left).performed)
-		firearm->Use(this);
+	if (Game::GetMouseState(MouseButton::Left).performed) {
+
+		if (firearm->Use(this)) {
+
+			currentAnimationState = AnimationIndex::Shoot;
+			currentAnimationStartTick = Game::Time();
+			currentAnimationTime = animationMap[AnimationIndex::Shoot]->AnimationLength();
+
+		}
+
+	}
 
 	// Reload current firearm
 	if (Game::GetKeyState(SDLK_r).started)
@@ -123,3 +151,22 @@ void Player::EnableInteraction() {
 }
 
 Firearm* Player::GetFirearm() { return firearm; }
+
+void Player::InitializeAnimation() {
+
+	// Idle
+	animationMap[AnimationIndex::Idle] = new AnimationClip(GetComponent<Image>());
+	animationMap[AnimationIndex::Idle]->AddAnimationFrame(new AnimationClip::AnimationFrame(
+		{ 16, 16, 160, 160 }, 0.0f, 3.0f
+	));
+
+	// Shoot
+	animationMap[AnimationIndex::Shoot] = new AnimationClip(GetComponent<Image>());
+	animationMap[AnimationIndex::Shoot]->AddAnimationFrame(new AnimationClip::AnimationFrame(
+		{ 208, 16, 160, 160 }, 0.0f, 3.0f
+	));
+	animationMap[AnimationIndex::Shoot]->AddAnimationFrame(new AnimationClip::AnimationFrame(
+		{ 208, 16, 160, 160 }, 0.1f, 3.0f
+	));
+
+}

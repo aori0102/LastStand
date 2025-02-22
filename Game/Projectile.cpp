@@ -1,14 +1,22 @@
 #include <Projectile.h>
 #include <Type.h>
 #include <Game.h>
+#include <Texture.h>
 
 const float EXIST_TIME = 5.0f;
+const string BULLET_PATH = "./Asset/Bullet.png";
 
-Projectile::Projectile(Vector2 initPosition, Vector2 initScale, Vector2 initDirection, float initVelocity, float initDamage) {
+Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = initPosition;
-	transform->scale = initScale;
+
+	Image* image = AddComponent<Image>();
+	image->LoadImage(BULLET_PATH);
+	image->showOnScreen = false;
+	image->angle = -Math::RadToDeg(initDirection.Angle());
+
+	transform->scale *= 2.0f;
 
 	AddComponent<BoxCollider>();
 
@@ -33,11 +41,7 @@ void Projectile::Update() {
 
 void Projectile::Render() {
 
-	Transform* transform = GetComponent<Transform>();
-
-	Game::DrawRectangle(transform->position, transform->scale / 2.0f, false, true, Color::YELLOW);
-
-	GetComponent<BoxCollider>()->Debug();
+	GetComponent<Image>()->Render();
 
 }
 

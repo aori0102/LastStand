@@ -1,12 +1,21 @@
 #pragma once
 
 #include <GameComponent.h>
+#include <unordered_map>
 
 class Firearm;
+class AnimationClip;
 
 class Player : public GameObject {
 
 private:
+
+	enum class AnimationIndex {
+
+		Idle,
+		Shoot,
+
+	};
 
 	float playerForwardAngle;
 
@@ -22,6 +31,13 @@ private:
 	bool canInteract;
 
 	Firearm* firearm;
+
+	unordered_map<AnimationIndex, AnimationClip*> animationMap;
+	AnimationIndex currentAnimationState;
+	float currentAnimationTime;
+	float currentAnimationStartTick;
+
+	void InitializeAnimation();
 
 public:
 	
