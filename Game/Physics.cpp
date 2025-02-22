@@ -9,6 +9,8 @@ const float MOVEMENT_PERCENTAGE = 0.99f;
 
 unordered_set<BoxCollider*> Physics::boxColliderSet = {};
 
+unordered_map<BoxCollider*, unordered_set<BoxCollider*>> Physics::colliderHitMap = {};
+
 void Physics::RegisterBoxCollider(BoxCollider* boxCollider) {
 
 	boxColliderSet.insert(boxCollider);
@@ -80,7 +82,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 		// Validate collision (Broad)
 		collisionTime = (start - contactPoint).x / (start - end).x;
 		if (collisionTime >= 0.0f && collisionTime <= 1.0f && movementVector.x > 0.0f) {
-			
+
 			// Calculate collision y
 			contactPoint.y = slope * (minX - thisBound.center.x) + thisBound.center.y;
 
@@ -96,7 +98,7 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 
 				// Check if this collision comes first
 				if (distance < distanceToCollision) {
-					
+
 					// There is a collision
 					isCollided = true;
 
@@ -270,11 +272,11 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 
 	}
 
-	// Call colliders upon collision
+	// On collision call
 	if (finalCollider) {
 
-		finalCollider->Owner()->OnCollisionEnter(collider);
-		collider->Owner()->OnCollisionEnter(finalCollider);
+		colliderHitMap[collider].insert(finalCollider);
+		colliderHitMap[finalCollider].insert(collider);
 
 	}
 
@@ -382,5 +384,29 @@ bool Physics::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2
 		*newEnd = start + (end - start) * t1;
 
 	return t0 != 0.0f || t1 != 1.0f;
+
+}
+
+void Physics::LateCollisionCall() {
+
+	auto it_first = colliderHitMap.begin();
+	while (it_first != colliderHitMap.end()) {
+
+		auto it_second = (it_first->second).begin();
+		while (it_second != (it_first->second).end()) {
+
+			(it_first->first)->Owner()->OnCollisionEnter(*it_second);
+
+			it_second++;
+
+		}
+
+		(it_first->second).clear();
+
+		it_first++;
+
+	}
+
+	colliderHitMap.clear();
 
 }

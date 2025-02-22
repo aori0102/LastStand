@@ -9,6 +9,7 @@
 #include <GameManager.h>
 #include <Texture.h>
 #include <UIEvent.h>
+#include <Physics.h>
 
 // Initialize static component
 bool Game::gQuit = false;
@@ -141,6 +142,8 @@ void Game::Loop() {
 			it++;
 
 		}
+
+		Physics::LateCollisionCall();
 
 		GameManager::Update();
 

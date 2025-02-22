@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_set>
+#include <unordered_map>
 #include <Type.h>
 
 using namespace std;
@@ -25,6 +26,8 @@ private:
 
 	static unordered_set<BoxCollider*> boxColliderSet;
 
+	static unordered_map<BoxCollider*, unordered_set<BoxCollider*>> colliderHitMap;
+
 public:
 
 	static void RegisterBoxCollider(BoxCollider* boxCollider);
@@ -34,5 +37,7 @@ public:
 	static bool RayCast(Vector2 origin, Vector2 end, HitInfo* hitInfo = nullptr);
 
 	static bool ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart = nullptr, Vector2* newEnd = nullptr);
+
+	static void LateCollisionCall();
 
 };

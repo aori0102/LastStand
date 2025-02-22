@@ -34,7 +34,7 @@ Enemy::Enemy(GameObject* initTarget) {
 	healthBar_image->showOnScreen = false;
 
 	target = initTarget;
-	movementSpeed = 300.0f;
+	movementSpeed = 100.0f;
 
 }
 
