@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameComponent.h>
+#include <RenderManager.h>
 
 class Enemy : public GameObject {
 

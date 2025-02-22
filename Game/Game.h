@@ -9,6 +9,14 @@
 
 using namespace std;
 
+enum class UILayer {
+
+	Default,
+	Tooltip,
+	Menu
+
+};
+
 enum class MouseButton {
 
 	Left,
@@ -79,7 +87,7 @@ public:
 	static void DrawLine(Vector2 position, Vector2 direction, float maxDistance, Color color);
 	static void DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color);
 	static void DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill, Color color);
-	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip = nullptr, float angle = 0.0f, Vector2 pivot = Vector2::zero, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip = nullptr, float angle = 0.0f, Vector2 pivot = Vector2(0.5f, 0.5f), SDL_RendererFlip flip = SDL_FLIP_NONE);
 	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 	static SDL_Texture* CreateTexture(Vector2 size);
 	static void ClearTexture(SDL_Texture* texture);

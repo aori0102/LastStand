@@ -27,8 +27,6 @@ void Texture::FreeTexture() {
 
 }
 
-// Dunno if it should be like this
-// Maybe should be applied with shared ptr
 SDL_Texture* Texture::GetTexture() { return texture; }
 
 Vector2 Texture::TextureDimension() const { return textureDimension; }

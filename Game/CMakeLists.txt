@@ -21,6 +21,7 @@ set(SOURCES
     "Shop.cpp"
     "UIEvent.cpp"
     "Animation.cpp"
+    "RenderManager.cpp"
 )
 
 # Add this directory as a static library

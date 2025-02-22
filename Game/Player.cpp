@@ -11,7 +11,23 @@
 
 const string PLAYER_SPRITE_PATH = "./Asset/PlayerSprite.png";
 
+Player::Player(string name) : GameObject(name) {
+
+	InitializeData();
+
+	InitializeAnimation();
+
+}
+
 Player::Player() {
+
+	InitializeData();
+
+	InitializeAnimation();
+
+}
+
+void Player::InitializeData() {
 
 	movementSpeed = 700.0f;
 
@@ -38,8 +54,6 @@ Player::Player() {
 	currentAnimationStartTick = 0.0f;
 	currentAnimationTime = 0.0f;
 
-	InitializeAnimation();
-
 }
 
 void Player::Update() {
@@ -55,9 +69,6 @@ void Player::Update() {
 		HandleActions();
 
 	}
-
-	// Render
-	Render();
 
 }
 

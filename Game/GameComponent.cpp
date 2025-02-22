@@ -12,3 +12,9 @@ GameComponent::GameComponent(GameObject* initOwner) {
 }
 
 void GameComponent::OnComponentDestroyed() {}
+
+GameObject* GameComponent::Owner() {
+
+	return owner;
+
+}

@@ -9,8 +9,6 @@ Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 
 void Humanoid::Damage(float amount) {
 
-	cout << "Dagwg\n";
-
 	health -= amount;
 
 	if (health <= 0.0f)

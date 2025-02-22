@@ -2,6 +2,7 @@
 
 #include <GameComponent.h>
 #include <unordered_map>
+#include <RenderManager.h>
 
 class Firearm;
 class AnimationClip;
@@ -23,7 +24,6 @@ private:
 
 	float movementSpeed;
 
-	void Render();
 	void HandleActions();
 	void HandleMovement(Transform* transform);
 	void HandleFacing(Transform* transform);
@@ -38,13 +38,17 @@ private:
 	float currentAnimationStartTick;
 
 	void InitializeAnimation();
+	void InitializeData();
 
 public:
 	
 	Player();
+	Player(string name);
 
 	void Update() override;
 	Vector2 Forward() const;
+
+	void Render() override;
 
 	void DisableInteraction();
 	void EnableInteraction();

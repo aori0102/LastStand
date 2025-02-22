@@ -52,14 +52,6 @@ void Shop::Update() {
 
 	}
 
-	if (!showShop)
-		return;
-
-	Render();
-
-	if (shopMenuIndex == ShopMenuIndex::Firearm)
-		RenderFirearmMenu();
-
 }
 
 void Shop::Show() {
@@ -88,6 +80,9 @@ void Shop::Hide() {
 
 void Shop::Render() {
 
+	if (!showShop)
+		return;
+
 	background->GetComponent<Image>()->Render();
 
 	buyButton->GetComponent<Button>()->Render();
@@ -101,6 +96,9 @@ void Shop::Render() {
 
 	utilityButton->GetComponent<Button>()->Render();
 	utilityButtonLabel->GetComponent<Text>()->Render();
+
+	if (shopMenuIndex == ShopMenuIndex::Firearm)
+		RenderFirearmMenu();
 
 }
 

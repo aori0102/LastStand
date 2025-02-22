@@ -10,6 +10,7 @@
 #include <Texture.h>
 #include <UIEvent.h>
 #include <Physics.h>
+#include <RenderManager.h>
 
 // Initialize static component
 bool Game::gQuit = false;
@@ -146,6 +147,8 @@ void Game::Loop() {
 		Physics::LateCollisionCall();
 
 		GameManager::Update();
+
+		RenderManager::RenderAll();
 
 		// Update renderer data
 		SDL_RenderPresent(gRenderer);

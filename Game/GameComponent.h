@@ -38,6 +38,17 @@ public:
 
 };
 
+enum class Layer {
+
+	Background,
+	Default,
+	Player,
+	Zombie,
+	GUI,
+	Menu,
+
+};
+
 class GameObject {
 
 private:
@@ -47,13 +58,25 @@ private:
 	// The set to delete game objects
 	static unordered_set<GameObject*> deletionSet;
 
+	Layer layer;
+
+	int id;
+
+	static int currentID;
+
+protected:
+
+	void SetLayer(Layer newLayer);
+
 public:
 
 	string name;
 
 	GameObject();
 	GameObject(string initName);
-	~GameObject();
+	virtual ~GameObject();
+
+	int ID();
 
 	virtual void Update();
 
@@ -61,6 +84,12 @@ public:
 
 	virtual void OnCollisionEnter(BoxCollider* other);
 	virtual void OnCollisionExit(BoxCollider* other);
+
+	virtual void Render();
+
+	static bool CompareByLayer(const GameObject* a, const GameObject* b);
+
+	static int GetNextID();
 
 	template<class T>
 	T* GetComponent();
@@ -89,14 +118,6 @@ public:
 	Vector2 scale;
 
 	void Translate(Vector2 movementVector, bool tryNavigate = true);
-
-};
-
-enum class Layer {
-
-	Default,
-	Player,
-	Enemy
 
 };
 

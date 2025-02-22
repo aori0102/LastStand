@@ -4,6 +4,7 @@
 #include <vector>
 #include <Item.h>
 #include <functional>
+#include <RenderManager.h>
 
 class Player;
 
@@ -90,8 +91,6 @@ private:
 	// Control
 	bool showShop;
 	ShopMenuIndex shopMenuIndex;
-
-	void Render();
 	void Show();
 	void Hide();
 
@@ -105,6 +104,8 @@ private:
 	void BuyUpgrade(Firearm::Attribute attribute);
 
 public:
+
+	void Render() override;
 
 	Shop(Player* initPlayer);
 	void Update() override;

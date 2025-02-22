@@ -1,21 +1,30 @@
 #include <GameComponent.h>
 #include <Game.h>
+#include <sstream>
+#include <RenderManager.h>
 
 unordered_set<GameObject*> GameObject::deletionSet = {};
-
-GameObject* GameComponent::Owner() {
-
-	return owner;
-
-}
+int GameObject::currentID = 0;
 
 GameObject::GameObject() {
 
 	name = "Game Object";
+	layer = Layer::Default;
 
 	AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
+	RenderManager::UpdateRenderObject(this);
+
+	id = GameObject::GetNextID();
+
+}
+
+void GameObject::SetLayer(Layer newLayer) {
+
+	layer = newLayer;
+
+	RenderManager::UpdateRenderObject(this);
 
 }
 
@@ -26,6 +35,9 @@ GameObject::GameObject(string initName) {
 	AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
+	RenderManager::UpdateRenderObject(this);
+
+	id = GameObject::GetNextID();
 
 }
 
@@ -66,6 +78,7 @@ void GameObject::CleanUpCache() {
 	while (it != deletionSet.end()) {
 
 		(*it)->OnDestroy();
+		RenderManager::RemoveRenderObject(*it);
 
 		delete (*it);
 
@@ -84,3 +97,17 @@ void GameObject::OnDestroy() {}
 void GameObject::OnCollisionEnter(BoxCollider* other) {}
 
 void GameObject::OnCollisionExit(BoxCollider* other) {}
+
+bool GameObject::CompareByLayer(const GameObject* a, const GameObject* b) {
+
+	return (int)a->layer == (int)b->layer
+		? a->id < b->id
+		: (int)a->layer < (int)b->layer;
+
+}
+
+void GameObject::Render() {}
+
+int GameObject::ID() { return id; }
+
+int GameObject::GetNextID() { return ++currentID; }

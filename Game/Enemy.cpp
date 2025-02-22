@@ -2,6 +2,7 @@
 #include <Game.h>
 #include <GameManager.h>
 #include <Texture.h>
+#include <GameComponent.h>
 
 const string ENEMY_SPRITE_PATH = "./Asset/Zombie.png";
 

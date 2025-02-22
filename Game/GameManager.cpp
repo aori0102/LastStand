@@ -6,6 +6,7 @@
 #include <Texture.h>
 #include <GameComponent.h>
 #include <Shop.h>
+#include <RenderManager.h>
 
 Player* GameManager::player = nullptr;
 Shop* GameManager::shop = nullptr;
@@ -119,8 +120,7 @@ void GameManager::InitializeObject() {
 	);
 
 	// Player
-	player = new Player;
-	player->name = "Player";
+	player = new Player("Player");
 	Game::LetCameraFocus(player);
 
 	// Shop
