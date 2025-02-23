@@ -1,4 +1,4 @@
-#include <Enemy.h>
+#include <Zombie.h>
 #include <Game.h>
 #include <GameManager.h>
 #include <Texture.h>
@@ -11,7 +11,7 @@ const Vector2 HEALTH_BAR_SCALE = Vector2(100.0f, 10.0f);
 const float HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const string HEALTH_BAR_PATH = "./Asset/HealthBar.png";
 
-Enemy::Enemy(GameObject* initTarget) {
+Zombie::Zombie(GameObject* initTarget) : GameObject("Zombie", Layer::Zombie) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = Vector2(500.0, 200.0f);
@@ -39,7 +39,7 @@ Enemy::Enemy(GameObject* initTarget) {
 
 }
 
-void Enemy::Render() {
+void Zombie::Render() {
 
 	Transform* transform = GetComponent<Transform>();
 	Image* enemySprite = GetComponent<Image>();
@@ -58,7 +58,7 @@ void Enemy::Render() {
 
 }
 
-void Enemy::Update() {
+void Zombie::Update() {
 
 	if (target) {
 
@@ -74,8 +74,8 @@ void Enemy::Update() {
 
 }
 
-void Enemy::OnDestroy() {
+void Zombie::OnDestroy() {
 
-	GameManager::ReportDead(this);
+	GameManager::Instance()->ReportDead(this);
 
 }

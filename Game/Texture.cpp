@@ -199,7 +199,7 @@ bool Text::LoadText(string text, Color color, int fontSize) {
 
 void Text::Render() {
 
-	Transform* transform = Owner()->GetComponent<Transform>();
+	Transform* transform = GetComponent<Transform>();
 
 	Game::RenderCopy(this, transform->position, transform->scale, showOnScreen);
 
@@ -208,7 +208,7 @@ void Text::Render() {
 Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 
 	backgroundColor = Color::WHITE;
-	isActive = false;
+	isActive = true;
 
 	UIEvent::RegisterButton(this);
 

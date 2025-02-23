@@ -8,7 +8,7 @@ set(SOURCES
     "Type.cpp"
     "Projectile.cpp"
     "GameComponent.cpp"
-    "Enemy.cpp"
+    "Zombie.cpp"
     "Physics.cpp"
     "Humanoid.cpp"
     "Item.cpp"

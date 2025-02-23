@@ -10,13 +10,14 @@ GameObject::GameObject() {
 
 	name = "Game Object";
 	layer = Layer::Default;
+	id = GameObject::GetNextID();
 
 	AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
 
-	id = GameObject::GetNextID();
+	Render = []() {};
 
 }
 
@@ -31,13 +32,30 @@ void GameObject::SetLayer(Layer newLayer) {
 GameObject::GameObject(string initName) {
 
 	name = initName;
+	id = GameObject::GetNextID();
+	layer = Layer::Default;
 
 	AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
 
+	Render = []() {};
+
+}
+
+GameObject::GameObject(string initName, Layer initLayer) {
+
+	name = initName;
+	layer = initLayer;
 	id = GameObject::GetNextID();
+
+	AddComponent<Transform>();
+
+	Game::RegisterGameObject(this);
+	RenderManager::UpdateRenderObject(this);
+
+	Render = []() {};
 
 }
 
@@ -100,14 +118,36 @@ void GameObject::OnCollisionExit(BoxCollider* other) {}
 
 bool GameObject::CompareByLayer(const GameObject* a, const GameObject* b) {
 
-	return (int)a->layer == (int)b->layer
+	if ((int)a->layer == (int)b->layer) {
+		if (a->id < b->id)
+			cout << "ID: " << a->id << " < " << b->id << endl;
+		return a->id < b->id;
+	} else {
+		if ((int)a->layer < (int)b->layer)
+			cout << "Layer: " << (int)a->layer << " < " << (int)b->layer << endl;
+		return (int)a->layer < (int)b->layer;
+	}
+
+	/*return (int)a->layer == (int)b->layer
 		? a->id < b->id
-		: (int)a->layer < (int)b->layer;
+		: (int)a->layer < (int)b->layer;*/
 
 }
-
-void GameObject::Render() {}
 
 int GameObject::ID() { return id; }
 
 int GameObject::GetNextID() { return ++currentID; }
+
+void GameObject::Enable() {
+
+	enabled = true;
+
+}
+
+void GameObject::Disable() {
+
+	enabled = false;
+
+}
+
+bool GameObject::IsActive() { return enabled; }

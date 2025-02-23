@@ -14,8 +14,16 @@ void RenderManager::UpdateRenderObject(GameObject* gameObject) {
 void RenderManager::RenderAll() {
 
 	std::erase_if(renderObjectSet, [](GameObject* obj) { return obj == nullptr; });
-	for (auto obj : renderObjectSet)
-		obj->Render();
+	cout << "Start rendering..." << endl;
+	for (auto obj : renderObjectSet) {
+
+		cout << "Rendering " << obj->name << " (Layer: " << (int)obj->GetLayer() << " | ID: " << obj->ID() << ")" << endl;
+
+		if (obj->IsActive())
+			obj->Render();
+
+	}
+	cout << "Rendering finished." << endl;
 
 }
 

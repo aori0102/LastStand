@@ -15,8 +15,6 @@ private:
 
 	float spawnTime;		// Control when the object would be destroyed
 
-	void Render();
-
 public:
 
 	Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage);

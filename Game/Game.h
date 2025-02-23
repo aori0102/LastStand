@@ -26,6 +26,7 @@ enum class MouseButton {
 };
 
 class GameObject;
+class GameManager;
 class Texture;
 class Color;
 
@@ -63,6 +64,8 @@ private:
 	static float time;
 	static float deltaTime;
 
+	static GameManager* gameManager;
+
 	static void HandleEvent();
 	static void UpdateEvent();
 
@@ -70,10 +73,7 @@ private:
 	static Vector2 cameraPosition;
 	static GameObject* cameraFocusObject;
 
-	static void UpdateCameraAndBackground();
-
-	// Background
-	static GameObject* background;
+	static void UpdateCamera();
 
 public:
 

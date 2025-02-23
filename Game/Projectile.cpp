@@ -6,7 +6,7 @@
 const float EXIST_TIME = 5.0f;
 const string BULLET_PATH = "./Asset/Bullet.png";
 
-Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) {
+Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) : GameObject("Projectile", Layer::Projectile) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = initPosition;
@@ -26,22 +26,18 @@ Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVe
 
 	spawnTime = Game::Time();
 
+	Render = [this]() {
+		GetComponent<Image>()->Render();
+		};
+
 }
 
 void Projectile::Update() {
 
 	GetComponent<Transform>()->Translate(direction.Normalize() * Game::DeltaTime() * velocity, false);
 
-	Render();
-
 	if (Game::Time() >= spawnTime + EXIST_TIME)
 		GameObject::Destroy(this);
-
-}
-
-void Projectile::Render() {
-
-	GetComponent<Image>()->Render();
 
 }
 

@@ -28,7 +28,7 @@ void UIEvent::Update() {
 		}
 
 		// Button is pressed
-		if ((*it)->IsActive()) {
+		if ((*it)->IsActive() && (*it)->Owner()->IsActive()) {
 
 			(*it)->OnClick();
 			return;

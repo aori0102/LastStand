@@ -40,15 +40,14 @@ private:
 	void InitializeAnimation();
 	void InitializeData();
 
+	void PlayerRender();
+
 public:
 	
 	Player();
-	Player(string name);
 
 	void Update() override;
 	Vector2 Forward() const;
-
-	void Render() override;
 
 	void DisableInteraction();
 	void EnableInteraction();

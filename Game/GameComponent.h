@@ -5,6 +5,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
+#include <functional>
 
 using namespace std;
 
@@ -44,6 +45,7 @@ enum class Layer {
 	Default,
 	Player,
 	Zombie,
+	Projectile,
 	GUI,
 	Menu,
 
@@ -64,6 +66,8 @@ private:
 
 	static int currentID;
 
+	bool enabled;
+
 protected:
 
 	void SetLayer(Layer newLayer);
@@ -74,6 +78,7 @@ public:
 
 	GameObject();
 	GameObject(string initName);
+	GameObject(string initName, Layer initLayer);
 	virtual ~GameObject();
 
 	int ID();
@@ -85,7 +90,13 @@ public:
 	virtual void OnCollisionEnter(BoxCollider* other);
 	virtual void OnCollisionExit(BoxCollider* other);
 
-	virtual void Render();
+	Layer GetLayer() { return layer; }
+
+	void Enable();
+	void Disable();
+	bool IsActive();
+
+	function<void()> Render;
 
 	static bool CompareByLayer(const GameObject* a, const GameObject* b);
 

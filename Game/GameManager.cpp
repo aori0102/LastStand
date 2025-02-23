@@ -1,39 +1,35 @@
-#include <GameManager.h>
-#include <Enemy.h>
-#include <Player.h>
-#include <string>
-#include <Game.h>
-#include <Texture.h>
-#include <GameComponent.h>
-#include <Shop.h>
-#include <RenderManager.h>
+#include <GameManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Zombie.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Player.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <string>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Game.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Texture.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <GameComponent.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Shop.h>\howtfisthiscompilinghowtfisthiscompiling
+#include <RenderManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
 
-Player* GameManager::player = nullptr;
-Shop* GameManager::shop = nullptr;
-unordered_set<Enemy*> GameManager::enemySet = {};
-int GameManager::money = 0;
-int GameManager::experience = 0;
-int GameManager::expToNextLvl = GameManager::BASE_EXP;
-int GameManager::level = 0;
-const int GameManager::BASE_EXP = 10;
-const float GameManager::EXP_MULTIPLIER = 1.65f;
-GameObject* GameManager::moneyLabel = nullptr;
-GameObject* GameManager::moneyText = nullptr;
-GameObject* GameManager::infoBackground = nullptr;
-GameObject* GameManager::experienceBackground = nullptr;
-GameObject* GameManager::experienceBar = nullptr;
-GameObject* GameManager::levelLabel = nullptr;
-GameObject* GameManager::expLabel = nullptr;
+GameManager* GameManager::instance = nullptr;
 
-// UI settings
-const Vector2 INFO_BOARD_SCALE = Vector2(300.0f, 225.0f);
-const string MONEY_LABEL_TEXT = "Money: ";
-const int MONEY_LABEL_SIZE = 20;
-const int LEVEL_LABEL_SIZE = 18;
-const int EXP_LABEL_SIZE = 18;
-const string EXP_SLASH = " | ";
-const string LEVEL_PREFIX = "Level: ";
-const Vector2 EXPERIENCE_BAR_SCALE = Vector2(100.0f, 7.0f);
+GameManager::GameManager() {
+
+	if (instance)
+		throw new exception("Only one GameManager is allowed");
+
+	instance = this;
+	money = 0;
+	experience = 0;
+	level = 0;
+	currentWave = 0;
+	currentEnemyCount = 0;
+	enemyTotal = 0;
+	enemySpawned = 0;
+	expToNextLvl = BASE_EXP;
+	isInWave = false;
+
+	InitializeObject();
+	InitializeUI();
+
+}
 
 bool GameManager::TrySpendMoney(int amount) {
 
@@ -46,38 +42,48 @@ bool GameManager::TrySpendMoney(int amount) {
 
 }
 
-void GameManager::InitializeObject() {
+void GameManager::InitializeUI() {
 
 	// UI components
 	// Info background
-	infoBackground = new GameObject;
+	infoBackground = new GameObject("Info background", Layer::GUI);
 	Image* infoBackground_image = infoBackground->AddComponent<Image>();
 	Transform* infoBackground_transform = infoBackground->GetComponent<Transform>();
 	infoBackground_image->backgroundColor = Color(0, 0, 0, 125);
 	infoBackground_image->showOnScreen = true;
-	infoBackground_transform->position = Vector2::zero;
 	infoBackground_transform->scale = INFO_BOARD_SCALE;
+	infoBackground_transform->position = INFO_BOARD_SCALE / 2.0f;
+	infoBackground->Render = [infoBackground_image]() {
+		infoBackground_image->Render();
+		};
 
 	// Money label
-	moneyLabel = new GameObject;
+	moneyLabel = new GameObject("Money label", Layer::GUI);
 	Text* moneyLabel_text = moneyLabel->AddComponent<Text>();
 	Transform* moneyLabel_transform = moneyLabel->GetComponent<Transform>();
 	moneyLabel_text->LoadText(MONEY_LABEL_TEXT, Color::WHITE, MONEY_LABEL_SIZE);
 	moneyLabel_text->showOnScreen = true;
-	moneyLabel_transform->position = Vector2::zero;
+	moneyLabel_transform->position = moneyLabel_transform->scale / 2.0f;
+	moneyLabel->Render = [moneyLabel_text]() {
+		moneyLabel_text->Render();
+		};
 
 	// Money text
-	moneyText = new GameObject;
+	moneyText = new GameObject("Money text", Layer::GUI);
 	Text* moneyText_text = moneyText->AddComponent<Text>();
 	moneyText_text->LoadText(to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
 	moneyText_text->showOnScreen = true;
-	moneyText->GetComponent<Transform>()->position = Vector2(
-		moneyLabel_transform->position.x + moneyLabel_transform->scale.x,
-		0.0f
+	Transform* moneyText_transform = moneyText->GetComponent<Transform>();
+	moneyText_transform->position = Vector2(
+		moneyLabel_transform->position.x + (moneyLabel_transform->scale + moneyText_transform->scale).x / 2.0f,
+		moneyLabel_transform->position.y
 	);
+	moneyText->Render = [moneyText_text]() {
+		moneyText_text->Render();
+		};
 
 	// Experience background
-	experienceBackground = new GameObject;
+	experienceBackground = new GameObject("Experience background", Layer::GUI);
 	Image* experienceBackground_image = experienceBackground->AddComponent<Image>();
 	Transform* experienceBackground_transform = experienceBackground->GetComponent<Transform>();
 	experienceBackground_image->backgroundColor = Color(0, 0, 0, 125);
@@ -86,7 +92,7 @@ void GameManager::InitializeObject() {
 	experienceBackground_transform->scale = EXPERIENCE_BAR_SCALE;
 
 	// Experience bar
-	experienceBar = new GameObject;
+	experienceBar = new GameObject("Experience bar", Layer::GUI);
 	Image* experienceBar_image = experienceBar->AddComponent<Image>();
 	Transform* experienceBar_transform = experienceBar->GetComponent<Transform>();
 	experienceBar_image->backgroundColor = Color::YELLOW;
@@ -97,7 +103,7 @@ void GameManager::InitializeObject() {
 	experienceBar_transform->scale = EXPERIENCE_BAR_SCALE;
 
 	// Level label
-	levelLabel = new GameObject;
+	levelLabel = new GameObject("Level label", Layer::GUI);
 	Text* levelLabel_text = levelLabel->AddComponent<Text>();
 	Transform* levelLabel_transform = levelLabel->GetComponent<Transform>();
 	string levelText = LEVEL_PREFIX + to_string(level);
@@ -109,38 +115,78 @@ void GameManager::InitializeObject() {
 	);
 
 	// Level label
-	expLabel = new GameObject;
-	Text* expLabel_text = expLabel->AddComponent<Text>();
+	experienceLabel = new GameObject("Experience label", Layer::GUI);
+	Text* expLabel_text = experienceLabel->AddComponent<Text>();
 	string expText = to_string(experience) + EXP_SLASH + to_string(expToNextLvl);
 	expLabel_text->LoadText(expText, Color::WHITE, EXP_LABEL_SIZE);
 	expLabel_text->showOnScreen = true;
-	expLabel->GetComponent<Transform>()->position = Vector2(
+	experienceLabel->GetComponent<Transform>()->position = Vector2(
 		Game::WindowResolution().x / 2.0f,
 		50.0f
 	);
 
+	// Wave button
+	spawnWaveButton = new GameObject("Spawn wave button", Layer::GUI);
+	Button* spawnWaveButton_button = spawnWaveButton->AddComponent<Button>();
+	spawnWaveButton_button->backgroundColor = Color::WHITE;
+	spawnWaveButton_button->OnClick = [this]() { StartWave(); };
+	Transform* spawnWaveButton_transform = spawnWaveButton->GetComponent<Transform>();
+	spawnWaveButton_transform->scale = SPAWN_WAVE_BUTTON_SCALE;
+	spawnWaveButton_transform->position = Vector2(
+		spawnWaveButton_transform->scale.x,
+		Game::WindowResolution().y - spawnWaveButton_transform->scale.y
+	);
+
+	spawnWaveLabel = new GameObject("Spawn wave label", Layer::GUI);
+	Text* spawnWaveLabel_text = spawnWaveLabel->AddComponent<Text>();
+	spawnWaveLabel_text->LoadText("Spawn wave", Color::RED, 24);
+	spawnWaveLabel->GetComponent<Transform>()->position = spawnWaveButton_transform->position;
+
+}
+
+void GameManager::InitializeObject() {
+
+	northBorder = new GameObject("North border");
+	Transform* northBorder_transform = northBorder->GetComponent<Transform>();
+	northBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
+	northBorder_transform->position = Vector2(0.0f, -MAP_SIZE.y/2.0f);
+	northBorder->AddComponent<BoxCollider>();
+
+	southBorder = new GameObject("South border");
+	Transform* southBorder_transform = southBorder->GetComponent<Transform>();
+	southBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
+	southBorder_transform->position = Vector2(0.0f, MAP_SIZE.y / 2.0f);
+	southBorder->AddComponent<BoxCollider>();
+
+	westBorder = new GameObject("West border");
+	Transform* westBorder_transform = westBorder->GetComponent<Transform>();
+	westBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
+	westBorder_transform->position = Vector2(-MAP_SIZE.x/2.0f, 0.0f);
+	westBorder->AddComponent<BoxCollider>();
+
+	eastBorder = new GameObject("East border");
+	Transform* eastBorder_transform = eastBorder->GetComponent<Transform>();
+	eastBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
+	eastBorder_transform->position = Vector2(MAP_SIZE.x / 2.0f, 0.0f);
+	eastBorder->AddComponent<BoxCollider>();
+
+	// Map background
+	background = new GameObject("Background", Layer::Background);
+	Image* background_image = background->AddComponent<Image>();
+	background_image->LoadImage(BACKGROUND_PATH);
+	background_image->showOnScreen = false;
+	background->GetComponent<Transform>()->position = Vector2::zero;
+	background->Render = [background_image]() {
+		background_image->Render();
+		};
+
 	// Player
-	player = new Player("Player");
+	player = new Player();
 	Game::LetCameraFocus(player);
 
 	// Shop
 	shop = new Shop(player);
-
-	// Enemy
-	Enemy* enemy1 = new Enemy(player);
-	enemy1->GetComponent<Transform>()->position = Vector2(100.0f, 200.0f);
-	Enemy* enemy2 = new Enemy(player);
-	enemy2->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy5 = new Enemy(player);
-	enemy5->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy6 = new Enemy(player);
-	enemy6->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy7 = new Enemy(player);
-	enemy7->GetComponent<Transform>()->position = Vector2(1000.0f, 200.0f);
-	Enemy* enemy3 = new Enemy(player);
-	enemy3->GetComponent<Transform>()->position = Vector2(100.0f, 2000.0f);
-	Enemy* enemy4 = new Enemy(player);
-	enemy4->GetComponent<Transform>()->position = Vector2(725.0f, 415.0f);
+	shop->name = "Shop";
 
 }
 
@@ -150,11 +196,17 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 		// Game over
 
-	} else if (gameObject->IsA<Enemy>()) {
+	} else if (gameObject->IsA<Zombie>()) {
 
 		// Point, xp, money, etc
 		money += 10;
 		moneyText->GetComponent<Text>()->LoadText(to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
+		Transform* moneyText_transform = moneyText->GetComponent<Transform>();
+		Transform* moneyLabel_transform = moneyLabel->GetComponent<Transform>();
+		moneyText_transform->position = Vector2(
+			moneyLabel_transform->position.x + (moneyLabel_transform->scale + moneyText_transform->scale).x / 2.0f,
+			moneyLabel_transform->position.y
+		);
 
 		experience += 7;
 		while (experience >= expToNextLvl) {
@@ -166,7 +218,7 @@ void GameManager::ReportDead(GameObject* gameObject) {
 		}
 		experienceBar->GetComponent<Image>()->fillAmount = (float)experience / (float)expToNextLvl;
 		string expText = to_string(experience) + EXP_SLASH + to_string(expToNextLvl);
-		expLabel->GetComponent<Text>()->LoadText(expText, Color::WHITE, EXP_LABEL_SIZE);
+		experienceLabel->GetComponent<Text>()->LoadText(expText, Color::WHITE, EXP_LABEL_SIZE);
 
 	}
 
@@ -174,15 +226,35 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 void GameManager::Update() {
 
+	northBorder->GetComponent<BoxCollider>()->Debug();
+	southBorder->GetComponent<BoxCollider>()->Debug();
+	westBorder->GetComponent<BoxCollider>()->Debug();
+	eastBorder->GetComponent<BoxCollider>()->Debug();
+
+}
+
+void GameManager::StartWave() {
+
+	if (isInWave)
+		return;
+
+	cout << "STart\n";
+
+	// Set data
+	isInWave = true;
+	currentWave++;
+	currentEnemyCount = 0;
+	enemySpawned = 0;
+	enemyTotal = static_cast<int>(static_cast<float>(BASE_SPAWN) * powf(SPAWN_MULTIPLIER, static_cast<float>(currentWave)));
+
+}
+
+void GameManager::Render() {
+
 	infoBackground->GetComponent<Image>()->Render();
 
 	moneyLabel->GetComponent<Text>()->Render();
 
-	Transform* moneyText_transform = moneyText->GetComponent<Transform>();
-	moneyText_transform->position = Vector2(
-		moneyLabel->GetComponent<Transform>()->scale.x,
-		0.0f
-	);
 	moneyText->GetComponent<Text>()->Render();
 
 	experienceBackground->GetComponent<Image>()->Render();
@@ -191,6 +263,10 @@ void GameManager::Update() {
 
 	levelLabel->GetComponent<Text>()->Render();
 
-	expLabel->GetComponent<Text>()->Render();
+	experienceLabel->GetComponent<Text>()->Render();
+
+	spawnWaveButton->GetComponent<Button>()->Render();
+
+	spawnWaveLabel->GetComponent<Text>()->Render();
 
 }

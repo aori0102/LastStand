@@ -105,8 +105,6 @@ private:
 
 public:
 
-	void Render() override;
-
 	Shop(Player* initPlayer);
 	void Update() override;
 

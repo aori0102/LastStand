@@ -3,7 +3,7 @@
 #include <GameComponent.h>
 #include <RenderManager.h>
 
-class Enemy : public GameObject {
+class Zombie : public GameObject {
 
 private:
 
@@ -16,7 +16,7 @@ private:
 
 public:
 
-	Enemy(GameObject* initTarget);
+	Zombie(GameObject* initTarget);
 
 	void Update() override;
 	void OnDestroy() override;

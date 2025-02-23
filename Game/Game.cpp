@@ -4,7 +4,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL.h>
-#include <Enemy.h>
+#include <Zombie.h>
 #include <iostream>
 #include <GameManager.h>
 #include <Texture.h>
@@ -26,10 +26,7 @@ Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
 Vector2 Game::cameraPosition = Vector2::zero;
 string Game::gameName = "Last Stand";
 GameObject* Game::cameraFocusObject = nullptr;
-GameObject* Game::background = nullptr;
-
-// Background path
-const string BACKGROUND_PATH = "./Asset/Background.png";
+GameManager* Game::gameManager = nullptr;
 
 // Getter
 float Game::Time() { return time; }
@@ -131,7 +128,7 @@ void Game::Loop() {
 		SDL_RenderClear(gRenderer);
 
 		// Camera and background
-		UpdateCameraAndBackground();
+		UpdateCamera();
 
 		// Handle game object
 		auto it = gameObjectSet.begin();
@@ -146,7 +143,7 @@ void Game::Loop() {
 
 		Physics::LateCollisionCall();
 
-		GameManager::Update();
+		GameManager::Instance()->Update();
 
 		RenderManager::RenderAll();
 
@@ -361,12 +358,9 @@ Game::ActionState Game::GetKeyState(SDL_Keycode keycode) {
 
 void Game::InitializeGameObject() {
 
-	// Background
-	background = new GameObject;
-	Image* backgroundImage = background->AddComponent<Image>();
-	backgroundImage->LoadImage(BACKGROUND_PATH);
+	gameManager = new GameManager;
 
-	GameManager::InitializeObject();
+	Random::Init();
 
 }
 
@@ -538,7 +532,7 @@ void Game::ClearTexture(SDL_Texture* texture) {
 
 }
 
-void Game::UpdateCameraAndBackground() {
+void Game::UpdateCamera() {
 
 	if (!cameraFocusObject)
 		return;
@@ -546,10 +540,6 @@ void Game::UpdateCameraAndBackground() {
 	// Get focus object component and update camera
 	Transform* focusTransform = cameraFocusObject->GetComponent<Transform>();
 	cameraPosition = focusTransform->position;
-
-	// Render background
-	background->GetComponent<Transform>()->position = cameraPosition.Inverse();
-	background->GetComponent<Image>()->Render();
 
 }
 

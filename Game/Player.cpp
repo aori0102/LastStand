@@ -8,18 +8,11 @@
 #include <PlayerUI.h>
 #include <Texture.h>
 #include <Animation.h>
+#include <functional>
 
 const string PLAYER_SPRITE_PATH = "./Asset/PlayerSprite.png";
 
-Player::Player(string name) : GameObject(name) {
-
-	InitializeData();
-
-	InitializeAnimation();
-
-}
-
-Player::Player() {
+Player::Player() : GameObject("Player", Layer::Player) {
 
 	InitializeData();
 
@@ -54,6 +47,8 @@ void Player::InitializeData() {
 	currentAnimationStartTick = 0.0f;
 	currentAnimationTime = 0.0f;
 
+	Render = [this]() { PlayerRender(); };
+
 }
 
 void Player::Update() {
@@ -68,11 +63,14 @@ void Player::Update() {
 
 		HandleActions();
 
+		cout << transform->position << endl;
+
 	}
+
 
 }
 
-void Player::Render() {
+void Player::PlayerRender() {
 
 	if (currentAnimationState != AnimationIndex::Idle && Game::Time() >= currentAnimationStartTick + currentAnimationTime) {
 

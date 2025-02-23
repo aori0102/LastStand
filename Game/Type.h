@@ -3,6 +3,7 @@
 #include <cmath>
 #include <SDL.h>
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -27,6 +28,7 @@ public:
 	Vector2 operator*(const float& other);
 	Vector2 operator*=(const float& other);
 	Vector2 operator/(const float& other);
+	Vector2 operator/(const float& other) const;
 	Vector2 operator/=(const float& other);
 
 	friend ostream& operator<<(ostream& os, const Vector2& other);
@@ -54,7 +56,23 @@ public:
 	static float RadToDeg(float angleInRadian);
 	static float DegToRad(float angleInDegree);
 
+}; 
+
+class Random {
+private:
+
+	static std::mt19937 randomEngine; // Mersenne Twister engine
+
+public:
+
+	static void Init();
+
+	static int Int(int min, int max);
+
+	static float Float(float min, float max);
+
 };
+
 
 class Bound {
 

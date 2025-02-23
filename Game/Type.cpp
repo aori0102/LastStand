@@ -1,5 +1,6 @@
 #include <Type.h>
 #include <SDL.h>
+#include <Game.h>
 
 Vector2 Vector2::zero = Vector2(0.0f, 0.0f);
 Vector2 Vector2::up = Vector2(0.0f, -1.0f);
@@ -60,6 +61,14 @@ Vector2 Vector2::operator*=(const float& other) {
 }
 
 Vector2 Vector2::operator/(const float& other) {
+
+	Vector2 res(x / other, y / other);
+
+	return res;
+
+}
+
+Vector2 Vector2::operator/(const float& other) const {
 
 	Vector2 res(x / other, y / other);
 
@@ -156,6 +165,28 @@ float Math::RadToDeg(float angleInRadian) {
 float Math::DegToRad(float angleInDegree) {
 
 	return angleInDegree * PI / 180.0f;
+
+}
+
+std::mt19937 Random::randomEngine = std::mt19937(std::random_device{}());
+
+float Random::Float(float min, float max) {
+
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(randomEngine);
+
+}
+
+void Random::Init() {
+
+	randomEngine.seed(time(nullptr));
+
+}
+
+int Random::Int(int min, int max) {
+
+	std::uniform_int_distribution<int> dist(min, max);
+	return dist(randomEngine);
 
 }
 
