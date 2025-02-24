@@ -4,7 +4,7 @@
 #include <Type.h>
 #include <Projectile.h>
 #include <Physics.h>
-#include <Item.h>
+#include <Firearm.h>
 #include <PlayerUI.h>
 #include <Texture.h>
 #include <Animation.h>
@@ -25,10 +25,10 @@ void Player::InitializeData() {
 	movementSpeed = 700.0f;
 
 	canInteract = true;
+	usingItem = false;
 
 	Image* playerSprite = AddComponent<Image>();
 	playerSprite->LoadImage(PLAYER_SPRITE_PATH);
-	playerSprite->pivot = Vector2(0.5f, 0.5f);
 	playerSprite->showOnScreen = false;
 
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
@@ -60,13 +60,10 @@ void Player::Update() {
 		HandleMovement(transform);
 
 		HandleFacing(transform);
-
+		
 		HandleActions();
 
-		cout << transform->position << endl;
-
 	}
-
 
 }
 
@@ -128,8 +125,20 @@ void Player::HandleFacing(Transform* transform) {
 
 void Player::HandleActions() {
 
+	if (Game::SelectedUI())
+		return;
+
 	// Use action
-	if (Game::GetMouseState(MouseButton::Left).performed) {
+	if (Game::GetMouseState(MouseButton::Left).started)
+		usingItem = true;
+	else if(Game::GetMouseState(MouseButton::Left).canceled)
+		usingItem = false;
+
+	// Reload current firearm
+	if (Game::GetKeyState(SDLK_r).started)
+		firearm->Reload();
+
+	if(usingItem){
 
 		if (firearm->Use(this)) {
 
@@ -140,10 +149,6 @@ void Player::HandleActions() {
 		}
 
 	}
-
-	// Reload current firearm
-	if (Game::GetKeyState(SDLK_r).started)
-		firearm->Reload();
 
 }
 

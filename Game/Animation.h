@@ -50,7 +50,7 @@ public:
 
 	void AddAnimationFrame(AnimationFrame* animationFrame);
 
-	void RenderCurrent(Vector2 position, Vector2 scale, float angle = 0.0f, Vector2 pivot = Vector2(0.5f,0.5f));
+	void RenderCurrent(Vector2 position, Vector2 scale, float angle = 0.0f);
 
 	float AnimationLength();
 

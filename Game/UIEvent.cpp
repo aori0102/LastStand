@@ -4,10 +4,10 @@
 
 unordered_set<Button*> UIEvent::buttonSet = {};
 
-void UIEvent::Update() {
+bool UIEvent::Update() {
 
 	if (!Game::GetMouseState(MouseButton::Left).started)
-		return;
+		return false;
 
 	Vector2 mousePosition = Game::GetMouseInput();
 
@@ -31,13 +31,15 @@ void UIEvent::Update() {
 		if ((*it)->IsActive() && (*it)->Owner()->IsActive()) {
 
 			(*it)->OnClick();
-			return;
+			return true;
 
 		}
 
 		it++;
 
 	}
+
+	return false;
 
 }
 

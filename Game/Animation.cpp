@@ -58,12 +58,12 @@ void AnimationClip::AddAnimationFrame(AnimationFrame* animationFrame) {
 
 }
 
-void AnimationClip::RenderCurrent(Vector2 position, Vector2 scale, float angle, Vector2 pivot) {
+void AnimationClip::RenderCurrent(Vector2 position, Vector2 scale, float angle) {
 
 	if (currentFrame == animationTimeline.end())
 		return;
 
-	Game::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, &(*currentFrame)->clip, angle, pivot);
+	Game::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, &(*currentFrame)->clip, angle);
 
 }
 

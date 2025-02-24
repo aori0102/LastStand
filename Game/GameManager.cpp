@@ -1,12 +1,12 @@
-#include <GameManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Zombie.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Player.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <string>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Game.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Texture.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <GameComponent.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Shop.h>\howtfisthiscompilinghowtfisthiscompiling
-#include <RenderManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <GameManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Zombie.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilhowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinginghowtfisthiscompilinghowtfisthiscompiling
+#include <Player.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <string>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Game.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Texture.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <GameComponent.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <Shop.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
+#include <RenderManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
 
 GameManager* GameManager::instance = nullptr;
 
@@ -22,9 +22,10 @@ GameManager::GameManager() {
 	currentWave = 0;
 	currentEnemyCount = 0;
 	enemyTotal = 0;
-	enemySpawned = 0;
+	enemyLeft = 0;
 	expToNextLvl = BASE_EXP;
 	isInWave = false;
+	lastSpawnTick = 0.0f;
 
 	InitializeObject();
 	InitializeUI();
@@ -52,7 +53,7 @@ void GameManager::InitializeUI() {
 	infoBackground_image->backgroundColor = Color(0, 0, 0, 125);
 	infoBackground_image->showOnScreen = true;
 	infoBackground_transform->scale = INFO_BOARD_SCALE;
-	infoBackground_transform->position = INFO_BOARD_SCALE / 2.0f;
+	infoBackground_transform->position = (INFO_BOARD_SCALE - Game::WindowResolution()) / 2.0f;
 	infoBackground->Render = [infoBackground_image]() {
 		infoBackground_image->Render();
 		};
@@ -63,7 +64,7 @@ void GameManager::InitializeUI() {
 	Transform* moneyLabel_transform = moneyLabel->GetComponent<Transform>();
 	moneyLabel_text->LoadText(MONEY_LABEL_TEXT, Color::WHITE, MONEY_LABEL_SIZE);
 	moneyLabel_text->showOnScreen = true;
-	moneyLabel_transform->position = moneyLabel_transform->scale / 2.0f;
+	moneyLabel_transform->position = (moneyLabel_transform->scale - Game::WindowResolution()) / 2.0f;
 	moneyLabel->Render = [moneyLabel_text]() {
 		moneyLabel_text->Render();
 		};
@@ -133,14 +134,20 @@ void GameManager::InitializeUI() {
 	Transform* spawnWaveButton_transform = spawnWaveButton->GetComponent<Transform>();
 	spawnWaveButton_transform->scale = SPAWN_WAVE_BUTTON_SCALE;
 	spawnWaveButton_transform->position = Vector2(
-		spawnWaveButton_transform->scale.x,
-		Game::WindowResolution().y - spawnWaveButton_transform->scale.y
+		(SPAWN_WAVE_BUTTON_SCALE - Game::WindowResolution()).x / 2.0f,
+		(Game::WindowResolution() - SPAWN_WAVE_BUTTON_SCALE).y / 2.0f
 	);
+	spawnWaveButton->Render = [spawnWaveButton_button]() {
+		spawnWaveButton_button->Render();
+		};
 
 	spawnWaveLabel = new GameObject("Spawn wave label", Layer::GUI);
 	Text* spawnWaveLabel_text = spawnWaveLabel->AddComponent<Text>();
 	spawnWaveLabel_text->LoadText("Spawn wave", Color::RED, 24);
 	spawnWaveLabel->GetComponent<Transform>()->position = spawnWaveButton_transform->position;
+	spawnWaveLabel->Render = [spawnWaveLabel_text]() {
+		spawnWaveLabel_text->Render();
+		};
 
 }
 
@@ -149,7 +156,7 @@ void GameManager::InitializeObject() {
 	northBorder = new GameObject("North border");
 	Transform* northBorder_transform = northBorder->GetComponent<Transform>();
 	northBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
-	northBorder_transform->position = Vector2(0.0f, -MAP_SIZE.y/2.0f);
+	northBorder_transform->position = Vector2(0.0f, -MAP_SIZE.y / 2.0f);
 	northBorder->AddComponent<BoxCollider>();
 
 	southBorder = new GameObject("South border");
@@ -161,7 +168,7 @@ void GameManager::InitializeObject() {
 	westBorder = new GameObject("West border");
 	Transform* westBorder_transform = westBorder->GetComponent<Transform>();
 	westBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
-	westBorder_transform->position = Vector2(-MAP_SIZE.x/2.0f, 0.0f);
+	westBorder_transform->position = Vector2(-MAP_SIZE.x / 2.0f, 0.0f);
 	westBorder->AddComponent<BoxCollider>();
 
 	eastBorder = new GameObject("East border");
@@ -231,6 +238,8 @@ void GameManager::Update() {
 	westBorder->GetComponent<BoxCollider>()->Debug();
 	eastBorder->GetComponent<BoxCollider>()->Debug();
 
+	HandleSpawning();
+
 }
 
 void GameManager::StartWave() {
@@ -238,14 +247,14 @@ void GameManager::StartWave() {
 	if (isInWave)
 		return;
 
-	cout << "STart\n";
-
 	// Set data
 	isInWave = true;
 	currentWave++;
 	currentEnemyCount = 0;
-	enemySpawned = 0;
 	enemyTotal = static_cast<int>(static_cast<float>(BASE_SPAWN) * powf(SPAWN_MULTIPLIER, static_cast<float>(currentWave)));
+	enemyLeft = enemyTotal;
+
+	cout << "Wave " << currentWave << " started" << endl;
 
 }
 
@@ -268,5 +277,37 @@ void GameManager::Render() {
 	spawnWaveButton->GetComponent<Button>()->Render();
 
 	spawnWaveLabel->GetComponent<Text>()->Render();
+
+}
+
+void GameManager::HandleSpawning() {
+
+	if (!isInWave)
+		return;
+
+	if (Game::Time() < lastSpawnTick + SPAWN_DELAY)
+		return;
+
+	// Spawn the horde
+
+	lastSpawnTick = Game::Time();
+
+	int minHorde = std::min(MIN_HORDE, enemyLeft);
+	int maxHorde = std::min(MAX_HORDE, enemyLeft);
+	int toSpawn = Random::Int(minHorde, maxHorde);
+
+	std::vector<Vector2> spawnPosition = SPAWN_POSITION_LIST;
+	Algorithm::Shuffle(spawnPosition);
+
+	for (int i = 0; i < toSpawn; i++) {
+
+		Zombie* zombie = new Zombie(player);
+		zombie->GetComponent<Transform>()->position = spawnPosition[i];
+		enemyLeft--;
+
+	}
+
+	if(enemyLeft == 0)
+		isInWave = false;
 
 }

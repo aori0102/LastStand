@@ -41,10 +41,10 @@ class Image : public GameComponent, public Texture {
 
 public:
 
-	Vector2 pivot;
 	float angle;
 	float fillAmount;
 	Color backgroundColor;
+	Color outlineColor;
 
 	ImageFill imageFill;
 

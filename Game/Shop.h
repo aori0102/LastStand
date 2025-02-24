@@ -2,7 +2,7 @@
 
 #include <GameComponent.h>
 #include <vector>
-#include <Item.h>
+#include <Firearm.h>
 #include <functional>
 #include <RenderManager.h>
 

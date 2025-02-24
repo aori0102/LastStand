@@ -14,7 +14,7 @@ private:
 
 public:
 
-	static void Update();
+	static bool Update();	// Return whether a UI is clicked
 	static void RegisterButton(Button* button);
 
 };

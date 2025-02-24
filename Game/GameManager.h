@@ -4,8 +4,7 @@
 #include <string>
 #include <Type.h>
 #include <GameComponent.h>
-
-using namespace std;
+#include <vector>
 
 class Player;
 class Zombie;
@@ -39,11 +38,29 @@ private:
 	const string BACKGROUND_PATH = "./Asset/Background.png";
 	const Vector2 MAP_SIZE = Vector2(3000.0f, 3000.0f);
 
+	// Spawn settings
+	float lastSpawnTick;
+
+	const float SPAWN_DELAY = 7.0f;
+	const int MIN_HORDE = 4;
+	const int MAX_HORDE = 8;
+	const vector<Vector2> SPAWN_POSITION_LIST =
+	{
+	Vector2(-1450.0f, 500.0f),
+	Vector2(-1450.0f, -500.0f),
+	Vector2(-500.0f, 1450.0f),
+	Vector2(500.0f, 1450.0f),
+	Vector2(1450.0f, -500.0f),
+	Vector2(1450.0f, 500.0f),
+	Vector2(-500.0f, -1450.0f),
+	Vector2(500.0f, -1450.0f)
+	};
+
 	// Game settings
 	int currentWave;
 	int currentEnemyCount;
 	int enemyTotal;
-	int enemySpawned;
+	int enemyLeft;
 	bool isInWave;
 
 	const int BASE_SPAWN = 15;
@@ -81,6 +98,7 @@ private:
 
 	void Render();
 
+	void HandleSpawning();
 
 public:
 

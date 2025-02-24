@@ -20,6 +20,14 @@ Vector2 Vector2::operator+(const Vector2& other) {
 
 }
 
+Vector2 Vector2::operator+(const Vector2& other) const {
+
+	Vector2 res(x + other.x, y + other.y);
+
+	return res;
+
+}
+
 Vector2 Vector2::operator+=(const Vector2& other) {
 
 	*this = *this + other;
@@ -36,6 +44,14 @@ Vector2 Vector2::operator-(const Vector2& other) {
 
 }
 
+Vector2 Vector2::operator-(const Vector2& other) const {
+
+	Vector2 res(x - other.x, y - other.y);
+
+	return res;
+
+}
+
 Vector2 Vector2::operator-=(const Vector2& other) {
 
 	*this = *this - other;
@@ -45,6 +61,14 @@ Vector2 Vector2::operator-=(const Vector2& other) {
 }
 
 Vector2 Vector2::operator*(const float& other) {
+
+	Vector2 res(x * other, y * other);
+
+	return res;
+
+}
+
+Vector2 Vector2::operator*(const float& other) const {
 
 	Vector2 res(x * other, y * other);
 

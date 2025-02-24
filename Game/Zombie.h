@@ -7,8 +7,6 @@ class Zombie : public GameObject {
 
 private:
 
-	void Render();
-
 	GameObject* healthBar;
 	GameObject* target;
 

@@ -14,6 +14,7 @@
 
 // Initialize static component
 bool Game::gQuit = false;
+bool Game::selectedUI = false;
 float Game::time = 0.0f;
 float Game::deltaTime = 0.0f;
 SDL_Window* Game::gWindow = nullptr;
@@ -121,7 +122,7 @@ void Game::Loop() {
 		while (SDL_PollEvent(gEvent) != 0)
 			HandleEvent();
 
-		UIEvent::Update();
+		selectedUI = UIEvent::Update();
 
 		// Clear renderer data
 		SetRenderDrawColor(Color::TRANSPARENT);
@@ -366,7 +367,7 @@ void Game::InitializeGameObject() {
 
 Vector2 Game::ScreenToWorldPosition(Vector2 screenPosition) {
 
-	return screenPosition + cameraPosition - windowResolution / 2.0f;
+	return screenPosition + cameraPosition;
 
 }
 
@@ -376,7 +377,7 @@ Vector2 Game::GetMouseInput() {
 
 	SDL_GetMouseState(&x, &y);
 
-	return Vector2(x, y);
+	return Vector2(x, y) - windowResolution / 2.0f;	// Convert to C00
 
 }
 
@@ -427,31 +428,11 @@ void Game::DrawLine(Vector2 position, Vector2 direction, float maxDistance, Colo
 
 }
 
-void Game::DrawRectangle(SDL_FRect* quad, bool onScreen, bool fill, Color color) {
-
-	SetRenderDrawColor(color);
-
-	Vector2 renderTopLeft =
-		!onScreen ? (Vector2(quad->x, quad->y) - cameraPosition + windowResolution / 2.0f)
-		: Vector2(quad->x, quad->y);
-
-	quad->x = renderTopLeft.x;
-	quad->y = renderTopLeft.y;
-
-	if (fill)
-		SDL_RenderFillRectF(gRenderer, quad);
-	else
-		SDL_RenderDrawRectF(gRenderer, quad);
-
-}
-
 void Game::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color) {
 
 	SetRenderDrawColor(color);
 
-	Vector2 renderCenter =
-		!onScreen ? (center - cameraPosition + windowResolution / 2.0f)
-		: center;
+	Vector2 renderCenter = (!onScreen ? (center - cameraPosition) : center) + windowResolution / 2.0f;
 
 	SDL_FRect quad = {
 		renderCenter.x - extents.x,
@@ -467,19 +448,22 @@ void Game::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fi
 
 }
 
-void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip, float angle, Vector2 pivot, SDL_RendererFlip flip) {
+void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip, float angle, SDL_RendererFlip flip) {
 
 	// Calculate camera's area
-
-	// Render quad
-	pivot.x = Math::Clamp(pivot.x, 0.0f, 1.0f);
-	pivot.y = Math::Clamp(pivot.y, 0.0f, 1.0f);
+	// This game use a different axis positioning comparing to SDL2.
+	// (0, 0) in the center of the window instead of top left
+	// Call it C00 (for center(0, 0))
+	// Render position relative to screen in C00
 	Vector2 renderPosition =
-		!onScreen ? (position - cameraPosition + windowResolution / 2.0f)
+		!onScreen
+		? position - cameraPosition
 		: position;
+
+	// Rendering format in SDL2
 	SDL_FRect quad = {
-		renderPosition.x - pivot.x * scale.x,
-		renderPosition.y - pivot.y * scale.y,
+		renderPosition.x + (windowResolution - scale).x / 2.0f,
+		renderPosition.y + (windowResolution - scale).y / 2.0f,
 		scale.x,
 		scale.y
 	};
@@ -492,9 +476,6 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool on
 		)
 		return;
 
-	// Center of texture
-	SDL_FPoint center = { scale.x * pivot.x, scale.y * pivot.y };
-
 	// Clipping texture
 
 	SDL_RenderCopyExF(
@@ -503,7 +484,7 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool on
 		clip,
 		&quad,
 		angle,
-		&center,
+		nullptr,	// Rotate by center of texture
 		flip
 	);
 
@@ -538,8 +519,7 @@ void Game::UpdateCamera() {
 		return;
 
 	// Get focus object component and update camera
-	Transform* focusTransform = cameraFocusObject->GetComponent<Transform>();
-	cameraPosition = focusTransform->position;
+	cameraPosition = cameraFocusObject->GetComponent<Transform>()->position;
 
 }
 
@@ -548,3 +528,5 @@ void Game::LetCameraFocus(GameObject* gameObject) {
 	cameraFocusObject = gameObject;
 
 }
+
+bool Game::SelectedUI() { return selectedUI; }

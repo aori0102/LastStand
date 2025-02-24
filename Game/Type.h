@@ -22,10 +22,13 @@ public:
 	Vector2(float initX, float initY);
 
 	Vector2 operator+(const Vector2& other);
+	Vector2 operator+(const Vector2& other) const;
 	Vector2 operator+=(const Vector2& other);
 	Vector2 operator-(const Vector2& other);
+	Vector2 operator-(const Vector2& other) const;
 	Vector2 operator-=(const Vector2& other);
 	Vector2 operator*(const float& other);
+	Vector2 operator*(const float& other)const;
 	Vector2 operator*=(const float& other);
 	Vector2 operator/(const float& other);
 	Vector2 operator/(const float& other) const;
@@ -35,7 +38,7 @@ public:
 
 	bool operator==(const Vector2& other);
 	bool operator!=(const Vector2& other);
-	
+
 	Vector2 Normalize();
 	Vector2 Inverse();
 	float Magnitude() const;
@@ -56,7 +59,7 @@ public:
 	static float RadToDeg(float angleInRadian);
 	static float DegToRad(float angleInDegree);
 
-}; 
+};
 
 class Random {
 private:
@@ -108,3 +111,13 @@ public:
 	static const Color BLACK;
 
 };
+
+class Algorithm {
+
+public:
+
+	template <typename T>
+	static void Shuffle(vector<T>& array);
+
+};
+#include <Type.inl>

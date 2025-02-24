@@ -1,5 +1,5 @@
 #include <PlayerUI.h>
-#include <Item.h>
+#include <Firearm.h>
 #include <Game.h>
 #include <SDL.h>
 #include <GameComponent.h>
@@ -25,27 +25,6 @@ ReloadUI::ReloadUI(Firearm* initFirearm) {
 
 void ReloadUI::Update() {
 
-	if (linkedFirearm->IsReloading()) {
-		// Render a box indicating the reload progress when
-		// the firearm reloads
-		SDL_FRect outlineQuad = {
-			(Game::WindowResolution().x - RELOAD_OUTLINE_SIZE.x) / 2.0f,
-			RELOAD_BAR_CENTER_Y + (Game::WindowResolution().y - RELOAD_OUTLINE_SIZE.y) / 2.0f,
-			RELOAD_OUTLINE_SIZE.x,
-			RELOAD_OUTLINE_SIZE.y
-		};
-
-		SDL_FRect fillQuad = {
-			(Game::WindowResolution().x - RELOAD_BAR_SIZE.x) / 2.0f,
-			RELOAD_BAR_CENTER_Y + (Game::WindowResolution().y - RELOAD_BAR_SIZE.y) / 2.0f,
-			RELOAD_BAR_SIZE.x * linkedFirearm->GetReloadingProgress(),
-			RELOAD_BAR_SIZE.y
-		};
-
-		Game::DrawRectangle(&outlineQuad, true, false, Color::WHITE);
-		Game::DrawRectangle(&fillQuad, true, true, Color::WHITE);
-
-	}
 
 }
 

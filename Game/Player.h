@@ -29,6 +29,7 @@ private:
 	void HandleFacing(Transform* transform);
 
 	bool canInteract;
+	bool usingItem;
 
 	Firearm* firearm;
 

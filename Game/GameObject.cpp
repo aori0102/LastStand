@@ -118,19 +118,10 @@ void GameObject::OnCollisionExit(BoxCollider* other) {}
 
 bool GameObject::CompareByLayer(const GameObject* a, const GameObject* b) {
 
-	if ((int)a->layer == (int)b->layer) {
-		if (a->id < b->id)
-			cout << "ID: " << a->id << " < " << b->id << endl;
+	if ((int)a->layer == (int)b->layer)
 		return a->id < b->id;
-	} else {
-		if ((int)a->layer < (int)b->layer)
-			cout << "Layer: " << (int)a->layer << " < " << (int)b->layer << endl;
+	else
 		return (int)a->layer < (int)b->layer;
-	}
-
-	/*return (int)a->layer == (int)b->layer
-		? a->id < b->id
-		: (int)a->layer < (int)b->layer;*/
 
 }
 

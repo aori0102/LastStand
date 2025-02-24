@@ -42,8 +42,16 @@ private:
 	float reloadStartTick;
 
 	// UI
-	ReloadUI* reloadUI;
-	FirearmUI* firearmUI;
+	GameObject* ammoLabel;
+	const int AMMO_TEXT_SIZE = 20;
+
+	GameObject* reloadFrame;
+	GameObject* reloadBar;
+	const Vector2 RELOAD_FRAME_SCALE = Vector2(165.0f, 65.0f);
+	const Vector2 RELOAD_BAR_SCALE = Vector2(150.0f, 50.0f);
+	const float RELOAD_BAR_BOTTOM_OFFSET = 300.0f;
+
+	float GetReloadingProgress();
 
 public:
 
@@ -55,7 +63,6 @@ public:
 	void Reload();
 
 	bool IsReloading() const;
-	float GetReloadingProgress();
 	int CurrentAmmo() const;
 
 	void ModifyAttributeMultiplier(Attribute attribute, float amount);

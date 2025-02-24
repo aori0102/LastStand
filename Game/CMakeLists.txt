@@ -11,7 +11,7 @@ set(SOURCES
     "Zombie.cpp"
     "Physics.cpp"
     "Humanoid.cpp"
-    "Item.cpp"
+    "Firearm.cpp"
     "FirearmUI.cpp"
     "Texture.cpp"
     "GameManager.cpp"

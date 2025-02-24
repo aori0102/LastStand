@@ -18,12 +18,11 @@ Zombie::Zombie(GameObject* initTarget) : GameObject("Zombie", Layer::Zombie) {
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
-	AddComponent<Humanoid>();
+	Humanoid* humanoid = AddComponent<Humanoid>();
 
-	Image* enemySprite = AddComponent<Image>();
-	enemySprite->LoadImage(ENEMY_SPRITE_PATH);
-	enemySprite->pivot = Vector2(0.5f, 0.5f);
-	enemySprite->showOnScreen = false;
+	Image* zombieSprite = AddComponent<Image>();
+	zombieSprite->LoadImage(ENEMY_SPRITE_PATH);
+	zombieSprite->showOnScreen = false;
 
 	// Initialize health bar
 	healthBar = new GameObject();
@@ -37,24 +36,16 @@ Zombie::Zombie(GameObject* initTarget) : GameObject("Zombie", Layer::Zombie) {
 	target = initTarget;
 	movementSpeed = 100.0f;
 
-}
+	Render = [zombieSprite, healthBar_image, humanoid, this]() {
 
-void Zombie::Render() {
+		zombieSprite->Render();
 
-	Transform* transform = GetComponent<Transform>();
-	Image* enemySprite = GetComponent<Image>();
+		// Render health bar
+		healthBar_image->GetComponent<Transform>()->position = GetComponent<Transform>()->position + Vector2::up * HEALTH_BAR_VERTICAL_OFFSET;
+		healthBar_image->fillAmount = humanoid->Health() / humanoid->maxHealth;
+		healthBar_image->Render();
 
-	enemySprite->GetComponent<Transform>()->position = GetComponent<Transform>()->position;
-	enemySprite->Render();
-
-	GetComponent<BoxCollider>()->Debug();
-
-	// Render health bar
-	Image* healthBar_image = healthBar->GetComponent<Image>();
-	Humanoid* humanoid = GetComponent<Humanoid>();
-	healthBar_image->GetComponent<Transform>()->position = transform->position + Vector2::up * HEALTH_BAR_VERTICAL_OFFSET;
-	healthBar_image->fillAmount = humanoid->Health() / humanoid->maxHealth;
-	healthBar_image->Render();
+		};
 
 }
 

@@ -33,13 +33,13 @@ Vector2 Texture::TextureDimension() const { return textureDimension; }
 
 Image::Image(GameObject* initOwner) : GameComponent(initOwner) {
 
-	pivot = Vector2(0.5f, 0.5f);
 	angle = 0.0f;
 
 	imageFill = ImageFill::None;
 	fillAmount = 1.0f;
 
 	backgroundColor = Color::WHITE;
+	outlineColor = Color::TRANSPARENT;
 
 }
 
@@ -120,26 +120,29 @@ void Image::Render() {
 			scale,
 			showOnScreen,
 			&clip,
-			angle,
-			pivot
+			angle
 		);
 
 	} else {
 
 		// No image texture, render background instead
-		SDL_FRect quad = {
-			transform->position.x - transform->scale.x * pivot.x,
-			transform->position.y - transform->scale.y * pivot.y,
-			transform->scale.x,
-			transform->scale.y
-		};
+		Vector2 center = transform->position;
+		Vector2 extents = transform->scale / 2.0f;
 
-		if (imageFill == ImageFill::Vertical)
-			quad.h *= fillAmount;
-		else if (imageFill == ImageFill::Horizontal)
-			quad.w *= fillAmount;
+		if (imageFill == ImageFill::Vertical) {
 
-		Game::DrawRectangle(&quad, showOnScreen, true, backgroundColor);
+			center.y -= extents.y * (1.0f - fillAmount);
+			extents.y *= fillAmount;
+
+		} else if (imageFill == ImageFill::Horizontal) {
+
+			center.x -= extents.x * (1.0f - fillAmount);
+			extents.x *= fillAmount;
+
+		}
+
+		Game::DrawRectangle(center, extents, showOnScreen, true, backgroundColor);
+		Game::DrawRectangle(center, extents, showOnScreen, false, outlineColor);
 
 	}
 
