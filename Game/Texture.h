@@ -6,6 +6,14 @@
 #include <GameComponent.h>
 #include <functional>
 
+struct ButtonUIGroup {
+
+	GameObject* button;
+	GameObject* label;
+	GameObject* image;
+
+};
+
 enum class ImageFill {
 
 	Horizontal,
@@ -13,6 +21,8 @@ enum class ImageFill {
 	None,
 
 };
+
+class GameObject;
 
 class Texture {
 

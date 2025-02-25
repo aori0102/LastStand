@@ -3,8 +3,8 @@
 #include <Game.h>
 
 Vector2 Vector2::zero = Vector2(0.0f, 0.0f);
-Vector2 Vector2::up = Vector2(0.0f, -1.0f);
-Vector2 Vector2::down = Vector2(0.0f, 1.0f);
+Vector2 Vector2::up = Vector2(0.0f, 1.0f);
+Vector2 Vector2::down = Vector2(0.0f, -1.0f);
 Vector2 Vector2::left = Vector2(-1.0f, 0.0f);
 Vector2 Vector2::right = Vector2(1.0f, 0.0f);
 
@@ -189,6 +189,24 @@ float Math::RadToDeg(float angleInRadian) {
 float Math::DegToRad(float angleInDegree) {
 
 	return angleInDegree * PI / 180.0f;
+
+}
+
+Vector2 Math::SDLToC00(Vector2 position, Vector2 scale) {
+
+	return Vector2(
+		position.x - (Game::WindowResolution() - scale).x / 2.0f,
+		-position.y - (scale - Game::WindowResolution()).y / 2.0f
+	);
+
+}
+
+Vector2 Math::C00ToSDL(Vector2 position, Vector2 scale) {
+
+	return Vector2(
+		position.x - (scale - Game::WindowResolution()).x / 2.0f,
+		-position.y + (Game::WindowResolution() - scale).y / 2.0f
+	);
 
 }
 

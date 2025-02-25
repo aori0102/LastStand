@@ -12,7 +12,7 @@ GameObject::GameObject() {
 	layer = Layer::Default;
 	id = GameObject::GetNextID();
 
-	AddComponent<Transform>();
+	transform = AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
@@ -35,7 +35,7 @@ GameObject::GameObject(string initName) {
 	id = GameObject::GetNextID();
 	layer = Layer::Default;
 
-	AddComponent<Transform>();
+	transform = AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
@@ -50,7 +50,7 @@ GameObject::GameObject(string initName, Layer initLayer) {
 	layer = initLayer;
 	id = GameObject::GetNextID();
 
-	AddComponent<Transform>();
+	transform = AddComponent<Transform>();
 
 	Game::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);

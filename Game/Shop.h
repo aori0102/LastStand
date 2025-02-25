@@ -5,8 +5,10 @@
 #include <Firearm.h>
 #include <functional>
 #include <RenderManager.h>
+#include <string>
 
 class Player;
+struct ButtonUIGroup;
 
 class Shop : public GameObject {
 
@@ -62,20 +64,30 @@ private:
 	// Shop items
 
 	// UI elements
+	// General
 	GameObject* background;
+	const string BACKGROUND_PATH = "./Asset/Shop_Background.png";
 
 	GameObject* buyButton;
 	GameObject* buyButtonLabel;
 
-	GameObject* firearmButton;
-	GameObject* firearmButtonLabel;
+	// Navigation
+	std::unordered_map<ShopMenuIndex, ButtonUIGroup*> menuNavigationButtonMap;
+	const std::unordered_map<ShopMenuIndex, const std::string> MENU_NAVIGATION_LABEL_MAP = {
+		{ ShopMenuIndex::Firearm, "Firearm" },
+		{ ShopMenuIndex::Melee, "Melee" },
+		{ ShopMenuIndex::Utility, "Utility" }
+	};
+	const std::unordered_map<ShopMenuIndex, Vector2> MENU_NAVIGATION_POSITION = {
+		{ ShopMenuIndex::Firearm, Vector2(170.0f, 80.0f) },
+		{ ShopMenuIndex::Melee, Vector2(490.0f, 80.0f) },
+		{ ShopMenuIndex::Utility, Vector2(810.0f, 80.0f) }
+	};
+	const std::string NAVIGATION_UNSELECTED_PATH = "./Asset/Navigation_Button_Unselected.png";
+	const std::string NAVIGATION_SELECTED_PATH = "./Asset/Navigation_Button_Selected.png";
+	const int NAVIGATION_LABEL_SIZE = 32;
 
-	GameObject* meleeButton;
-	GameObject* meleeButtonLabel;
-
-	GameObject* utilityButton;
-	GameObject* utilityButtonLabel;
-
+	// Firearm upgrade
 	GameObject* damageUpgradeButton;
 	GameObject* damageUpgradeButtonLabel;
 	GameObject* damageUpgradeButtonAmountLabel;
@@ -88,6 +100,8 @@ private:
 	GameObject* ammoCapacityUpgradeButtonLabel;
 	GameObject* ammoCapacityUpgradeButtonAmountLabel;
 
+	const float UPGRADE_VERTICAL_MARGIN = 30.0f;
+
 	// Control
 	bool showShop;
 	ShopMenuIndex shopMenuIndex;
@@ -95,8 +109,8 @@ private:
 	void Hide();
 
 	void RenderFirearmMenu();
-	void ShowFirearmMenu();
-	void HideFirearmMenu();
+	void ShowCurrentMenu();
+	void HideCurrentMenu();
 
 	void InitializeUI();
 	void InitializeUpgrades();

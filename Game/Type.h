@@ -58,6 +58,8 @@ public:
 	static float Clamp(float value, float lowerBound, float upperBound);
 	static float RadToDeg(float angleInRadian);
 	static float DegToRad(float angleInDegree);
+	static Vector2 SDLToC00(Vector2 position, Vector2 scale);
+	static Vector2 C00ToSDL(Vector2 position, Vector2 scale);
 
 };
 

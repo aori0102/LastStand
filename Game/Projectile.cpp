@@ -14,7 +14,7 @@ Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVe
 	Image* image = AddComponent<Image>();
 	image->LoadImage(BULLET_PATH);
 	image->showOnScreen = false;
-	image->angle = -Math::RadToDeg(initDirection.Angle());
+	image->angle = Math::RadToDeg(initDirection.Angle());
 
 	transform->scale *= 2.0f;
 

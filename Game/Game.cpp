@@ -367,7 +367,10 @@ void Game::InitializeGameObject() {
 
 Vector2 Game::ScreenToWorldPosition(Vector2 screenPosition) {
 
-	return screenPosition + cameraPosition;
+	return Vector2(
+		screenPosition.x - windowResolution.x / 2.0f,
+		windowResolution.y / 2.0f - screenPosition.y
+	) + cameraPosition;
 
 }
 
@@ -377,7 +380,7 @@ Vector2 Game::GetMouseInput() {
 
 	SDL_GetMouseState(&x, &y);
 
-	return Vector2(x, y) - windowResolution / 2.0f;	// Convert to C00
+	return Vector2(x, y);
 
 }
 
@@ -455,15 +458,12 @@ void Game::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool on
 	// (0, 0) in the center of the window instead of top left
 	// Call it C00 (for center(0, 0))
 	// Render position relative to screen in C00
-	Vector2 renderPosition =
-		!onScreen
-		? position - cameraPosition
-		: position;
+	Vector2 renderPosition = Math::C00ToSDL(!onScreen ? position - cameraPosition : position, scale);
 
 	// Rendering format in SDL2
 	SDL_FRect quad = {
-		renderPosition.x + (windowResolution - scale).x / 2.0f,
-		renderPosition.y + (windowResolution - scale).y / 2.0f,
+		renderPosition.x,
+		renderPosition.y,
 		scale.x,
 		scale.y
 	};

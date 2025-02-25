@@ -22,7 +22,7 @@ GameManager::GameManager() {
 	currentWave = 0;
 	currentEnemyCount = 0;
 	enemyTotal = 0;
-	enemyLeft = 0;
+	enemyToSpawn = 0;
 	expToNextLvl = BASE_EXP;
 	isInWave = false;
 	lastSpawnTick = 0.0f;
@@ -227,6 +227,8 @@ void GameManager::ReportDead(GameObject* gameObject) {
 		string expText = to_string(experience) + EXP_SLASH + to_string(expToNextLvl);
 		experienceLabel->GetComponent<Text>()->LoadText(expText, Color::WHITE, EXP_LABEL_SIZE);
 
+		currentEnemyCount--;
+
 	}
 
 }
@@ -252,9 +254,7 @@ void GameManager::StartWave() {
 	currentWave++;
 	currentEnemyCount = 0;
 	enemyTotal = static_cast<int>(static_cast<float>(BASE_SPAWN) * powf(SPAWN_MULTIPLIER, static_cast<float>(currentWave)));
-	enemyLeft = enemyTotal;
-
-	cout << "Wave " << currentWave << " started" << endl;
+	enemyToSpawn = enemyTotal;
 
 }
 
@@ -292,8 +292,8 @@ void GameManager::HandleSpawning() {
 
 	lastSpawnTick = Game::Time();
 
-	int minHorde = std::min(MIN_HORDE, enemyLeft);
-	int maxHorde = std::min(MAX_HORDE, enemyLeft);
+	int minHorde = std::min(MIN_HORDE, enemyToSpawn);
+	int maxHorde = std::min(MAX_HORDE, enemyToSpawn);
 	int toSpawn = Random::Int(minHorde, maxHorde);
 
 	std::vector<Vector2> spawnPosition = SPAWN_POSITION_LIST;
@@ -303,11 +303,18 @@ void GameManager::HandleSpawning() {
 
 		Zombie* zombie = new Zombie(player);
 		zombie->GetComponent<Transform>()->position = spawnPosition[i];
-		enemyLeft--;
+		enemyToSpawn--;
+		currentEnemyCount++;
 
 	}
 
-	if(enemyLeft == 0)
+	spawnPosition.clear();
+
+	if (currentEnemyCount == 0) {
+
 		isInWave = false;
+		cout << "Wave " << currentWave << " completed!\n";
+
+	}
 
 }

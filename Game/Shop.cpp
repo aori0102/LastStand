@@ -40,15 +40,14 @@ void Shop::Update() {
 		linkedPlayer->DisableInteraction();
 		Show();
 
-		if (shopMenuIndex == ShopMenuIndex::Firearm)
-			ShowFirearmMenu();
+		ShowCurrentMenu();
 
 	} else {
 
 		linkedPlayer->EnableInteraction();
 		Hide();
 
-		HideFirearmMenu();
+		HideCurrentMenu();
 
 	}
 
@@ -56,25 +55,27 @@ void Shop::Update() {
 
 void Shop::Show() {
 
+	background->Enable();
+
 	buyButton->Enable();
+	buyButtonLabel->Enable();
 
-	firearmButton->Enable();
-
-	meleeButton->Enable();
-
-	utilityButton->Enable();
+	menuNavigationButtonMap.at(ShopMenuIndex::Firearm)->button->Enable();
+	menuNavigationButtonMap.at(ShopMenuIndex::Melee)->button->Enable();
+	menuNavigationButtonMap.at(ShopMenuIndex::Utility)->button->Enable();
 
 }
 
 void Shop::Hide() {
 
+	background->Disable();
+
 	buyButton->Disable();
+	buyButtonLabel->Disable();
 
-	firearmButton->Disable();
-
-	meleeButton->Disable();
-
-	utilityButton->Disable();
+	menuNavigationButtonMap.at(ShopMenuIndex::Firearm)->button->Disable();
+	menuNavigationButtonMap.at(ShopMenuIndex::Melee)->button->Disable();
+	menuNavigationButtonMap.at(ShopMenuIndex::Utility)->button->Disable();
 
 }
 
@@ -94,19 +95,63 @@ void Shop::RenderFirearmMenu() {
 
 }
 
-void Shop::ShowFirearmMenu() {
+void Shop::ShowCurrentMenu() {
 
-	damageUpgradeButton->GetComponent<Button>()->Enable();
-	reloadTimeUpgradeButton->GetComponent<Button>()->Enable();
-	ammoCapacityUpgradeButton->GetComponent<Button>()->Enable();
+	switch (shopMenuIndex) {
+
+	case ShopMenuIndex::Firearm:
+
+		damageUpgradeButton->Enable();
+		damageUpgradeButtonLabel->Enable();
+		damageUpgradeButtonAmountLabel->Enable();
+
+		reloadTimeUpgradeButton->Enable();
+		reloadTimeUpgradeButtonLabel->Enable();
+		reloadTimeUpgradeButtonAmountLabel->Enable();
+
+		ammoCapacityUpgradeButton->Enable();
+		ammoCapacityUpgradeButtonLabel->Enable();
+		ammoCapacityUpgradeButtonAmountLabel->Enable();
+
+		break;
+
+	case ShopMenuIndex::Melee:
+		break;
+
+	case ShopMenuIndex::Utility:
+		break;
+
+	}
 
 }
 
-void Shop::HideFirearmMenu() {
+void Shop::HideCurrentMenu() {
 
-	damageUpgradeButton->GetComponent<Button>()->Disable();
-	reloadTimeUpgradeButton->GetComponent<Button>()->Disable();
-	ammoCapacityUpgradeButton->GetComponent<Button>()->Disable();
+	switch (shopMenuIndex) {
+
+	case ShopMenuIndex::Firearm:
+
+		damageUpgradeButton->Disable();
+		damageUpgradeButtonLabel->Disable();
+		damageUpgradeButtonAmountLabel->Disable();
+
+		reloadTimeUpgradeButton->Disable();
+		reloadTimeUpgradeButtonLabel->Disable();
+		reloadTimeUpgradeButtonAmountLabel->Disable();
+
+		ammoCapacityUpgradeButton->Disable();
+		ammoCapacityUpgradeButtonLabel->Disable();
+		ammoCapacityUpgradeButtonAmountLabel->Disable();
+
+		break;
+
+	case ShopMenuIndex::Melee:
+		break;
+
+	case ShopMenuIndex::Utility:
+		break;
+
+	}
 
 }
 
@@ -159,10 +204,14 @@ void Shop::InitializeUI() {
 
 	// Background
 	background = new GameObject("Shop background", Layer::Menu);
-	background->AddComponent<Image>()->backgroundColor = Color(0, 0, 0, 100);
+	Image* background_image = background->AddComponent<Image>();
+	background_image->LoadImage(BACKGROUND_PATH);
+	background_image->showOnScreen = true;
 	Transform* background_transform = background->GetComponent<Transform>();
-	background_transform->position = Game::WindowResolution() / 2.0f;
-	background_transform->scale = SHOP_BACKGROUND_SIZE;
+	background_transform->position = Vector2::zero;
+	background->Render = [background_image]() {
+		background_image->Render();
+		};
 
 	// Buy button
 	buyButton = new GameObject("Buy button", Layer::Menu);
@@ -175,6 +224,9 @@ void Shop::InitializeUI() {
 		background_transform->position.x,
 		background_transform->position.y + (background_transform->scale.y - BUY_BUTTON_SIZE.y) / 2.0f
 	);
+	buyButton->Render = [buyButton_button]() {
+		buyButton_button->Render();
+		};
 
 	buyButtonLabel = new GameObject("Buy button label", Layer::Menu);
 	Text* buyButtonLabel_text = buyButtonLabel->AddComponent<Text>();
@@ -182,63 +234,90 @@ void Shop::InitializeUI() {
 	buyButtonLabel_text->showOnScreen = true;
 	Transform* buyButtonLabel_transform = buyButtonLabel->GetComponent<Transform>();
 	buyButtonLabel_transform->position = buyButton_transform->position;
+	buyButtonLabel->Render = [buyButtonLabel_text]() {
+		buyButtonLabel_text->Render();
+		};
 
 	// Firearm navigation button
-	firearmButton = new GameObject("Firearm button", Layer::Menu);
-	Button* firearmButton_button = firearmButton->AddComponent<Button>();
-	firearmButton_button->backgroundColor = Color::WHITE;
-	firearmButton_button->OnClick = []() {cout << "Firearm button is pressed" << endl; };
-	Transform* firearmButton_transform = firearmButton->GetComponent<Transform>();
-	firearmButton_transform->scale = NAVIGATION_BUTTON_SIZE;
-	firearmButton_transform->position = Vector2(
-		background_transform->position.x,
-		background_transform->position.y - (background_transform->scale.y - NAVIGATION_BUTTON_SIZE.y) / 2.0f + NAVIGATION_BUTTON_OFFSET.y
-	);
-
-	firearmButtonLabel = new GameObject("Firearm button label", Layer::Menu);
-	Text* firearmButtonLabel_text = firearmButtonLabel->AddComponent<Text>();
-	firearmButtonLabel_text->LoadText("Firearm", Color::BLUE, 24);
-	firearmButtonLabel_text->showOnScreen = true;
-	Transform* firearmButtonLabel_transform = firearmButtonLabel->GetComponent<Transform>();
-	firearmButtonLabel_transform->position = firearmButton_transform->position;
+	ButtonUIGroup* firearmButtonGroup = new ButtonUIGroup;
+	firearmButtonGroup->image = new GameObject("Firearm image", Layer::Menu);
+	Image* firearmButtonGroup_image = firearmButtonGroup->image->AddComponent<Image>();
+	firearmButtonGroup_image->LoadImage(NAVIGATION_UNSELECTED_PATH);
+	firearmButtonGroup_image->showOnScreen = true;
+	firearmButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Firearm), firearmButtonGroup_image->transform->scale);
+	firearmButtonGroup->label = new GameObject("Firearm label", Layer::Menu);
+	Text* firearmButtonGroup_text = firearmButtonGroup->label->AddComponent<Text>();
+	firearmButtonGroup_text->LoadText(MENU_NAVIGATION_LABEL_MAP.at(ShopMenuIndex::Firearm), Color::WHITE, NAVIGATION_LABEL_SIZE);
+	firearmButtonGroup_text->showOnScreen = true;
+	firearmButtonGroup_text->transform->position = firearmButtonGroup_image->transform->position;
+	firearmButtonGroup->button = new GameObject("Firearm button", Layer::Menu);
+	Button* firearmButtonGroup_button = firearmButtonGroup->button->AddComponent<Button>();
+	firearmButtonGroup_button->transform->scale = firearmButtonGroup_image->transform->scale;
+	firearmButtonGroup_button->transform->position = firearmButtonGroup_image->transform->position;
+	firearmButtonGroup_button->OnClick = [this]() {
+		HideCurrentMenu();
+		shopMenuIndex = ShopMenuIndex::Firearm;
+		ShowCurrentMenu();
+		};
+	firearmButtonGroup->button->Render = [firearmButtonGroup_image, firearmButtonGroup_text]() {
+		firearmButtonGroup_image->Render();
+		firearmButtonGroup_text->Render();
+		};
+	menuNavigationButtonMap[ShopMenuIndex::Firearm] = firearmButtonGroup;
 
 	// Melee navigation button
-	meleeButton = new GameObject("Melee button", Layer::Menu);
-	Button* meleeButton_button = meleeButton->AddComponent<Button>();
-	meleeButton_button->backgroundColor = Color::WHITE;
-	meleeButton_button->OnClick = []() {cout << "Melee button is pressed" << endl; };
-	Transform* meleeButton_transform = meleeButton->GetComponent<Transform>();
-	meleeButton_transform->scale = NAVIGATION_BUTTON_SIZE;
-	meleeButton_transform->position = Vector2(
-		firearmButton_transform->position.x - (firearmButton_transform->scale.x + meleeButton_transform->scale.x) / 2.0f - NAVIGATION_BUTTON_OFFSET.x,
-		background_transform->position.y - (background_transform->scale.y - NAVIGATION_BUTTON_SIZE.y) / 2.0f + NAVIGATION_BUTTON_OFFSET.y
-	);
-
-	meleeButtonLabel = new GameObject("Melee button label", Layer::Menu);
-	Text* meleeButtonLabel_text = meleeButtonLabel->AddComponent<Text>();
-	meleeButtonLabel_text->LoadText("Melee", Color::BLUE, 24);
-	meleeButtonLabel_text->showOnScreen = true;
-	Transform* meleeButtonLabel_transform = meleeButtonLabel->GetComponent<Transform>();
-	meleeButtonLabel_transform->position = meleeButton_transform->position;
+	ButtonUIGroup* meleeButtonGroup = new ButtonUIGroup;
+	meleeButtonGroup->image = new GameObject("Melee image", Layer::Menu);
+	Image* meleeButtonGroup_image = meleeButtonGroup->image->AddComponent<Image>();
+	meleeButtonGroup_image->LoadImage(NAVIGATION_UNSELECTED_PATH);
+	meleeButtonGroup_image->showOnScreen = true;
+	meleeButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Melee), meleeButtonGroup_image->transform->scale);
+	meleeButtonGroup->label = new GameObject("Melee label", Layer::Menu);
+	Text* meleeButtonGroup_text = meleeButtonGroup->label->AddComponent<Text>();
+	meleeButtonGroup_text->LoadText(MENU_NAVIGATION_LABEL_MAP.at(ShopMenuIndex::Melee), Color::WHITE, NAVIGATION_LABEL_SIZE);
+	meleeButtonGroup_text->showOnScreen = true;
+	meleeButtonGroup_text->transform->position = meleeButtonGroup_image->transform->position;
+	meleeButtonGroup->button = new GameObject("Melee button", Layer::Menu);
+	Button* meleeButtonGroup_button = meleeButtonGroup->button->AddComponent<Button>();
+	meleeButtonGroup_button->transform->scale = meleeButtonGroup_image->transform->scale;
+	meleeButtonGroup_button->transform->position = meleeButtonGroup_image->transform->position;
+	meleeButtonGroup_button->OnClick = [this]() {
+		HideCurrentMenu();
+		shopMenuIndex = ShopMenuIndex::Melee;
+		ShowCurrentMenu();
+		};
+	meleeButtonGroup->button->Render = [meleeButtonGroup_image, meleeButtonGroup_text]() {
+		meleeButtonGroup_image->Render();
+		meleeButtonGroup_text->Render();
+		};
+	menuNavigationButtonMap[ShopMenuIndex::Melee] = meleeButtonGroup;
 
 	// Utility navigation button
-	utilityButton = new GameObject("Utility button", Layer::Menu);
-	Button* utilityButton_button = utilityButton->AddComponent<Button>();
-	utilityButton_button->backgroundColor = Color::WHITE;
-	utilityButton_button->OnClick = []() {cout << "Utility button is pressed" << endl; };
-	Transform* utilityButton_transform = utilityButton->GetComponent<Transform>();
-	utilityButton_transform->scale = NAVIGATION_BUTTON_SIZE;
-	utilityButton_transform->position = Vector2(
-		firearmButton_transform->position.x + (firearmButton_transform->scale.x + utilityButton_transform->scale.x) / 2.0f + NAVIGATION_BUTTON_OFFSET.x,
-		background_transform->position.y - (background_transform->scale.y - NAVIGATION_BUTTON_SIZE.y) / 2.0f + NAVIGATION_BUTTON_OFFSET.y
-	);
-
-	utilityButtonLabel = new GameObject("Utility button label", Layer::Menu);
-	Text* utilityButtonLabel_text = utilityButtonLabel->AddComponent<Text>();
-	utilityButtonLabel_text->LoadText("Utility", Color::BLUE, 24);
-	utilityButtonLabel_text->showOnScreen = true;
-	Transform* utilityButtonLabel_transform = utilityButtonLabel->GetComponent<Transform>();
-	utilityButtonLabel_transform->position = utilityButton_transform->position;
+	ButtonUIGroup* utilityButtonGroup = new ButtonUIGroup;
+	utilityButtonGroup->image = new GameObject("Utility image", Layer::Menu);
+	Image* utilityButtonGroup_image = utilityButtonGroup->image->AddComponent<Image>();
+	utilityButtonGroup_image->LoadImage(NAVIGATION_UNSELECTED_PATH);
+	utilityButtonGroup_image->showOnScreen = true;
+	utilityButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Utility), utilityButtonGroup_image->transform->scale);
+	utilityButtonGroup->label = new GameObject("Utility label", Layer::Menu);
+	Text* utilityButtonGroup_text = utilityButtonGroup->label->AddComponent<Text>();
+	utilityButtonGroup_text->LoadText(MENU_NAVIGATION_LABEL_MAP.at(ShopMenuIndex::Utility), Color::WHITE, NAVIGATION_LABEL_SIZE);
+	utilityButtonGroup_text->showOnScreen = true;
+	utilityButtonGroup_text->transform->position = utilityButtonGroup_image->transform->position;
+	utilityButtonGroup->button = new GameObject("Utility button", Layer::Menu);
+	Button* utilityButtonGroup_button = utilityButtonGroup->button->AddComponent<Button>();
+	utilityButtonGroup_button->transform->scale = utilityButtonGroup_image->transform->scale;
+	utilityButtonGroup_button->transform->position = utilityButtonGroup_image->transform->position;
+	utilityButtonGroup_button->OnClick = [this]() {
+		HideCurrentMenu();
+		shopMenuIndex = ShopMenuIndex::Utility;
+		ShowCurrentMenu();
+		};
+	utilityButtonGroup->button->Render = [utilityButtonGroup_image, utilityButtonGroup_text]() {
+		utilityButtonGroup_image->Render();
+		utilityButtonGroup_text->Render();
+		};
+	menuNavigationButtonMap[ShopMenuIndex::Utility] = utilityButtonGroup;
 
 	// Damage upgrade
 	damageUpgradeButton = new GameObject("Damage upgrade button", Layer::Menu);
@@ -249,10 +328,10 @@ void Shop::InitializeUI() {
 		};
 	Transform* damageUpgradeButton_transform = damageUpgradeButton->GetComponent<Transform>();
 	damageUpgradeButton_transform->scale = UPGRADE_BUTTON_SIZE;
-	damageUpgradeButton_transform->position = Vector2(
-		background_transform->position.x,
-		UPGRADE_BUTTON_TOP
-	);
+	damageUpgradeButton_transform->position = background_transform->position;
+	damageUpgradeButton->Render = [damageUpgradeButton_button]() {
+		damageUpgradeButton_button->Render();
+		};
 
 	damageUpgradeButtonLabel = new GameObject("Damage upgrade button label", Layer::Menu);
 	Text* damageUpgradeButtonLabel_text = damageUpgradeButtonLabel->AddComponent<Text>();
@@ -260,6 +339,9 @@ void Shop::InitializeUI() {
 	damageUpgradeButtonLabel_text->showOnScreen = true;
 	Transform* damageUpgradeButtonLabel_transform = damageUpgradeButtonLabel->GetComponent<Transform>();
 	damageUpgradeButtonLabel_transform->position = damageUpgradeButton_transform->position;
+	damageUpgradeButtonLabel->Render = [damageUpgradeButtonLabel_text]() {
+		damageUpgradeButtonLabel_text->Render();
+		};
 
 	damageUpgradeButtonAmountLabel = new GameObject("Damage upgrade button amount label", Layer::Menu);
 	Text* damageUpgradeButtonAmountLabel_text = damageUpgradeButtonAmountLabel->AddComponent<Text>();
@@ -267,6 +349,9 @@ void Shop::InitializeUI() {
 	damageUpgradeButtonAmountLabel_text->showOnScreen = true;
 	Transform* damageUpgradeButtonAmountLabel_transform = damageUpgradeButtonAmountLabel->GetComponent<Transform>();
 	damageUpgradeButtonAmountLabel_transform->position = damageUpgradeButton_transform->position;
+	damageUpgradeButtonAmountLabel->Render = [damageUpgradeButtonAmountLabel_text]() {
+		damageUpgradeButtonAmountLabel_text->Render();
+		};
 
 	// Reload time upgrade
 	reloadTimeUpgradeButton = new GameObject("Reload time upgrade button", Layer::Menu);
@@ -277,10 +362,11 @@ void Shop::InitializeUI() {
 		};
 	Transform* reloadTimeUpgradeButton_transform = reloadTimeUpgradeButton->GetComponent<Transform>();
 	reloadTimeUpgradeButton_transform->scale = UPGRADE_BUTTON_SIZE;
-	reloadTimeUpgradeButton_transform->position = Vector2(
-		background_transform->position.x,
-		damageUpgradeButton_transform->position.y + (damageUpgradeButton_transform->scale + reloadTimeUpgradeButton_transform->scale).y / 2.0f + UPGRADE_BUTTON_VERTICAL_OFFSET
-	);
+	reloadTimeUpgradeButton_transform->position =
+		damageUpgradeButton_transform->position + Vector2::up * (UPGRADE_VERTICAL_MARGIN + UPGRADE_BUTTON_SIZE.y);
+	reloadTimeUpgradeButton->Render = [reloadTimeUpgradeButton_button]() {
+		reloadTimeUpgradeButton_button->Render();
+		};
 
 	reloadTimeUpgradeButtonLabel = new GameObject("Reload time upgrade button label", Layer::Menu);
 	Text* reloadTimeUpgradeButtonLabel_text = reloadTimeUpgradeButtonLabel->AddComponent<Text>();
@@ -288,6 +374,9 @@ void Shop::InitializeUI() {
 	reloadTimeUpgradeButtonLabel_text->showOnScreen = true;
 	Transform* reloadTimeUpgradeButtonLabel_transform = reloadTimeUpgradeButtonLabel->GetComponent<Transform>();
 	reloadTimeUpgradeButtonLabel_transform->position = reloadTimeUpgradeButton_transform->position;
+	reloadTimeUpgradeButtonLabel->Render = [reloadTimeUpgradeButtonLabel_text]() {
+		reloadTimeUpgradeButtonLabel_text->Render();
+		};
 
 	reloadTimeUpgradeButtonAmountLabel = new GameObject("Reload time upgrade button amount label", Layer::Menu);
 	Text* reloadTimeUpgradeButtonAmountLabel_text = reloadTimeUpgradeButtonAmountLabel->AddComponent<Text>();
@@ -295,6 +384,9 @@ void Shop::InitializeUI() {
 	reloadTimeUpgradeButtonAmountLabel_text->showOnScreen = true;
 	Transform* reloadTimeUpgradeButtonAmountLabel_transform = reloadTimeUpgradeButtonAmountLabel->GetComponent<Transform>();
 	reloadTimeUpgradeButtonAmountLabel_transform->position = reloadTimeUpgradeButton_transform->position;
+	reloadTimeUpgradeButtonAmountLabel->Render = [reloadTimeUpgradeButtonAmountLabel_text]() {
+		reloadTimeUpgradeButtonAmountLabel_text->Render();
+		};
 
 	// Ammo capacity upgrade
 	ammoCapacityUpgradeButton = new GameObject("Ammo capacity upgrade button", Layer::Menu);
@@ -305,10 +397,11 @@ void Shop::InitializeUI() {
 		};
 	Transform* ammoCapacityUpgradeButton_transform = ammoCapacityUpgradeButton->GetComponent<Transform>();
 	ammoCapacityUpgradeButton_transform->scale = UPGRADE_BUTTON_SIZE;
-	ammoCapacityUpgradeButton_transform->position = Vector2(
-		background_transform->position.x,
-		reloadTimeUpgradeButton_transform->position.y + (reloadTimeUpgradeButton_transform->scale + ammoCapacityUpgradeButton_transform->scale).y / 2.0f + UPGRADE_BUTTON_VERTICAL_OFFSET
-	);
+	ammoCapacityUpgradeButton_transform->position =
+		damageUpgradeButton_transform->position + Vector2::down * (UPGRADE_VERTICAL_MARGIN + UPGRADE_BUTTON_SIZE.y);
+	ammoCapacityUpgradeButton->Render = [ammoCapacityUpgradeButton_button]() {
+		ammoCapacityUpgradeButton_button->Render();
+		};
 
 	ammoCapacityUpgradeButtonLabel = new GameObject("Ammo capacity upgrade button label", Layer::Menu);
 	Text* ammoCapacityUpgradeButtonLabel_text = ammoCapacityUpgradeButtonLabel->AddComponent<Text>();
@@ -316,6 +409,9 @@ void Shop::InitializeUI() {
 	ammoCapacityUpgradeButtonLabel_text->showOnScreen = true;
 	Transform* ammoCapacityUpgradeButtonLabel_transform = ammoCapacityUpgradeButtonLabel->GetComponent<Transform>();
 	ammoCapacityUpgradeButtonLabel_transform->position = ammoCapacityUpgradeButton_transform->position;
+	ammoCapacityUpgradeButtonLabel->Render = [ammoCapacityUpgradeButtonLabel_text]() {
+		ammoCapacityUpgradeButtonLabel_text->Render();
+		};
 
 	ammoCapacityUpgradeButtonAmountLabel = new GameObject("Ammo capacity upgrade button amount label", Layer::Menu);
 	Text* ammoCapacityUpgradeButtonAmountLabel_text = ammoCapacityUpgradeButtonAmountLabel->AddComponent<Text>();
@@ -323,6 +419,9 @@ void Shop::InitializeUI() {
 	ammoCapacityUpgradeButtonAmountLabel_text->showOnScreen = true;
 	Transform* ammoCapacityUpgradeButtonAmountLabel_transform = ammoCapacityUpgradeButtonAmountLabel->GetComponent<Transform>();
 	ammoCapacityUpgradeButtonAmountLabel_transform->position = ammoCapacityUpgradeButton_transform->position;
+	ammoCapacityUpgradeButtonAmountLabel->Render = [ammoCapacityUpgradeButtonAmountLabel_text]() {
+		ammoCapacityUpgradeButtonAmountLabel_text->Render();
+		};
 
 }
 

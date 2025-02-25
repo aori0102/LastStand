@@ -29,6 +29,8 @@ public:
 
 	GameObject* Owner();
 
+	Transform* transform;
+
 	virtual void OnComponentDestroyed();
 
 	template<class T>
@@ -80,6 +82,8 @@ public:
 	GameObject(string initName);
 	GameObject(string initName, Layer initLayer);
 	virtual ~GameObject();
+
+	Transform* transform;
 
 	int ID();
 

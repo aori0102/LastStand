@@ -35,7 +35,8 @@ Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, flo
 	ammoLabel_text->showOnScreen = true;
 	Transform* ammoLabel_transform = ammoLabel->GetComponent<Transform>();
 	ammoLabel_transform->position = (Game::WindowResolution() - ammoLabel_transform->scale) / 2.0f;
-	ammoLabel->Render = [ammoLabel_text]() {
+	ammoLabel->Render = [this, ammoLabel_text]() {
+		ammoLabel_text->LoadText(to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
 		ammoLabel_text->Render();
 		};
 

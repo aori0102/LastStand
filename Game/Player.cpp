@@ -39,7 +39,7 @@ void Player::InitializeData() {
 	AddComponent<BoxCollider>();
 
 	// Add a firearm to the inventory
-	firearm = new Firearm(8, 20, 400.0f, 5.0f);
+	firearm = new Firearm(80, 200, 400.0f, 5.0f);
 
 	animationMap = {};
 
@@ -82,7 +82,7 @@ void Player::PlayerRender() {
 	animationMap[currentAnimationState]->RenderCurrent(
 		transform->position,
 		transform->scale,
-		-Math::RadToDeg(forward.Angle())
+		Math::RadToDeg(forward.Angle())
 	);
 
 	GetComponent<BoxCollider>()->Debug();

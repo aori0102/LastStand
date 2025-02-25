@@ -9,6 +9,8 @@ GameComponent::GameComponent(GameObject* initOwner) {
 
 	owner = initOwner;
 
+	transform = owner->transform;
+
 }
 
 void GameComponent::OnComponentDestroyed() {}

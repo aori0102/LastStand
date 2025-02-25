@@ -41,7 +41,7 @@ private:
 	// Spawn settings
 	float lastSpawnTick;
 
-	const float SPAWN_DELAY = 7.0f;
+	const float SPAWN_DELAY = 1.0f;
 	const int MIN_HORDE = 4;
 	const int MAX_HORDE = 8;
 	const vector<Vector2> SPAWN_POSITION_LIST =
@@ -60,7 +60,7 @@ private:
 	int currentWave;
 	int currentEnemyCount;
 	int enemyTotal;
-	int enemyLeft;
+	int enemyToSpawn;
 	bool isInWave;
 
 	const int BASE_SPAWN = 15;
