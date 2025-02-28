@@ -13,14 +13,14 @@ Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, flo
 	// Base
 	baseAttributeMap[Attribute::Damage] = initDamage;
 	baseAttributeMap[Attribute::ReloadTime] = initReloadTime;
-	baseAttributeMap[Attribute::AmmoCapacity] = initAmmoCapacity;
+	baseAttributeMap[Attribute::MaxAmmo] = initAmmoCapacity;
 	currentAmmo = initAmmoCapacity;
 	fireRate = initFireRate;
 
 	// Multiplier
 	attributeMultiplierMap[Attribute::Damage] = 1.0f;
 	attributeMultiplierMap[Attribute::ReloadTime] = 1.0f;
-	attributeMultiplierMap[Attribute::AmmoCapacity] = 1.0f;
+	attributeMultiplierMap[Attribute::MaxAmmo] = 1.0f;
 
 	shotDelay = 60.0f / fireRate;
 	lastShotTick = 0.0f;
@@ -121,7 +121,7 @@ void Firearm::Reload() {
 
 	isReloading = true;
 	reloadStartTick = Game::Time();
-	currentAmmo = baseAttributeMap[Attribute::AmmoCapacity] * attributeMultiplierMap[Attribute::AmmoCapacity];
+	currentAmmo = baseAttributeMap[Attribute::MaxAmmo] * attributeMultiplierMap[Attribute::MaxAmmo];
 
 	// Show UI
 	reloadBar->Enable();
@@ -167,5 +167,11 @@ int Firearm::CurrentAmmo() const {
 void Firearm::ModifyAttributeMultiplier(Attribute attribute, float amount) {
 
 	attributeMultiplierMap[attribute] = amount;
+
+}
+
+float Firearm::GetAttribute(Attribute attribute) {
+
+	return baseAttributeMap[attribute] * attributeMultiplierMap[attribute];
 
 }

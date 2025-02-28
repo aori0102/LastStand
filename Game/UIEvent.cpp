@@ -9,7 +9,7 @@ bool UIEvent::Update() {
 	if (!Game::GetMouseState(MouseButton::Left).started)
 		return false;
 
-	Vector2 mousePosition = Game::GetMouseInput();
+	Vector2 mousePosition = Math::SDLToC00(Game::GetMouseInput(), Vector2::zero);
 
 	auto it = buttonSet.begin();
 	while (it != buttonSet.end()) {

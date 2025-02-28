@@ -75,6 +75,8 @@ private:
 
 public:
 
+	int wrapLength;
+
 	Text(GameObject* initOwner);
 	~Text();
 

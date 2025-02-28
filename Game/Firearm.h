@@ -23,7 +23,8 @@ public:
 
 		Damage,
 		ReloadTime,
-		AmmoCapacity
+		MaxAmmo,
+		CriticalChance
 
 	};
 
@@ -66,5 +67,6 @@ public:
 	int CurrentAmmo() const;
 
 	void ModifyAttributeMultiplier(Attribute attribute, float amount);
+	float GetAttribute(Attribute attribute);
 
 };

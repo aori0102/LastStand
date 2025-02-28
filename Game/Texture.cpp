@@ -154,6 +154,8 @@ Text::Text(GameObject* initOwner) : GameComponent(initOwner) {
 	if (!font)
 		throw new exception("Cannot load font");
 
+	wrapLength = 0;
+
 }
 
 Text::~Text() {
@@ -171,7 +173,7 @@ bool Text::LoadText(string text, Color color, int fontSize) {
 
 	// Load text
 	TTF_SetFontSize(font, fontSize);
-	SDL_Surface* loadedSurface = TTF_RenderText_Blended(font, text.c_str(), color.ToSDLColor());
+	SDL_Surface* loadedSurface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), color.ToSDLColor(), wrapLength);
 
 	// Validate
 	if (!loadedSurface) {

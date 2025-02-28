@@ -219,9 +219,10 @@ void Game::HandleEvent() {
 
 		ActionState* keyState = FindKeyState(keycode);
 
-		if (keyState) {
+		if (keyState && keyState->canceled) {
 
 			keyState->canceled = false;
+			keyState->performed = false;
 			keyState->started = true;
 
 		}
@@ -233,7 +234,7 @@ void Game::HandleEvent() {
 		SDL_Keycode keycode = gEvent->key.keysym.sym;
 
 		ActionState* keyState = FindKeyState(keycode);
-
+		 
 		if (keyState) {
 
 			keyState->canceled = true;
