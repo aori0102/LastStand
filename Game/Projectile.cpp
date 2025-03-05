@@ -18,7 +18,8 @@ Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVe
 
 	transform->scale *= 2.0f;
 
-	AddComponent<BoxCollider>();
+	BoxCollider* boxCollider = AddComponent<BoxCollider>();
+	boxCollider->ignoreLayerSet.insert(Layer::Player);
 
 	direction = initDirection;
 	velocity = initVelocity;

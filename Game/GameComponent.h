@@ -6,8 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
-
-using namespace std;
+#include <set>
 
 class BoxCollider;
 class Transform;
@@ -37,19 +36,13 @@ public:
 	T* GetComponent();
 
 	template<class T>
+	bool TryGetComponent();
+
+	template<class T>
+	bool TryGetComponent(T* out);
+
+	template<class T>
 	T* AddComponent();
-
-};
-
-enum class Layer {
-
-	Background,
-	Default,
-	Player,
-	Zombie,
-	Projectile,
-	GUI,
-	Menu,
 
 };
 
@@ -57,7 +50,7 @@ class GameObject {
 
 private:
 
-	unordered_map<type_index, GameComponent*> componentMap;
+	std::unordered_map<type_index, GameComponent*> componentMap;
 
 	// The set to delete game objects
 	static unordered_set<GameObject*> deletionSet;
@@ -94,7 +87,7 @@ public:
 	virtual void OnCollisionEnter(BoxCollider* other);
 	virtual void OnCollisionExit(BoxCollider* other);
 
-	Layer GetLayer() { return layer; }
+	Layer GetLayer() const { return layer; }
 
 	void Enable();
 	void Disable();
@@ -108,6 +101,12 @@ public:
 
 	template<class T>
 	T* GetComponent();
+
+	template<class T>
+	bool TryGetComponent();
+
+	template<class T>
+	bool TryGetComponent(T* out);
 
 	template<class T>
 	T* AddComponent();
@@ -138,11 +137,9 @@ public:
 
 class BoxCollider : public GameComponent {
 
-private:
-
-	Layer layer;
-
 public:
+
+	std::set<Layer> ignoreLayerSet;
 
 	Vector2 localPosition;	// The position relative to the game object's transform
 
@@ -162,16 +159,27 @@ class Humanoid : public GameComponent {
 private:
 
 	float health;
+	float maxHealth;
+
+	float stamina;
+	float maxStamina;
 
 public:
 
-	float maxHealth;
-
 	Humanoid(GameObject* initOwner);
 
-	float Health() const;
+	float GetHealth() const;
+	float GetMaxHealth() const;
+
+	float GetStamina() const;
+	float GetMaxStamina() const;
+
+	void SetHealth(float amount);
 
 	void Damage(float amount);
 	void Heal(float amount);
+
+	void DrainStamina(float amount);
+	void GainStamina(float amount);
 
 };

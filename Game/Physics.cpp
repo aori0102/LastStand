@@ -48,6 +48,9 @@ bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hi
 		if (otherCollier == collider)
 			continue;
 
+		if (collider->ignoreLayerSet.contains(otherCollier->Owner()->GetLayer()))
+			continue;
+
 		// Get other bound
 		Bound otherBound = otherCollier->GetBound();
 

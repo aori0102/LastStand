@@ -3,8 +3,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <Type.h>
-
-using namespace std;
+#include <set>
 
 class GameObject;
 class BoxCollider;

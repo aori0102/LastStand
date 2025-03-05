@@ -43,3 +43,21 @@ bool GameObject::IsA() {
 	return type != nullptr;
 
 }
+
+template<class T>
+bool GameObject::TryGetComponent() {
+
+	T* component = GetComponent<T>();
+
+	return component != nullptr;
+
+}
+
+template<class T>
+bool GameObject::TryGetComponent(T* out) {
+
+	out = GetComponent<T>();
+
+	return out != nullptr;
+
+}

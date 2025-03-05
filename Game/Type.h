@@ -78,7 +78,6 @@ public:
 
 };
 
-
 class Bound {
 
 public:
@@ -123,3 +122,15 @@ public:
 
 };
 #include <Type.inl>
+
+enum class Layer {
+
+	Background,
+	Default,
+	Player,
+	Zombie,
+	Projectile,
+	GUI,
+	Menu,
+
+};

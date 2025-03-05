@@ -37,6 +37,7 @@ void Player::InitializeData() {
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
+	AddComponent<Humanoid>();
 
 	// Add a firearm to the inventory
 	firearm = new Firearm(80, 200, 400.0f, 5.0f);
@@ -60,8 +61,14 @@ void Player::Update() {
 		HandleMovement(transform);
 
 		HandleFacing(transform);
-		
+
 		HandleActions();
+
+		if (Game::GetKeyState(SDLK_h).started)
+			GetComponent<Humanoid>()->Damage(7.4f);
+
+		if (Game::GetKeyState(SDLK_t).started)
+			GetComponent<Humanoid>()->DrainStamina(19.4f);
 
 	}
 
@@ -131,14 +138,14 @@ void Player::HandleActions() {
 	// Use action
 	if (Game::GetMouseState(MouseButton::Left).started)
 		usingItem = true;
-	else if(Game::GetMouseState(MouseButton::Left).canceled)
+	else if (Game::GetMouseState(MouseButton::Left).canceled)
 		usingItem = false;
 
 	// Reload current firearm
 	if (Game::GetKeyState(SDLK_r).started)
 		firearm->Reload();
 
-	if(usingItem){
+	if (usingItem) {
 
 		if (firearm->Use(this)) {
 

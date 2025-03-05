@@ -6,9 +6,10 @@
 #include <GameComponent.h>
 #include <vector>
 
-class Player;
+class PlayerStatistic;
 class Zombie;
 class Shop;
+class StatusBar;
 
 class GameManager : public GameObject {
 
@@ -18,19 +19,16 @@ private:
 
 	// Entity
 	Player* player;
+	PlayerStatistic* playerStatistic;
 	unordered_set<Zombie*> enemySet;
+
+	StatusBar* statusBarUI;
 
 	// Systems
 	Shop* shop;
 
 	// Player stats
 	int money;
-	int experience;
-	int level;
-	int expToNextLvl;
-
-	const int BASE_EXP = 10;			// Base experience to get from level 0 to 1
-	const float EXP_MULTIPLIER = 1.65f;	// How much greater the exp to progress to next level
 
 	// Map setting
 	GameObject* background;
@@ -62,6 +60,7 @@ private:
 	int enemyTotal;
 	int enemyToSpawn;
 	bool isInWave;
+	float difficulty;
 
 	const int BASE_SPAWN = 15;
 	const float SPAWN_MULTIPLIER = 1.7f;
@@ -82,18 +81,6 @@ private:
 	const int MONEY_LABEL_SIZE = 20;
 	const int LEVEL_LABEL_SIZE = 18;
 
-	GameObject* experienceBackground;
-	GameObject* experienceBar;
-	GameObject* experienceLabel;
-	const Vector2 EXPERIENCE_BAR_SCALE = Vector2(100.0f, 7.0f);
-	const string EXP_SLASH = " | ";
-	const int EXP_LABEL_SIZE = 18;
-
-	GameObject* levelLabel;
-	const string LEVEL_PREFIX = "Level: ";
-
-	GameObject* spawnWaveButton;
-	GameObject* spawnWaveLabel;
 	const Vector2 SPAWN_WAVE_BUTTON_SCALE = Vector2(200.0f, 80.0f);
 
 	void Render();
@@ -116,5 +103,8 @@ public:
 	void StartWave();
 
 	static GameManager* Instance() { return instance; }
+
+	float GetDifficulty() const;
+	int GetCurrentWave() const;
 
 };

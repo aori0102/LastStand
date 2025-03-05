@@ -575,7 +575,7 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(Shop* initShop, Firearm::Attribute 
 	costObject->Render = [cost_text]() {
 		cost_text->Render();
 		};
-
+	
 }
 
 void FirearmUpgradeUIGroup::Update(Vector2 framePosition) {

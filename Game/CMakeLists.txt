@@ -22,6 +22,8 @@ set(SOURCES
     "UIEvent.cpp"
     "Animation.cpp"
     "RenderManager.cpp"
+    "StatusBar.cpp"
+    "PlayerStatistic.cpp"
 )
 
 # Add this directory as a static library

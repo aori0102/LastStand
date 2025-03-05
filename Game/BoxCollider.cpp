@@ -4,7 +4,7 @@
 
 BoxCollider::BoxCollider(GameObject* initOwner) : GameComponent(initOwner) {
 
-	layer = Layer::Default;
+	ignoreLayerSet = {};
 	localPosition = Vector2::zero;
 
 	Physics::RegisterBoxCollider(this);
@@ -13,7 +13,7 @@ BoxCollider::BoxCollider(GameObject* initOwner) : GameComponent(initOwner) {
 
 BoxCollider::BoxCollider(GameObject* initOwner, Layer initLayer) : GameComponent(initOwner) {
 
-	layer = initLayer;
+	ignoreLayerSet = {};
 	localPosition = Vector2::zero;
 
 	Physics::RegisterBoxCollider(this);
