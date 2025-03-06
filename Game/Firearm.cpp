@@ -106,7 +106,7 @@ bool Firearm::Use(Player* player) {
 	Vector2 origin = player->GetComponent<Transform>()->position;
 
 	// Fire
-	new Projectile(origin, direction, BULLET_VELOCITY, baseAttributeMap[Attribute::Damage] * attributeMultiplierMap[Attribute::Damage]);
+	new Projectile(player, origin, direction, BULLET_VELOCITY, baseAttributeMap[Attribute::Damage] * attributeMultiplierMap[Attribute::Damage]);
 	currentAmmo--;
 	lastShotTick = Game::Time();
 

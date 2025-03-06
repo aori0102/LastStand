@@ -15,9 +15,11 @@ private:
 
 	float spawnTime;		// Control when the object would be destroyed
 
+	GameObject* shooter;
+
 public:
 
-	Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage);
+	Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage);
 
 	void Update() override;
 	void OnCollisionEnter(BoxCollider* collider) override;

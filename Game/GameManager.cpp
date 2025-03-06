@@ -9,6 +9,7 @@
 #include <RenderManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
 #include <StatusBar.h>
 #include <PlayerStatistic.h>
+#include <WaveHandler.h>
 
 GameManager* GameManager::instance = nullptr;
 
@@ -17,14 +18,10 @@ GameManager::GameManager() {
 	if (instance)
 		throw new exception("Only one GameManager is allowed");
 
+	new WaveHandler;
+
 	instance = this;
 	money = 0;
-	currentWave = 0;
-	currentEnemyCount = 0;
-	enemyTotal = 0;
-	enemyToSpawn = 0;
-	isInWave = false;
-	lastSpawnTick = 0.0f;
 
 	InitializeObject();
 	InitializeUI();
@@ -81,29 +78,6 @@ void GameManager::InitializeUI() {
 	moneyText->Render = [moneyText_text]() {
 		moneyText_text->Render();
 		};
-
-	// Wave button
-	/*spawnWaveButton = new GameObject("Spawn wave button", Layer::GUI);
-	Button* spawnWaveButton_button = spawnWaveButton->AddComponent<Button>();
-	spawnWaveButton_button->backgroundColor = Color::WHITE;
-	spawnWaveButton_button->OnClick = [this]() { StartWave(); };
-	Transform* spawnWaveButton_transform = spawnWaveButton->GetComponent<Transform>();
-	spawnWaveButton_transform->scale = SPAWN_WAVE_BUTTON_SCALE;
-	spawnWaveButton_transform->position = Vector2(
-		(SPAWN_WAVE_BUTTON_SCALE - Game::WindowResolution()).x / 2.0f,
-		(Game::WindowResolution() - SPAWN_WAVE_BUTTON_SCALE).y / 2.0f
-	);
-	spawnWaveButton->Render = [spawnWaveButton_button]() {
-		spawnWaveButton_button->Render();
-		};
-
-	spawnWaveLabel = new GameObject("Spawn wave label", Layer::GUI);
-	Text* spawnWaveLabel_text = spawnWaveLabel->AddComponent<Text>();
-	spawnWaveLabel_text->LoadText("Spawn wave", Color::RED, 24);
-	spawnWaveLabel->GetComponent<Transform>()->position = spawnWaveButton_transform->position;
-	spawnWaveLabel->Render = [spawnWaveLabel_text]() {
-		spawnWaveLabel_text->Render();
-		};*/
 
 }
 
@@ -175,7 +149,7 @@ void GameManager::ReportDead(GameObject* gameObject) {
 			moneyLabel_transform->position.y
 		);
 
-		currentEnemyCount--;
+		WaveHandler::Instance()->RemoveZombie();
 
 	}
 
@@ -187,22 +161,6 @@ void GameManager::Update() {
 	southBorder->GetComponent<BoxCollider>()->Debug();
 	westBorder->GetComponent<BoxCollider>()->Debug();
 	eastBorder->GetComponent<BoxCollider>()->Debug();
-
-	HandleSpawning();
-
-}
-
-void GameManager::StartWave() {
-
-	if (isInWave)
-		return;
-
-	// Set data
-	isInWave = true;
-	currentWave++;
-	currentEnemyCount = 0;
-	enemyTotal = static_cast<int>(static_cast<float>(BASE_SPAWN) * powf(SPAWN_MULTIPLIER, static_cast<float>(currentWave)));
-	enemyToSpawn = enemyTotal;
 
 }
 
@@ -216,45 +174,20 @@ void GameManager::Render() {
 
 }
 
-void GameManager::HandleSpawning() {
+void GameManager::SpawnZombie(int amount) {
 
-	if (!isInWave)
-		return;
+	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
+	Algorithm::Shuffle(spawnPositionList);
 
-	if (Game::Time() < lastSpawnTick + SPAWN_DELAY)
-		return;
+	std::cout << "Spawning " << amount << std::endl;
 
-	// Spawn the horde
-
-	lastSpawnTick = Game::Time();
-
-	int minHorde = std::min(MIN_HORDE, enemyToSpawn);
-	int maxHorde = std::min(MAX_HORDE, enemyToSpawn);
-	int toSpawn = Random::Int(minHorde, maxHorde);
-
-	std::vector<Vector2> spawnPosition = SPAWN_POSITION_LIST;
-	Algorithm::Shuffle(spawnPosition);
-
-	for (int i = 0; i < toSpawn; i++) {
+	for (int i = 0; i < amount; i++) {
 
 		Zombie* zombie = new Zombie(player, ZombieIndex::Normal);
-		zombie->GetComponent<Transform>()->position = spawnPosition[i];
-		enemyToSpawn--;
-		currentEnemyCount++;
+		zombie->name = "Zombie " + std::to_string(i) + " (" + std::to_string(Game::Time()) + ")";
 
-	}
-
-	spawnPosition.clear();
-
-	if (currentEnemyCount == 0) {
-
-		isInWave = false;
-		cout << "Wave " << currentWave << " completed!\n";
+		zombie->transform->position = spawnPositionList[i];
 
 	}
 
 }
-
-float GameManager::GetDifficulty() const { return difficulty; }
-
-int GameManager::GetCurrentWave() const { return currentWave; }

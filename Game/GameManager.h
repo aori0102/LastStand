@@ -37,11 +37,6 @@ private:
 	const Vector2 MAP_SIZE = Vector2(3000.0f, 3000.0f);
 
 	// Spawn settings
-	float lastSpawnTick;
-
-	const float SPAWN_DELAY = 1.0f;
-	const int MIN_HORDE = 4;
-	const int MAX_HORDE = 8;
 	const vector<Vector2> SPAWN_POSITION_LIST =
 	{
 	Vector2(-1450.0f, 500.0f),
@@ -53,17 +48,6 @@ private:
 	Vector2(-500.0f, -1450.0f),
 	Vector2(500.0f, -1450.0f)
 	};
-
-	// Game settings
-	int currentWave;
-	int currentEnemyCount;
-	int enemyTotal;
-	int enemyToSpawn;
-	bool isInWave;
-	float difficulty;
-
-	const int BASE_SPAWN = 15;
-	const float SPAWN_MULTIPLIER = 1.7f;
 
 	// Border
 	GameObject* northBorder;
@@ -83,9 +67,9 @@ private:
 
 	const Vector2 SPAWN_WAVE_BUTTON_SCALE = Vector2(200.0f, 80.0f);
 
-	void Render();
+private:
 
-	void HandleSpawning();
+	void Render();
 
 public:
 
@@ -94,17 +78,13 @@ public:
 	void InitializeObject();
 	void InitializeUI();
 
+	void SpawnZombie(int amount);
 	void ReportDead(GameObject* gameObject);
 
 	void Update();
 
 	bool TrySpendMoney(int amount);
 
-	void StartWave();
-
 	static GameManager* Instance() { return instance; }
-
-	float GetDifficulty() const;
-	int GetCurrentWave() const;
 
 };

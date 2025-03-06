@@ -6,10 +6,12 @@
 const float EXIST_TIME = 5.0f;
 const string BULLET_PATH = "./Asset/Bullet.png";
 
-Projectile::Projectile(Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) : GameObject("Projectile", Layer::Projectile) {
+Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) : GameObject("Projectile", Layer::Projectile) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = initPosition;
+
+	shooter = initShooter;
 
 	Image* image = AddComponent<Image>();
 	image->LoadImage(BULLET_PATH);
@@ -44,7 +46,13 @@ void Projectile::Update() {
 
 void Projectile::OnCollisionEnter(BoxCollider* collider) {
 
+	if (collider->Owner() == shooter)
+		return;
+
 	Humanoid* humanoid = collider->GetComponent<Humanoid>();
+
+	std::cout << Game::Time() << std::endl;
+	std::cout << "Hit " << collider->Owner()->name << " (" << collider << " | " << collider->Owner() << ")" << std::endl;
 
 	if (humanoid)
 		humanoid->Damage(damage);

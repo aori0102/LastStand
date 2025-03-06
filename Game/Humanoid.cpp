@@ -11,6 +11,8 @@ Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 
 void Humanoid::Damage(float amount) {
 
+	std::cout << Owner()->name << " damaged (" << amount << ")" << std::endl;
+
 	health -= amount;
 
 	if (health <= 0.0f)

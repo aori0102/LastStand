@@ -3,13 +3,14 @@
 #include <GameManager.h>
 #include <Texture.h>
 #include <GameComponent.h>
+#include <WaveHandler.h>
 
 const string Zombie::SPRITE_PATH = "./Asset/Zombie.png";
 const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRIBUTE_MAP = {
-	{ ZombieIndex::Normal, ZombieAttribute(10.0f, 32.0f, 6.0f) },
-	{ ZombieIndex::Bomber, ZombieAttribute(9.0f, 73.0f, 9.0f) },
-	{ ZombieIndex::Lurker, ZombieAttribute(19.0f, 21.0f, 3.0f) },
-	{ ZombieIndex::Tanker, ZombieAttribute(5.0f, 148.0f, 3.0f) },
+	{ ZombieIndex::Normal, ZombieAttribute(60.0f, 32.0f, 6.0f) },
+	{ ZombieIndex::Bomber, ZombieAttribute(54.0f, 73.0f, 9.0f) },
+	{ ZombieIndex::Lurker, ZombieAttribute(104.0f, 21.0f, 3.0f) },
+	{ ZombieIndex::Tanker, ZombieAttribute(30.0f, 148.0f, 3.0f) },
 };
 const Vector2 Zombie::HEALTH_BAR_SCALE = Vector2(100.0f, 10.0f);
 const float Zombie::HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
@@ -36,13 +37,13 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 	// x is the wave
 	zombieAttribute->health *= ZombieAttribute::HEALTH_MULTIPLIER
 		* (
-			GameManager::Instance()->GetDifficulty() * std::logf(GameManager::Instance()->GetCurrentWave()) +
-			std::sqrtf(std::powf(ZombieAttribute::HEALTH_MULTIPLIER, GameManager::Instance()->GetCurrentWave()))
+			WaveHandler::Instance()->GetDifficulty() * std::logf(WaveHandler::Instance()->GetCurrentWave()) +
+			std::sqrtf(std::powf(ZombieAttribute::HEALTH_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave()))
 			);
 	zombieAttribute->damage *= ZombieAttribute::DAMAGE_MULTIPLIER
 		* (
-			GameManager::Instance()->GetDifficulty() * std::logf(GameManager::Instance()->GetCurrentWave()) +
-			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, GameManager::Instance()->GetCurrentWave()))
+			WaveHandler::Instance()->GetDifficulty() * std::logf(WaveHandler::Instance()->GetCurrentWave()) +
+			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave()))
 			);
 
 	transform->position = Vector2(500.0, 200.0f);

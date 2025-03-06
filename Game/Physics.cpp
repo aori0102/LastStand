@@ -21,6 +21,7 @@ void Physics::UnregisterBoxCollider(BoxCollider* boxCollider) {
 
 	boxColliderSet.erase(boxCollider);
 
+
 }
 
 bool Physics::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo) {

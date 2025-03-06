@@ -24,6 +24,7 @@ set(SOURCES
     "RenderManager.cpp"
     "StatusBar.cpp"
     "PlayerStatistic.cpp"
+    "WaveHandler.cpp"
 )
 
 # Add this directory as a static library

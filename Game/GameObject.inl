@@ -24,10 +24,10 @@ T* GameObject::AddComponent() {
 
 	auto it = componentMap.find(typeid(T));
 
-	T* component = new T(this);
-
 	if (it != componentMap.end())
 		return static_cast<T*>(it->second);
+
+	T* component = new T(this);
 
 	componentMap[typeid(T)] = component;
 
