@@ -7,9 +7,10 @@
 // object going through each other due to small calculation difference
 const float MOVEMENT_PERCENTAGE = 0.99f;
 
-unordered_set<BoxCollider*> Physics::boxColliderSet = {};
+std::unordered_set<BoxCollider*> Physics::boxColliderSet = {};
+std::unordered_set<RigidBody*> Physics::rigidBodySet = {};
 
-unordered_map<BoxCollider*, unordered_set<BoxCollider*>> Physics::colliderHitMap = {};
+std::unordered_map<BoxCollider*, std::unordered_set<BoxCollider*>> Physics::colliderHitMap = {};
 
 void Physics::RegisterBoxCollider(BoxCollider* boxCollider) {
 
@@ -21,6 +22,24 @@ void Physics::UnregisterBoxCollider(BoxCollider* boxCollider) {
 
 	boxColliderSet.erase(boxCollider);
 
+}
+
+void Physics::RegisterRigidBody(RigidBody* rigidBody) {
+
+	rigidBodySet.insert(rigidBody);
+
+}
+
+void Physics::UnregisterRigidBody(RigidBody* rigidBody) {
+
+	rigidBodySet.erase(rigidBody);
+
+}
+
+void Physics::Update() {
+
+	for (auto it = rigidBodySet.begin(); it != rigidBodySet.end(); it++)
+		(*it)->Update();
 
 }
 
@@ -370,9 +389,9 @@ bool Physics::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2
 
 		float t = q[i] / p[i];
 		if (p[i] < 0.0f)
-			t0 = max(t0, t);
+			t0 = std::max(t0, t);
 		else if (p[i] > 0.0f)
-			t1 = min(t1, t);
+			t1 = std::min(t1, t);
 
 		// Fully outside
 		if (t0 > t1)

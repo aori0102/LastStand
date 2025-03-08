@@ -2,7 +2,7 @@
 #include <Texture.h>
 #include <Game.h>
 
-unordered_set<Button*> UIEvent::buttonSet = {};
+std::unordered_set<Button*> UIEvent::buttonSet = {};
 
 bool UIEvent::Update() {
 

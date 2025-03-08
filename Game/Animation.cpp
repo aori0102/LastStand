@@ -5,7 +5,7 @@
 AnimationClip::AnimationClip(Image* initAnimationSpriteSheet) {
 
 	if (!initAnimationSpriteSheet)
-		throw new exception("Animation extracting from null sprite sheet");
+		throw new std::exception("Animation extracting from null sprite sheet");
 
 	animationSpriteSheet = initAnimationSpriteSheet;
 
@@ -13,7 +13,7 @@ AnimationClip::AnimationClip(Image* initAnimationSpriteSheet) {
 	isPlaying = false;
 	animationLength = 0.0f;
 
-	animationTimeline = set<AnimationFrame*, decltype(&AnimationFrame::Compare)>(&AnimationFrame::Compare);
+	animationTimeline = std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)>(&AnimationFrame::Compare);
 	currentFrame = animationTimeline.begin();
 
 }
@@ -48,11 +48,11 @@ void AnimationClip::Update() {
 void AnimationClip::AddAnimationFrame(AnimationFrame* animationFrame) {
 
 	if (!animationFrame)
-		throw new exception("Adding null frame to animation");
+		throw new std::exception("Adding null frame to animation");
 
 	animationTimeline.insert(animationFrame);
 
-	animationLength = max(animationLength, animationFrame->timePoint);
+	animationLength = std::max(animationLength, animationFrame->timePoint);
 
 	currentFrame = animationTimeline.begin();
 

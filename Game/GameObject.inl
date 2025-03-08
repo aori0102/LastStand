@@ -4,7 +4,7 @@
 template <class T>
 T* GameObject::GetComponent() {
 
-	if (!is_base_of<GameComponent, T>::value)
+	if (!std::is_base_of<GameComponent, T>::value)
 		return nullptr;
 
 	auto it = componentMap.find(typeid(T));
@@ -12,14 +12,14 @@ T* GameObject::GetComponent() {
 	if (it == componentMap.end())
 		return nullptr;
 	else
-		return static_cast<T*>(componentMap[typeid(T)]);
+		return static_cast<T*>(componentMap.at(typeid(T)));
 
 }
 
 template <class T>
 T* GameObject::AddComponent() {
 
-	if (!is_base_of<GameComponent, T>::value)
+	if (!std::is_base_of<GameComponent, T>::value)
 		return nullptr;
 
 	auto it = componentMap.find(typeid(T));
@@ -54,7 +54,7 @@ bool GameObject::TryGetComponent() {
 }
 
 template<class T>
-bool GameObject::TryGetComponent(T* out) {
+bool GameObject::TryGetComponent(T*& out) {
 
 	out = GetComponent<T>();
 

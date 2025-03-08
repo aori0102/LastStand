@@ -7,7 +7,7 @@
 #include <UIEvent.h>
 
 // Font data
-const string FONT_PATH = "./Asset/Font.ttf";
+const std::string FONT_PATH = "./Asset/Font.ttf";
 const int FONT_SIZE = 16;
 
 Texture::Texture() {
@@ -49,7 +49,7 @@ Image::~Image() {
 
 }
 
-bool Image::LoadImage(string path) {
+bool Image::LoadImage(std::string path) {
 
 	FreeTexture();
 
@@ -59,7 +59,7 @@ bool Image::LoadImage(string path) {
 	// Validate surface
 	if (!loadedSurface) {
 
-		cout << "Cannot load image. IMG Error: " << IMG_GetError() << endl;
+		std::cout << "Cannot load image. IMG Error: " << IMG_GetError() << std::endl;
 		return false;
 
 	}
@@ -68,7 +68,7 @@ bool Image::LoadImage(string path) {
 	texture = Game::CreateTexture(loadedSurface);
 	if (!texture) {
 
-		cout << "Cannot get texture. SDL Error: " << SDL_GetError() << endl;
+		std::cout << "Cannot get texture. SDL Error: " << SDL_GetError() << std::endl;
 		return false;
 
 	}
@@ -152,7 +152,7 @@ Text::Text(GameObject* initOwner) : GameComponent(initOwner) {
 
 	font = TTF_OpenFont(FONT_PATH.c_str(), FONT_SIZE);
 	if (!font)
-		throw new exception("Cannot load font");
+		throw new std::exception("Cannot load font");
 
 	wrapLength = 0;
 
@@ -167,7 +167,7 @@ Text::~Text() {
 
 }
 
-bool Text::LoadText(string text, Color color, int fontSize) {
+bool Text::LoadText(std::string text, Color color, int fontSize) {
 
 	FreeTexture();
 
@@ -178,7 +178,7 @@ bool Text::LoadText(string text, Color color, int fontSize) {
 	// Validate
 	if (!loadedSurface) {
 
-		cout << "Error loading text. TTF Error: " << TTF_GetError() << endl;
+		std::cout << "Error loading text. TTF Error: " << TTF_GetError() << std::endl;
 		return false;
 
 	}
@@ -187,7 +187,7 @@ bool Text::LoadText(string text, Color color, int fontSize) {
 	texture = Game::CreateTexture(loadedSurface);
 	if (!texture) {
 
-		cout << "Error loading texture. SDL Error: " << SDL_GetError() << endl;
+		std::cout << "Error loading texture. SDL Error: " << SDL_GetError() << std::endl;
 		return false;
 
 	}
@@ -217,7 +217,7 @@ Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 
 	UIEvent::RegisterButton(this);
 
-	OnClick = []() { cout << "Button is pressed" << endl; };
+	OnClick = []() { std::cout << "Button is pressed" << std::endl; };
 
 }
 

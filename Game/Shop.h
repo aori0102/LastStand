@@ -111,14 +111,14 @@ private:
 		UpgradeNode* currentUpgrade;
 		UpgradeNode* tailNode;
 		Firearm::Attribute attribute;
-		function<bool(float, float)> betterNode;
+		std::function<bool(float, float)> betterNode;
 
 	public:
 
-		string name;
-		string description;
+		std::string name;
+		std::string description;
 
-		FirearmUpgrade(Firearm::Attribute initAttribute, function<bool(float, float)> initBetterNode = [](float newUp, float oldUp) { return newUp > oldUp; });
+		FirearmUpgrade(Firearm::Attribute initAttribute, std::function<bool(float, float)> initBetterNode = [](float newUp, float oldUp) { return newUp > oldUp; });
 
 		void AddUpgrade(UpgradeNode* newNode);
 		void UpgradeNext(Firearm* firearm);
@@ -126,7 +126,7 @@ private:
 		float NextUpgradeAmount();
 
 	};
-	unordered_map<Firearm::Attribute, FirearmUpgrade*> firearmUpgradeMap;
+	std::unordered_map<Firearm::Attribute, FirearmUpgrade*> firearmUpgradeMap;
 
 	// Player to control interaction
 	Player* linkedPlayer;
@@ -141,7 +141,7 @@ private:
 
 	// General
 	GameObject* background;
-	const string BACKGROUND_PATH = "./Asset/Shop_Background.png";
+	const std::string BACKGROUND_PATH = "./Asset/Shop_Background.png";
 
 	// Navigation
 	std::unordered_map<ShopMenuIndex, ButtonUIGroup*> menuNavigationButtonMap;

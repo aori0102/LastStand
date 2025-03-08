@@ -4,8 +4,9 @@
 #include <Texture.h>
 #include <GameComponent.h>
 #include <WaveHandler.h>
+#include <Player.h>
 
-const string Zombie::SPRITE_PATH = "./Asset/Zombie.png";
+const std::string Zombie::SPRITE_PATH = "./Asset/Zombie.png";
 const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRIBUTE_MAP = {
 	{ ZombieIndex::Normal, ZombieAttribute(60.0f, 32.0f, 6.0f) },
 	{ ZombieIndex::Bomber, ZombieAttribute(54.0f, 73.0f, 9.0f) },
@@ -46,12 +47,19 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave()))
 			);
 
-	transform->position = Vector2(500.0, 200.0f);
 	transform->scale = Vector2(50.0f, 50.0f);
 
+	RigidBody* rigidBody= AddComponent<RigidBody>();
+	rigidBody->drag = 10.0f;
+	rigidBody->mass = 60.0f;
+
 	AddComponent<BoxCollider>();
+	
 	Humanoid* humanoid = AddComponent<Humanoid>();
 	humanoid->SetHealth(zombieAttribute->health);
+	humanoid->OnDeath = [this]() {
+		GameObject::Destroy(this);
+		};
 
 	Image* zombieSprite = AddComponent<Image>();
 	zombieSprite->LoadImage(SPRITE_PATH);
@@ -99,5 +107,14 @@ void Zombie::Update() {
 void Zombie::OnDestroy() {
 
 	GameManager::Instance()->ReportDead(this);
+
+}
+
+void Zombie::OnCollisionEnter(BoxCollider* other) {
+
+	if (!other->Owner()->IsA<Player>())
+		return;
+
+	other->Owner()->GetComponent<Humanoid>()->Damage(1);
 
 }

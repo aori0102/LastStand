@@ -4,13 +4,14 @@
 #include <Texture.h>
 
 const float EXIST_TIME = 5.0f;
-const string BULLET_PATH = "./Asset/Bullet.png";
+const std::string BULLET_PATH = "./Asset/Bullet.png";
+const float Projectile::KNOCKBACK_FORCE = 37.0f;
 
 Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) : GameObject("Projectile", Layer::Projectile) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = initPosition;
-
+	
 	shooter = initShooter;
 
 	Image* image = AddComponent<Image>();
@@ -49,13 +50,13 @@ void Projectile::OnCollisionEnter(BoxCollider* collider) {
 	if (collider->Owner() == shooter)
 		return;
 
-	Humanoid* humanoid = collider->GetComponent<Humanoid>();
-
-	std::cout << Game::Time() << std::endl;
-	std::cout << "Hit " << collider->Owner()->name << " (" << collider << " | " << collider->Owner() << ")" << std::endl;
-
-	if (humanoid)
+	Humanoid* humanoid = nullptr;
+	if (collider->TryGetComponent<Humanoid>(humanoid))
 		humanoid->Damage(damage);
+
+	RigidBody* rigidBody = nullptr;
+	if (collider->TryGetComponent<RigidBody>(rigidBody))
+		rigidBody->AddForce(direction.Normalize() * KNOCKBACK_FORCE);
 
 	GameObject::Destroy(this);
 

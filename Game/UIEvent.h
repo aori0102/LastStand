@@ -2,15 +2,13 @@
 
 #include <unordered_set>
 
-using namespace std;
-
 class Button;
 
 class UIEvent {
 
 private:
 
-	static unordered_set<Button*> buttonSet;
+	static std::unordered_set<Button*> buttonSet;
 
 public:
 

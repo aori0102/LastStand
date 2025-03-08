@@ -16,7 +16,7 @@ GameManager* GameManager::instance = nullptr;
 GameManager::GameManager() {
 
 	if (instance)
-		throw new exception("Only one GameManager is allowed");
+		throw new std::exception("Only one GameManager is allowed");
 
 	new WaveHandler;
 
@@ -34,7 +34,7 @@ bool GameManager::TrySpendMoney(int amount) {
 		return false;
 
 	money -= amount;
-	moneyText->GetComponent<Text>()->LoadText(to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
+	moneyText->GetComponent<Text>()->LoadText(std::to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
 	return true;
 
 }
@@ -68,7 +68,7 @@ void GameManager::InitializeUI() {
 	// Money text
 	moneyText = new GameObject("Money text", Layer::GUI);
 	Text* moneyText_text = moneyText->AddComponent<Text>();
-	moneyText_text->LoadText(to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
+	moneyText_text->LoadText(std::to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
 	moneyText_text->showOnScreen = true;
 	Transform* moneyText_transform = moneyText->GetComponent<Transform>();
 	moneyText_transform->position = Vector2(
@@ -141,7 +141,7 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 		// Point, xp, money, etc
 		money += 10;
-		moneyText->GetComponent<Text>()->LoadText(to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
+		moneyText->GetComponent<Text>()->LoadText(std::to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
 		Transform* moneyText_transform = moneyText->GetComponent<Transform>();
 		Transform* moneyLabel_transform = moneyLabel->GetComponent<Transform>();
 		moneyText_transform->position = Vector2(

@@ -17,7 +17,7 @@ const int AMMO_FONT_SIZE = 30;
 ReloadUI::ReloadUI(Firearm* initFirearm) {
 
 	if (!initFirearm)
-		throw new exception("Initializing reload UI with a null firearm");
+		throw new std::exception("Initializing reload UI with a null firearm");
 
 	linkedFirearm = initFirearm;
 
@@ -31,13 +31,13 @@ void ReloadUI::Update() {
 FirearmUI::FirearmUI(Firearm* initFirearm) {
 
 	if (!linkedFirearm)
-		throw new exception("Initialize firearm UI with null firearm");
+		throw new std::exception("Initialize firearm UI with null firearm");
 
 	linkedFirearm = initFirearm;
 	previousAmmo = linkedFirearm->CurrentAmmo();
 
 	Text* text = AddComponent<Text>();
-	text->LoadText(to_string(previousAmmo), Color::WHITE, AMMO_FONT_SIZE);
+	text->LoadText(std::to_string(previousAmmo), Color::WHITE, AMMO_FONT_SIZE);
 
 }
 
@@ -52,7 +52,7 @@ void FirearmUI::Update() {
 		// Update UI and data
 		previousAmmo = ammo;
 
-		text->LoadText(to_string(ammo), Color::WHITE, AMMO_FONT_SIZE);
+		text->LoadText(std::to_string(ammo), Color::WHITE, AMMO_FONT_SIZE);
 
 	}
 

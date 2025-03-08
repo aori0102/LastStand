@@ -3,8 +3,6 @@
 #include <Type.h>
 #include <GameComponent.h>
 
-using namespace std;
-
 class Projectile : public GameObject {
 
 private:
@@ -16,6 +14,8 @@ private:
 	float spawnTime;		// Control when the object would be destroyed
 
 	GameObject* shooter;
+
+	static const float KNOCKBACK_FORCE;
 
 public:
 

@@ -7,8 +7,6 @@
 #include <vector>
 #include <iostream>
 
-using namespace std;
-
 enum class UILayer {
 
 	Default,
@@ -44,15 +42,15 @@ private:
 
 	// Event control
 	static SDL_Event* gEvent;
-	static unordered_map<SDL_Keycode, ActionState> keyStateDictionary;
-	static unordered_set<GameObject*> gameObjectSet;
-	static unordered_map<MouseButton, ActionState> mouseButtonStateDictionary;
+	static std::unordered_map<SDL_Keycode, ActionState> keyStateDictionary;
+	static std::unordered_set<GameObject*> gameObjectSet;
+	static std::unordered_map<MouseButton, ActionState> mouseButtonStateDictionary;
 
 	static ActionState* FindKeyState(SDL_Keycode keycode);
 	static ActionState* FindMouseButtonState(MouseButton mouseButton);
 
 	// Game info
-	static string gameName;
+	static std::string gameName;
 	static Vector2 windowResolution;
 
 	// Game component

@@ -21,6 +21,7 @@ set(SOURCES
     "Shop.cpp"
     "UIEvent.cpp"
     "Animation.cpp"
+    "RigidBody.cpp"
     "RenderManager.cpp"
     "StatusBar.cpp"
     "PlayerStatistic.cpp"

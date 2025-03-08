@@ -20,12 +20,12 @@ float Game::deltaTime = 0.0f;
 SDL_Window* Game::gWindow = nullptr;
 SDL_Renderer* Game::gRenderer = nullptr;
 SDL_Event* Game::gEvent = new SDL_Event;
-unordered_map<SDL_Keycode, Game::ActionState> Game::keyStateDictionary = {};
-unordered_map<MouseButton, Game::ActionState> Game::mouseButtonStateDictionary = {};
-unordered_set<GameObject*> Game::gameObjectSet = {};
+std::unordered_map<SDL_Keycode, Game::ActionState> Game::keyStateDictionary = {};
+std::unordered_map<MouseButton, Game::ActionState> Game::mouseButtonStateDictionary = {};
+std::unordered_set<GameObject*> Game::gameObjectSet = {};
 Vector2 Game::windowResolution = Vector2(1280.0f, 720.0f);
 Vector2 Game::cameraPosition = Vector2::zero;
-string Game::gameName = "Last Stand";
+std::string Game::gameName = "Last Stand";
 GameObject* Game::cameraFocusObject = nullptr;
 GameManager* Game::gameManager = nullptr;
 
@@ -40,15 +40,15 @@ Vector2 Game::WindowResolution() { return windowResolution; }
 bool Game::Initialize() {
 
 	// Initialize SDL2
-	cout << "Initializing SDL2..." << endl;
+	std::cout << "Initializing SDL2..." << std::endl;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 
-		cout << "Failed to initialize SDL2. SDL Error: " << SDL_GetError() << endl;
+		std::cout << "Failed to initialize SDL2. SDL Error: " << SDL_GetError() << std::endl;
 		return false;
 
 	} else
-		cout << "SDL2 initialized." << endl;
+		std::cout << "SDL2 initialized." << std::endl;
 
 	// Create window
 	gWindow = SDL_CreateWindow(
@@ -61,22 +61,22 @@ bool Game::Initialize() {
 
 	if (!gWindow) {
 
-		cout << "Failed to create window. SDL Error: " << SDL_GetError() << endl;
+		std::cout << "Failed to create window. SDL Error: " << SDL_GetError() << std::endl;
 		return false;
 
 	} else
-		cout << "Window created." << endl;
+		std::cout << "Window created." << std::endl;
 
 	// Create renderer
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
 	if (!gRenderer) {
 
-		cout << "Failed to create renderer. SDL Error: " << SDL_GetError() << endl;
+		std::cout << "Failed to create renderer. SDL Error: " << SDL_GetError() << std::endl;
 		return false;
 
 	} else
-		cout << "Renderer created." << endl;
+		std::cout << "Renderer created." << std::endl;
 	// Renderer settings
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
@@ -84,23 +84,23 @@ bool Game::Initialize() {
 	int imgFlag = IMG_INIT_PNG;
 	if (!(IMG_Init(imgFlag) & imgFlag)) {
 
-		cout << "Failed to initialize SDL2 Image. IMG Error: " << IMG_GetError() << endl;
+		std::cout << "Failed to initialize SDL2 Image. IMG Error: " << IMG_GetError() << std::endl;
 		return false;
 
 	} else
-		cout << "SDL2 Image initialized" << endl;
+		std::cout << "SDL2 Image initialized" << std::endl;
 
 	// Initialize TTF
 	if (TTF_Init() == -1) {
 
-		cout << "Failed to initialize SDL2 TTF. TTF Error: " << TTF_GetError() << endl;
+		std::cout << "Failed to initialize SDL2 TTF. TTF Error: " << TTF_GetError() << std::endl;
 		return false;
 
 	} else
-		cout << "SDL2 TTF initialized" << endl;
+		std::cout << "SDL2 TTF initialized" << std::endl;
 
 	// Success, terminate
-	cout << "Done!" << endl;
+	std::cout << "Done!" << std::endl;
 	return true;
 
 }
@@ -130,6 +130,8 @@ void Game::Loop() {
 
 		// Camera and background
 		UpdateCamera();
+
+		Physics::Update();
 
 		// Handle game object
 		auto it = gameObjectSet.begin();

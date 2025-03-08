@@ -5,8 +5,6 @@
 #include <string>
 #include <GameComponent.h>
 
-using namespace std;
-
 class Image;
 
 class AnimationClip : public GameObject {
@@ -32,11 +30,11 @@ private:
 
 	Image* animationSpriteSheet;
 
-	set<AnimationFrame*, decltype(&AnimationFrame::Compare)> animationTimeline;
+	std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)> animationTimeline;
 
 	float startTick;		// When the animation is played
 	float animationLength;
-	set<AnimationFrame*, decltype(&AnimationFrame::Compare)>::iterator currentFrame;
+	std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)>::iterator currentFrame;
 	bool isPlaying;
 
 public:

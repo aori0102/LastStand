@@ -39,7 +39,7 @@ public:
 	bool TryGetComponent();
 
 	template<class T>
-	bool TryGetComponent(T* out);
+	bool TryGetComponent(T*& out);
 
 	template<class T>
 	T* AddComponent();
@@ -50,10 +50,10 @@ class GameObject {
 
 private:
 
-	std::unordered_map<type_index, GameComponent*> componentMap;
+	std::unordered_map<std::type_index, GameComponent*> componentMap;
 
 	// The set to delete game objects
-	static unordered_set<GameObject*> deletionSet;
+	static std::unordered_set<GameObject*> deletionSet;
 
 	Layer layer;
 
@@ -69,11 +69,11 @@ protected:
 
 public:
 
-	string name;
+	std::string name;
 
 	GameObject();
-	GameObject(string initName);
-	GameObject(string initName, Layer initLayer);
+	GameObject(std::string initName);
+	GameObject(std::string initName, Layer initLayer);
 	virtual ~GameObject();
 
 	Transform* transform;
@@ -93,7 +93,7 @@ public:
 	void Disable();
 	bool IsActive();
 
-	function<void()> Render;
+	std::function<void()> Render;
 
 	static bool CompareByLayer(const GameObject* a, const GameObject* b);
 
@@ -106,7 +106,7 @@ public:
 	bool TryGetComponent();
 
 	template<class T>
-	bool TryGetComponent(T* out);
+	bool TryGetComponent(T*& out);
 
 	template<class T>
 	T* AddComponent();
@@ -166,6 +166,10 @@ private:
 
 public:
 
+	std::function<void()> OnDeath;
+
+public:
+
 	Humanoid(GameObject* initOwner);
 
 	float GetHealth() const;
@@ -181,5 +185,33 @@ public:
 
 	void DrainStamina(float amount);
 	void GainStamina(float amount);
+
+};
+
+class RigidBody : public GameComponent {
+
+private:
+
+	Vector2 initialForce;
+
+	float lastUpdateTick;
+
+public:
+
+	float mass;
+	float drag;
+
+	Vector2 momentum;
+
+public:
+
+	RigidBody(GameObject* initOwner);
+
+	void AddForce(Vector2 force);
+	void Update();
+
+	Vector2 GetAcceleration();
+
+	void OnComponentDestroyed() override;
 
 };

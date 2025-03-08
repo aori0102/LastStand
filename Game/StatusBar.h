@@ -73,7 +73,7 @@ private:
 
 private:
 
-	unordered_map<UIElementIndex, GameObject*> uiElementMap;
+	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 
 	PlayerStatistic* linkedPlayerStatistic;
 

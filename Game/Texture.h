@@ -61,7 +61,7 @@ public:
 	Image(GameObject* initOwner);
 	~Image();
 
-	bool LoadImage(string path);
+	bool LoadImage(std::string path);
 
 	void Render() override;
 
@@ -80,7 +80,7 @@ public:
 	Text(GameObject* initOwner);
 	~Text();
 
-	bool LoadText(string text, Color color, int fontSize);
+	bool LoadText(std::string text, Color color, int fontSize);
 
 	void Render() override;
 
@@ -101,7 +101,7 @@ public:
 	void Render() override;
 	Bound GetBound();
 
-	function<void()> OnClick;
+	std::function<void()> OnClick;
 
 	bool IsActive() const;
 

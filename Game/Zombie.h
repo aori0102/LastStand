@@ -57,5 +57,6 @@ public:
 
 	void Update() override;
 	void OnDestroy() override;
+	void OnCollisionEnter(BoxCollider* other) override;
 
 };

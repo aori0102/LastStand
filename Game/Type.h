@@ -1,11 +1,8 @@
 #pragma once
 
-#include <cmath>
 #include <SDL.h>
 #include <iostream>
 #include <random>
-
-using namespace std;
 
 class Vector2 {
 
@@ -34,7 +31,7 @@ public:
 	Vector2 operator/(const float& other) const;
 	Vector2 operator/=(const float& other);
 
-	friend ostream& operator<<(ostream& os, const Vector2& other);
+	friend std::ostream& operator<<(std::ostream& os, const Vector2& other);
 
 	bool operator==(const Vector2& other);
 	bool operator!=(const Vector2& other);
@@ -118,7 +115,7 @@ class Algorithm {
 public:
 
 	template <typename T>
-	static void Shuffle(vector<T>& array);
+	static void Shuffle(std::vector<T>& array);
 
 };
 #include <Type.inl>

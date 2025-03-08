@@ -10,7 +10,7 @@
 #include <Animation.h>
 #include <functional>
 
-const string PLAYER_SPRITE_PATH = "./Asset/PlayerSprite.png";
+const std::string PLAYER_SPRITE_PATH = "./Asset/PlayerSprite.png";
 
 Player::Player() : GameObject("Player", Layer::Player) {
 
@@ -37,8 +37,11 @@ void Player::InitializeData() {
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
-	AddComponent<Humanoid>();
-
+	Humanoid* humanoid = AddComponent<Humanoid>();
+	humanoid->SetHealth(250.0f);
+	humanoid->OnDeath = []() {
+		std::cout << "Player dead" << std::endl;
+		};
 	// Add a firearm to the inventory
 	firearm = new Firearm(80, 200, 400.0f, 5.0f);
 

@@ -31,12 +31,12 @@ Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, flo
 	// Ammo
 	ammoLabel = new GameObject("Ammo label", Layer::GUI);
 	Text* ammoLabel_text = ammoLabel->AddComponent<Text>();
-	ammoLabel_text->LoadText(to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
+	ammoLabel_text->LoadText(std::to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
 	ammoLabel_text->showOnScreen = true;
 	Transform* ammoLabel_transform = ammoLabel->GetComponent<Transform>();
 	ammoLabel_transform->position = (Game::WindowResolution() - ammoLabel_transform->scale) / 2.0f;
 	ammoLabel->Render = [this, ammoLabel_text]() {
-		ammoLabel_text->LoadText(to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
+		ammoLabel_text->LoadText(std::to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
 		ammoLabel_text->Render();
 		};
 
@@ -151,7 +151,7 @@ float Firearm::GetReloadingProgress() {
 	float reloadTime = baseAttributeMap[Attribute::ReloadTime] * attributeMultiplierMap[Attribute::ReloadTime];
 
 	if (reloadTime == 0.0f)
-		throw new exception("Reload time of firearm is 0s. Why?");
+		throw new std::exception("Reload time of firearm is 0s. Why?");
 
 	return ((Game::Time() - reloadStartTick) / reloadTime);
 

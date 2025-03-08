@@ -17,17 +17,13 @@ T* GameComponent::AddComponent() {
 template<class T>
 bool GameComponent::TryGetComponent() {
 
-	T* component = GetComponent<T>();
-
-	return component != nullptr;
+	return owner->TryGetComponent<T>();
 
 }
 
 template<class T>
-bool GameComponent::TryGetComponent(T* out) {
+bool GameComponent::TryGetComponent(T*& out) {
 
-	out = GetComponent<T>();
-
-	return out != nullptr;
+	return owner->TryGetComponent<T>(out);
 
 }

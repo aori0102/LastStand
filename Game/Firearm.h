@@ -30,8 +30,8 @@ public:
 
 private:
 
-	unordered_map<Attribute, float> baseAttributeMap;
-	unordered_map<Attribute, float> attributeMultiplierMap;
+	std::unordered_map<Attribute, float> baseAttributeMap;
+	std::unordered_map<Attribute, float> attributeMultiplierMap;
 
 	int currentAmmo;
 

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <RenderManager.h>
 
-unordered_set<GameObject*> GameObject::deletionSet = {};
+std::unordered_set<GameObject*> GameObject::deletionSet = {};
 int GameObject::currentID = 0;
 
 GameObject::GameObject() {
@@ -29,7 +29,7 @@ void GameObject::SetLayer(Layer newLayer) {
 
 }
 
-GameObject::GameObject(string initName) {
+GameObject::GameObject(std::string initName) {
 
 	name = initName;
 	id = GameObject::GetNextID();
@@ -44,7 +44,7 @@ GameObject::GameObject(string initName) {
 
 }
 
-GameObject::GameObject(string initName, Layer initLayer) {
+GameObject::GameObject(std::string initName, Layer initLayer) {
 
 	name = initName;
 	layer = initLayer;

@@ -1,11 +1,10 @@
 ﻿#include <iostream>
 #include <Game.h>
-
-using namespace std;
+#include <exception>
 
 int main(int argc, char* args[]) {
 
-	cout << "Game starting..." << endl;
+	std::cout << "Game starting..." << std::endl;
 
 	if (!Game::Initialize())
 		return -1;
@@ -15,9 +14,9 @@ int main(int argc, char* args[]) {
 		Game::InitializeGameObject();
 		Game::Loop();
 
-	} catch (exception* e) {
+	} catch (std::exception* e) {
 
-		cout << "Unexpected error: " << e->what() << endl;
+		std::cout << "Unexpected error: " << e->what() << std::endl;
 
 	}
 

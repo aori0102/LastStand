@@ -5,7 +5,7 @@
 GameComponent::GameComponent(GameObject* initOwner) {
 
 	if (!initOwner)
-		throw new exception("Initialize game component with NULL game object");
+		throw new std::exception("Initialize game component with NULL game object");
 
 	owner = initOwner;
 

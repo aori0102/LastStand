@@ -3,10 +3,10 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <Type.h>
-#include <set>
 
 class GameObject;
 class BoxCollider;
+class RigidBody;
 class Bound;
 
 class HitInfo {
@@ -23,14 +23,20 @@ class Physics {
 
 private:
 
-	static unordered_set<BoxCollider*> boxColliderSet;
+	static std::unordered_set<BoxCollider*> boxColliderSet;
+	static std::unordered_set<RigidBody*> rigidBodySet;
 
-	static unordered_map<BoxCollider*, unordered_set<BoxCollider*>> colliderHitMap;
+	static std::unordered_map<BoxCollider*, std::unordered_set<BoxCollider*>> colliderHitMap;
 
 public:
 
+	static void Update();
+
 	static void RegisterBoxCollider(BoxCollider* boxCollider);
 	static void UnregisterBoxCollider(BoxCollider* boxCollider);
+
+	static void RegisterRigidBody(RigidBody* rigidBody);
+	static void UnregisterRigidBody(RigidBody* rigidBody);
 
 	static bool BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo = nullptr);
 	static bool RayCast(Vector2 origin, Vector2 end, HitInfo* hitInfo = nullptr);

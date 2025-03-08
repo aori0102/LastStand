@@ -2,7 +2,7 @@
 #include <algorithm>
 
 template <typename T>
-void Algorithm::Shuffle(vector<T>& array) {
+void Algorithm::Shuffle(std::vector<T>& array) {
 
 	for (int i = array.size() - 1; i > 0; i--) {
 

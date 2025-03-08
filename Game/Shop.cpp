@@ -20,7 +20,7 @@ const float UPGRADE_BUTTON_TOP = 250.0f;
 Shop::Shop(Player* initPlayer) {
 
 	if (!initPlayer)
-		throw new exception("Initialize shop with null player");
+		throw new std::exception("Initialize shop with null player");
 
 	linkedPlayer = initPlayer;
 
@@ -136,7 +136,7 @@ void Shop::HideCurrentMenu() {
 
 }
 
-Shop::FirearmUpgrade::FirearmUpgrade(Firearm::Attribute initAttribute, function<bool(float, float)> initBetterNode) {
+Shop::FirearmUpgrade::FirearmUpgrade(Firearm::Attribute initAttribute, std::function<bool(float, float)> initBetterNode) {
 
 	name = "Upgrade";
 	description = "Upgrade description";
@@ -158,7 +158,7 @@ void Shop::FirearmUpgrade::AddUpgrade(Shop::UpgradeNode* newUpgrade) {
 	}
 
 	if (!newUpgrade || !betterNode)
-		throw new exception("Adding new upgrade worth less than previous one");
+		throw new std::exception("Adding new upgrade worth less than previous one");
 
 	tailNode->next = newUpgrade;
 	tailNode = newUpgrade;
@@ -174,7 +174,7 @@ void Shop::FirearmUpgrade::UpgradeNext(Firearm* firearm) {
 
 	firearm->ModifyAttributeMultiplier(attribute, currentUpgrade->amount);
 
-	cout << "Upgrading to next tier. New amount: " << currentUpgrade->amount << " for " << currentUpgrade->cost << " cost" << endl;
+	std::cout << "Upgrading to next tier. New amount: " << currentUpgrade->amount << " for " << currentUpgrade->cost << " cost" << std::endl;
 
 	delete currentUpgrade;
 	currentUpgrade = nextUpgrade;
@@ -526,7 +526,7 @@ void FirearmAttributeInfoGroup::Hide() {
 FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(Shop* initShop, Firearm::Attribute initAttribute) {
 
 	if (!initShop)
-		throw new exception("Updating node does not link to a shop object!");
+		throw new std::exception("Updating node does not link to a shop object!");
 
 	linkedShop = initShop;
 	assignedAttribute = initAttribute;

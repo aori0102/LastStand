@@ -33,7 +33,7 @@ private:
 
 	Firearm* firearm;
 
-	unordered_map<AnimationIndex, AnimationClip*> animationMap;
+	std::unordered_map<AnimationIndex, AnimationClip*> animationMap;
 	AnimationIndex currentAnimationState;
 	float currentAnimationTime;
 	float currentAnimationStartTick;

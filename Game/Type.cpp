@@ -86,6 +86,9 @@ Vector2 Vector2::operator*=(const float& other) {
 
 Vector2 Vector2::operator/(const float& other) {
 
+	if (other == 0.0f)
+		throw new std::exception("Vector2 division by zero");
+
 	Vector2 res(x / other, y / other);
 
 	return res;
@@ -166,9 +169,9 @@ Vector2 Vector2::Inverse() {
 
 }
 
-ostream& operator<<(ostream& os, const Vector2& other) {
+std::ostream& operator<<(std::ostream& os, const Vector2& other) {
 
-	os << "(" << other.x << ", " << other.y;
+	os << "(" << other.x << ", " << other.y << ")";
 
 	return os;
 
@@ -176,7 +179,7 @@ ostream& operator<<(ostream& os, const Vector2& other) {
 
 float Math::Clamp(float value, float lowerBound, float UpperBound) {
 
-	return min(max(value, lowerBound), UpperBound);
+	return std::min(std::max(value, lowerBound), UpperBound);
 
 }
 

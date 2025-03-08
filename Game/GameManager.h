@@ -20,7 +20,7 @@ private:
 	// Entity
 	Player* player;
 	PlayerStatistic* playerStatistic;
-	unordered_set<Zombie*> enemySet;
+	std::unordered_set<Zombie*> enemySet;
 
 	StatusBar* statusBarUI;
 
@@ -33,11 +33,11 @@ private:
 	// Map setting
 	GameObject* background;
 
-	const string BACKGROUND_PATH = "./Asset/Background.png";
+	const std::string BACKGROUND_PATH = "./Asset/Background.png";
 	const Vector2 MAP_SIZE = Vector2(3000.0f, 3000.0f);
 
 	// Spawn settings
-	const vector<Vector2> SPAWN_POSITION_LIST =
+	const std::vector<Vector2> SPAWN_POSITION_LIST =
 	{
 	Vector2(-1450.0f, 500.0f),
 	Vector2(-1450.0f, -500.0f),
@@ -61,7 +61,7 @@ private:
 
 	GameObject* moneyLabel;
 	GameObject* moneyText;
-	const string MONEY_LABEL_TEXT = "Money: ";
+	const std::string MONEY_LABEL_TEXT = "Money: ";
 	const int MONEY_LABEL_SIZE = 20;
 	const int LEVEL_LABEL_SIZE = 18;
 
