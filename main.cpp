@@ -1,18 +1,18 @@
 ﻿#include <iostream>
-#include <Game.h>
+#include <GameCore/GameCore.h>
 #include <exception>
 
 int main(int argc, char* args[]) {
 
 	std::cout << "Game starting..." << std::endl;
 
-	if (!Game::Initialize())
+	if (!GameCore::Initialize())
 		return -1;
 
 	try {
 
-		Game::InitializeGameObject();
-		Game::Loop();
+		GameCore::InitializeGameObject();
+		GameCore::Loop();
 
 	} catch (std::exception* e) {
 

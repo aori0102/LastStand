@@ -8,11 +8,17 @@ cmake_policy(SET CMP0079 NEW)
 set(CMAKE_CXX_STANDARD 20)
 
 # Set project name and version
-project(ShooterGame VERSION 0.1)
+project(LastStand VERSION 0.1)
 
 # Link directories
 add_subdirectory(Lib)
-add_subdirectory(Game)
+add_subdirectory(Utils)
+add_subdirectory(GameCore)
+add_subdirectory(Texture)
+add_subdirectory(Components)
+add_subdirectory(Manager)
+add_subdirectory(Menu)
+add_subdirectory(GameObjects)
 
 # Set source file (main)
 set(SOURCES
@@ -29,7 +35,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
     ${SDL2_TTF_INCLUDE_DIRS}
 )
 target_include_directories(${PROJECT_NAME} PUBLIC
-	${CMAKE_SOURCE_DIR}/GAME
+	${CMAKE_SOURCE_DIR}/GAME_CORE
 )
 
 # Link libraries
@@ -39,7 +45,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${SDL2_TTF_LIBRARIES}
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC
-	GAME
+	GAME_CORE
 )
 
 # Copy dll to solution output post-build
