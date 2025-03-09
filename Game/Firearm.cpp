@@ -5,8 +5,28 @@
 #include <PlayerUI.h>
 #include <Texture.h>
 #include <string>
+#include <MediaManager.h>
 
 const float BULLET_VELOCITY = 7000.0f;
+
+const std::unordered_map<Firearm::UIIndex, Vector2> Firearm::UI_POSITION_MAP = {
+	{ Firearm::UIIndex::AmmoFrame, Vector2(1119.0f, 660.0f) },
+	{ Firearm::UIIndex::AmmoLabel, Vector2(-20.0f, 0.0f) },
+	{ Firearm::UIIndex::AmmoIcon, Vector2(1130.0f, 676.0f) }
+};
+const std::unordered_map<Firearm::UIIndex, int> Firearm::UI_FONT_SIZE_MAP = {
+	{ Firearm::UIIndex::AmmoLabel, 20 }
+};
+const std::unordered_map<Firearm::UIIndex, std::string> Firearm::UI_LABEL_MAP = {
+	{ Firearm::UIIndex::AmmoFrame, "AmmoFrame" },
+	{ Firearm::UIIndex::AmmoIcon, "AmmoIcon" },
+	{ Firearm::UIIndex::AmmoLabel, "AmmoLabel" }
+};
+const std::unordered_map<Firearm::UIIndex, std::string> Firearm::UI_TEXT_MAP = {
+	{ Firearm::UIIndex::AmmoLabel, " / " }
+};
+const std::string Firearm::FOLDER_PATH = "./Asset/Firearm/";
+const std::string Firearm::FILE_EXTENSION = ".png";
 
 Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime) {
 
@@ -16,6 +36,10 @@ Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, flo
 	baseAttributeMap[Attribute::MaxAmmo] = initAmmoCapacity;
 	currentAmmo = initAmmoCapacity;
 	fireRate = initFireRate;
+	reserveAmmo = 120;
+
+	previousCurrentAmmo = currentAmmo;
+	previousReserveAmmo = reserveAmmo;
 
 	// Multiplier
 	attributeMultiplierMap[Attribute::Damage] = 1.0f;
@@ -27,57 +51,7 @@ Firearm::Firearm(float initDamage, int initAmmoCapacity, float initFireRate, flo
 	isReloading = false;
 	reloadStartTick = 0.0f;
 
-	// UI
-	// Ammo
-	ammoLabel = new GameObject("Ammo label", Layer::GUI);
-	Text* ammoLabel_text = ammoLabel->AddComponent<Text>();
-	ammoLabel_text->LoadText(std::to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
-	ammoLabel_text->showOnScreen = true;
-	Transform* ammoLabel_transform = ammoLabel->GetComponent<Transform>();
-	ammoLabel_transform->position = (Game::WindowResolution() - ammoLabel_transform->scale) / 2.0f;
-	ammoLabel->Render = [this, ammoLabel_text]() {
-		ammoLabel_text->LoadText(std::to_string(currentAmmo), Color::WHITE, AMMO_TEXT_SIZE);
-		ammoLabel_text->Render();
-		};
-
-	// Reload
-	reloadFrame = new GameObject("Reload frame", Layer::GUI);
-	Image* reloadFrame_image = reloadFrame->AddComponent<Image>();
-	reloadFrame_image->backgroundColor = Color::TRANSPARENT;
-	reloadFrame_image->outlineColor = Color::WHITE;
-	reloadFrame_image->showOnScreen = true;
-	Transform* reloadFrame_transform = reloadFrame->GetComponent<Transform>();
-	reloadFrame_transform->scale = RELOAD_FRAME_SCALE;
-	reloadFrame_transform->position = Vector2::down * RELOAD_BAR_BOTTOM_OFFSET;
-	reloadFrame->Render = [reloadFrame_image]() {
-		reloadFrame_image->Render();
-		};
-	reloadFrame->Disable();
-
-	reloadBar = new GameObject("Reload bar", Layer::GUI);
-	Image* reloadBar_image = reloadBar->AddComponent<Image>();
-	reloadBar_image->backgroundColor = Color::WHITE;
-	reloadBar_image->outlineColor = Color::TRANSPARENT;
-	reloadBar_image->showOnScreen = true;
-	reloadBar_image->imageFill = ImageFill::Horizontal;
-	Transform* reloadBar_transform = reloadBar->GetComponent<Transform>();
-	reloadBar_transform->scale = RELOAD_BAR_SCALE;
-	reloadBar_transform->position = Vector2::down * RELOAD_BAR_BOTTOM_OFFSET;
-	reloadBar->Render = [reloadBar_image]() {
-		reloadBar_image->Render();
-		};
-	reloadBar->Disable();
-
-}
-
-Firearm::~Firearm() {
-
-	delete ammoLabel;
-	ammoLabel = nullptr;
-	delete reloadFrame;
-	reloadFrame = nullptr;
-	delete reloadBar;
-	reloadBar = nullptr;
+	InitializeUI();
 
 }
 
@@ -123,46 +97,22 @@ void Firearm::Reload() {
 	reloadStartTick = Game::Time();
 	currentAmmo = baseAttributeMap[Attribute::MaxAmmo] * attributeMultiplierMap[Attribute::MaxAmmo];
 
-	// Show UI
-	reloadBar->Enable();
-	reloadFrame->Enable();
-
 }
 
 void Firearm::Update() {
 
-	if (isReloading && Game::Time() >= reloadStartTick + baseAttributeMap[Attribute::ReloadTime] * attributeMultiplierMap[Attribute::ReloadTime]) {
-
+	if (isReloading && Game::Time() >= reloadStartTick + baseAttributeMap[Attribute::ReloadTime] * attributeMultiplierMap[Attribute::ReloadTime])
 		isReloading = false;
-
-		// Hide UI
-		reloadBar->Disable();
-		reloadFrame->Disable();
-
-	} else if(isReloading)
-		reloadBar->GetComponent<Image>()->fillAmount = GetReloadingProgress();
 
 }
 
 bool Firearm::IsReloading() const { return isReloading; }
-
-float Firearm::GetReloadingProgress() {
-
-	float reloadTime = baseAttributeMap[Attribute::ReloadTime] * attributeMultiplierMap[Attribute::ReloadTime];
-
-	if (reloadTime == 0.0f)
-		throw new std::exception("Reload time of firearm is 0s. Why?");
-
-	return ((Game::Time() - reloadStartTick) / reloadTime);
-
-}
 
 int Firearm::CurrentAmmo() const {
 
 	return currentAmmo;
 
 }
-
 
 void Firearm::ModifyAttributeMultiplier(Attribute attribute, float amount) {
 
@@ -173,5 +123,53 @@ void Firearm::ModifyAttributeMultiplier(Attribute attribute, float amount) {
 float Firearm::GetAttribute(Attribute attribute) {
 
 	return baseAttributeMap[attribute] * attributeMultiplierMap[attribute];
+
+}
+
+void Firearm::InitializeUI() {
+
+	// --- AMMO FRAME ---
+	uiElementMap[UIIndex::AmmoFrame] = new GameObject(UI_LABEL_MAP.at(UIIndex::AmmoFrame), Layer::GUI);
+	Image* ammoFrame_image = uiElementMap.at(UIIndex::AmmoFrame)->AddComponent<Image>();
+	ammoFrame_image->showOnScreen = true;
+	ammoFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoFrame));
+	ammoFrame_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(UIIndex::AmmoFrame), ammoFrame_image->transform->scale);
+	uiElementMap.at(UIIndex::AmmoFrame)->Render = [ammoFrame_image]() {
+		ammoFrame_image->Render();
+		};
+
+	// --- AMMO ICON ---
+	uiElementMap[UIIndex::AmmoIcon] = new GameObject(UI_LABEL_MAP.at(UIIndex::AmmoIcon), Layer::GUI);
+	Image* ammoIcon_image = uiElementMap.at(UIIndex::AmmoIcon)->AddComponent<Image>();
+	ammoIcon_image->showOnScreen = true;
+	ammoIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoIcon));
+	ammoIcon_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(UIIndex::AmmoIcon), ammoIcon_image->transform->scale);
+	uiElementMap.at(UIIndex::AmmoIcon)->Render = [ammoIcon_image]() {
+		ammoIcon_image->Render();
+		};
+
+	// --- AMMO LABEL ---
+	uiElementMap[UIIndex::AmmoLabel] = new GameObject(UI_LABEL_MAP.at(UIIndex::AmmoLabel), Layer::GUI);
+	Text* ammoLabel_text = uiElementMap.at(UIIndex::AmmoLabel)->AddComponent<Text>();
+	ammoLabel_text->showOnScreen = true;
+	ammoLabel_text->LoadText(std::to_string(currentAmmo) + UI_TEXT_MAP.at(UIIndex::AmmoLabel) + std::to_string(reserveAmmo), Color::WHITE, UI_FONT_SIZE_MAP.at(UIIndex::AmmoLabel));
+	ammoLabel_text->transform->position = Vector2(
+		ammoFrame_image->transform->position.x + (ammoFrame_image->transform->scale.x - ammoLabel_text->transform->scale.x) / 2.0f + UI_POSITION_MAP.at(UIIndex::AmmoLabel).x,
+		ammoFrame_image->transform->position.y
+	);
+	uiElementMap.at(UIIndex::AmmoLabel)->Render = [this, ammoLabel_text]() {
+		if (currentAmmo != previousCurrentAmmo || reserveAmmo != previousReserveAmmo) {
+			ammoLabel_text->LoadText(std::to_string(currentAmmo) + UI_TEXT_MAP.at(UIIndex::AmmoLabel) + std::to_string(reserveAmmo), Color::WHITE, UI_FONT_SIZE_MAP.at(UIIndex::AmmoLabel));
+			previousCurrentAmmo = currentAmmo;
+			previousReserveAmmo = reserveAmmo;
+		}
+		ammoLabel_text->Render();
+		};
+
+}
+
+void Firearm::OnDestroy() {
+
+
 
 }

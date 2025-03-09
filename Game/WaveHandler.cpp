@@ -6,6 +6,7 @@
 #include <cmath>
 #include <Zombie.h>
 #include <GameManager.h>
+#include <MediaManager.h>
 
 WaveHandler* WaveHandler::instance = nullptr;
 WaveInfoUI* WaveInfoUI::instance = nullptr;
@@ -121,7 +122,7 @@ void WaveInfoUI::InitializeUI() {
 	// --- PROGRESS BAR BACKGROUND
 	uiElementMap[WaveInfoIndex::ProgressBarBackground] = new GameObject(UI_LABEL_MAP.at(WaveInfoIndex::ProgressBarBackground), Layer::GUI);
 	Image* progressBarBackground_image = uiElementMap.at(WaveInfoIndex::ProgressBarBackground)->AddComponent<Image>();
-	progressBarBackground_image->LoadImage(FOLDER_PATH + UI_LABEL_MAP.at(WaveInfoIndex::ProgressBarBackground) + FILE_EXTENSION);
+	progressBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBarBackground));
 	progressBarBackground_image->showOnScreen = true;
 	progressBarBackground_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(WaveInfoIndex::ProgressBarBackground), progressBarBackground_image->transform->scale);
 	progressBarBackground_image->transform->position.x = 0.0f;
@@ -134,7 +135,7 @@ void WaveInfoUI::InitializeUI() {
 	// --- PROGRESS BAR
 	uiElementMap[WaveInfoIndex::ProgressBar] = new GameObject(UI_LABEL_MAP.at(WaveInfoIndex::ProgressBar), Layer::GUI);
 	Image* progressBar_image = uiElementMap.at(WaveInfoIndex::ProgressBar)->AddComponent<Image>();
-	progressBar_image->LoadImage(FOLDER_PATH + UI_LABEL_MAP.at(WaveInfoIndex::ProgressBar) + FILE_EXTENSION);
+	progressBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBar));
 	progressBar_image->imageFill = ImageFill::Horizontal;
 	progressBar_image->showOnScreen = true;
 	progressBar_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(WaveInfoIndex::ProgressBar), progressBar_image->transform->scale);
@@ -182,7 +183,7 @@ void WaveInfoUI::InitializeUI() {
 	// --- NEXT WAVE BUTTON ---
 	uiElementMap[WaveInfoIndex::NextWaveButton] = new GameObject(UI_LABEL_MAP.at(WaveInfoIndex::NextWaveButton), Layer::GUI);
 	Image* nextWave_image = uiElementMap.at(WaveInfoIndex::NextWaveButton)->AddComponent<Image>();
-	nextWave_image->LoadImage(FOLDER_PATH + UI_LABEL_MAP.at(WaveInfoIndex::NextWaveButton) + FILE_EXTENSION);
+	nextWave_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_NextWaveButton));
 	nextWave_image->showOnScreen = true;
 	Button* nextWave_button = uiElementMap.at(WaveInfoIndex::NextWaveButton)->AddComponent<Button>();
 	nextWave_button->backgroundColor = Color::TRANSPARENT;

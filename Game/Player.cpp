@@ -9,8 +9,7 @@
 #include <Texture.h>
 #include <Animation.h>
 #include <functional>
-
-const std::string PLAYER_SPRITE_PATH = "./Asset/PlayerSprite.png";
+#include <MediaManager.h>
 
 Player::Player() : GameObject("Player", Layer::Player) {
 
@@ -28,7 +27,7 @@ void Player::InitializeData() {
 	usingItem = false;
 
 	Image* playerSprite = AddComponent<Image>();
-	playerSprite->LoadImage(PLAYER_SPRITE_PATH);
+	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player));
 	playerSprite->showOnScreen = false;
 
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
@@ -37,6 +36,11 @@ void Player::InitializeData() {
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
+
+	RigidBody* rigidBody = AddComponent<RigidBody>();
+	rigidBody->mass = 60.0f;
+	rigidBody->drag = 6.0f;
+
 	Humanoid* humanoid = AddComponent<Humanoid>();
 	humanoid->SetHealth(250.0f);
 	humanoid->OnDeath = []() {
@@ -82,7 +86,7 @@ void Player::PlayerRender() {
 	if (currentAnimationState != AnimationIndex::Idle && Game::Time() >= currentAnimationStartTick + currentAnimationTime) {
 
 		currentAnimationState = AnimationIndex::Idle;
-		currentAnimationTime = animationMap[AnimationIndex::Idle]->AnimationLength();
+		currentAnimationTime = animationMap[AnimationIndex::Idle]->GetAnimationLength();
 		currentAnimationStartTick = Game::Time();
 
 	}
@@ -154,7 +158,7 @@ void Player::HandleActions() {
 
 			currentAnimationState = AnimationIndex::Shoot;
 			currentAnimationStartTick = Game::Time();
-			currentAnimationTime = animationMap[AnimationIndex::Shoot]->AnimationLength();
+			currentAnimationTime = animationMap[AnimationIndex::Shoot]->GetAnimationLength();
 
 		}
 
@@ -179,13 +183,13 @@ Firearm* Player::GetFirearm() { return firearm; }
 void Player::InitializeAnimation() {
 
 	// Idle
-	animationMap[AnimationIndex::Idle] = new AnimationClip(GetComponent<Image>());
+	animationMap[AnimationIndex::Idle] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player));
 	animationMap[AnimationIndex::Idle]->AddAnimationFrame(new AnimationClip::AnimationFrame(
 		{ 16, 16, 160, 160 }, 0.0f, 3.0f
 	));
 
 	// Shoot
-	animationMap[AnimationIndex::Shoot] = new AnimationClip(GetComponent<Image>());
+	animationMap[AnimationIndex::Shoot] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player));
 	animationMap[AnimationIndex::Shoot]->AddAnimationFrame(new AnimationClip::AnimationFrame(
 		{ 208, 16, 160, 160 }, 0.0f, 3.0f
 	));

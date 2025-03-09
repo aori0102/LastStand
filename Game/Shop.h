@@ -16,7 +16,6 @@ class FirearmUpgradeUIGroup {
 
 private:
 
-	const std::string UPGRADE_SLOT_PATH = "./Asset/Upgrade_Slot.png";
 	const std::string COST_PREFIX = "Cost: ";
 	const std::string OBJECT_NAME_SUFFIX = "_UpgradeButton";
 	const int UPGRADE_LABEL_SIZE = 24;
@@ -141,7 +140,6 @@ private:
 
 	// General
 	GameObject* background;
-	const std::string BACKGROUND_PATH = "./Asset/Shop_Background.png";
 
 	// Navigation
 	std::unordered_map<ShopMenuIndex, ButtonUIGroup*> menuNavigationButtonMap;
@@ -155,8 +153,6 @@ private:
 		{ ShopMenuIndex::Melee, Vector2(490.0f, 80.0f) },
 		{ ShopMenuIndex::Utility, Vector2(810.0f, 80.0f) }
 	};
-	const std::string NAVIGATION_UNSELECTED_PATH = "./Asset/Navigation_Button_Unselected.png";
-	const std::string NAVIGATION_SELECTED_PATH = "./Asset/Navigation_Button_Selected.png";
 	const int NAVIGATION_LABEL_SIZE = 48;
 
 	// Firearm upgrade

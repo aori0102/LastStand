@@ -11,6 +11,7 @@
 #include <UIEvent.h>
 #include <Physics.h>
 #include <RenderManager.h>
+#include <MediaManager.h>
 
 // Initialize static component
 bool Game::gQuit = false;
@@ -28,6 +29,7 @@ Vector2 Game::cameraPosition = Vector2::zero;
 std::string Game::gameName = "Last Stand";
 GameObject* Game::cameraFocusObject = nullptr;
 GameManager* Game::gameManager = nullptr;
+MediaManager* Game::mediaManager = nullptr;
 
 // Getter
 float Game::Time() { return time; }
@@ -236,7 +238,7 @@ void Game::HandleEvent() {
 		SDL_Keycode keycode = gEvent->key.keysym.sym;
 
 		ActionState* keyState = FindKeyState(keycode);
-		 
+
 		if (keyState) {
 
 			keyState->canceled = true;
@@ -362,6 +364,7 @@ Game::ActionState Game::GetKeyState(SDL_Keycode keycode) {
 
 void Game::InitializeGameObject() {
 
+	mediaManager = new MediaManager;
 	gameManager = new GameManager;
 
 	Random::Init();

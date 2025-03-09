@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <MediaManager.h>
 
 // Settings
 const Vector2 SHOP_BACKGROUND_SIZE = Vector2(800.0f, 500.0f);
@@ -186,7 +187,7 @@ void Shop::InitializeUI() {
 	// Background
 	background = new GameObject("Shop background", Layer::Menu);
 	Image* background_image = background->AddComponent<Image>();
-	background_image->LoadImage(BACKGROUND_PATH);
+	background_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_Background));
 	background_image->showOnScreen = true;
 	Transform* background_transform = background->GetComponent<Transform>();
 	background_transform->position = Vector2::zero;
@@ -198,7 +199,7 @@ void Shop::InitializeUI() {
 	ButtonUIGroup* firearmButtonGroup = new ButtonUIGroup;
 	firearmButtonGroup->image = new GameObject("Firearm image", Layer::Menu);
 	Image* firearmButtonGroup_image = firearmButtonGroup->image->AddComponent<Image>();
-	firearmButtonGroup_image->LoadImage(NAVIGATION_UNSELECTED_PATH);
+	firearmButtonGroup_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected));
 	firearmButtonGroup_image->showOnScreen = true;
 	firearmButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Firearm), firearmButtonGroup_image->transform->scale);
 	firearmButtonGroup->label = new GameObject("Firearm label", Layer::Menu);
@@ -225,7 +226,7 @@ void Shop::InitializeUI() {
 	ButtonUIGroup* meleeButtonGroup = new ButtonUIGroup;
 	meleeButtonGroup->image = new GameObject("Melee image", Layer::Menu);
 	Image* meleeButtonGroup_image = meleeButtonGroup->image->AddComponent<Image>();
-	meleeButtonGroup_image->LoadImage(NAVIGATION_UNSELECTED_PATH);
+	meleeButtonGroup_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected));
 	meleeButtonGroup_image->showOnScreen = true;
 	meleeButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Melee), meleeButtonGroup_image->transform->scale);
 	meleeButtonGroup->label = new GameObject("Melee label", Layer::Menu);
@@ -252,7 +253,7 @@ void Shop::InitializeUI() {
 	ButtonUIGroup* utilityButtonGroup = new ButtonUIGroup;
 	utilityButtonGroup->image = new GameObject("Utility image", Layer::Menu);
 	Image* utilityButtonGroup_image = utilityButtonGroup->image->AddComponent<Image>();
-	utilityButtonGroup_image->LoadImage(NAVIGATION_UNSELECTED_PATH);
+	utilityButtonGroup_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected));
 	utilityButtonGroup_image->showOnScreen = true;
 	utilityButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Utility), utilityButtonGroup_image->transform->scale);
 	utilityButtonGroup->label = new GameObject("Utility label", Layer::Menu);
@@ -330,7 +331,7 @@ void Shop::InitializeUI() {
 	// -- General --
 	firearmAttributeFrame = new GameObject("Firearm attribute frame", Layer::Menu);
 	Image* firearmAttributeFrame_image = firearmAttributeFrame->AddComponent<Image>();
-	firearmAttributeFrame_image->LoadImage(FIREARM_ATTRIBUTE_FRAME_PATH);
+	firearmAttributeFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_AttributeFrame));
 	firearmAttributeFrame_image->showOnScreen = true;
 	firearmAttributeFrame->transform->position = Math::SDLToC00(FIREARM_ATTRIBUTE_FRAME_POSITION, firearmAttributeFrame->transform->scale);
 	firearmAttributeFrame->Render = [firearmAttributeFrame_image]() {
@@ -545,7 +546,7 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(Shop* initShop, Firearm::Attribute 
 		};
 	buttonObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
 	Image* frame_image = buttonObject->AddComponent<Image>();
-	frame_image->LoadImage(UPGRADE_SLOT_PATH);
+	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UpgradeSlot));
 	frame_image->showOnScreen = true;
 	Button* button_button = buttonObject->AddComponent<Button>();
 	button_button->backgroundColor = Color::TRANSPARENT;

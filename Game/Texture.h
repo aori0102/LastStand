@@ -22,7 +22,20 @@ enum class ImageFill {
 
 };
 
+enum class MediaFont;
 class GameObject;
+class Image;
+class AnimationClip;
+
+class RenderComponent {
+
+public:
+
+	bool showOnScreen;
+
+	virtual void Render() = 0;
+
+};
 
 class Texture {
 
@@ -38,16 +51,31 @@ protected:
 
 public:
 
-	bool showOnScreen;
-
-	virtual void Render() = 0;
-
 	SDL_Texture* GetTexture();
 	Vector2 TextureDimension() const;
 
 };
 
-class Image : public GameComponent, public Texture {
+class Sprite : public Texture {
+
+private:
+
+	SDL_Rect clip;
+
+	friend class Image;
+	friend class AnimationClip;
+
+public:
+
+	bool LoadImage(std::string path);
+
+};
+
+class Image : public GameComponent, public RenderComponent {
+
+private:
+
+	Sprite* linkedSprite;
 
 public:
 
@@ -59,21 +87,19 @@ public:
 	ImageFill imageFill;
 
 	Image(GameObject* initOwner);
-	~Image();
-
-	bool LoadImage(std::string path);
-
-	void Render() override;
+	
+	void LinkSprite(Sprite* sprite);
+	void Render();
 
 };
 
-class Text : public GameComponent, public Texture {
+class Text : public GameComponent, public Texture, public RenderComponent {
 
 private:
 
-	TTF_Font* font;
-
 public:
+
+	MediaFont mediaFont;
 
 	int wrapLength;
 
@@ -86,7 +112,7 @@ public:
 
 };
 
-class Button : public GameComponent, public Texture {
+class Button : public GameComponent, public RenderComponent {
 
 private:
 

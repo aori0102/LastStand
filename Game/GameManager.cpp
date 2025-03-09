@@ -10,6 +10,7 @@
 #include <StatusBar.h>
 #include <PlayerStatistic.h>
 #include <WaveHandler.h>
+#include <MediaManager.h>
 
 GameManager* GameManager::instance = nullptr;
 
@@ -110,7 +111,7 @@ void GameManager::InitializeObject() {
 	// Map background
 	background = new GameObject("Background", Layer::Background);
 	Image* background_image = background->AddComponent<Image>();
-	background_image->LoadImage(BACKGROUND_PATH);
+	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background));
 	background_image->showOnScreen = false;
 	background->GetComponent<Transform>()->position = Vector2::zero;
 	background->Render = [background_image]() {

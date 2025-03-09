@@ -2,7 +2,7 @@
 #include <Texture.h>
 #include <Game.h>
 
-AnimationClip::AnimationClip(Image* initAnimationSpriteSheet) {
+AnimationClip::AnimationClip(Sprite* initAnimationSpriteSheet) {
 
 	if (!initAnimationSpriteSheet)
 		throw new std::exception("Animation extracting from null sprite sheet");
@@ -63,8 +63,8 @@ void AnimationClip::RenderCurrent(Vector2 position, Vector2 scale, float angle) 
 	if (currentFrame == animationTimeline.end())
 		return;
 
-	Game::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, &(*currentFrame)->clip, angle);
+	Game::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, &((*currentFrame)->clip), angle);
 
 }
 
-float AnimationClip::AnimationLength() { return animationLength; }
+float AnimationClip::GetAnimationLength() const { return animationLength; }

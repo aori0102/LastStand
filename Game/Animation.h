@@ -6,6 +6,7 @@
 #include <GameComponent.h>
 
 class Image;
+class Sprite;
 
 class AnimationClip : public GameObject {
 
@@ -28,7 +29,7 @@ public:
 
 private:
 
-	Image* animationSpriteSheet;
+	Sprite* animationSpriteSheet;
 
 	std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)> animationTimeline;
 
@@ -39,7 +40,7 @@ private:
 
 public:
 
-	AnimationClip(Image* initAnimationSpriteSheet);
+	AnimationClip(Sprite* initAnimationSpriteSheet);
 
 	void Start();
 	void Stop();
@@ -50,6 +51,6 @@ public:
 
 	void RenderCurrent(Vector2 position, Vector2 scale, float angle = 0.0f);
 
-	float AnimationLength();
+	float GetAnimationLength() const;
 
 };

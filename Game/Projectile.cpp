@@ -2,9 +2,9 @@
 #include <Type.h>
 #include <Game.h>
 #include <Texture.h>
+#include <MediaManager.h>
 
 const float EXIST_TIME = 5.0f;
-const std::string BULLET_PATH = "./Asset/Bullet.png";
 const float Projectile::KNOCKBACK_FORCE = 37.0f;
 
 Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) : GameObject("Projectile", Layer::Projectile) {
@@ -15,7 +15,7 @@ Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 in
 	shooter = initShooter;
 
 	Image* image = AddComponent<Image>();
-	image->LoadImage(BULLET_PATH);
+	image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Bullet));
 	image->showOnScreen = false;
 	image->angle = Math::RadToDeg(initDirection.Angle());
 

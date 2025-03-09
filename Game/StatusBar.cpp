@@ -2,6 +2,7 @@
 #include <Texture.h>
 #include <PlayerStatistic.h>
 #include <string>
+#include <MediaManager.h>
 
 StatusBar::StatusBar(PlayerStatistic* initLinkedPlayerStatistic) {
 
@@ -19,7 +20,7 @@ void StatusBar::InitializeUI() {
 	// --- FRAME ---
 	uiElementMap[UIElementIndex::Frame] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::Frame), Layer::Menu);
 	Image* frame_image = uiElementMap.at(UIElementIndex::Frame)->AddComponent<Image>();
-	frame_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::Frame) + FILE_EXTENSION);
+	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_Frame));
 	frame_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::Frame)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Frame),
@@ -32,7 +33,7 @@ void StatusBar::InitializeUI() {
 	// --- LEVEL FRAME ---
 	uiElementMap[UIElementIndex::LevelFrame] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::LevelFrame), Layer::Menu);
 	Image* levelFrame_image = uiElementMap.at(UIElementIndex::LevelFrame)->AddComponent<Image>();
-	levelFrame_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::LevelFrame) + FILE_EXTENSION);
+	levelFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_LevelFrame));
 	levelFrame_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::LevelFrame)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::LevelFrame),
@@ -45,7 +46,7 @@ void StatusBar::InitializeUI() {
 	// --- HEALTH BAR BACKGROUND ---
 	uiElementMap[UIElementIndex::HealthBarBackground] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBarBackground), Layer::Menu);
 	Image* healthBarBackground_image = uiElementMap.at(UIElementIndex::HealthBarBackground)->AddComponent<Image>();
-	healthBarBackground_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBarBackground) + FILE_EXTENSION);
+	healthBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_BarBackground));
 	healthBarBackground_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::HealthBarBackground)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::HealthBarBackground),
@@ -58,7 +59,7 @@ void StatusBar::InitializeUI() {
 	// --- STAMINA BAR BACKGROUND ---
 	uiElementMap[UIElementIndex::StaminaBarBackground] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBarBackground), Layer::Menu);
 	Image* staminaBarBackground_image = uiElementMap.at(UIElementIndex::StaminaBarBackground)->AddComponent<Image>();
-	staminaBarBackground_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBarBackground) + FILE_EXTENSION);
+	staminaBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_BarBackground));
 	staminaBarBackground_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::StaminaBarBackground)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::StaminaBarBackground),
@@ -71,7 +72,7 @@ void StatusBar::InitializeUI() {
 	// --- HEALTH BAR ---
 	uiElementMap[UIElementIndex::HealthBar] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBar), Layer::Menu);
 	Image* healthBar_image = uiElementMap.at(UIElementIndex::HealthBar)->AddComponent<Image>();
-	healthBar_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBar) + FILE_EXTENSION);
+	healthBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_HealthBar));
 	healthBar_image->showOnScreen = true;
 	healthBar_image->imageFill = ImageFill::Horizontal;
 	uiElementMap.at(UIElementIndex::HealthBar)->transform->position = Math::SDLToC00(
@@ -86,7 +87,7 @@ void StatusBar::InitializeUI() {
 	// --- STAMINA BAR ---
 	uiElementMap[UIElementIndex::StaminaBar] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBar), Layer::Menu);
 	Image* staminaBar_image = uiElementMap.at(UIElementIndex::StaminaBar)->AddComponent<Image>();
-	staminaBar_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBar) + FILE_EXTENSION);
+	staminaBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_StaminaBar));
 	staminaBar_image->showOnScreen = true;
 	staminaBar_image->imageFill = ImageFill::Horizontal;
 	uiElementMap.at(UIElementIndex::StaminaBar)->transform->position = Math::SDLToC00(
@@ -101,7 +102,7 @@ void StatusBar::InitializeUI() {
 	// --- HEALTH SYMBOL ---
 	uiElementMap[UIElementIndex::HealthSymbol] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthSymbol), Layer::Menu);
 	Image* healthSymbol_image = uiElementMap.at(UIElementIndex::HealthSymbol)->AddComponent<Image>();
-	healthSymbol_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthSymbol) + FILE_EXTENSION);
+	healthSymbol_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_HealthSymbol));
 	healthSymbol_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::HealthSymbol)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::HealthSymbol),
@@ -114,7 +115,7 @@ void StatusBar::InitializeUI() {
 	// --- STAMINA SYMBOL ---
 	uiElementMap[UIElementIndex::StaminaSymbol] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaSymbol), Layer::Menu);
 	Image* staminaSymbol_image = uiElementMap.at(UIElementIndex::StaminaSymbol)->AddComponent<Image>();
-	staminaSymbol_image->LoadImage(FOLDER_PATH + UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaSymbol) + FILE_EXTENSION);
+	staminaSymbol_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_StaminaSymbol));
 	staminaSymbol_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::StaminaSymbol)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::StaminaSymbol),

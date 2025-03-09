@@ -44,6 +44,7 @@ private:
 	static const std::string HEALTH_BAR_PATH;
 	static const Vector2 HEALTH_BAR_SCALE;
 	static const float HEALTH_BAR_VERTICAL_OFFSET;
+	static const float KNOCKBACK_FORCE;
 
 	GameObject* healthBar;
 	GameObject* target;

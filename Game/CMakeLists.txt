@@ -23,9 +23,14 @@ set(SOURCES
     "Animation.cpp"
     "RigidBody.cpp"
     "RenderManager.cpp"
+    "MediaManager.cpp"
     "StatusBar.cpp"
     "PlayerStatistic.cpp"
     "WaveHandler.cpp"
+    "Text.cpp"
+    "Image.cpp"
+    "Button.cpp"
+    "Sprite.cpp"
 )
 
 # Add this directory as a static library

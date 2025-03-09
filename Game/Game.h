@@ -25,6 +25,7 @@ enum class MouseButton {
 
 class GameObject;
 class GameManager;
+class MediaManager;
 class Texture;
 class Color;
 
@@ -62,6 +63,8 @@ private:
 	static float time;
 	static float deltaTime;
 
+	// --- MANAGERS ---
+	static MediaManager* mediaManager;
 	static GameManager* gameManager;
 
 	static void HandleEvent();
