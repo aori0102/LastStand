@@ -56,6 +56,7 @@ void Image::Render() {
 			position,
 			scale,
 			showOnScreen,
+			Owner()->GetLayer(),
 			&clip,
 			angle
 		);

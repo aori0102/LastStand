@@ -72,6 +72,9 @@ private:
 	static void UpdateEvent();
 
 	// Camera
+	static float currentCameraZoom;
+	static float targetCameraZoom;
+	static const float CAMERA_ZOOM_SPEED;
 	static Vector2 cameraPosition;
 	static GameObject* cameraFocusObject;
 
@@ -91,7 +94,7 @@ public:
 	static void SetRenderDrawColor(Color color);
 	static void DrawLine(Vector2 position, Vector2 direction, float maxDistance, Color color);
 	static void DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color);
-	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip = nullptr, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Layer layer, SDL_Rect* clip = nullptr, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 	static SDL_Texture* CreateTexture(Vector2 size);
 	static void ClearTexture(SDL_Texture* texture);
@@ -113,7 +116,7 @@ public:
 
 	// Camera control
 	static void LetCameraFocus(GameObject* gameObject);
-
+	static void SetCameraZoom(float zoom);
 	static bool SelectedUI();
 
 };

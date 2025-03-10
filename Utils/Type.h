@@ -1,8 +1,10 @@
 #pragma once
 
-#include <SDL.h>
 #include <iostream>
 #include <random>
+#include <concepts>
+
+#include <SDL.h>
 
 class Vector2 {
 
@@ -37,6 +39,7 @@ public:
 	bool operator!=(const Vector2& other);
 
 	Vector2 Normalize();
+	Vector2 Rotate(float angleInRadian);
 	Vector2 Inverse();
 	float Magnitude() const;
 	float Dot(const Vector2& other) const;
@@ -58,6 +61,8 @@ public:
 	static Vector2 SDLToC00(Vector2 position, Vector2 scale);
 	static Vector2 C00ToSDL(Vector2 position, Vector2 scale);
 
+	static float Lerp(float start, float end, float time);
+
 };
 
 class Random {
@@ -72,6 +77,10 @@ public:
 	static int Int(int min, int max);
 
 	static float Float(float min, float max);
+
+	template <typename T>
+	requires std::is_arithmetic_v<T>
+	static T Sign(T value);
 
 };
 

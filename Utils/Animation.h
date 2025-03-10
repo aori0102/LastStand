@@ -40,7 +40,7 @@ private:
 
 public:
 
-	AnimationClip(Sprite* initAnimationSpriteSheet);
+	AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer);
 
 	void Start();
 	void Stop();

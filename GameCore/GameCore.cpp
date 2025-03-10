@@ -16,6 +16,9 @@ bool GameCore::gQuit = false;
 bool GameCore::selectedUI = false;
 float GameCore::time = 0.0f;
 float GameCore::deltaTime = 0.0f;
+float GameCore::currentCameraZoom = 1.0f;
+float GameCore::targetCameraZoom = 1.0f;
+const float GameCore::CAMERA_ZOOM_SPEED = 14.0f;
 SDL_Window* GameCore::gWindow = nullptr;
 SDL_Renderer* GameCore::gRenderer = nullptr;
 SDL_Event* GameCore::gEvent = new SDL_Event;
@@ -455,14 +458,24 @@ void GameCore::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, boo
 
 }
 
-void GameCore::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, SDL_Rect* clip, float angle, SDL_RendererFlip flip) {
+void GameCore::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Layer layer, SDL_Rect* clip, float angle, SDL_RendererFlip flip) {
 
 	// Calculate camera's area
 	// This game use a different axis positioning comparing to SDL2.
 	// (0, 0) in the center of the window instead of top left
 	// Call it C00 (for center(0, 0))
 	// Render position relative to screen in C00
-	Vector2 renderPosition = Math::C00ToSDL(!onScreen ? position - cameraPosition : position, scale);
+	Vector2 renderPosition = !onScreen ? position - cameraPosition : position;
+
+	if (RenderManager::AffectByZoom(layer)) {
+
+		renderPosition *= currentCameraZoom;
+
+		scale *= currentCameraZoom;
+
+	}
+
+	renderPosition = Math::C00ToSDL(renderPosition, scale);
 
 	// Rendering format in SDL2
 	SDL_FRect quad = {
@@ -479,8 +492,6 @@ void GameCore::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, boo
 		quad.y + quad.h < 0.0f
 		)
 		return;
-
-	// Clipping texture
 
 	SDL_RenderCopyExF(
 		gRenderer,
@@ -523,7 +534,9 @@ void GameCore::UpdateCamera() {
 		return;
 
 	// Get focus object component and update camera
-	cameraPosition = cameraFocusObject->GetComponent<Transform>()->position;
+	cameraPosition = cameraFocusObject->transform->position;
+
+	currentCameraZoom = Math::Lerp(currentCameraZoom, targetCameraZoom, deltaTime*CAMERA_ZOOM_SPEED);
 
 }
 
@@ -534,3 +547,9 @@ void GameCore::LetCameraFocus(GameObject* gameObject) {
 }
 
 bool GameCore::SelectedUI() { return selectedUI; }
+
+void GameCore::SetCameraZoom(float zoom) {
+
+	targetCameraZoom = zoom;
+
+}

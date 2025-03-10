@@ -12,3 +12,14 @@ void Algorithm::Shuffle(std::vector<T>& array) {
 	}
 
 }
+
+template <typename T>
+requires std::is_arithmetic_v<T>
+T Random::Sign(T value) {
+
+	if (Random::Int(0, INT_MAX) & 1)
+		return value;
+	else
+		return -value;
+
+}

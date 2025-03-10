@@ -2,6 +2,11 @@
 #include <GameComponent.h>
 
 std::set<GameObject*, decltype(&GameObject::CompareByLayer)> RenderManager::renderObjectSet = std::set<GameObject*, decltype(&GameObject::CompareByLayer)>(&GameObject::CompareByLayer);
+std::unordered_set<Layer> RenderManager::noZoomLayerList = {
+	Layer::Menu,
+	Layer::GUI
+};
+
 
 void RenderManager::UpdateRenderObject(GameObject* gameObject) {
 
@@ -14,11 +19,11 @@ void RenderManager::UpdateRenderObject(GameObject* gameObject) {
 void RenderManager::RenderAll() {
 
 	std::erase_if(renderObjectSet, [](GameObject* obj) { return obj == nullptr; });
-	//cout << "Start rendering..." << endl;
+	//std::cout << "----- Start rendering... -----" << std::endl;
 	for (auto obj : renderObjectSet) {
 
 		if (obj->IsActive()) {
-			//cout << "Rendering " << obj->name << " (Layer: " << (int)obj->GetLayer() << " | ID: " << obj->ID() << ")" << endl;
+			//std::cout << "Rendering " << obj->name << " (Layer: " << (int)obj->GetLayer() << " | ID: " << obj->ID() << ")" << std::endl;
 			obj->Render();
 		}
 
@@ -28,18 +33,13 @@ void RenderManager::RenderAll() {
 
 void RenderManager::RemoveRenderObject(GameObject* gameObject) {
 
-	auto it = renderObjectSet.begin();
-	while (it != renderObjectSet.end()) {
+	if (renderObjectSet.contains(gameObject))
+		renderObjectSet.erase(gameObject);
 
-		if (*it == gameObject) {
+}
 
-			renderObjectSet.erase(it);
-			return;
+bool RenderManager::AffectByZoom(Layer layer) {
 
-		}
-
-		it++;
-
-	}
+	return !noZoomLayerList.contains(layer);
 
 }

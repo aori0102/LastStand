@@ -32,7 +32,8 @@ void MediaManager::InitializeMediaUI() {
 	for (auto it = MEDIA_UI_PATH_MAP.begin(); it != MEDIA_UI_PATH_MAP.end(); it++) {
 
 		uiSpriteMap[it->first] = new Sprite;
-		uiSpriteMap.at(it->first)->LoadImage(ASSET_FOLDER_PATH + it->second + SPRITE_EXTENSION);
+		if (!uiSpriteMap.at(it->first)->LoadImage(ASSET_FOLDER_PATH + it->second + SPRITE_EXTENSION))
+			throw new std::exception(("Loading media UI failed at item " + it->second).c_str());
 
 		completed++;
 		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;
@@ -51,7 +52,8 @@ void MediaManager::InitializeMediaObject() {
 	for (auto it = MEDIA_OBJECT_PATH_MAP.begin(); it != MEDIA_OBJECT_PATH_MAP.end(); it++) {
 
 		objectSpriteMap[it->first] = new Sprite;
-		objectSpriteMap.at(it->first)->LoadImage(ASSET_FOLDER_PATH + it->second + SPRITE_EXTENSION);
+		if (!objectSpriteMap.at(it->first)->LoadImage(ASSET_FOLDER_PATH + it->second + SPRITE_EXTENSION))
+			throw new std::exception(("Loading media object failed at item " + it->second).c_str());
 
 		completed++;
 		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;

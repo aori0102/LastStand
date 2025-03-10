@@ -122,6 +122,17 @@ Vector2 Vector2::Normalize() {
 
 }
 
+Vector2 Vector2::Rotate(float angleInRadian) {
+
+	Vector2 res(
+		x * std::cosf(angleInRadian) - y * std::sinf(angleInRadian),
+		x * std::sinf(angleInRadian) + y * std::cosf(angleInRadian)
+	);
+
+	return res;
+
+}
+
 float Vector2::Magnitude() const {
 
 	return sqrt(x * x + y * y);
@@ -210,6 +221,14 @@ Vector2 Math::C00ToSDL(Vector2 position, Vector2 scale) {
 		position.x - (scale - GameCore::WindowResolution()).x / 2.0f,
 		-position.y + (GameCore::WindowResolution() - scale).y / 2.0f
 	);
+
+}
+
+float Math::Lerp(float start, float end, float time) {
+
+	time = Math::Clamp(time, 0.0f, 1.0f);
+
+	return start * (1.0f - time) + end * time;
 
 }
 

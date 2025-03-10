@@ -2,7 +2,7 @@
 #include <Texture.h>
 #include <GameCore.h>
 
-AnimationClip::AnimationClip(Sprite* initAnimationSpriteSheet) {
+AnimationClip::AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer) : GameObject("Animation", initLayer) {
 
 	if (!initAnimationSpriteSheet)
 		throw new std::exception("Animation extracting from null sprite sheet");
@@ -63,7 +63,7 @@ void AnimationClip::RenderCurrent(Vector2 position, Vector2 scale, float angle) 
 	if (currentFrame == animationTimeline.end())
 		return;
 
-	GameCore::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, &((*currentFrame)->clip), angle);
+	GameCore::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, GetLayer(), &((*currentFrame)->clip), angle);
 
 }
 

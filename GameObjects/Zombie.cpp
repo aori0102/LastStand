@@ -23,6 +23,8 @@ const float ZombieAttribute::HEALTH_MULTIPLIER = 1.07f;
 
 Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject("Zombie", Layer::Zombie) {
 
+	std::cout << "Zombie loaded" << std::endl;
+
 	zombieIndex = initZombieIndex;
 
 	zombieAttribute = new ZombieAttribute(

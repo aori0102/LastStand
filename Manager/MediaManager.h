@@ -56,7 +56,7 @@ private:
 
 	static MediaManager* instance;
 
-	const std::string ASSET_FOLDER_PATH = "./Asset/";
+	const std::string ASSET_FOLDER_PATH = ".\\Asset\\";
 	const std::string SPRITE_EXTENSION = ".png";
 	const std::string FONT_EXTENSION = ".ttf";
 
@@ -64,39 +64,39 @@ private:
 
 	std::unordered_map<MediaUI, Sprite*> uiSpriteMap;
 	const std::unordered_map<MediaUI, std::string> MEDIA_UI_PATH_MAP = {
-		{ MediaUI::Firearm_AmmoFrame, "Firearm/AmmoFrame" },
-		{ MediaUI::Firearm_AmmoIcon, "Firearm/AmmoIcon" },
-		{ MediaUI::Status_BarBackground, "Status/BarBackground" },
-		{ MediaUI::Status_Frame, "Status/Frame" },
-		{ MediaUI::Status_HealthBar, "Status/HealthBar" },
-		{ MediaUI::Status_HealthSymbol, "Status/HealthSymbol" },
-		{ MediaUI::Status_LevelFrame, "Status/LevelFrame" },
-		{ MediaUI::Status_StaminaBar, "Status/StaminaBar" },
-		{ MediaUI::Status_StaminaSymbol, "Status/StaminaSymbol" },
-		{ MediaUI::WaveInfo_NextWaveButton, "WaveInfo/NextWaveButton" },
-		{ MediaUI::WaveInfo_ProgressBar, "WaveInfo/ProgressBar" },
-		{ MediaUI::WaveInfo_ProgressBarBackground, "WaveInfo/ProgressBarBackground" },
-		{ MediaUI::Shop_AttributeFrame, "Shop/AttributeFrame" },
-		{ MediaUI::Shop_Background, "Shop/Background" },
-		{ MediaUI::Shop_NavigationButtonSelected, "Shop/NavigationButtonSelected" },
-		{ MediaUI::Shop_NavigationButtonUnselected, "Shop/NavigationButtonUnselected" },
-		{ MediaUI::Shop_UpgradeSlot, "Shop/UpgradeSlot" }
+		{ MediaUI::Firearm_AmmoFrame, "Firearm\\AmmoFrame" },
+		{ MediaUI::Firearm_AmmoIcon, "Firearm\\AmmoIcon" },
+		{ MediaUI::Status_BarBackground, "Status\\BarBackground" },
+		{ MediaUI::Status_Frame, "Status\\Frame" },
+		{ MediaUI::Status_HealthBar, "Status\\HealthBar" },
+		{ MediaUI::Status_HealthSymbol, "Status\\HealthSymbol" },
+		{ MediaUI::Status_LevelFrame, "Status\\LevelFrame" },
+		{ MediaUI::Status_StaminaBar, "Status\\StaminaBar" },
+		{ MediaUI::Status_StaminaSymbol, "Status\\StaminaSymbol" },
+		{ MediaUI::WaveInfo_NextWaveButton, "WaveInfo\\NextWaveButton" },
+		{ MediaUI::WaveInfo_ProgressBar, "WaveInfo\\ProgressBar" },
+		{ MediaUI::WaveInfo_ProgressBarBackground, "WaveInfo\\ProgressBarBackground" },
+		{ MediaUI::Shop_AttributeFrame, "Shop\\AttributeFrame" },
+		{ MediaUI::Shop_Background, "Shop\\Background" },
+		{ MediaUI::Shop_NavigationButtonSelected, "Shop\\NavigationButtonSelected" },
+		{ MediaUI::Shop_NavigationButtonUnselected, "Shop\\NavigationButtonUnselected" },
+		{ MediaUI::Shop_UpgradeSlot, "Shop\\UpgradeSlot" }
 	};
 
 	// --- OBJECT SPRITE ---
 
 	std::unordered_map<MediaObject, Sprite*> objectSpriteMap;
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
-		{ MediaObject::Entity_Zombie, "Entity/Zombie" },
-		{ MediaObject::Entity_Player, "Entity/Player" },
-		{ MediaObject::Misc_Bullet, "Misc/Bullet" },
-		{ MediaObject::Misc_Background, "Misc/Background" },
-		{ MediaObject::Misc_HealthBar, "Misc/HealthBar" },
+		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
+		{ MediaObject::Entity_Player, "Entity\\Player" },
+		{ MediaObject::Misc_Bullet, "Misc\\Bullet" },
+		{ MediaObject::Misc_Background, "Misc\\Background" },
+		{ MediaObject::Misc_HealthBar, "Misc\\HealthBar" },
 	};
 
 	// --- FONT ---
 	std::unordered_map<MediaFont, TTF_Font*> fontMap;
-	const std::string FONT_SUBFOLDER = "Font/";
+	const std::string FONT_SUBFOLDER = "Font\\";
 	const int DEFAULT_FONT_SIZE = 16;
 	const std::unordered_map<MediaFont, std::string> FONT_PATH_MAP = {
 		{ MediaFont::RimouskiSb_Regular, "RimouskiSb_Regular" },

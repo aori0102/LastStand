@@ -1,13 +1,24 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <GameComponent.h>
 #include <unordered_map>
+
+#include <GameComponent.h>
 #include <RenderManager.h>
 
 class Firearm;
 class AnimationClip;
 
 class Player : public GameObject {
+
+	// ----------------------------------
+	// STRUCTURES AND CONSTANTS
+	// ----------------------------------
 
 private:
 
@@ -18,41 +29,59 @@ private:
 
 	};
 
+	// The aiming error angle in degree
+	static const float MAX_AIMING_DEVIATION;
+
+	// ----------------------------------
+	// FIELDS
+	// ----------------------------------
+
+private:
+
 	float playerForwardAngle;
-
-	Vector2 forward;		// The vector towards the position the player is facing
-
 	float movementSpeed;
+
+	bool isMoving;
+
+	Vector2 forward;
+
+public:
+
+	float currentAnimationTime;
+	float currentAnimationStartTick;
+
+	bool canInteract;
+	bool usingItem;
+
+	std::unordered_map<AnimationIndex, AnimationClip*> animationMap;
+
+	Firearm* firearm;
+	AnimationIndex currentAnimationState;
+
+	// ----------------------------------
+	// METHODS
+	// ----------------------------------
+
+private:
 
 	void HandleActions();
 	void HandleMovement(Transform* transform);
 	void HandleFacing(Transform* transform);
 
-	bool canInteract;
-	bool usingItem;
+public:
 
-	Firearm* firearm;
-
-	std::unordered_map<AnimationIndex, AnimationClip*> animationMap;
-	AnimationIndex currentAnimationState;
-	float currentAnimationTime;
-	float currentAnimationStartTick;
+	Player();
 
 	void InitializeAnimation();
 	void InitializeData();
-
 	void PlayerRender();
-
-public:
-	
-	Player();
-
-	void Update() override;
-	Vector2 Forward() const;
-
 	void DisableInteraction();
 	void EnableInteraction();
+	void Update() override;
 
-	Firearm* GetFirearm();
+	Vector2 GetForward() const;
+	Vector2 GetAimingDirection();
+
+	Firearm* GetFirearm() const;
 
 };

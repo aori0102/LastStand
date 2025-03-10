@@ -74,7 +74,7 @@ bool Firearm::Use(Player* player) {
 		return false;
 
 	// Get the direction the player is facing
-	Vector2 direction = player->Forward();
+	Vector2 direction = player->GetAimingDirection();
 
 	// Get player's position
 	Vector2 origin = player->GetComponent<Transform>()->position;

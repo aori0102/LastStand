@@ -6,6 +6,8 @@
 
 StatusBar::StatusBar(PlayerStatistic* initLinkedPlayerStatistic) {
 
+	std::cout << "Status bar loaded" << std::endl;
+
 	linkedPlayerStatistic = initLinkedPlayerStatistic;
 
 	previousPlayerEXP = 0;

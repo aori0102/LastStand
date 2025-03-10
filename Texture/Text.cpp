@@ -59,6 +59,6 @@ void Text::Render() {
 
 	Transform* transform = GetComponent<Transform>();
 
-	GameCore::RenderCopy(this, transform->position, transform->scale, showOnScreen);
+	GameCore::RenderCopy(this, transform->position, transform->scale, showOnScreen, Owner()->GetLayer());
 
 }

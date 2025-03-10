@@ -12,20 +12,17 @@ GameObject::GameObject() {
 	layer = Layer::Default;
 	id = GameObject::GetNextID();
 
+	enabled = true;
+
+	componentMap = {};
+
 	transform = AddComponent<Transform>();
 
 	GameCore::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
 
-	Render = []() {};
-
-}
-
-void GameObject::SetLayer(Layer newLayer) {
-
-	layer = newLayer;
-
-	RenderManager::UpdateRenderObject(this);
+	if (!Render)
+		Render = []() {};
 
 }
 
@@ -35,12 +32,17 @@ GameObject::GameObject(std::string initName) {
 	id = GameObject::GetNextID();
 	layer = Layer::Default;
 
+	enabled = true;
+
+	componentMap = {};
+
 	transform = AddComponent<Transform>();
 
 	GameCore::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
 
-	Render = []() {};
+	if (!Render)
+		Render = []() {};
 
 }
 
@@ -50,12 +52,17 @@ GameObject::GameObject(std::string initName, Layer initLayer) {
 	layer = initLayer;
 	id = GameObject::GetNextID();
 
+	enabled = true;
+
+	componentMap = {};
+
 	transform = AddComponent<Transform>();
 
 	GameCore::RegisterGameObject(this);
 	RenderManager::UpdateRenderObject(this);
 
-	Render = []() {};
+	if (!Render)
+		Render = []() {};
 
 }
 
@@ -79,6 +86,14 @@ GameObject::~GameObject() {
 	GameCore::UnregisterGameObject(this);
 
 	OnDestroy();
+
+}
+
+void GameObject::SetLayer(Layer newLayer) {
+
+	layer = newLayer;
+
+	RenderManager::UpdateRenderObject(this);
 
 }
 
