@@ -24,7 +24,7 @@ void Transform::Translate(Vector2 movementVector, bool tryNavigate) {
 	}
 
 	// Only check for collision if there is a collider
-	if (TryGetComponent<BoxCollider>(collider) && PhysicsManager::BoxCast(collider, movementVector, &hitInfo)) {
+	if (TryGetComponent<BoxCollider>(collider) && PhysicsManager::Instance()->BoxCast(collider, movementVector, &hitInfo)) {
 
 		// The remaining distance that hasn't been covered
 		float remainingDistance = (movementVector - (hitInfo.contactPoint - position)).Magnitude();
@@ -41,14 +41,14 @@ void Transform::Translate(Vector2 movementVector, bool tryNavigate) {
 		// Try navigate alongside the box
 		// Try movement on x axis
 		Vector2 movementAlongX = Vector2(movementVector.x, 0.0f).Normalize() * remainingDistance;
-		if (PhysicsManager::BoxCast(collider, movementAlongX, &hitInfo)) {
+		if (PhysicsManager::Instance()->BoxCast(collider, movementAlongX, &hitInfo)) {
 
 			if (rigidBody && hitInfo.otherCollider->TryGetComponent<RigidBody>(otherRigidBody))
 				otherRigidBody->momentum = (otherRigidBody->momentum + movementAlongX * rigidBody->mass) / 2.0f;
 
 			// Try movement on y axis
 			Vector2 movementAlongY = Vector2(0.0f, movementVector.y).Normalize() * remainingDistance;
-			if (!PhysicsManager::BoxCast(collider, movementAlongY, &hitInfo))
+			if (!PhysicsManager::Instance()->BoxCast(collider, movementAlongY, &hitInfo))
 				position += movementAlongY;
 			else {
 

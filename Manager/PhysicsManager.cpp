@@ -1,16 +1,31 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <PhysicsManager.h>
+
 #include <GameComponent.h>
-#include <Type.h>
 #include <GameCore.h>
+#include <Type.h>
 
-// This value is used to set a small margin between objects. To prevent
-// object going through each other due to small calculation difference
-const float MOVEMENT_PERCENTAGE = 0.99f;
+PhysicsManager* PhysicsManager::instance = nullptr;
 
-std::unordered_set<BoxCollider*> PhysicsManager::boxColliderSet = {};
-std::unordered_set<RigidBody*> PhysicsManager::rigidBodySet = {};
+PhysicsManager::PhysicsManager() {
 
-std::unordered_map<BoxCollider*, std::unordered_set<BoxCollider*>> PhysicsManager::colliderHitMap = {};
+	if (instance)
+		throw new std::exception("Physics Manager can only have one instance!");
+
+	boxColliderSet = {};
+	rigidBodySet = {};
+	colliderHitMap = {};
+
+	instance = this;
+
+}
+
+PhysicsManager* PhysicsManager::Instance() { return instance; }
 
 void PhysicsManager::RegisterBoxCollider(BoxCollider* boxCollider) {
 

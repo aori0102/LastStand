@@ -31,6 +31,7 @@ std::string GameCore::gameName = "Last Stand";
 GameObject* GameCore::cameraFocusObject = nullptr;
 GameManager* GameCore::gameManager = nullptr;
 MediaManager* GameCore::mediaManager = nullptr;
+PhysicsManager* GameCore::physicsManager = nullptr;
 
 // Getter
 float GameCore::Time() { return time; }
@@ -134,7 +135,7 @@ void GameCore::Loop() {
 		// Camera and background
 		UpdateCamera();
 
-		PhysicsManager::Update();
+		PhysicsManager::Instance()->Update();
 
 		// Handle game object
 		auto it = gameObjectSet.begin();
@@ -147,7 +148,7 @@ void GameCore::Loop() {
 
 		}
 
-		PhysicsManager::LateCollisionCall();
+		PhysicsManager::Instance()->LateCollisionCall();
 
 		GameManager::Instance()->Update();
 
@@ -366,6 +367,7 @@ GameCore::ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
 void GameCore::InitializeGameObject() {
 
 	mediaManager = new MediaManager;
+	physicsManager = new PhysicsManager;
 	gameManager = new GameManager;
 
 	Random::Init();
@@ -438,15 +440,25 @@ void GameCore::DrawLine(Vector2 position, Vector2 direction, float maxDistance, 
 
 }
 
-void GameCore::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color) {
+void GameCore::DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color, Layer layer) {
 
 	SetRenderDrawColor(color);
 
-	Vector2 renderCenter = (!onScreen ? (center - cameraPosition) : center) + windowResolution / 2.0f;
+	Vector2 renderCenter = !onScreen ? center - cameraPosition : center;
+
+	if (RenderManager::AffectByZoom(layer)) {
+
+		extents *= currentCameraZoom;
+
+		renderCenter *= currentCameraZoom;
+
+	}
+
+	renderCenter = Math::C00ToSDL(renderCenter, extents * 2.0f);
 
 	SDL_FRect quad = {
-		renderCenter.x - extents.x,
-		renderCenter.y - extents.y,
+		renderCenter.x,
+		renderCenter.y,
 		extents.x * 2.0f,
 		extents.y * 2.0f
 	};

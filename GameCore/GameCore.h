@@ -27,6 +27,7 @@ enum class MouseButton {
 class GameObject;
 class GameManager;
 class MediaManager;
+class PhysicsManager;
 class Texture;
 class Color;
 
@@ -67,6 +68,7 @@ private:
 	// --- MANAGERS ---
 	static MediaManager* mediaManager;
 	static GameManager* gameManager;
+	static PhysicsManager* physicsManager;
 
 	static void HandleEvent();
 	static void UpdateEvent();
@@ -93,7 +95,7 @@ public:
 	// Rendering
 	static void SetRenderDrawColor(Color color);
 	static void DrawLine(Vector2 position, Vector2 direction, float maxDistance, Color color);
-	static void DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color);
+	static void DrawRectangle(Vector2 center, Vector2 extents, bool onScreen, bool fill, Color color, Layer layer);
 	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Layer layer, SDL_Rect* clip = nullptr, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 	static SDL_Texture* CreateTexture(Vector2 size);

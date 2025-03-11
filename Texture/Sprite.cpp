@@ -28,7 +28,6 @@ bool Sprite::LoadImage(std::string path) {
 
 	// Finish up
 	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
-	clip = { 0, 0, static_cast<int>(textureDimension.x), static_cast<int>(textureDimension.y) };
 
 	// Clean
 	SDL_FreeSurface(loadedSurface);

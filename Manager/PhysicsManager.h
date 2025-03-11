@@ -1,7 +1,14 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
+
 #include <Type.h>
 
 class GameObject;
@@ -10,6 +17,10 @@ class RigidBody;
 class Bound;
 
 class HitInfo {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 public:
 
@@ -21,28 +32,51 @@ public:
 
 class PhysicsManager {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
-	static std::unordered_set<BoxCollider*> boxColliderSet;
-	static std::unordered_set<RigidBody*> rigidBodySet;
+	// This value is used to set a small margin between objects. To prevent
+	// object going through each other due to small calculation difference
+	const float MOVEMENT_PERCENTAGE = 0.99f;
+	
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
-	static std::unordered_map<BoxCollider*, std::unordered_set<BoxCollider*>> colliderHitMap;
+private:
+
+	std::unordered_set<BoxCollider*> boxColliderSet;
+	std::unordered_set<RigidBody*> rigidBodySet;
+	std::unordered_map<BoxCollider*, std::unordered_set<BoxCollider*>> colliderHitMap;
+
+	static PhysicsManager* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
-	static void Update();
+	PhysicsManager();
 
-	static void RegisterBoxCollider(BoxCollider* boxCollider);
-	static void UnregisterBoxCollider(BoxCollider* boxCollider);
+	static PhysicsManager* Instance();
 
-	static void RegisterRigidBody(RigidBody* rigidBody);
-	static void UnregisterRigidBody(RigidBody* rigidBody);
+	void Update();
 
-	static bool BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo = nullptr);
-	static bool RayCast(Vector2 origin, Vector2 end, HitInfo* hitInfo = nullptr);
+	void RegisterBoxCollider(BoxCollider* boxCollider);
+	void UnregisterBoxCollider(BoxCollider* boxCollider);
 
-	static bool ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart = nullptr, Vector2* newEnd = nullptr);
+	void RegisterRigidBody(RigidBody* rigidBody);
+	void UnregisterRigidBody(RigidBody* rigidBody);
 
-	static void LateCollisionCall();
+	bool BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo = nullptr);
+	bool RayCast(Vector2 origin, Vector2 end, HitInfo* hitInfo = nullptr);
+
+	bool ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart = nullptr, Vector2* newEnd = nullptr);
+
+	void LateCollisionCall();
 
 };

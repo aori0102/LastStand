@@ -4,6 +4,8 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
+#include <Player.h>
+
 #include <functional>
 
 #include <Animation.h>
@@ -12,13 +14,20 @@
 #include <GameCore.h>
 #include <MediaManager.h>
 #include <PhysicsManager.h>
-#include <Player.h>
 #include <PlayerUI.h>
 #include <Projectile.h>
 #include <Texture.h>
 #include <Type.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 const float Player::MAX_AIMING_DEVIATION = 27.0f;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void Player::HandleActions() {
 
@@ -56,7 +65,7 @@ void Player::HandleActions() {
 
 }
 
-void Player::HandleMovement(Transform* transform) {
+void Player::HandleMovement() {
 
 	// Input
 	Vector2 input(0.0f, 0.0f);
@@ -80,13 +89,10 @@ void Player::HandleMovement(Transform* transform) {
 
 }
 
-void Player::HandleFacing(Transform* transform) {
+void Player::HandleFacing() {
 
 	// Calculate rotation
 	forward = (GameCore::ScreenToWorldPosition(GameCore::GetMouseInput()) - transform->position).Normalize();
-
-	// Render line of sight
-	GameCore::DrawLine(transform->position, forward, 2000.0f, Color::GREEN);
 
 }
 
@@ -126,12 +132,11 @@ void Player::InitializeData() {
 	isMoving = false;
 
 	Image* playerSprite = AddComponent<Image>();
-	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player));
+	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player),false);
 	playerSprite->showOnScreen = false;
 
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
 
-	Transform* transform = AddComponent<Transform>();
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
@@ -160,8 +165,6 @@ void Player::InitializeData() {
 
 void Player::PlayerRender() {
 
-	std::cout << "Player rendering..." << std::endl;
-
 	if (currentAnimationState != AnimationIndex::Idle && GameCore::Time() >= currentAnimationStartTick + currentAnimationTime) {
 
 		currentAnimationState = AnimationIndex::Idle;
@@ -170,7 +173,7 @@ void Player::PlayerRender() {
 
 	}
 
-	Transform* transform = GetComponent<Transform>();
+	std::cout << "Render current: " << transform->scale << std::endl;
 
 	animationMap[currentAnimationState]->RenderCurrent(
 		transform->position,
@@ -198,11 +201,9 @@ void Player::Update() {
 
 	if (canInteract) {
 
-		Transform* transform = GetComponent<Transform>();
+		HandleMovement();
 
-		HandleMovement(transform);
-
-		HandleFacing(transform);
+		HandleFacing();
 
 		HandleActions();
 

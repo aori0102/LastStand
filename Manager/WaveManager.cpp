@@ -45,7 +45,8 @@ void WaveHandler::Update() {
 
 		lastSpawnTick = GameCore::Time();
 
-		GameManager::Instance()->SpawnZombie(spawnAmount);
+		GameManager::Instance()->SpawnZombie(spawnAmount, 
+			Random::Int(0, 10) & 1 ? ZombieIndex::Normal : ZombieIndex::Lurker);
 
 	}
 
@@ -71,8 +72,6 @@ void WaveHandler::InitiateWave() {
 
 	if (waveInProgress)
 		return;
-
-	std::cout << "Spawning wave!!!" << std::endl;
 
 	waveInProgress = true;
 
@@ -122,7 +121,7 @@ void WaveInfoUI::InitializeUI() {
 	// --- PROGRESS BAR BACKGROUND
 	uiElementMap[WaveInfoIndex::ProgressBarBackground] = new GameObject(UI_LABEL_MAP.at(WaveInfoIndex::ProgressBarBackground), Layer::GUI);
 	Image* progressBarBackground_image = uiElementMap.at(WaveInfoIndex::ProgressBarBackground)->AddComponent<Image>();
-	progressBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBarBackground));
+	progressBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBarBackground),true);
 	progressBarBackground_image->showOnScreen = true;
 	progressBarBackground_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(WaveInfoIndex::ProgressBarBackground), progressBarBackground_image->transform->scale);
 	progressBarBackground_image->transform->position.x = 0.0f;
@@ -135,7 +134,7 @@ void WaveInfoUI::InitializeUI() {
 	// --- PROGRESS BAR
 	uiElementMap[WaveInfoIndex::ProgressBar] = new GameObject(UI_LABEL_MAP.at(WaveInfoIndex::ProgressBar), Layer::GUI);
 	Image* progressBar_image = uiElementMap.at(WaveInfoIndex::ProgressBar)->AddComponent<Image>();
-	progressBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBar));
+	progressBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBar),true);
 	progressBar_image->imageFill = ImageFill::Horizontal;
 	progressBar_image->showOnScreen = true;
 	progressBar_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(WaveInfoIndex::ProgressBar), progressBar_image->transform->scale);
@@ -183,7 +182,7 @@ void WaveInfoUI::InitializeUI() {
 	// --- NEXT WAVE BUTTON ---
 	uiElementMap[WaveInfoIndex::NextWaveButton] = new GameObject(UI_LABEL_MAP.at(WaveInfoIndex::NextWaveButton), Layer::GUI);
 	Image* nextWave_image = uiElementMap.at(WaveInfoIndex::NextWaveButton)->AddComponent<Image>();
-	nextWave_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_NextWaveButton));
+	nextWave_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_NextWaveButton),true);
 	nextWave_image->showOnScreen = true;
 	Button* nextWave_button = uiElementMap.at(WaveInfoIndex::NextWaveButton)->AddComponent<Button>();
 	nextWave_button->backgroundColor = Color::TRANSPARENT;

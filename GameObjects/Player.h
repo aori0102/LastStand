@@ -16,9 +16,9 @@ class AnimationClip;
 
 class Player : public GameObject {
 
-	// ----------------------------------
-	// STRUCTURES AND CONSTANTS
-	// ----------------------------------
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -32,9 +32,9 @@ private:
 	// The aiming error angle in degree
 	static const float MAX_AIMING_DEVIATION;
 
-	// ----------------------------------
-	// FIELDS
-	// ----------------------------------
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -58,15 +58,15 @@ public:
 	Firearm* firearm;
 	AnimationIndex currentAnimationState;
 
-	// ----------------------------------
-	// METHODS
-	// ----------------------------------
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 
 	void HandleActions();
-	void HandleMovement(Transform* transform);
-	void HandleFacing(Transform* transform);
+	void HandleMovement();
+	void HandleFacing();
 
 public:
 

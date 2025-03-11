@@ -18,4 +18,4 @@ void Texture::FreeTexture() {
 
 SDL_Texture* Texture::GetTexture() { return texture; }
 
-Vector2 Texture::TextureDimension() const { return textureDimension; }
+Vector2 Texture::GetTextureDimension() const { return textureDimension; }

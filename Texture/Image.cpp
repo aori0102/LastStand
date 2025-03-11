@@ -8,6 +8,11 @@ Image::Image(GameObject* initOwner) : GameComponent(initOwner) {
 
 	imageFill = ImageFill::None;
 	fillAmount = 1.0f;
+	scale = 1.0f;
+
+	stretchToTransform = false;
+
+	clip = { 0, 0, 0, 0 };
 
 	backgroundColor = Color::WHITE;
 	outlineColor = Color::TRANSPARENT;
@@ -16,37 +21,42 @@ Image::Image(GameObject* initOwner) : GameComponent(initOwner) {
 
 }
 
-void Image::LinkSprite(Sprite* sprite) {
+void Image::LinkSprite(Sprite* sprite, bool stretchWithTransform) {
 
 	linkedSprite = sprite;
 
-	transform->scale = sprite->textureDimension;
+	stretchToTransform = stretchWithTransform;
+
+	if (stretchToTransform)
+		transform->scale = sprite->GetTextureDimension();
+
+	clip = { 0, 0, static_cast<int>(sprite->GetTextureDimension().x), static_cast<int>(sprite->GetTextureDimension().y) };
 
 }
 
 void Image::Render() {
 
-	if (linkedSprite && linkedSprite->texture) {
+	if (linkedSprite && linkedSprite->GetTexture()) {
+
+		SDL_Rect formatClip = clip;
 
 		// Format
-		SDL_Rect clip = linkedSprite->clip;
-
 		Vector2 position = transform->position;
-		Vector2 scale = transform->scale;
+		Vector2 size = stretchToTransform ? transform->scale : Vector2(formatClip.w, formatClip.h);
 
 		fillAmount = Math::Clamp(fillAmount, 0.0f, 1.0f);
 
 		if (imageFill == ImageFill::Vertical) {
 
-			clip.h *= fillAmount;
-			position.y -= (scale.y * (1.0f - fillAmount)) / 2.0f;
-			scale.y *= fillAmount;
+			formatClip.h *= fillAmount;
+			position.y -= (size.y * (1.0f - fillAmount)) / 2.0f;
+			size.y *= fillAmount;
 
 		} else if (imageFill == ImageFill::Horizontal) {
 
-			clip.w *= fillAmount;
-			position.x -= (scale.x * (1.0f - fillAmount)) / 2.0f;
-			scale.x *= fillAmount;
+			formatClip.w *= fillAmount;
+			position.x -= (size.x * (1.0f - fillAmount)) / 2.0f;
+			size.x *= fillAmount;
 
 		}
 
@@ -54,10 +64,10 @@ void Image::Render() {
 		GameCore::RenderCopy(
 			linkedSprite,
 			position,
-			scale,
+			size * scale,
 			showOnScreen,
 			Owner()->GetLayer(),
-			&clip,
+			&formatClip,
 			angle
 		);
 
@@ -79,8 +89,8 @@ void Image::Render() {
 
 		}
 
-		GameCore::DrawRectangle(center, extents, showOnScreen, true, backgroundColor);
-		GameCore::DrawRectangle(center, extents, showOnScreen, false, outlineColor);
+		GameCore::DrawRectangle(center, extents, showOnScreen, true, backgroundColor, Owner()->GetLayer());
+		GameCore::DrawRectangle(center, extents, showOnScreen, false, outlineColor, Owner()->GetLayer());
 
 	}
 

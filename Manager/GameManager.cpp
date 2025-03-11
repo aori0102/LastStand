@@ -111,7 +111,7 @@ void GameManager::InitializeObject() {
 	// Map background
 	background = new GameObject("Background", Layer::Background);
 	Image* background_image = background->AddComponent<Image>();
-	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background));
+	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background),true);
 	background_image->showOnScreen = false;
 	background->GetComponent<Transform>()->position = Vector2::zero;
 	background->Render = [background_image]() {
@@ -175,17 +175,14 @@ void GameManager::Render() {
 
 }
 
-void GameManager::SpawnZombie(int amount) {
+void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 
 	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
 	Algorithm::Shuffle(spawnPositionList);
 
-	std::cout << "Spawning " << amount << std::endl;
-
 	for (int i = 0; i < amount; i++) {
 
-		Zombie* zombie = new Zombie(player, ZombieIndex::Normal);
-		zombie->name = "Zombie " + std::to_string(i) + " (" + std::to_string(GameCore::Time()) + ")";
+		Zombie* zombie = new Zombie(player, zombieIndex);
 
 		zombie->transform->position = spawnPositionList[i];
 

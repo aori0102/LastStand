@@ -17,7 +17,7 @@ void Button::Render() {
 
 	Transform* transform = GetComponent<Transform>();
 
-	GameCore::DrawRectangle(transform->position, transform->scale / 2.0f, true, true, backgroundColor);
+	GameCore::DrawRectangle(transform->position, transform->scale / 2.0f, true, true, backgroundColor, Owner()->GetLayer());
 
 }
 

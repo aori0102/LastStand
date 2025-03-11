@@ -11,7 +11,7 @@ RigidBody::RigidBody(GameObject* initOwner) : GameComponent(initOwner) {
 
 	lastUpdateTick = 0.0f;
 
-	PhysicsManager::RegisterRigidBody(this);
+	PhysicsManager::Instance()->RegisterRigidBody(this);
 
 }
 
@@ -37,7 +37,7 @@ void RigidBody::Update() {
 
 void RigidBody::OnComponentDestroyed() {
 
-	PhysicsManager::UnregisterRigidBody(this);
+	PhysicsManager::Instance()->UnregisterRigidBody(this);
 
 }
 

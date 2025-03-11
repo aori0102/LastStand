@@ -10,6 +10,7 @@ class PlayerStatistic;
 class Zombie;
 class Shop;
 class StatusBar;
+enum class ZombieIndex;
 
 class GameManager : public GameObject {
 
@@ -77,7 +78,7 @@ public:
 	void InitializeObject();
 	void InitializeUI();
 
-	void SpawnZombie(int amount);
+	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void ReportDead(GameObject* gameObject);
 
 	void Update();

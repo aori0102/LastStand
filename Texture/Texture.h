@@ -26,7 +26,6 @@ enum class ImageFill {
 enum class MediaFont;
 class GameObject;
 class Image;
-class AnimationClip;
 
 class RenderComponent {
 
@@ -53,18 +52,11 @@ protected:
 public:
 
 	SDL_Texture* GetTexture();
-	Vector2 TextureDimension() const;
+	Vector2 GetTextureDimension() const;
 
 };
 
 class Sprite : public Texture {
-
-private:
-
-	SDL_Rect clip;
-
-	friend class Image;
-	friend class AnimationClip;
 
 public:
 
@@ -76,20 +68,23 @@ class Image : public GameComponent, public RenderComponent {
 
 private:
 
+	bool stretchToTransform;
 	Sprite* linkedSprite;
 
 public:
 
 	float angle;
 	float fillAmount;
+	float scale;
 	Color backgroundColor;
 	Color outlineColor;
+	SDL_Rect clip;
 
 	ImageFill imageFill;
 
 	Image(GameObject* initOwner);
 
-	void LinkSprite(Sprite* sprite);
+	void LinkSprite(Sprite* sprite, bool stretchWithTransform);
 	void Render();
 
 };

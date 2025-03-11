@@ -15,7 +15,7 @@ Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 in
 	shooter = initShooter;
 
 	Image* image = AddComponent<Image>();
-	image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Bullet));
+	image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Bullet), false);
 	image->showOnScreen = false;
 	image->angle = Math::RadToDeg(initDirection.Angle());
 

@@ -132,7 +132,7 @@ void Firearm::InitializeUI() {
 	uiElementMap[UIIndex::AmmoFrame] = new GameObject(UI_LABEL_MAP.at(UIIndex::AmmoFrame), Layer::GUI);
 	Image* ammoFrame_image = uiElementMap.at(UIIndex::AmmoFrame)->AddComponent<Image>();
 	ammoFrame_image->showOnScreen = true;
-	ammoFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoFrame));
+	ammoFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoFrame),true);
 	ammoFrame_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(UIIndex::AmmoFrame), ammoFrame_image->transform->scale);
 	uiElementMap.at(UIIndex::AmmoFrame)->Render = [ammoFrame_image]() {
 		ammoFrame_image->Render();
@@ -142,7 +142,7 @@ void Firearm::InitializeUI() {
 	uiElementMap[UIIndex::AmmoIcon] = new GameObject(UI_LABEL_MAP.at(UIIndex::AmmoIcon), Layer::GUI);
 	Image* ammoIcon_image = uiElementMap.at(UIIndex::AmmoIcon)->AddComponent<Image>();
 	ammoIcon_image->showOnScreen = true;
-	ammoIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoIcon));
+	ammoIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoIcon),true);
 	ammoIcon_image->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(UIIndex::AmmoIcon), ammoIcon_image->transform->scale);
 	uiElementMap.at(UIIndex::AmmoIcon)->Render = [ammoIcon_image]() {
 		ammoIcon_image->Render();

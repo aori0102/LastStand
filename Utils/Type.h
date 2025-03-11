@@ -133,9 +133,9 @@ enum class Layer {
 
 	Background,
 	Default,
+	Projectile,
 	Player,
 	Zombie,
-	Projectile,
 	GUI,
 	Menu,
 
