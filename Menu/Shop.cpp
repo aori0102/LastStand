@@ -34,29 +34,29 @@ const Color Shop::FirearmUpgradeUIGroup::UPGRADE_ATTRIBUTE_COLOR = Color::GREEN;
 const std::string Shop::FirearmAttributeInfoGroup::OBJECT_NAME_SUFFIX = "_InfoGroup";
 
 const float Shop::UPGRADE_DESCRIPTION_MARGIN = 40.0f;
-const std::unordered_map<Firearm::Attribute, std::string> Shop::FIREARM_UPGRADE_LABEL_MAP = {
-	{ Firearm::Attribute::Damage, "Damage" },
-	{ Firearm::Attribute::ReloadTime, "Reload Time" },
-	{ Firearm::Attribute::MaxAmmo, "Max Ammo" },
-	{ Firearm::Attribute::CriticalChance, "Critical Chance" }
+const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_UPGRADE_LABEL_MAP = {
+	{ FirearmAttributeIndex::Damage, "Damage" },
+	{ FirearmAttributeIndex::ReloadTime, "Reload Time" },
+	{ FirearmAttributeIndex::MagazineCapacity, "Max Ammo" },
+	{ FirearmAttributeIndex::CriticalChance, "Critical Chance" }
 };
-const std::unordered_map<Firearm::Attribute, Vector2> Shop::FIREARM_UPGRADE_POSITION = {
-	{ Firearm::Attribute::Damage, Vector2(200.0f, 230.0f) },
-	{ Firearm::Attribute::ReloadTime, Vector2(475.0f, 230.0f) },
-	{ Firearm::Attribute::MaxAmmo, Vector2(200.0f, 430.0f) },
-	{ Firearm::Attribute::CriticalChance, Vector2(475.0f, 430.0f) }
+const std::unordered_map<FirearmAttributeIndex, Vector2> Shop::FIREARM_UPGRADE_POSITION = {
+	{ FirearmAttributeIndex::Damage, Vector2(200.0f, 230.0f) },
+	{ FirearmAttributeIndex::ReloadTime, Vector2(475.0f, 230.0f) },
+	{ FirearmAttributeIndex::MagazineCapacity, Vector2(200.0f, 430.0f) },
+	{ FirearmAttributeIndex::CriticalChance, Vector2(475.0f, 430.0f) }
 };
-const std::unordered_map<Firearm::Attribute, std::string> Shop::FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP = {
-	{ Firearm::Attribute::Damage, "Increase firearm damage by " },
-	{ Firearm::Attribute::ReloadTime, "Reduce time take to reload to " },
-	{ Firearm::Attribute::MaxAmmo, "Expand magazine, holding up to " },
-	{ Firearm::Attribute::CriticalChance, "Increase critical chance by " }
+const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP = {
+	{ FirearmAttributeIndex::Damage, "Increase firearm damage by " },
+	{ FirearmAttributeIndex::ReloadTime, "Reduce time take to reload to " },
+	{ FirearmAttributeIndex::MagazineCapacity, "Expand magazine, holding up to " },
+	{ FirearmAttributeIndex::CriticalChance, "Increase critical chance by " }
 };
-const std::unordered_map<Firearm::Attribute, std::string> Shop::FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP = {
-	{ Firearm::Attribute::Damage, " times." },
-	{ Firearm::Attribute::ReloadTime, "s." },
-	{ Firearm::Attribute::MaxAmmo, " rounds." },
-	{ Firearm::Attribute::CriticalChance, " times." }
+const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP = {
+	{ FirearmAttributeIndex::Damage, " times." },
+	{ FirearmAttributeIndex::ReloadTime, "s." },
+	{ FirearmAttributeIndex::MagazineCapacity, " rounds." },
+	{ FirearmAttributeIndex::CriticalChance, " times." }
 };
 const int Shop::NAVIGATION_LABEL_SIZE = 48;
 const std::unordered_map<Shop::ShopMenuIndex, std::string> Shop::MENU_NAVIGATION_LABEL_MAP = {
@@ -73,17 +73,17 @@ const float Shop::FIREARM_ATTRIBUTE_VALUE_LEFT = 1075.0f;
 const int Shop::FIREARM_ATTRIBUTE_LABEL_SIZE = 24;
 const int Shop::FIREARM_ATTRIBUTE_AMOUNT_DECIMAL = 1;
 const std::string Shop::FIREARM_ATTRIBUTE_FRAME_PATH = "./Asset/Attribute_Frame.png";
-const std::unordered_map<Firearm::Attribute, Vector2> Shop::FIREARM_ATTRIBUTE_POSITION_MAP = {
-	{ Firearm::Attribute::Damage, Vector2(775.0f, 220.0f) },
-	{ Firearm::Attribute::ReloadTime, Vector2(775.0f, 265.0f) },
-	{ Firearm::Attribute::MaxAmmo, Vector2(775.0f, 310.0f) },
-	{ Firearm::Attribute::CriticalChance, Vector2(775.0f, 355.0f) }
+const std::unordered_map<FirearmAttributeIndex, Vector2> Shop::FIREARM_ATTRIBUTE_POSITION_MAP = {
+	{ FirearmAttributeIndex::Damage, Vector2(775.0f, 220.0f) },
+	{ FirearmAttributeIndex::ReloadTime, Vector2(775.0f, 265.0f) },
+	{ FirearmAttributeIndex::MagazineCapacity, Vector2(775.0f, 310.0f) },
+	{ FirearmAttributeIndex::CriticalChance, Vector2(775.0f, 355.0f) }
 };
-const std::unordered_map<Firearm::Attribute, std::string> Shop::FIREARM_ATTRIBUTE_LABEL_MAP = {
-	{ Firearm::Attribute::Damage, "Damage" },
-	{ Firearm::Attribute::ReloadTime, "Reload Time" },
-	{ Firearm::Attribute::MaxAmmo, "Max Ammo" },
-	{ Firearm::Attribute::CriticalChance, "Critical Chance" }
+const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_ATTRIBUTE_LABEL_MAP = {
+	{ FirearmAttributeIndex::Damage, "Damage" },
+	{ FirearmAttributeIndex::ReloadTime, "Reload Time" },
+	{ FirearmAttributeIndex::MagazineCapacity, "Max Ammo" },
+	{ FirearmAttributeIndex::CriticalChance, "Critical Chance" }
 };
 const Vector2 Shop::FIREARM_ATTRIBUTE_FRAME_POSITION = Vector2(750.0f, 200.0f);
 
@@ -91,7 +91,7 @@ const Vector2 Shop::FIREARM_ATTRIBUTE_FRAME_POSITION = Vector2(750.0f, 200.0f);
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Shop::FirearmUpgrade::FirearmUpgrade(Firearm::Attribute initAttribute, std::function<bool(float, float)> initBetterNode) {
+Shop::FirearmUpgrade::FirearmUpgrade(FirearmAttributeIndex initAttribute, std::function<bool(float, float)> initBetterNode) {
 
 	name = "Upgrade";
 	description = "Upgrade description";
@@ -113,7 +113,7 @@ void Shop::FirearmUpgrade::AddUpgrade(Shop::UpgradeNode* newUpgrade) {
 	}
 
 	if (!newUpgrade || !betterNode)
-		throw new std::exception("Adding new upgrade worth less than previous one");
+		throw std::exception("Adding new upgrade worth less than previous one");
 
 	tailNode->next = newUpgrade;
 	tailNode = newUpgrade;
@@ -154,10 +154,10 @@ float Shop::FirearmUpgrade::NextUpgradeAmount() {
 
 }
 
-Shop::FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(Shop* initShop, Firearm::Attribute initAttribute) {
+Shop::FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(Shop* initShop, FirearmAttributeIndex initAttribute) {
 
 	if (!initShop)
-		throw new std::exception("Updating node does not link to a shop object!");
+		throw std::exception("Updating node does not link to a shop object!");
 
 	linkedShop = initShop;
 	assignedAttribute = initAttribute;
@@ -351,10 +351,10 @@ void Shop::Show() {
 	menuNavigationButtonMap.at(ShopMenuIndex::Melee)->button->Enable();
 	menuNavigationButtonMap.at(ShopMenuIndex::Utility)->button->Enable();
 
-	firearmAttributeInfoMap.at(Firearm::Attribute::Damage)->Show();
-	firearmAttributeInfoMap.at(Firearm::Attribute::ReloadTime)->Show();
-	firearmAttributeInfoMap.at(Firearm::Attribute::MaxAmmo)->Show();
-	firearmAttributeInfoMap.at(Firearm::Attribute::CriticalChance)->Show();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::Damage)->Show();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::ReloadTime)->Show();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::MagazineCapacity)->Show();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::CriticalChance)->Show();
 
 	firearmAttributeFrame->Enable();
 
@@ -368,10 +368,10 @@ void Shop::Hide() {
 	menuNavigationButtonMap.at(ShopMenuIndex::Melee)->button->Disable();
 	menuNavigationButtonMap.at(ShopMenuIndex::Utility)->button->Disable();
 
-	firearmAttributeInfoMap.at(Firearm::Attribute::Damage)->Hide();
-	firearmAttributeInfoMap.at(Firearm::Attribute::ReloadTime)->Hide();
-	firearmAttributeInfoMap.at(Firearm::Attribute::MaxAmmo)->Hide();
-	firearmAttributeInfoMap.at(Firearm::Attribute::CriticalChance)->Hide();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::Damage)->Hide();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::ReloadTime)->Hide();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::MagazineCapacity)->Hide();
+	firearmAttributeInfoMap.at(FirearmAttributeIndex::CriticalChance)->Hide();
 
 	firearmAttributeFrame->Disable();
 
@@ -383,10 +383,10 @@ void Shop::ShowCurrentMenu() {
 
 	case ShopMenuIndex::Firearm:
 
-		firearmUpgradeUIGroupMap[Firearm::Attribute::Damage]->Show();
-		firearmUpgradeUIGroupMap[Firearm::Attribute::ReloadTime]->Show();
-		firearmUpgradeUIGroupMap[Firearm::Attribute::MaxAmmo]->Show();
-		firearmUpgradeUIGroupMap[Firearm::Attribute::CriticalChance]->Show();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::Damage]->Show();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::ReloadTime]->Show();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::MagazineCapacity]->Show();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::CriticalChance]->Show();
 
 		break;
 
@@ -406,10 +406,10 @@ void Shop::HideCurrentMenu() {
 
 	case ShopMenuIndex::Firearm:
 
-		firearmUpgradeUIGroupMap[Firearm::Attribute::Damage]->Hide();
-		firearmUpgradeUIGroupMap[Firearm::Attribute::ReloadTime]->Hide();
-		firearmUpgradeUIGroupMap[Firearm::Attribute::MaxAmmo]->Hide();
-		firearmUpgradeUIGroupMap[Firearm::Attribute::CriticalChance]->Hide();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::Damage]->Hide();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::ReloadTime]->Hide();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::MagazineCapacity]->Hide();
+		firearmUpgradeUIGroupMap[FirearmAttributeIndex::CriticalChance]->Hide();
 
 		break;
 
@@ -512,52 +512,52 @@ void Shop::InitializeUI() {
 	menuNavigationButtonMap[ShopMenuIndex::Utility] = utilityButtonGroup;
 
 	// Damage upgrade
-	FirearmUpgradeUIGroup* damageUpgradeUIGroup = new FirearmUpgradeUIGroup(this, Firearm::Attribute::Damage);
-	damageUpgradeUIGroup->amount = firearmUpgradeMap[Firearm::Attribute::Damage]->NextUpgradeAmount();
-	damageUpgradeUIGroup->cost = firearmUpgradeMap[Firearm::Attribute::Damage]->NextUpgradeCost();
-	damageUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(Firearm::Attribute::Damage);
-	damageUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(Firearm::Attribute::Damage);
-	damageUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(Firearm::Attribute::Damage);
+	FirearmUpgradeUIGroup* damageUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::Damage);
+	damageUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::Damage]->NextUpgradeAmount();
+	damageUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::Damage]->NextUpgradeCost();
+	damageUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::Damage);
+	damageUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::Damage);
+	damageUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::Damage);
 	damageUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
 	damageUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	damageUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(Firearm::Attribute::Damage));
-	firearmUpgradeUIGroupMap[Firearm::Attribute::Damage] = damageUpgradeUIGroup;
+	damageUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::Damage));
+	firearmUpgradeUIGroupMap[FirearmAttributeIndex::Damage] = damageUpgradeUIGroup;
 
 	// Reload time upgrade
-	FirearmUpgradeUIGroup* reloadTimeUpgradeUIGroup = new FirearmUpgradeUIGroup(this, Firearm::Attribute::ReloadTime);
-	reloadTimeUpgradeUIGroup->amount = firearmUpgradeMap[Firearm::Attribute::ReloadTime]->NextUpgradeAmount();
-	reloadTimeUpgradeUIGroup->cost = firearmUpgradeMap[Firearm::Attribute::ReloadTime]->NextUpgradeCost();
-	reloadTimeUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(Firearm::Attribute::ReloadTime);
-	reloadTimeUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(Firearm::Attribute::ReloadTime);
-	reloadTimeUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(Firearm::Attribute::ReloadTime);
+	FirearmUpgradeUIGroup* reloadTimeUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::ReloadTime);
+	reloadTimeUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::ReloadTime]->NextUpgradeAmount();
+	reloadTimeUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::ReloadTime]->NextUpgradeCost();
+	reloadTimeUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::ReloadTime);
+	reloadTimeUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::ReloadTime);
+	reloadTimeUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::ReloadTime);
 	reloadTimeUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
 	reloadTimeUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	reloadTimeUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(Firearm::Attribute::ReloadTime));
-	firearmUpgradeUIGroupMap[Firearm::Attribute::ReloadTime] = reloadTimeUpgradeUIGroup;
+	reloadTimeUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::ReloadTime));
+	firearmUpgradeUIGroupMap[FirearmAttributeIndex::ReloadTime] = reloadTimeUpgradeUIGroup;
 
 	// Max ammo upgrade
-	FirearmUpgradeUIGroup* maxAmmoUpgradeUIGroup = new FirearmUpgradeUIGroup(this, Firearm::Attribute::MaxAmmo);
-	maxAmmoUpgradeUIGroup->amount = firearmUpgradeMap[Firearm::Attribute::MaxAmmo]->NextUpgradeAmount();
-	maxAmmoUpgradeUIGroup->cost = firearmUpgradeMap[Firearm::Attribute::MaxAmmo]->NextUpgradeCost();
-	maxAmmoUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(Firearm::Attribute::MaxAmmo);
-	maxAmmoUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(Firearm::Attribute::MaxAmmo);
-	maxAmmoUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(Firearm::Attribute::MaxAmmo);
+	FirearmUpgradeUIGroup* maxAmmoUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::MagazineCapacity);
+	maxAmmoUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity]->NextUpgradeAmount();
+	maxAmmoUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity]->NextUpgradeCost();
+	maxAmmoUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::MagazineCapacity);
+	maxAmmoUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::MagazineCapacity);
+	maxAmmoUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::MagazineCapacity);
 	maxAmmoUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
 	maxAmmoUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	maxAmmoUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(Firearm::Attribute::MaxAmmo));
-	firearmUpgradeUIGroupMap[Firearm::Attribute::MaxAmmo] = maxAmmoUpgradeUIGroup;
+	maxAmmoUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::MagazineCapacity));
+	firearmUpgradeUIGroupMap[FirearmAttributeIndex::MagazineCapacity] = maxAmmoUpgradeUIGroup;
 
 	// Critical chance upgrade
-	FirearmUpgradeUIGroup* criticalChanceUpgradeUIGroup = new FirearmUpgradeUIGroup(this, Firearm::Attribute::CriticalChance);
-	criticalChanceUpgradeUIGroup->amount = firearmUpgradeMap[Firearm::Attribute::CriticalChance]->NextUpgradeAmount();
-	criticalChanceUpgradeUIGroup->cost = firearmUpgradeMap[Firearm::Attribute::CriticalChance]->NextUpgradeCost();
-	criticalChanceUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(Firearm::Attribute::CriticalChance);
-	criticalChanceUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(Firearm::Attribute::CriticalChance);
-	criticalChanceUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(Firearm::Attribute::CriticalChance);
+	FirearmUpgradeUIGroup* criticalChanceUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::CriticalChance);
+	criticalChanceUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::CriticalChance]->NextUpgradeAmount();
+	criticalChanceUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::CriticalChance]->NextUpgradeCost();
+	criticalChanceUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::CriticalChance);
+	criticalChanceUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::CriticalChance);
+	criticalChanceUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::CriticalChance);
 	criticalChanceUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
 	criticalChanceUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	criticalChanceUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(Firearm::Attribute::CriticalChance));
-	firearmUpgradeUIGroupMap[Firearm::Attribute::CriticalChance] = criticalChanceUpgradeUIGroup;
+	criticalChanceUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::CriticalChance));
+	firearmUpgradeUIGroupMap[FirearmAttributeIndex::CriticalChance] = criticalChanceUpgradeUIGroup;
 
 	// -----------------------------------
 	// FIREARM ATTRIBUTE INFO BOARD
@@ -575,43 +575,39 @@ void Shop::InitializeUI() {
 
 	// -- Damage --
 	FirearmAttributeInfoGroup* damageInfoGroup = new FirearmAttributeInfoGroup;
-	damageInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(Firearm::Attribute::Damage);
-	damageInfoGroup->amount = linkedPlayer->GetFirearm()->GetAttribute(Firearm::Attribute::Damage);
+	damageInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::Damage);
 	damageInfoGroup->labelColor = Color::WHITE;
 	damageInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
 	damageInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	damageInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(Firearm::Attribute::Damage), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[Firearm::Attribute::Damage] = damageInfoGroup;
+	damageInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::Damage), FIREARM_ATTRIBUTE_VALUE_LEFT);
+	firearmAttributeInfoMap[FirearmAttributeIndex::Damage] = damageInfoGroup;
 
 	// -- Reload time --
 	FirearmAttributeInfoGroup* reloadTimeInfoGroup = new FirearmAttributeInfoGroup;
-	reloadTimeInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(Firearm::Attribute::ReloadTime);
-	reloadTimeInfoGroup->amount = linkedPlayer->GetFirearm()->GetAttribute(Firearm::Attribute::ReloadTime);
+	reloadTimeInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::ReloadTime);
 	reloadTimeInfoGroup->labelColor = Color::WHITE;
 	reloadTimeInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
 	reloadTimeInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	reloadTimeInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(Firearm::Attribute::ReloadTime), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[Firearm::Attribute::ReloadTime] = reloadTimeInfoGroup;
+	reloadTimeInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::ReloadTime), FIREARM_ATTRIBUTE_VALUE_LEFT);
+	firearmAttributeInfoMap[FirearmAttributeIndex::ReloadTime] = reloadTimeInfoGroup;
 
 	// -- Max ammo --
 	FirearmAttributeInfoGroup* maxAmmoInfoGroup = new FirearmAttributeInfoGroup;
-	maxAmmoInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(Firearm::Attribute::MaxAmmo);
-	maxAmmoInfoGroup->amount = linkedPlayer->GetFirearm()->GetAttribute(Firearm::Attribute::MaxAmmo);
+	maxAmmoInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::MagazineCapacity);
 	maxAmmoInfoGroup->labelColor = Color::WHITE;
 	maxAmmoInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
 	maxAmmoInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	maxAmmoInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(Firearm::Attribute::MaxAmmo), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[Firearm::Attribute::MaxAmmo] = maxAmmoInfoGroup;
+	maxAmmoInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::MagazineCapacity), FIREARM_ATTRIBUTE_VALUE_LEFT);
+	firearmAttributeInfoMap[FirearmAttributeIndex::MagazineCapacity] = maxAmmoInfoGroup;
 
 	// -- Critical chance --
 	FirearmAttributeInfoGroup* criticalChanceInfoGroup = new FirearmAttributeInfoGroup;
-	criticalChanceInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(Firearm::Attribute::CriticalChance);
-	criticalChanceInfoGroup->amount = linkedPlayer->GetFirearm()->GetAttribute(Firearm::Attribute::CriticalChance);
+	criticalChanceInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::CriticalChance);
 	criticalChanceInfoGroup->labelColor = Color::WHITE;
 	criticalChanceInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
 	criticalChanceInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	criticalChanceInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(Firearm::Attribute::CriticalChance), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[Firearm::Attribute::CriticalChance] = criticalChanceInfoGroup;
+	criticalChanceInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::CriticalChance), FIREARM_ATTRIBUTE_VALUE_LEFT);
+	firearmAttributeInfoMap[FirearmAttributeIndex::CriticalChance] = criticalChanceInfoGroup;
 
 }
 
@@ -619,7 +615,7 @@ void Shop::InitializeUpgrades() {
 
 	// Reload time
 	FirearmUpgrade* reloadTimeUpgrade = new FirearmUpgrade(
-		Firearm::Attribute::ReloadTime,
+		FirearmAttributeIndex::ReloadTime,
 		[](float newUp, float oldUp) { return newUp < oldUp; }
 	);
 	// NOT FUCKING MAGIC NUMBERS, JUST RANDOM BULLSHIT GO
@@ -629,40 +625,40 @@ void Shop::InitializeUpgrades() {
 	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(69, 0.65f));
 	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(124, 0.6f));
 	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(372, 0.4f));
-	firearmUpgradeMap[Firearm::Attribute::ReloadTime] = reloadTimeUpgrade;
+	firearmUpgradeMap[FirearmAttributeIndex::ReloadTime] = reloadTimeUpgrade;
 
 
 
 	// Damage
 	FirearmUpgrade* damageUpgrade = new FirearmUpgrade(
-		Firearm::Attribute::Damage
+		FirearmAttributeIndex::Damage
 	);
 	damageUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
 	damageUpgrade->AddUpgrade(new UpgradeNode(25, 1.5f));
 	damageUpgrade->AddUpgrade(new UpgradeNode(64, 1.9f));
 	damageUpgrade->AddUpgrade(new UpgradeNode(189, 2.3f));
-	firearmUpgradeMap[Firearm::Attribute::Damage] = damageUpgrade;
+	firearmUpgradeMap[FirearmAttributeIndex::Damage] = damageUpgrade;
 
 	// Max ammo
 	FirearmUpgrade* maxAmmoUpgrade = new FirearmUpgrade(
-		Firearm::Attribute::MaxAmmo
+		FirearmAttributeIndex::MagazineCapacity
 	);
 	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
 	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(54, 1.3f));
 	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(123, 1.5f));
 	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(256, 2.0f));
-	firearmUpgradeMap[Firearm::Attribute::MaxAmmo] = maxAmmoUpgrade;
+	firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity] = maxAmmoUpgrade;
 
 	// Critical chance
 	FirearmUpgrade* criticalChanceUpgrade = new FirearmUpgrade(
-		Firearm::Attribute::CriticalChance
+		FirearmAttributeIndex::CriticalChance
 	);
 	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(24, 0.3f));
 	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(74, 0.4f));
 	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(125, 0.55f));
 	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(299, 0.6f));
 	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(372, 0.7f));
-	firearmUpgradeMap[Firearm::Attribute::CriticalChance] = criticalChanceUpgrade;
+	firearmUpgradeMap[FirearmAttributeIndex::CriticalChance] = criticalChanceUpgrade;
 
 }
 
@@ -684,7 +680,7 @@ void Shop::SwitchMenu(ShopMenuIndex targetMenuIndex) {
 Shop::Shop(Player* initPlayer) {
 
 	if (!initPlayer)
-		throw new std::exception("Initialize shop with null player");
+		throw std::exception("Initialize shop with null player");
 
 	linkedPlayer = initPlayer;
 
@@ -722,14 +718,10 @@ void Shop::Update() {
 
 }
 
-void Shop::BuyUpgrade(Firearm::Attribute attribute) {
+void Shop::BuyUpgrade(FirearmAttributeIndex attribute) {
 
 	FirearmUpgrade* upgrade = firearmUpgradeMap[attribute];
 
-	if (upgrade->NextUpgradeCost() >= 0 && GameManager::Instance()->TrySpendMoney(upgrade->NextUpgradeCost()))
-		upgrade->UpgradeNext(linkedPlayer->GetFirearm());
-
-	firearmAttributeInfoMap.at(attribute)->amount = linkedPlayer->GetFirearm()->GetAttribute(attribute);
 	firearmAttributeInfoMap.at(attribute)->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(attribute), FIREARM_ATTRIBUTE_VALUE_LEFT);
 
 }

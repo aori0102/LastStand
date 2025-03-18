@@ -9,7 +9,7 @@ PlayerStatistic::PlayerStatistic(Player* initLinkedPlayer) {
 
 	linkedPlayer = initLinkedPlayer;
 	if (!linkedPlayer->TryGetComponent<Humanoid>())
-		throw new std::exception("Linked player to statistic requires a humanoid");
+		throw std::exception("Linked player to statistic requires a humanoid");
 
 	playerLevel = 0;
 	playerEXP = 0;

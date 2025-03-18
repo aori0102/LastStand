@@ -17,7 +17,7 @@ GameManager* GameManager::instance = nullptr;
 GameManager::GameManager() {
 
 	if (instance)
-		throw new std::exception("Only one GameManager is allowed");
+		throw std::exception("Only one GameManager is allowed");
 
 	new WaveHandler;
 

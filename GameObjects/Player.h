@@ -12,7 +12,7 @@
 #include <RenderManager.h>
 
 class Firearm;
-class AnimationClip;
+enum class ItemIndex;
 
 class Player : public GameObject {
 
@@ -21,13 +21,6 @@ class Player : public GameObject {
 	/// ----------------------------------
 
 private:
-
-	enum class AnimationIndex {
-
-		Idle,
-		Shoot,
-
-	};
 
 	// The aiming error angle in degree
 	static const float MAX_AIMING_DEVIATION;
@@ -40,10 +33,9 @@ private:
 
 	float playerForwardAngle;
 	float movementSpeed;
-
 	bool isMoving;
-
 	Vector2 forward;
+	ItemIndex itemIndex;
 
 public:
 
@@ -52,11 +44,6 @@ public:
 
 	bool canInteract;
 	bool usingItem;
-
-	std::unordered_map<AnimationIndex, AnimationClip*> animationMap;
-
-	Firearm* firearm;
-	AnimationIndex currentAnimationState;
 
 	/// ----------------------------------
 	/// METHODS
@@ -67,21 +54,19 @@ private:
 	void HandleActions();
 	void HandleMovement();
 	void HandleFacing();
+	void InitializeAnimation();
+	void InitializeData();
 
 public:
 
 	Player();
 
-	void InitializeAnimation();
-	void InitializeData();
 	void PlayerRender();
 	void DisableInteraction();
 	void EnableInteraction();
 	void Update() override;
 
 	Vector2 GetForward() const;
-	Vector2 GetAimingDirection();
-
-	Firearm* GetFirearm() const;
+	Vector2 GetAimingDirection() const;
 
 };

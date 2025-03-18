@@ -8,7 +8,9 @@
 
 #include <functional>
 
+#include <AnimationManager.h>
 #include <Animation.h>
+#include <Item.h>
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <GameCore.h>
@@ -34,34 +36,31 @@ void Player::HandleActions() {
 	if (GameCore::SelectedUI())
 		return;
 
-	// Use action
-	if (GameCore::GetMouseState(MouseButton::Left).started)
-		usingItem = true;
-	else if (GameCore::GetMouseState(MouseButton::Left).canceled)
-		usingItem = false;
-
 	// Aiming
 	if (GameCore::GetMouseState(MouseButton::Right).started)
 		GameCore::SetCameraZoom(1.3f);
 	else if (GameCore::GetMouseState(MouseButton::Right).canceled)
 		GameCore::SetCameraZoom(1.0f);
 
-	// Reload current firearm
-	if (GameCore::GetKeyState(SDLK_r).started)
-		firearm->Reload();
+	// Hotbar
+	Inventory* inventory = GetComponent<Inventory>();
+	if (GameCore::GetKeyState(SDLK_1).started)
+		inventory->SelectSlot(InventorySlotIndex::First);
+	else if (GameCore::GetKeyState(SDLK_2).started)
+		inventory->SelectSlot(InventorySlotIndex::Second);
+	else if (GameCore::GetKeyState(SDLK_3).started)
+		inventory->SelectSlot(InventorySlotIndex::Third);
+	else if (GameCore::GetKeyState(SDLK_4).started)
+		inventory->SelectSlot(InventorySlotIndex::Forth);
+	else if (GameCore::GetKeyState(SDLK_5).started)
+		inventory->SelectSlot(InventorySlotIndex::Fifth);
 
-	if (usingItem) {
+	itemIndex = inventory->GetCurrentItemIndex();
 
-		// Shoot firearm
-		if (firearm->Use(this)) {
+	std::cout << (int)itemIndex << std::endl;
 
-			currentAnimationState = AnimationIndex::Shoot;
-			currentAnimationStartTick = GameCore::Time();
-			currentAnimationTime = animationMap[AnimationIndex::Shoot]->GetAnimationLength();
-
-		}
-
-	}
+	// Use item
+	usingItem = GameCore::GetMouseState(MouseButton::Left).started;
 
 }
 
@@ -96,43 +95,18 @@ void Player::HandleFacing() {
 
 }
 
-Player::Player() : GameObject("Player", Layer::Player) {
-
-	InitializeData();
-
-	InitializeAnimation();
-
-}
-
-void Player::InitializeAnimation() {
-
-	// Idle
-	animationMap[AnimationIndex::Idle] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), GetLayer());
-	animationMap[AnimationIndex::Idle]->AddAnimationFrame(new AnimationClip::AnimationFrame(
-		{ 16, 16, 160, 160 }, 0.0f, 3.0f
-	));
-
-	// Shoot
-	animationMap[AnimationIndex::Shoot] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), GetLayer());
-	animationMap[AnimationIndex::Shoot]->AddAnimationFrame(new AnimationClip::AnimationFrame(
-		{ 208, 16, 160, 160 }, 0.0f, 3.0f
-	));
-	animationMap[AnimationIndex::Shoot]->AddAnimationFrame(new AnimationClip::AnimationFrame(
-		{ 208, 16, 160, 160 }, 0.1f, 3.0f
-	));
-
-}
-
 void Player::InitializeData() {
 
 	movementSpeed = 700.0f;
+
+	itemIndex = ItemIndex::None;
 
 	canInteract = true;
 	usingItem = false;
 	isMoving = false;
 
 	Image* playerSprite = AddComponent<Image>();
-	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player),false);
+	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
 	playerSprite->showOnScreen = false;
 
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
@@ -140,6 +114,9 @@ void Player::InitializeData() {
 	transform->scale = Vector2(50.0f, 50.0f);
 
 	AddComponent<BoxCollider>();
+	Inventory* inventory = AddComponent<Inventory>();
+	inventory->AddItem(ItemIndex::Pistol);
+	inventory->AddItem(ItemIndex::Shotgun);
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
@@ -150,12 +127,7 @@ void Player::InitializeData() {
 	humanoid->OnDeath = []() {
 		std::cout << "Player dead" << std::endl;
 		};
-	// Add a firearm to the inventory
-	firearm = new Firearm(80, 200, 400.0f, 5.0f);
 
-	animationMap = {};
-
-	currentAnimationState = AnimationIndex::Idle;
 	currentAnimationStartTick = 0.0f;
 	currentAnimationTime = 0.0f;
 
@@ -163,19 +135,105 @@ void Player::InitializeData() {
 
 }
 
+void Player::InitializeAnimation() {
+
+	AnimationController* animController = AddComponent<AnimationController>();
+
+	animController->AddAnimationClip(AnimationIndex::Player_Idle);
+	animController->AddAnimationClip(AnimationIndex::Player_Pistol_Idle);
+	animController->AddAnimationClip(AnimationIndex::Player_Pistol_Shoot);
+	animController->AddAnimationClip(AnimationIndex::Player_Shotgun_Idle);
+	animController->AddAnimationClip(AnimationIndex::Player_Shotgun_Shoot);
+
+	animController->MakeDefault(AnimationIndex::Player_Idle);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Idle,
+		AnimationIndex::Player_Pistol_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::Pistol;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Idle,
+		AnimationIndex::Player_Shotgun_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::Shotgun;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Pistol_Idle,
+		AnimationIndex::Player_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::None;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Shotgun_Idle,
+		AnimationIndex::Player_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::None;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Pistol_Idle,
+		AnimationIndex::Player_Pistol_Shoot,
+		[this]() {
+			return itemIndex == ItemIndex::Pistol && usingItem;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Pistol_Shoot,
+		AnimationIndex::Player_Pistol_Idle
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Shotgun_Idle,
+		AnimationIndex::Player_Shotgun_Shoot,
+		[this]() {
+			return itemIndex == ItemIndex::Shotgun && usingItem;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Shotgun_Shoot,
+		AnimationIndex::Player_Shotgun_Idle
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Pistol_Idle,
+		AnimationIndex::Player_Shotgun_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::Shotgun;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Shotgun_Idle,
+		AnimationIndex::Player_Pistol_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::Pistol;
+		}
+	);
+
+}
+
+Player::Player() : GameObject("Player", Layer::Player) {
+
+	InitializeData();
+
+	InitializeAnimation();
+
+}
+
 void Player::PlayerRender() {
 
-	if (currentAnimationState != AnimationIndex::Idle && GameCore::Time() >= currentAnimationStartTick + currentAnimationTime) {
-
-		currentAnimationState = AnimationIndex::Idle;
-		currentAnimationTime = animationMap[AnimationIndex::Idle]->GetAnimationLength();
-		currentAnimationStartTick = GameCore::Time();
-
-	}
-
-	std::cout << "Render current: " << transform->scale << std::endl;
-
-	animationMap[currentAnimationState]->RenderCurrent(
+	GetComponent<AnimationController>()->RenderCurrent(
 		transform->position,
 		transform->scale,
 		Math::RadToDeg(forward.Angle())
@@ -213,7 +271,7 @@ void Player::Update() {
 
 Vector2 Player::GetForward() const { return forward; }
 
-Vector2 Player::GetAimingDirection() {
+Vector2 Player::GetAimingDirection() const {
 
 	Vector2 aimDirection = forward;
 
@@ -223,5 +281,3 @@ Vector2 Player::GetAimingDirection() {
 	return aimDirection;
 
 }
-
-Firearm* Player::GetFirearm() const { return firearm; }

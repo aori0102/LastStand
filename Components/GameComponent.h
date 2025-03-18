@@ -1,18 +1,29 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <Type.h>
+#include <functional>
 #include <iostream>
+#include <set>
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
-#include <functional>
-#include <set>
+#include <vector>
 
+#include <Type.h>
+
+class AnimationClip;
 class BoxCollider;
-class Transform;
 class GameObject;
 class Item;
 class Player;
+class Transform;
+enum class AnimationIndex;
+enum class ItemIndex;
 
 class GameComponent {
 
@@ -20,17 +31,21 @@ private:
 
 	GameObject* owner;
 
+	friend class GameObject;
+	friend class GameCore;
+
 protected:
 
 	GameComponent(GameObject* initOwner);
+
+	virtual void OnComponentDestroyed();
+	virtual void OnComponentUpdate();
 
 public:
 
 	GameObject* Owner();
 
 	Transform* transform;
-
-	virtual void OnComponentDestroyed();
 
 	template<class T>
 	T* GetComponent();
@@ -93,6 +108,8 @@ public:
 	void Disable();
 	bool IsActive();
 
+	void UpdateComponents();
+
 	std::function<void()> Render;
 
 	static bool CompareByLayer(const GameObject* a, const GameObject* b);
@@ -113,6 +130,9 @@ public:
 
 	template<class T>
 	bool IsA();
+
+	template<class T>
+	T* As();
 
 	static void CleanUpCache();
 
@@ -213,5 +233,105 @@ public:
 	Vector2 GetAcceleration();
 
 	void OnComponentDestroyed() override;
+
+};
+
+enum class InventorySlotIndex {
+
+	None,
+
+	First,
+	Second,
+	Third,
+	Forth,
+	Fifth,
+
+};
+
+class Inventory : public GameComponent {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	std::unordered_map<ItemIndex, Item*> storage;
+	std::unordered_map<InventorySlotIndex, Item*> hotBar;
+	InventorySlotIndex currentSlotIndex;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	Inventory(GameObject* initOwner);
+
+	void AddItem(ItemIndex itemIndex);
+	void SelectSlot(InventorySlotIndex slotIndex);
+	bool TryUseCurrent();
+	ItemIndex GetCurrentItemIndex();
+
+};
+
+class AnimationController : public GameComponent {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
+private:
+
+	struct AnimationNode;
+
+	struct AnimationTransition {
+
+		AnimationNode* to = nullptr;
+		std::function<bool()> condition = []() { return true; };
+
+		AnimationTransition(AnimationNode* initTo, std::function<bool()> initCondition)
+			: to(initTo), condition(initCondition) {}
+
+	};
+
+	struct AnimationNode {
+
+		AnimationClip* animationClip = nullptr;
+		std::vector<AnimationTransition*> transitionList = {};
+
+		AnimationNode(AnimationClip* initAnimationClip)
+			: animationClip(initAnimationClip), transitionList({}) {}
+
+	};
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	AnimationNode* defaultAnimationNode;
+	AnimationNode* currentAnimationNode;
+
+	std::unordered_map<AnimationIndex, AnimationNode*> animationNodeMap;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+private:
+
+	void OnComponentUpdate() override;
+	void OnComponentDestroyed() override;
+
+public:
+
+	AnimationController(GameObject* initOwner);
+
+	void AddAnimationClip(AnimationIndex animationIndex);
+	void AddTransition(AnimationIndex from, AnimationIndex to, std::function<bool()> condition = []() { return true; });
+	void MakeDefault(AnimationIndex animationIndex);
+	void RenderCurrent(Vector2 position, Vector2 scale, float angle);
 
 };

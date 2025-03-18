@@ -61,3 +61,10 @@ bool GameObject::TryGetComponent(T*& out) {
 	return out != nullptr;
 
 }
+
+template<class T>
+T* GameObject::As() {
+
+	return dynamic_cast<T*>(this);
+
+}

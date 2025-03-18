@@ -3,10 +3,12 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
+    "AnimationController.cpp"
     "BoxCollider.cpp"
     "GameComponent.cpp"
     "GameObject.cpp"
     "Humanoid.cpp"
+    "Inventory.cpp"
     "RigidBody.cpp"
     "Transform.cpp"
 )
@@ -25,6 +27,7 @@ target_include_directories(COMPONENTS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 target_include_directories(COMPONENTS PUBLIC    
     ${CMAKE_SOURCE_DIR}/UTILS
+    ${CMAKE_SOURCE_DIR}/GAME_OBJECTS
 )
 
 # Link libraries for this subdirectory use
@@ -35,4 +38,5 @@ target_link_libraries(COMPONENTS PRIVATE
 )
 target_link_libraries(COMPONENTS PUBLIC     
     UTILS
+    GAME_OBJECTS
 )

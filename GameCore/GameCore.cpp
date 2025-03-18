@@ -1,4 +1,5 @@
 #include <GameCore.h>
+#include <AnimationManager.h>
 #include <GameComponent.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -32,6 +33,7 @@ GameObject* GameCore::cameraFocusObject = nullptr;
 GameManager* GameCore::gameManager = nullptr;
 MediaManager* GameCore::mediaManager = nullptr;
 PhysicsManager* GameCore::physicsManager = nullptr;
+AnimationManager* GameCore::animationManager = nullptr;
 
 // Getter
 float GameCore::Time() { return time; }
@@ -142,6 +144,7 @@ void GameCore::Loop() {
 
 		while (it != gameObjectSet.end()) {
 
+			(*it)->UpdateComponents();
 			(*it)->Update();
 
 			it++;
@@ -364,10 +367,11 @@ GameCore::ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
 
 }
 
-void GameCore::InitializeGameObject() {
+void GameCore::InitializeGame() {
 
 	mediaManager = new MediaManager;
 	physicsManager = new PhysicsManager;
+	animationManager = new AnimationManager;
 	gameManager = new GameManager;
 
 	Random::Init();

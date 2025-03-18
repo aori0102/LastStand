@@ -11,7 +11,7 @@ int main(int argc, char* args[]) {
 
 	try {
 
-		GameCore::InitializeGameObject();
+		GameCore::InitializeGame();
 		GameCore::Loop();
 
 	} catch (std::exception* e) {

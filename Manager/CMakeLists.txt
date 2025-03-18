@@ -3,7 +3,9 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
+    "AnimationManager.cpp"
     "GameManager.cpp"
+    "ItemManager.cpp"
     "MediaManager.cpp"
     "PhysicsManager.cpp"
     "RenderManager.cpp"

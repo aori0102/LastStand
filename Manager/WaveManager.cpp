@@ -14,7 +14,7 @@ WaveInfoUI* WaveInfoUI::instance = nullptr;
 WaveHandler::WaveHandler() {
 
 	if (instance)
-		throw new std::exception("Wave handler should only have one instance!");
+		throw std::exception("Wave handler should only have one instance!");
 
 	instance = this;
 
@@ -90,7 +90,7 @@ void WaveHandler::InitiateWave() {
 WaveInfoUI::WaveInfoUI() {
 
 	if (instance)
-		throw new std::exception("Wave info UI should only have one instance!");
+		throw std::exception("Wave info UI should only have one instance!");
 
 	instance = this;
 

@@ -26,6 +26,13 @@ GameObject::GameObject() {
 
 }
 
+void GameObject::UpdateComponents() {
+
+	for (auto it = componentMap.begin(); it != componentMap.end(); it++)
+		(it->second)->OnComponentUpdate();
+
+}
+
 GameObject::GameObject(std::string initName) {
 
 	name = initName;

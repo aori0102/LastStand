@@ -4,11 +4,13 @@
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
     "Firearm.cpp"
-    "FirearmUI.cpp"
     "FirearmUpgrade.cpp"
+    "Item.cpp"
+    "Pistol.cpp"
     "Player.cpp"
     "PlayerStatistic.cpp"
     "Projectile.cpp"
+    "Shotgun.cpp"
     "StatusBar.cpp"
     "Zombie.cpp"
 )

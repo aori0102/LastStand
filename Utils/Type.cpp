@@ -87,7 +87,7 @@ Vector2 Vector2::operator*=(const float& other) {
 Vector2 Vector2::operator/(const float& other) {
 
 	if (other == 0.0f)
-		throw new std::exception("Vector2 division by zero");
+		throw std::exception("Vector2 division by zero");
 
 	Vector2 res(x / other, y / other);
 

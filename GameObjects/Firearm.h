@@ -1,19 +1,19 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
+
+#include <Item.h>
 
 #include <GameComponent.h>
 #include <unordered_map>
 
 class Player;
-class ReloadUI;
-class FirearmUI;
 
-class Item {
-
-public:
-
-	virtual bool Use(Player* user) = 0;
-
-};
+/*
 
 class Firearm : public GameObject, public Item {
 
@@ -81,7 +81,109 @@ public:
 	float GetAttribute(Attribute attribute);
 
 	void OnDestroy() override;
-	bool Use(Player* player) override;
+	bool TryUse(Player* player) override;
 	void Update() override;
+
+};
+
+*/
+
+enum class FirearmAttributeIndex {
+
+	Damage,
+	ReloadTime,
+	CriticalDamageMultiplier,
+	CriticalChance,
+	Firerate,
+	MagazineCapacity,
+
+};
+
+class Firearm : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
+protected:
+
+	static const std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	float lastReloadTick;
+	bool isReloading;
+
+protected:
+	
+	float reloadTime;
+	int magazineCapacity;
+	std::unordered_map<FirearmAttributeIndex, float> attributeMultiplierMap;
+
+public:
+
+	float damage;
+	float fireRate;
+	int currentAmmo;
+	int reserveAmmo;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	Firearm();
+
+	void Update() override;
+	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
+	void Reload();
+	virtual float GetAttribute(FirearmAttributeIndex attributeIndex) = 0;
+
+};
+
+class Pistol : public Item, public Firearm {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	Pistol();
+
+	bool TryUse(Player* player) override;
+	float GetAttribute(FirearmAttributeIndex attributeIndex) override;
+
+};
+
+class Shotgun : public Item, public Firearm {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	Shotgun();
+
+	bool TryUse(Player* player) override;
+	float GetAttribute(FirearmAttributeIndex attributeIndex) override;
 
 };

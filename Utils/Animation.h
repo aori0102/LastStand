@@ -1,55 +1,85 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <SDL.h>
-#include <set>
+#include <functional>
 #include <string>
-#include <../Components/GameComponent.h>
+#include <vector>
+
+#include <GameComponent.h>
+#include <SDL.h>
 
 class Image;
 class Sprite;
 
-class AnimationClip : public GameObject {
+class AnimationFrame {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 public:
 
-	struct AnimationFrame {
+	float scale;
+	float duration;
+	SDL_Rect clip;
 
-		SDL_Rect clip;
-		float timePoint;
-		float scale;
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
-		AnimationFrame(SDL_Rect initClip, float initTimePoint, float initScale)
-			: clip(initClip), timePoint(initTimePoint), scale(initScale) {}
+public:
 
-		static bool Compare(const AnimationFrame* a, const AnimationFrame* b) {
-			return a->timePoint < b->timePoint;
-		}
+	AnimationFrame(SDL_Rect initClip, float initDuration, float initScale)
+		: clip(initClip), duration(initDuration), scale(initScale) {}
 
-	};
+};
+
+class AnimationClip : public GameObject {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
-	Sprite* animationSpriteSheet;
-
-	std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)> animationTimeline;
+	friend class AnimationController;
+	friend class AnimationManager;
 
 	float startTick;		// When the animation is played
+	float currentFrameStartTick;
 	float animationLength;
-	std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)>::iterator currentFrame;
 	bool isPlaying;
+	bool loop;
+	bool ended;
+	std::vector<AnimationFrame*> animationTimeline;
+	std::vector<AnimationFrame*>::iterator currentFrame;
+	Sprite* animationSpriteSheet;
 
 public:
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+	
+private:
+
 	AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer);
 
-	void Start();
+	void Play();
 	void Stop();
+	void EndAndReset();
 
 	void Update() override;
 
 	void AddAnimationFrame(AnimationFrame* animationFrame);
 
 	void RenderCurrent(Vector2 position, Vector2 scale, float angle = 0.0f);
+	bool IsPlaying() const;
 
 	float GetAnimationLength() const;
 

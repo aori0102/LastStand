@@ -10,7 +10,7 @@ MediaManager::MediaManager() {
 	std::cout << "[MediaManager] Initializing..." << std::endl;
 
 	if (instance)
-		throw new std::exception("Media Manager can only have one instance!");
+		throw std::exception("Media Manager can only have one instance!");
 
 	instance = this;
 
@@ -33,7 +33,7 @@ void MediaManager::InitializeMediaUI() {
 
 		uiSpriteMap[it->first] = new Sprite;
 		if (!uiSpriteMap.at(it->first)->LoadImage(ASSET_FOLDER_PATH + it->second + SPRITE_EXTENSION))
-			throw new std::exception(("Loading media UI failed at item " + it->second).c_str());
+			throw std::exception(("Loading media UI failed at item " + it->second).c_str());
 
 		completed++;
 		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;
@@ -53,7 +53,7 @@ void MediaManager::InitializeMediaObject() {
 
 		objectSpriteMap[it->first] = new Sprite;
 		if (!objectSpriteMap.at(it->first)->LoadImage(ASSET_FOLDER_PATH + it->second + SPRITE_EXTENSION))
-			throw new std::exception(("Loading media object failed at item " + it->second).c_str());
+			throw std::exception(("Loading media object failed at item " + it->second).c_str());
 
 		completed++;
 		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;
@@ -73,7 +73,7 @@ void MediaManager::InitializeMediaFont() {
 
 		fontMap[it->first] = TTF_OpenFont((ASSET_FOLDER_PATH + FONT_SUBFOLDER + it->second + FONT_EXTENSION).c_str(), DEFAULT_FONT_SIZE);
 		if (!fontMap.at(it->first))
-			throw new std::exception(("Font " + it->second + " failed to load. Error: " + TTF_GetError()).c_str());
+			throw std::exception(("Font " + it->second + " failed to load. Error: " + TTF_GetError()).c_str());
 
 		completed++;
 		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;

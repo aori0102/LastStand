@@ -27,6 +27,7 @@ enum class MouseButton {
 class GameObject;
 class GameManager;
 class MediaManager;
+class AnimationManager;
 class PhysicsManager;
 class Texture;
 class Color;
@@ -69,6 +70,7 @@ private:
 	static MediaManager* mediaManager;
 	static GameManager* gameManager;
 	static PhysicsManager* physicsManager;
+	static AnimationManager* animationManager;
 
 	static void HandleEvent();
 	static void UpdateEvent();
@@ -107,7 +109,7 @@ public:
 	static void Close();
 
 	// Game
-	static void InitializeGameObject();
+	static void InitializeGame();
 	static void RegisterGameObject(GameObject* gameObject);
 	static void UnregisterGameObject(GameObject* gameObject);
 

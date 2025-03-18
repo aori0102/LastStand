@@ -15,7 +15,7 @@ PhysicsManager* PhysicsManager::instance = nullptr;
 PhysicsManager::PhysicsManager() {
 
 	if (instance)
-		throw new std::exception("Physics Manager can only have one instance!");
+		throw std::exception("Physics Manager can only have one instance!");
 
 	boxColliderSet = {};
 	rigidBodySet = {};

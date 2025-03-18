@@ -1,37 +1,61 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Animation.h>
-#include <Texture.h>
+
 #include <GameCore.h>
+#include <Texture.h>
 
 AnimationClip::AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer) : GameObject("Animation", initLayer) {
 
 	if (!initAnimationSpriteSheet)
-		throw new std::exception("Animation extracting from null sprite sheet");
+		throw std::exception("Animation extracting from null sprite sheet");
 
 	animationSpriteSheet = initAnimationSpriteSheet;
 
 	startTick = 0.0f;
+	currentFrameStartTick = 0.0f;
 	isPlaying = false;
+	loop = false;
+	ended = false;
 	animationLength = 0.0f;
 
-	animationTimeline = std::set<AnimationFrame*, decltype(&AnimationFrame::Compare)>(&AnimationFrame::Compare);
+	animationTimeline = {};
 	currentFrame = animationTimeline.begin();
 
 }
 
-void AnimationClip::Start() {
+void AnimationClip::Play() {
+
+	if (isPlaying)
+		return;
 
 	startTick = GameCore::Time();
-
-	startTick = 0.0f;
-	currentFrame = animationTimeline.begin();
+	currentFrameStartTick = startTick;
 
 	isPlaying = true;
+	ended = false;
 
 }
 
 void AnimationClip::Stop() {
 
+	if (!isPlaying)
+		return;
+
 	isPlaying = false;
+
+}
+
+void AnimationClip::EndAndReset() {
+
+	currentFrame = animationTimeline.begin();
+
+	isPlaying = false;
+	ended = true;
 
 }
 
@@ -40,19 +64,27 @@ void AnimationClip::Update() {
 	if (!isPlaying)
 		return;
 
-	if (GameCore::Time() - startTick >= (*currentFrame)->timePoint && currentFrame != animationTimeline.end())
+	if (GameCore::Time() >= currentFrameStartTick + (*currentFrame)->duration) {
+
 		currentFrame++;
+
+		currentFrameStartTick = GameCore::Time();
+
+		if (currentFrame == animationTimeline.end())
+			EndAndReset();
+
+	}
 
 }
 
 void AnimationClip::AddAnimationFrame(AnimationFrame* animationFrame) {
 
 	if (!animationFrame)
-		throw new std::exception("Adding null frame to animation");
+		throw std::exception("Adding null frame to animation");
 
-	animationTimeline.insert(animationFrame);
+	animationTimeline.push_back(animationFrame);
 
-	animationLength = std::max(animationLength, animationFrame->timePoint);
+	animationLength += animationFrame->duration;
 
 	currentFrame = animationTimeline.begin();
 
@@ -68,3 +100,5 @@ void AnimationClip::RenderCurrent(Vector2 position, Vector2 scale, float angle) 
 }
 
 float AnimationClip::GetAnimationLength() const { return animationLength; }
+
+bool AnimationClip::IsPlaying() const { return isPlaying; }

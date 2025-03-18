@@ -60,7 +60,7 @@ private:
 
 		UpgradeNode* currentUpgrade;
 		UpgradeNode* tailNode;
-		Firearm::Attribute attribute;
+		FirearmAttributeIndex attribute;
 
 	public:
 
@@ -73,7 +73,7 @@ private:
 
 	public:
 
-		FirearmUpgrade(Firearm::Attribute initAttribute, std::function<bool(float, float)> initBetterNode = [](float newUp, float oldUp) { return newUp > oldUp; });
+		FirearmUpgrade(FirearmAttributeIndex initAttribute, std::function<bool(float, float)> initBetterNode = [](float newUp, float oldUp) { return newUp > oldUp; });
 
 		void AddUpgrade(UpgradeNode* newNode);
 		void UpgradeNext(Firearm* firearm);
@@ -113,7 +113,7 @@ private:
 		GameObject* costObject;
 
 		Shop* linkedShop;
-		Firearm::Attribute assignedAttribute;
+		FirearmAttributeIndex assignedAttribute;
 
 	public:
 
@@ -131,7 +131,7 @@ private:
 
 	public:
 
-		FirearmUpgradeUIGroup(Shop* initShop, Firearm::Attribute initAttribute);
+		FirearmUpgradeUIGroup(Shop* initShop, FirearmAttributeIndex initAttribute);
 
 		void Update(Vector2 framePosition);
 		void Show();
@@ -183,10 +183,10 @@ private:
 
 	// Upgrade buttons preset
 	static const float UPGRADE_DESCRIPTION_MARGIN;
-	static const std::unordered_map<Firearm::Attribute, std::string> FIREARM_UPGRADE_LABEL_MAP;
-	static const std::unordered_map<Firearm::Attribute, Vector2> FIREARM_UPGRADE_POSITION;
-	static const std::unordered_map<Firearm::Attribute, std::string> FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP;
-	static const std::unordered_map<Firearm::Attribute, std::string> FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP;
+	static const std::unordered_map<FirearmAttributeIndex, std::string> FIREARM_UPGRADE_LABEL_MAP;
+	static const std::unordered_map<FirearmAttributeIndex, Vector2> FIREARM_UPGRADE_POSITION;
+	static const std::unordered_map<FirearmAttributeIndex, std::string> FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP;
+	static const std::unordered_map<FirearmAttributeIndex, std::string> FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP;
 
 	// Navigation buttons preset
 	static const int NAVIGATION_LABEL_SIZE;
@@ -198,8 +198,8 @@ private:
 	static const int FIREARM_ATTRIBUTE_LABEL_SIZE;
 	static const int FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
 	static const std::string FIREARM_ATTRIBUTE_FRAME_PATH;
-	static const std::unordered_map<Firearm::Attribute, Vector2> FIREARM_ATTRIBUTE_POSITION_MAP;
-	static const std::unordered_map<Firearm::Attribute, std::string> FIREARM_ATTRIBUTE_LABEL_MAP;
+	static const std::unordered_map<FirearmAttributeIndex, Vector2> FIREARM_ATTRIBUTE_POSITION_MAP;
+	static const std::unordered_map<FirearmAttributeIndex, std::string> FIREARM_ATTRIBUTE_LABEL_MAP;
 	static const Vector2 FIREARM_ATTRIBUTE_FRAME_POSITION;
 
 	/// ----------------------------------
@@ -208,10 +208,10 @@ private:
 
 private:
 
-	std::unordered_map<Firearm::Attribute, FirearmUpgradeUIGroup*> firearmUpgradeUIGroupMap;
-	std::unordered_map<Firearm::Attribute, FirearmAttributeInfoGroup*> firearmAttributeInfoMap;
+	std::unordered_map<FirearmAttributeIndex, FirearmUpgradeUIGroup*> firearmUpgradeUIGroupMap;
+	std::unordered_map<FirearmAttributeIndex, FirearmAttributeInfoGroup*> firearmAttributeInfoMap;
 	std::unordered_map<ShopMenuIndex, ButtonUIGroup*> menuNavigationButtonMap;
-	std::unordered_map<Firearm::Attribute, FirearmUpgrade*> firearmUpgradeMap;
+	std::unordered_map<FirearmAttributeIndex, FirearmUpgrade*> firearmUpgradeMap;
 
 	GameObject* firearmAttributeFrame;
 	GameObject* background;
@@ -245,6 +245,6 @@ public:
 
 	void Update() override;
 
-	void BuyUpgrade(Firearm::Attribute attribute);
+	void BuyUpgrade(FirearmAttributeIndex attribute);
 
 };
