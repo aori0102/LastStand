@@ -37,14 +37,14 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	case ItemIndex::Pistol: {
 
-		Pistol* pistol = new Pistol;
+		Pistol* pistol = new Pistol(FirearmID::M1911);
 		return pistol;
 
 	}
 
 	case ItemIndex::Shotgun: {
 
-		Shotgun* shotgun = new Shotgun;
+		Shotgun* shotgun = new Shotgun(FirearmID::Beretta1301);
 		return shotgun;
 
 	}

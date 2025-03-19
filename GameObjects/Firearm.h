@@ -13,81 +13,6 @@
 
 class Player;
 
-/*
-
-class Firearm : public GameObject, public Item {
-
-public:
-
-	enum class Attribute {
-
-		Damage,
-		ReloadTime,
-		MaxAmmo,
-		CriticalChance
-
-	};
-
-private:
-
-	std::unordered_map<Attribute, float> baseAttributeMap;
-	std::unordered_map<Attribute, float> attributeMultiplierMap;
-
-	int previousCurrentAmmo;
-	int previousReserveAmmo;
-
-	int currentAmmo;
-	int reserveAmmo;
-
-	float fireRate;		// In rounds per minute
-
-	float shotDelay;	// Delay in seconds between shots
-	float lastShotTick;
-	bool isReloading;
-	float reloadStartTick;
-
-private:
-
-	enum class UIIndex {
-
-		AmmoLabel,
-		AmmoFrame,
-		AmmoIcon,
-
-	};
-
-	static const std::unordered_map<UIIndex, Vector2> UI_POSITION_MAP;
-	static const std::unordered_map<UIIndex, int> UI_FONT_SIZE_MAP;
-	static const std::unordered_map<UIIndex, std::string> UI_LABEL_MAP;
-	static const std::unordered_map<UIIndex, std::string> UI_TEXT_MAP;
-
-	static const std::string FOLDER_PATH;
-	static const std::string FILE_EXTENSION;
-
-	std::unordered_map<UIIndex, GameObject*> uiElementMap;
-
-	void InitializeUI();
-
-public:
-
-	Firearm(float initDamage, int initAmmoCapacity, float initFireRate, float initReloadTime);
-
-	void Reload();
-
-	bool IsReloading() const;
-	int CurrentAmmo() const;
-
-	void ModifyAttributeMultiplier(Attribute attribute, float amount);
-	float GetAttribute(Attribute attribute);
-
-	void OnDestroy() override;
-	bool TryUse(Player* player) override;
-	void Update() override;
-
-};
-
-*/
-
 enum class FirearmAttributeIndex {
 
 	Damage,
@@ -99,15 +24,30 @@ enum class FirearmAttributeIndex {
 
 };
 
+enum class FirearmID {
+
+	M1911,
+	Beretta1301,
+
+};
+
 class Firearm : public GameObject {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS
 	/// ----------------------------------
 
+private:
+
+	static const int CURRENT_AMMO_LABEL_SIZE;
+	static const int RESERVE_AMMO_LABEL_SIZE;
+	static const float RESERVE_AMMO_LABEL_OFFSET;
+	static const Vector2 AMMO_FRAME_POSTIION;
+	static const Vector2 AMMO_ICON_POSTIION;
+
 protected:
 
-	static const std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
+	static const std::unordered_map<FirearmID, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -115,29 +55,41 @@ protected:
 
 private:
 
+	// Logic handling
 	float lastReloadTick;
+	float lastShootTick;
 	bool isReloading;
+	FirearmID firearmID;
+
+	// UI
+	GameObject* ammoIcon;
+	GameObject* ammoFrame;
+	GameObject* currentAmmoLabel;
+	GameObject* reserveAmmoLabel;
 
 protected:
 	
 	float reloadTime;
-	int magazineCapacity;
-	std::unordered_map<FirearmAttributeIndex, float> attributeMultiplierMap;
-
-public:
-
 	float damage;
 	float fireRate;
 	int currentAmmo;
 	int reserveAmmo;
+	int magazineCapacity;
+	std::unordered_map<FirearmAttributeIndex, float> attributeMultiplierMap;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
+protected:
+
+	bool TryShoot();
+	void ShowUI();
+	void HideUI();
+
 public:
 
-	Firearm();
+	Firearm(FirearmID initFirearmID);
 
 	void Update() override;
 	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
@@ -160,7 +112,7 @@ private:
 
 public:
 
-	Pistol();
+	Pistol(FirearmID initFirearmID);
 
 	bool TryUse(Player* player) override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex) override;
@@ -170,10 +122,13 @@ public:
 class Shotgun : public Item, public Firearm {
 
 	/// ----------------------------------
-	/// FIELDS
+	/// STRUCTURES AND CONSTANTS
 	/// ----------------------------------
 
 private:
+
+	static const int PELLET;
+	static const float PELLET_SPAN_DEGREE;
 
 	/// ----------------------------------
 	/// METHODS
@@ -181,7 +136,7 @@ private:
 
 public:
 
-	Shotgun();
+	Shotgun(FirearmID initFirearmID);
 
 	bool TryUse(Player* player) override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex) override;

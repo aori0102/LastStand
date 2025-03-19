@@ -17,7 +17,7 @@
 #include <MediaManager.h>
 #include <PhysicsManager.h>
 #include <PlayerUI.h>
-#include <Projectile.h>
+#include <Bullet.h>
 #include <Texture.h>
 #include <Type.h>
 
@@ -25,7 +25,13 @@
 /// STATIC FIELDS
 /// ----------------------------------
 
-const float Player::MAX_AIMING_DEVIATION = 27.0f;
+const float Player::MOVING_AIM_DEVIATION = 27.0f;
+const float Player::STANDING_AIM_DEVIATION = 10.0f;
+const float Player::ADS_AIM_DEVIATION = 5.0f;
+const float Player::MOVEMENT_SPEED_CHANGE_RATE = 50.0f;
+const float Player::CAMERA_AIM_ZOOM = 1.3f;
+const float Player::DEFAULT_MOVEMENT_SPEED = 700.0f;
+const float Player::AIM_MOVEMENT_SPEED = 400.0f;
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -37,11 +43,19 @@ void Player::HandleActions() {
 		return;
 
 	// Aiming
-	if (GameCore::GetMouseState(MouseButton::Right).started)
-		GameCore::SetCameraZoom(1.3f);
-	else if (GameCore::GetMouseState(MouseButton::Right).canceled)
-		GameCore::SetCameraZoom(1.0f);
+	if (GameCore::GetMouseState(MouseButton::Right).started) {
 
+		GameCore::SetCameraZoom(CAMERA_AIM_ZOOM);
+		targetMovementSpeed = AIM_MOVEMENT_SPEED;
+		isAiming = true;
+
+	} else if (GameCore::GetMouseState(MouseButton::Right).canceled) {
+
+		GameCore::SetCameraZoom(1.0f);
+		targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
+		isAiming = false;
+
+	}
 	// Hotbar
 	Inventory* inventory = GetComponent<Inventory>();
 	if (GameCore::GetKeyState(SDLK_1).started)
@@ -57,14 +71,27 @@ void Player::HandleActions() {
 
 	itemIndex = inventory->GetCurrentItemIndex();
 
-	std::cout << (int)itemIndex << std::endl;
-
 	// Use item
-	usingItem = GameCore::GetMouseState(MouseButton::Left).started;
+	usingItem = GameCore::GetMouseState(MouseButton::Left).started && inventory->TryUseCurrent();
+
+	// Reload firearm
+	if (GameCore::GetKeyState(SDLK_r).started) {
+
+		Item* currentItem = inventory->GetCurrentItem();
+		Firearm* currentFirearm = nullptr;
+		if (currentItem)
+			currentFirearm = dynamic_cast<Firearm*>(currentItem);
+
+		if (currentFirearm)
+			currentFirearm->Reload();
+
+	}
 
 }
 
 void Player::HandleMovement() {
+
+	currentMovementSpeed = Math::Lerp(currentMovementSpeed, targetMovementSpeed, GameCore::DeltaTime() * MOVEMENT_SPEED_CHANGE_RATE);
 
 	// Input
 	Vector2 input(0.0f, 0.0f);
@@ -84,7 +111,16 @@ void Player::HandleMovement() {
 	isMoving = (input != Vector2::zero);
 
 	// Apply movement
-	transform->Translate(input.Normalize() * movementSpeed * GameCore::DeltaTime());
+	transform->Translate(input.Normalize() * currentMovementSpeed * GameCore::DeltaTime());
+
+	// Assign deviation
+	if (isMoving)
+		aimDeviation = MOVING_AIM_DEVIATION;
+	else
+		aimDeviation = STANDING_AIM_DEVIATION;
+
+	if (isAiming)
+		aimDeviation = ADS_AIM_DEVIATION;
 
 }
 
@@ -97,13 +133,15 @@ void Player::HandleFacing() {
 
 void Player::InitializeData() {
 
-	movementSpeed = 700.0f;
+	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
+	aimDeviation = STANDING_AIM_DEVIATION;
 
 	itemIndex = ItemIndex::None;
 
 	canInteract = true;
 	usingItem = false;
 	isMoving = false;
+	isAiming = false;
 
 	Image* playerSprite = AddComponent<Image>();
 	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
@@ -271,13 +309,8 @@ void Player::Update() {
 
 Vector2 Player::GetForward() const { return forward; }
 
-Vector2 Player::GetAimingDirection() const {
+Vector2 Player::GetAimingDirection() {
 
-	Vector2 aimDirection = forward;
-
-	if (isMoving)
-		aimDirection = aimDirection.Rotate(Math::DegToRad(Random::Sign(Random::Float(0.0f, MAX_AIMING_DEVIATION))));
-
-	return aimDirection;
+	return forward.Rotate(Math::DegToRad(Random::Sign(Random::Float(0.0f, aimDeviation))));
 
 }

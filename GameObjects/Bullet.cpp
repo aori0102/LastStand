@@ -1,17 +1,26 @@
-#include <Projectile.h>
+#include <Bullet.h>
 #include <Type.h>
 #include <GameCore.h>
 #include <Texture.h>
 #include <MediaManager.h>
 
-const float EXIST_TIME = 5.0f;
-const float Projectile::KNOCKBACK_FORCE = 37.0f;
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
-Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 initDirection, float initVelocity, float initDamage) : GameObject("Projectile", Layer::Projectile) {
+const float EXIST_TIME = 5.0f;
+const float Bullet::KNOCKBACK_FORCE = 37.0f;
+const float Bullet::BULLET_VELOCITY = 4800.0f;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
+
+Bullet::Bullet(GameObject* initShooter, Vector2 initPosition, Vector2 initDirection, float initDamage) : GameObject("Bullet", Layer::Bullet) {
 
 	Transform* transform = AddComponent<Transform>();
 	transform->position = initPosition;
-	
+
 	shooter = initShooter;
 
 	Image* image = AddComponent<Image>();
@@ -25,7 +34,6 @@ Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 in
 	boxCollider->ignoreLayerSet.insert(Layer::Player);
 
 	direction = initDirection;
-	velocity = initVelocity;
 	damage = initDamage;
 
 	spawnTime = GameCore::Time();
@@ -36,18 +44,18 @@ Projectile::Projectile(GameObject* initShooter, Vector2 initPosition, Vector2 in
 
 }
 
-void Projectile::Update() {
+void Bullet::Update() {
 
-	GetComponent<Transform>()->Translate(direction.Normalize() * GameCore::DeltaTime() * velocity, false);
+	GetComponent<Transform>()->Translate(direction.Normalize() * GameCore::DeltaTime() * BULLET_VELOCITY, false);
 
 	if (GameCore::Time() >= spawnTime + EXIST_TIME)
 		GameObject::Destroy(this);
 
 }
 
-void Projectile::OnCollisionEnter(BoxCollider* collider) {
+void Bullet::OnCollisionEnter(BoxCollider* collider) {
 
-	if (collider->Owner() == shooter)
+	if (collider->Owner() == shooter || collider->Owner()->GetLayer() == Layer::Bullet)
 		return;
 
 	Humanoid* humanoid = nullptr;

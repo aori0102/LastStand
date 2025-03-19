@@ -58,10 +58,16 @@ void Inventory::AddItem(ItemIndex itemIndex) {
 
 void Inventory::SelectSlot(InventorySlotIndex slotIndex) {
 
+	if (currentSlotIndex != InventorySlotIndex::None && hotBar.at(currentSlotIndex))
+		hotBar.at(currentSlotIndex)->Dequip();
+
 	if (currentSlotIndex == slotIndex)
 		currentSlotIndex = InventorySlotIndex::None;
 	else
 		currentSlotIndex = slotIndex;
+
+	if (currentSlotIndex != InventorySlotIndex::None && hotBar.at(currentSlotIndex))
+		hotBar.at(currentSlotIndex)->Equip();
 
 }
 
@@ -80,5 +86,14 @@ ItemIndex Inventory::GetCurrentItemIndex() {
 		return ItemIndex::None;
 
 	return hotBar.at(currentSlotIndex)->GetIndex();
+
+}
+
+Item* Inventory::GetCurrentItem() {
+
+	if (currentSlotIndex == InventorySlotIndex::None)
+		return nullptr;
+
+	return hotBar.at(currentSlotIndex);
 
 }

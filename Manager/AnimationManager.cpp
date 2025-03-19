@@ -43,7 +43,7 @@ void AnimationManager::InitializeAnimation() {
 		{ 16, 304, 256, 256 }, 0.05f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Pistol_Shoot)->AddAnimationFrame(new AnimationFrame(
-		{ 304, 304, 256, 256 }, 0.2f, 5.0f
+		{ 304, 304, 256, 256 }, 0.0f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Pistol_Shoot)->loop = false;
 
@@ -69,7 +69,7 @@ void AnimationManager::InitializeAnimation() {
 		{ 880, 592, 256, 256 }, 0.08f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Shotgun_Shoot)->AddAnimationFrame(new AnimationFrame(
-		{ 1168, 592, 256, 256 }, 0.2f, 5.0f
+		{ 1168, 592, 256, 256 }, 0.0f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Shotgun_Shoot)->loop = false;
 

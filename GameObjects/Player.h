@@ -23,7 +23,13 @@ class Player : public GameObject {
 private:
 
 	// The aiming error angle in degree
-	static const float MAX_AIMING_DEVIATION;
+	static const float MOVING_AIM_DEVIATION;
+	static const float STANDING_AIM_DEVIATION;
+	static const float ADS_AIM_DEVIATION;
+	static const float MOVEMENT_SPEED_CHANGE_RATE;
+	static const float CAMERA_AIM_ZOOM;
+	static const float DEFAULT_MOVEMENT_SPEED;
+	static const float AIM_MOVEMENT_SPEED;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -32,8 +38,11 @@ private:
 private:
 
 	float playerForwardAngle;
-	float movementSpeed;
+	float currentMovementSpeed;
+	float targetMovementSpeed;
+	float aimDeviation;
 	bool isMoving;
+	bool isAiming;
 	Vector2 forward;
 	ItemIndex itemIndex;
 
@@ -67,6 +76,6 @@ public:
 	void Update() override;
 
 	Vector2 GetForward() const;
-	Vector2 GetAimingDirection() const;
+	Vector2 GetAimingDirection();
 
 };

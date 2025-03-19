@@ -272,6 +272,7 @@ public:
 	void SelectSlot(InventorySlotIndex slotIndex);
 	bool TryUseCurrent();
 	ItemIndex GetCurrentItemIndex();
+	Item* GetCurrentItem();
 
 };
 
