@@ -30,6 +30,7 @@ public:
 
 	static const float HEALTH_MULTIPLIER;
 	static const float DAMAGE_MULTIPLIER;
+	static const float EXP_MULTIPLIER;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -40,6 +41,7 @@ public:
 	float movementSpeed;
 	float health;
 	float damage;
+	float exp;
 
 	/// ----------------------------------
 	/// METHODS
@@ -47,11 +49,11 @@ public:
 
 public:
 
-	ZombieAttribute(float initMovementSpeed, float initHealth, float initDamage)
-		: movementSpeed(initMovementSpeed), health(initHealth), damage(initDamage) {}
+	ZombieAttribute(float initMovementSpeed, float initHealth, float initDamage, float initExp)
+		: movementSpeed(initMovementSpeed), health(initHealth), damage(initDamage), exp(initExp) {}
 
 	ZombieAttribute()
-		: movementSpeed(0.0f), health(0.0f), damage(0.0f) {}
+		: movementSpeed(0.0f), health(0.0f), damage(0.0f), exp(0.0f) {}
 
 };
 
@@ -93,5 +95,6 @@ public:
 	void Update() override;
 	void OnDestroy() override;
 	void OnCollisionEnter(BoxCollider* other) override;
+	float GetExp() const;
 
 };

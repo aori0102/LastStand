@@ -1,19 +1,58 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <PlayerStatistic.h>
-#include <Player.h>
-#include <GameComponent.h>
+
 #include <cmath>
 
-PlayerStatistic::PlayerStatistic(Player* initLinkedPlayer) {
+#include <GameComponent.h>
+#include <Player.h>
+#include <WaveManager.h>
 
-	std::cout << "Player statistic loaded" << std::endl;
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
-	linkedPlayer = initLinkedPlayer;
-	if (!linkedPlayer->TryGetComponent<Humanoid>())
-		throw std::exception("Linked player to statistic requires a humanoid");
+PlayerStatistic* PlayerStatistic::instance = nullptr;
 
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
+
+PlayerStatistic::PlayerStatistic() {
+
+	if (instance)
+		throw std::exception("Player Statistic can only have one instance");
+
+	instance = this;
+
+	playerMoney = 0;
 	playerLevel = 0;
 	playerEXP = 0;
 	playerEXPNeeded = PLAYER_BASE_EXP;
+
+}
+
+void PlayerStatistic::AddEXP(int amount) {
+
+	playerEXP += amount;
+
+	if (playerEXP >= playerEXPNeeded) {
+
+		playerEXP -= playerEXPNeeded;
+		playerLevel++;
+		playerEXPNeeded = std::powf(PLAYER_EXP_MULTIPLIER, playerLevel) * static_cast<float>(PLAYER_BASE_EXP);
+
+	}
+
+}
+
+void PlayerStatistic::AddMoney(int amount) {
+
+	playerMoney += amount;
 
 }
 
@@ -29,6 +68,12 @@ int PlayerStatistic::GetEXP() const {
 
 }
 
+int PlayerStatistic::GetMoney() const {
+
+	return playerMoney;
+
+}
+
 int PlayerStatistic::GetEXPNeeded() const {
 
 	return playerEXPNeeded;
@@ -37,38 +82,36 @@ int PlayerStatistic::GetEXPNeeded() const {
 
 float PlayerStatistic::GetHealth() const {
 
-	return linkedPlayer->GetComponent<Humanoid>()->GetHealth();
+	return Player::Instance()->GetComponent<Humanoid>()->GetHealth();
 
 }
 
 float PlayerStatistic::GetMaxHealth() const {
 
-	return linkedPlayer->GetComponent<Humanoid>()->GetMaxHealth();
+	return Player::Instance()->GetComponent<Humanoid>()->GetMaxHealth();
 
 }
 
 float PlayerStatistic::GetStamina() const {
 
-	return linkedPlayer->GetComponent<Humanoid>()->GetStamina();
+	return Player::Instance()->GetComponent<Humanoid>()->GetStamina();
 
 }
 
 float PlayerStatistic::GetMaxStamina() const {
 
-	return linkedPlayer->GetComponent<Humanoid>()->GetMaxStamina();
+	return Player::Instance()->GetComponent<Humanoid>()->GetMaxStamina();
 
 }
 
-void PlayerStatistic::AddEXP(int amount) {
+bool PlayerStatistic::TrySpendMoney(int amount) {
 
-	playerEXP += amount;
+	if (amount > playerMoney)
+		return false;
 
-	if (playerEXP >= playerEXPNeeded) {
+	playerMoney -= amount;
+	return true;
 
-		playerEXP -= playerEXPNeeded;
-		playerLevel++;
-		playerEXPNeeded = std::powf(PLAYER_EXP_MULTIPLIER, playerLevel) * static_cast<float>(PLAYER_BASE_EXP);
-
-	}
-	
 }
+
+PlayerStatistic* PlayerStatistic::Instance() { return instance; }

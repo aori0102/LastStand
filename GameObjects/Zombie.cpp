@@ -20,15 +20,16 @@
 
 const float ZombieAttribute::DAMAGE_MULTIPLIER = 1.03f;
 const float ZombieAttribute::HEALTH_MULTIPLIER = 1.07f;
+const float ZombieAttribute::EXP_MULTIPLIER = 1.01f;
 
 const float Zombie::KNOCKBACK_FORCE = 50.0f;
 const float Zombie::HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const float Zombie::HEALTH_BAR_SCALE = 0.4f;
 const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRIBUTE_MAP = {
-	{ ZombieIndex::Normal, ZombieAttribute(60.0f, 32.0f, 6.0f) },
-	{ ZombieIndex::Bomber, ZombieAttribute(54.0f, 73.0f, 9.0f) },
-	{ ZombieIndex::Lurker, ZombieAttribute(104.0f, 21.0f, 3.0f) },
-	{ ZombieIndex::Tanker, ZombieAttribute(30.0f, 148.0f, 3.0f) },
+	{ ZombieIndex::Normal, ZombieAttribute(60.0f, 32.0f, 6.0f, 3.0f) },
+	{ ZombieIndex::Bomber, ZombieAttribute(54.0f, 73.0f, 9.0f, 5.0f) },
+	{ ZombieIndex::Lurker, ZombieAttribute(104.0f, 21.0f, 3.0f, 7.0f) },
+	{ ZombieIndex::Tanker, ZombieAttribute(30.0f, 148.0f, 3.0f, 9.0f) },
 };
 const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP = {
 	{ ZombieIndex::Normal, { 16, 16, 96, 96 } },
@@ -44,7 +45,8 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 	zombieAttribute = new ZombieAttribute(
 		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed,
 		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health,
-		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage
+		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage,
+		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp
 	);
 	// Calculation of zombie's attribute uses the following formula
 	// y = bm(d * ln(x) + sqrt(m ^ x))
@@ -146,5 +148,15 @@ void Zombie::OnCollisionEnter(BoxCollider* other) {
 
 	if (other->TryGetComponent<RigidBody>(rigidBody))
 		rigidBody->AddForce((other->transform->position - transform->position).Normalize() * KNOCKBACK_FORCE);
+
+}
+
+float Zombie::GetExp() const {
+
+	return zombieAttribute->exp * ZombieAttribute::EXP_MULTIPLIER
+		* (
+			WaveHandler::Instance()->GetDifficulty() * logf(WaveHandler::Instance()->GetCurrentWave() +
+			sqrtf(powf(ZombieAttribute::EXP_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave())))
+			);
 
 }

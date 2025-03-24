@@ -1,186 +1,64 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <GameCore.h>
+
+#include <iostream>
+
 #include <AnimationManager.h>
 #include <GameComponent.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL.h>
-#include <iostream>
 #include <GameManager.h>
-#include <Texture.h>
-#include <UIEventManager.h>
+#include <MediaManager.h>
 #include <PhysicsManager.h>
 #include <RenderManager.h>
-#include <MediaManager.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <Texture.h>
+#include <UIEventManager.h>
 
-// Initialize static component
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
+const float GameCore::CAMERA_ZOOM_SPEED = 14.0f;
+
 bool GameCore::gQuit = false;
 bool GameCore::selectedUI = false;
+
 float GameCore::time = 0.0f;
 float GameCore::deltaTime = 0.0f;
 float GameCore::currentCameraZoom = 1.0f;
 float GameCore::targetCameraZoom = 1.0f;
-const float GameCore::CAMERA_ZOOM_SPEED = 14.0f;
-SDL_Window* GameCore::gWindow = nullptr;
-SDL_Renderer* GameCore::gRenderer = nullptr;
-SDL_Event* GameCore::gEvent = new SDL_Event;
-std::unordered_map<SDL_Keycode, GameCore::ActionState> GameCore::keyStateDictionary = {};
-std::unordered_map<MouseButton, GameCore::ActionState> GameCore::mouseButtonStateDictionary = {};
-std::unordered_set<GameObject*> GameCore::gameObjectSet = {};
-Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
-Vector2 GameCore::cameraPosition = Vector2::zero;
+
 std::string GameCore::gameName = "Last Stand";
-GameObject* GameCore::cameraFocusObject = nullptr;
-GameManager* GameCore::gameManager = nullptr;
-MediaManager* GameCore::mediaManager = nullptr;
-PhysicsManager* GameCore::physicsManager = nullptr;
+
+std::unordered_map<SDL_Keycode, ActionState> GameCore::keyStateDictionary = {};
+std::unordered_map<MouseButton, ActionState> GameCore::mouseButtonStateDictionary = {};
+
+std::unordered_set<GameObject*> GameCore::gameObjectSet = {};
+
+Vector2 GameCore::cameraPosition = Vector2::zero;
+Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
+
+SDL_Event* GameCore::gEvent = new SDL_Event;
+SDL_Renderer* GameCore::gRenderer = nullptr;
+SDL_Window* GameCore::gWindow = nullptr;
+
 AnimationManager* GameCore::animationManager = nullptr;
+GameManager* GameCore::gameManager = nullptr;
+PhysicsManager* GameCore::physicsManager = nullptr;
+MediaManager* GameCore::mediaManager = nullptr;
 
-// Getter
-float GameCore::Time() { return time; }
+GameObject* GameCore::cameraFocusObject = nullptr;
 
-float GameCore::DeltaTime() { return deltaTime; }
-
-Vector2 GameCore::WindowResolution() { return windowResolution; }
-
-// Method
-bool GameCore::Initialize() {
-
-	// Initialize SDL2
-	std::cout << "Initializing SDL2..." << std::endl;
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-
-		std::cout << "Failed to initialize SDL2. SDL Error: " << SDL_GetError() << std::endl;
-		return false;
-
-	} else
-		std::cout << "SDL2 initialized." << std::endl;
-
-	// Create window
-	gWindow = SDL_CreateWindow(
-		gameName.c_str(),
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		windowResolution.x,
-		windowResolution.y,
-		SDL_WINDOW_SHOWN);
-
-	if (!gWindow) {
-
-		std::cout << "Failed to create window. SDL Error: " << SDL_GetError() << std::endl;
-		return false;
-
-	} else
-		std::cout << "Window created." << std::endl;
-
-	// Create renderer
-	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-
-	if (!gRenderer) {
-
-		std::cout << "Failed to create renderer. SDL Error: " << SDL_GetError() << std::endl;
-		return false;
-
-	} else
-		std::cout << "Renderer created." << std::endl;
-	// Renderer settings
-	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
-
-	// Initialize IMG
-	int imgFlag = IMG_INIT_PNG;
-	if (!(IMG_Init(imgFlag) & imgFlag)) {
-
-		std::cout << "Failed to initialize SDL2 Image. IMG Error: " << IMG_GetError() << std::endl;
-		return false;
-
-	} else
-		std::cout << "SDL2 Image initialized" << std::endl;
-
-	// Initialize TTF
-	if (TTF_Init() == -1) {
-
-		std::cout << "Failed to initialize SDL2 TTF. TTF Error: " << TTF_GetError() << std::endl;
-		return false;
-
-	} else
-		std::cout << "SDL2 TTF initialized" << std::endl;
-
-	// Success, terminate
-	std::cout << "Done!" << std::endl;
-	return true;
-
-}
-
-void GameCore::Loop() {
-
-	while (!gQuit) {
-
-		// Flush the game object beforehand
-		GameObject::CleanUpCache();
-
-		// Update time
-		float currentTime = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
-		deltaTime = currentTime - time;
-		time = currentTime;
-
-		// Poll event
-		UpdateEvent();
-		while (SDL_PollEvent(gEvent) != 0)
-			HandleEvent();
-
-		selectedUI = UIEvent::Update();
-
-		// Clear renderer data
-		SetRenderDrawColor(Color::TRANSPARENT);
-		SDL_RenderClear(gRenderer);
-
-		// Camera and background
-		UpdateCamera();
-
-		PhysicsManager::Instance()->Update();
-
-		// Handle game object
-		auto it = gameObjectSet.begin();
-
-		while (it != gameObjectSet.end()) {
-
-			(*it)->UpdateComponents();
-			(*it)->Update();
-
-			it++;
-
-		}
-
-		PhysicsManager::Instance()->LateCollisionCall();
-
-		GameManager::Instance()->Update();
-
-		RenderManager::RenderAll();
-
-		// Update renderer data
-		SDL_RenderPresent(gRenderer);
-
-	}
-
-}
-
-void GameCore::Close() {
-
-	// Flush game objects and components
-
-	// Close window and renderer
-	SDL_DestroyWindow(gWindow);
-	gWindow = nullptr;
-
-	SDL_DestroyRenderer(gRenderer);
-	gRenderer = nullptr;
-
-	// Close SDL libraries
-	TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
-
-}
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void GameCore::UpdateEvent() {
 
@@ -327,7 +205,19 @@ void GameCore::HandleEvent() {
 
 }
 
-GameCore::ActionState* GameCore::FindKeyState(SDL_Keycode keycode) {
+void GameCore::UpdateCamera() {
+
+	if (!cameraFocusObject)
+		return;
+
+	// Get focus object component and update camera
+	cameraPosition = cameraFocusObject->transform->position;
+
+	currentCameraZoom = Math::Lerp(currentCameraZoom, targetCameraZoom, deltaTime * CAMERA_ZOOM_SPEED);
+
+}
+
+ActionState* GameCore::FindKeyState(SDL_Keycode keycode) {
 
 	auto it = keyStateDictionary.find(keycode);
 
@@ -338,7 +228,7 @@ GameCore::ActionState* GameCore::FindKeyState(SDL_Keycode keycode) {
 
 }
 
-GameCore::ActionState* GameCore::FindMouseButtonState(MouseButton mouseButton) {
+ActionState* GameCore::FindMouseButtonState(MouseButton mouseButton) {
 
 	auto it = mouseButtonStateDictionary.find(mouseButton);
 
@@ -349,87 +239,9 @@ GameCore::ActionState* GameCore::FindMouseButtonState(MouseButton mouseButton) {
 
 }
 
-GameCore::ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
-
-	// Find the key
-	ActionState* keyState = FindKeyState(keycode);
-
-	// Create a key state if not already
-	if (!keyState) {
-
-		keyState = new ActionState;
-		keyStateDictionary[keycode] = *keyState;
-		delete keyState;
-
-	}
-
-	return keyStateDictionary[keycode];
-
-}
-
-void GameCore::InitializeGame() {
-
-	mediaManager = new MediaManager;
-	physicsManager = new PhysicsManager;
-	animationManager = new AnimationManager;
-	gameManager = new GameManager;
-
-	Random::Init();
-
-}
-
-Vector2 GameCore::ScreenToWorldPosition(Vector2 screenPosition) {
-
-	return Vector2(
-		screenPosition.x - windowResolution.x / 2.0f,
-		windowResolution.y / 2.0f - screenPosition.y
-	) + cameraPosition;
-
-}
-
-Vector2 GameCore::GetMouseInput() {
-
-	int x, y;
-
-	SDL_GetMouseState(&x, &y);
-
-	return Vector2(x, y);
-
-}
-
 void GameCore::SetRenderDrawColor(Color color) {
 
 	SDL_SetRenderDrawColor(gRenderer, color.r, color.g, color.b, color.a);
-
-}
-
-void GameCore::RegisterGameObject(GameObject* gameObject) {
-
-	gameObjectSet.insert(gameObject);
-
-}
-
-void GameCore::UnregisterGameObject(GameObject* gameObject) {
-
-	gameObjectSet.erase(gameObject);
-
-}
-
-GameCore::ActionState GameCore::GetMouseState(MouseButton mouseButton) {
-
-	// Find the key
-	ActionState* mouseButtonState = FindMouseButtonState(mouseButton);
-
-	// Create a key state if not already
-	if (!mouseButtonState) {
-
-		mouseButtonState = new ActionState;
-		mouseButtonStateDictionary[mouseButton] = *mouseButtonState;
-		delete mouseButtonState;
-
-	}
-
-	return mouseButtonStateDictionary[mouseButton];
 
 }
 
@@ -521,6 +333,251 @@ void GameCore::RenderCopy(Texture* texture, Vector2 position, Vector2 scale, boo
 
 }
 
+void GameCore::Loop() {
+
+	while (!gQuit) {
+
+		// Flush the game object beforehand
+		GameObject::CleanUpCache();
+
+		// Update time
+		float currentTime = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
+		deltaTime = currentTime - time;
+		time = currentTime;
+
+		// Poll event
+		UpdateEvent();
+		while (SDL_PollEvent(gEvent) != 0)
+			HandleEvent();
+
+		selectedUI = UIEvent::Update();
+
+		// Clear renderer data
+		SetRenderDrawColor(Color::TRANSPARENT);
+		SDL_RenderClear(gRenderer);
+
+		// Camera and background
+		UpdateCamera();
+
+		PhysicsManager::Instance()->Update();
+
+		// Handle game object
+		auto it = gameObjectSet.begin();
+
+		while (it != gameObjectSet.end()) {
+
+			(*it)->UpdateComponents();
+
+			(*it)->Update();
+
+			it++;
+
+		}
+
+		PhysicsManager::Instance()->LateCollisionCall();
+
+		GameManager::Instance()->Update();
+
+		RenderManager::RenderAll();
+
+		// Update renderer data
+		SDL_RenderPresent(gRenderer);
+
+	}
+
+}
+
+void GameCore::Close() {
+
+	// Flush game objects and components
+
+	// Close window and renderer
+	SDL_DestroyWindow(gWindow);
+	gWindow = nullptr;
+
+	SDL_DestroyRenderer(gRenderer);
+	gRenderer = nullptr;
+
+	// Close SDL libraries
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
+
+}
+
+void GameCore::InitializeGame() {
+
+	mediaManager = new MediaManager;
+	physicsManager = new PhysicsManager;
+	animationManager = new AnimationManager;
+	gameManager = new GameManager;
+
+	Random::Init();
+
+}
+
+void GameCore::RegisterGameObject(GameObject* gameObject) {
+
+	gameObjectSet.insert(gameObject);
+
+}
+
+void GameCore::UnregisterGameObject(GameObject* gameObject) {
+
+	gameObjectSet.erase(gameObject);
+
+}
+
+void GameCore::LetCameraFocus(GameObject* gameObject) {
+
+	cameraFocusObject = gameObject;
+
+}
+
+void GameCore::SetCameraZoom(float zoom) {
+
+	targetCameraZoom = zoom;
+
+}
+
+void GameCore::ClearTexture(SDL_Texture* texture) {
+
+	SDL_DestroyTexture(texture);
+	texture = nullptr;
+
+}
+
+bool GameCore::SelectedUI() { return selectedUI; }
+
+bool GameCore::Initialize() {
+
+	// Initialize SDL2
+	std::cout << "Initializing SDL2..." << std::endl;
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+
+		std::cout << "Failed to initialize SDL2. SDL Error: " << SDL_GetError() << std::endl;
+		return false;
+
+	} else
+		std::cout << "SDL2 initialized." << std::endl;
+
+	// Create window
+	gWindow = SDL_CreateWindow(
+		gameName.c_str(),
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
+		windowResolution.x,
+		windowResolution.y,
+		SDL_WINDOW_SHOWN);
+
+	if (!gWindow) {
+
+		std::cout << "Failed to create window. SDL Error: " << SDL_GetError() << std::endl;
+		return false;
+
+	} else
+		std::cout << "Window created." << std::endl;
+
+	// Create renderer
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+
+	if (!gRenderer) {
+
+		std::cout << "Failed to create renderer. SDL Error: " << SDL_GetError() << std::endl;
+		return false;
+
+	} else
+		std::cout << "Renderer created." << std::endl;
+	// Renderer settings
+	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
+
+	// Initialize IMG
+	int imgFlag = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlag) & imgFlag)) {
+
+		std::cout << "Failed to initialize SDL2 Image. IMG Error: " << IMG_GetError() << std::endl;
+		return false;
+
+	} else
+		std::cout << "SDL2 Image initialized" << std::endl;
+
+	// Initialize TTF
+	if (TTF_Init() == -1) {
+
+		std::cout << "Failed to initialize SDL2 TTF. TTF Error: " << TTF_GetError() << std::endl;
+		return false;
+
+	} else
+		std::cout << "SDL2 TTF initialized" << std::endl;
+
+	// Success, terminate
+	std::cout << "Done!" << std::endl;
+	return true;
+
+}
+
+float GameCore::Time() { return time; }
+
+float GameCore::DeltaTime() { return deltaTime; }
+
+ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
+
+	// Find the key
+	ActionState* keyState = FindKeyState(keycode);
+
+	// Create a key state if not already
+	if (!keyState) {
+
+		keyState = new ActionState;
+		keyStateDictionary[keycode] = *keyState;
+		delete keyState;
+
+	}
+
+	return keyStateDictionary[keycode];
+
+}
+
+ActionState GameCore::GetMouseState(MouseButton mouseButton) {
+
+	// Find the key
+	ActionState* mouseButtonState = FindMouseButtonState(mouseButton);
+
+	// Create a key state if not already
+	if (!mouseButtonState) {
+
+		mouseButtonState = new ActionState;
+		mouseButtonStateDictionary[mouseButton] = *mouseButtonState;
+		delete mouseButtonState;
+
+	}
+
+	return mouseButtonStateDictionary[mouseButton];
+
+}
+
+Vector2 GameCore::WindowResolution() { return windowResolution; }
+
+Vector2 GameCore::GetMouseInput() {
+
+	int x, y;
+
+	SDL_GetMouseState(&x, &y);
+
+	return Vector2(x, y);
+
+}
+
+Vector2 GameCore::ScreenToWorldPosition(Vector2 screenPosition) {
+
+	return Vector2(
+		screenPosition.x - windowResolution.x / 2.0f,
+		windowResolution.y / 2.0f - screenPosition.y
+	) + cameraPosition;
+
+}
+
 SDL_Texture* GameCore::CreateTexture(SDL_Surface* loadedSurface) {
 
 	return SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
@@ -534,38 +591,5 @@ SDL_Texture* GameCore::CreateTexture(Vector2 size) {
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
 	return texture;
-
-}
-
-void GameCore::ClearTexture(SDL_Texture* texture) {
-
-	SDL_DestroyTexture(texture);
-	texture = nullptr;
-
-}
-
-void GameCore::UpdateCamera() {
-
-	if (!cameraFocusObject)
-		return;
-
-	// Get focus object component and update camera
-	cameraPosition = cameraFocusObject->transform->position;
-
-	currentCameraZoom = Math::Lerp(currentCameraZoom, targetCameraZoom, deltaTime*CAMERA_ZOOM_SPEED);
-
-}
-
-void GameCore::LetCameraFocus(GameObject* gameObject) {
-
-	cameraFocusObject = gameObject;
-
-}
-
-bool GameCore::SelectedUI() { return selectedUI; }
-
-void GameCore::SetCameraZoom(float zoom) {
-
-	targetCameraZoom = zoom;
 
 }

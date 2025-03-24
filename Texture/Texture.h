@@ -124,6 +124,8 @@ public:
 	Bound GetBound();
 
 	std::function<void()> OnClick;
+	std::function<void()> OnMouseEnter;
+	std::function<void()> OnMouseLeave;
 
 	bool IsActive() const;
 

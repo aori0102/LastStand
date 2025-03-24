@@ -47,9 +47,7 @@ public:
 	WaveHandler();
 
 	void InitiateWave();
-
 	void Update() override;
-
 	void RemoveZombie();
 
 };

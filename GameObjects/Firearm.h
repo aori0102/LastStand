@@ -6,21 +6,23 @@
 
 #pragma once
 
-#include <Item.h>
-
-#include <GameComponent.h>
 #include <unordered_map>
 
+#include <GameComponent.h>
+#include <Item.h>
+
 class Player;
+class Sprite;
+enum class MediaObject;
 
 enum class FirearmAttributeIndex {
 
-	Damage,
-	ReloadTime,
-	CriticalDamageMultiplier,
-	CriticalChance,
-	Firerate,
-	MagazineCapacity,
+	Damage,							// Upgrade
+	ReloadTime,						// Perk
+	CriticalDamage,					// Upgrade
+	CriticalChance,					// Perk
+	Firerate,						// Upgrade
+	MagazineCapacity,				// Upgrade
 
 };
 
@@ -28,6 +30,13 @@ enum class FirearmID {
 
 	M1911,
 	Beretta1301,
+
+};
+
+enum class ReloadType {
+
+	Magazine,
+	PerAmmo,
 
 };
 
@@ -48,6 +57,8 @@ private:
 protected:
 
 	static const std::unordered_map<FirearmID, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
+	static const std::unordered_map<FirearmID, MediaObject> FIREARM_ICON_INDEX_MAP;
+	static const std::unordered_map<FirearmID, std::string> FIREARM_NAME_MAP;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -59,31 +70,37 @@ private:
 	float lastReloadTick;
 	float lastShootTick;
 	bool isReloading;
+	bool stopReload;
+	std::string firearmName;
 	FirearmID firearmID;
+	ReloadType reloadType;
 
 	// UI
 	GameObject* ammoIcon;
 	GameObject* ammoFrame;
 	GameObject* currentAmmoLabel;
 	GameObject* reserveAmmoLabel;
+	GameObject* reloadLabel;
 
 protected:
-	
-	float reloadTime;
-	float damage;
-	float fireRate;
+
 	int currentAmmo;
 	int reserveAmmo;
-	int magazineCapacity;
 	std::unordered_map<FirearmAttributeIndex, float> attributeMultiplierMap;
+	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void HandleReloading();
+
 protected:
 
 	bool TryShoot();
+	bool IsCrit();
 	void ShowUI();
 	void HideUI();
 
@@ -94,7 +111,10 @@ public:
 	void Update() override;
 	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
 	void Reload();
-	virtual float GetAttribute(FirearmAttributeIndex attributeIndex) = 0;
+	float GetAttribute(FirearmAttributeIndex attributeIndex);
+	std::string GetName() const;
+	FirearmID GetFirearmID() const;
+	Sprite* GetIconSprite() const;
 
 };
 
@@ -115,7 +135,6 @@ public:
 	Pistol(FirearmID initFirearmID);
 
 	bool TryUse(Player* player) override;
-	float GetAttribute(FirearmAttributeIndex attributeIndex) override;
 
 };
 
@@ -139,6 +158,5 @@ public:
 	Shotgun(FirearmID initFirearmID);
 
 	bool TryUse(Player* player) override;
-	float GetAttribute(FirearmAttributeIndex attributeIndex) override;
 
 };

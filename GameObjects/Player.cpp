@@ -14,9 +14,9 @@
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <GameCore.h>
+#include <GameManager.h>
 #include <MediaManager.h>
 #include <PhysicsManager.h>
-#include <PlayerUI.h>
 #include <Bullet.h>
 #include <Texture.h>
 #include <Type.h>
@@ -32,6 +32,7 @@ const float Player::MOVEMENT_SPEED_CHANGE_RATE = 50.0f;
 const float Player::CAMERA_AIM_ZOOM = 1.3f;
 const float Player::DEFAULT_MOVEMENT_SPEED = 700.0f;
 const float Player::AIM_MOVEMENT_SPEED = 400.0f;
+Player* Player::instance = nullptr;
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -162,8 +163,8 @@ void Player::InitializeData() {
 
 	Humanoid* humanoid = AddComponent<Humanoid>();
 	humanoid->SetHealth(250.0f);
-	humanoid->OnDeath = []() {
-		std::cout << "Player dead" << std::endl;
+	humanoid->OnDeath = [this]() {
+		GameManager::Instance()->ReportDead(this);
 		};
 
 	currentAnimationStartTick = 0.0f;
@@ -263,6 +264,11 @@ void Player::InitializeAnimation() {
 
 Player::Player() : GameObject("Player", Layer::Player) {
 
+	if (instance)
+		throw std::exception("This is a singleplayer game!");
+
+	instance = this;
+
 	InitializeData();
 
 	InitializeAnimation();
@@ -307,6 +313,12 @@ void Player::Update() {
 
 }
 
+std::vector<Firearm*> Player::GetFirearmList() {
+
+	return GetComponent<Inventory>()->GetItemListOfType<Firearm>();
+
+}
+
 Vector2 Player::GetForward() const { return forward; }
 
 Vector2 Player::GetAimingDirection() {
@@ -314,3 +326,5 @@ Vector2 Player::GetAimingDirection() {
 	return forward.Rotate(Math::DegToRad(Random::Sign(Random::Float(0.0f, aimDeviation))));
 
 }
+
+Player* Player::Instance() { return instance; }

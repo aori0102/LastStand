@@ -19,17 +19,12 @@ private:
 	static GameManager* instance;
 
 	// Entity
-	Player* player;
-	PlayerStatistic* playerStatistic;
 	std::unordered_set<Zombie*> enemySet;
 
 	StatusBar* statusBarUI;
 
 	// Systems
 	Shop* shop;
-
-	// Player stats
-	int money;
 
 	// Map setting
 	GameObject* background;
@@ -55,18 +50,6 @@ private:
 	GameObject* westBorder;
 	GameObject* eastBorder;
 
-	// UI elements
-	GameObject* infoBackground;
-	const Vector2 INFO_BOARD_SCALE = Vector2(300.0f, 225.0f);
-
-	GameObject* moneyLabel;
-	GameObject* moneyText;
-	const std::string MONEY_LABEL_TEXT = "Money: ";
-	const int MONEY_LABEL_SIZE = 20;
-	const int LEVEL_LABEL_SIZE = 18;
-
-	const Vector2 SPAWN_WAVE_BUTTON_SCALE = Vector2(200.0f, 80.0f);
-
 private:
 
 	void Render();
@@ -76,14 +59,11 @@ public:
 	GameManager();
 
 	void InitializeObject();
-	void InitializeUI();
 
 	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void ReportDead(GameObject* gameObject);
 
 	void Update();
-
-	bool TrySpendMoney(int amount);
 
 	static GameManager* Instance() { return instance; }
 

@@ -10,10 +10,16 @@
 #include <sstream>
 #include <string>
 
+#include <Firearm.h>
+#include <FirearmAttributeUIGroup.h>
+#include <FirearmSelectionUI.h>
+#include <FirearmUpgrade.h>
+#include <FirearmUpgradeUIGroup.h>
 #include <GameCore.h>
 #include <GameManager.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <PlayerStatistic.h>
 #include <Texture.h>
 #include <Type.h>
 
@@ -21,359 +27,30 @@
 /// STATIC FIELDS
 /// ----------------------------------
 
-const int Shop::FirearmUpgradeUIGroup::UPGRADE_LABEL_SIZE = 24;
-const int Shop::FirearmUpgradeUIGroup::UPGRADE_DESCRIPTION_SIZE = 14;
-const int Shop::FirearmUpgradeUIGroup::UPGADE_COST_SIZE = 14;
-const float Shop::FirearmUpgradeUIGroup::UPGRADE_LABEL_OFFSET_Y = 15.0f;
-const float Shop::FirearmUpgradeUIGroup::UPGRADE_COST_OFFSET_Y = 130.0f;
-const std::string Shop::FirearmUpgradeUIGroup::COST_PREFIX = "Cost: ";
-const std::string Shop::FirearmUpgradeUIGroup::OBJECT_NAME_SUFFIX = "_UpgradeButton";
-const Color Shop::FirearmUpgradeUIGroup::UPGRADE_LABEL_COLOR = Color::WHITE;
-const Color Shop::FirearmUpgradeUIGroup::UPGRADE_ATTRIBUTE_COLOR = Color::GREEN;
-
-const std::string Shop::FirearmAttributeInfoGroup::OBJECT_NAME_SUFFIX = "_InfoGroup";
-
-const float Shop::UPGRADE_DESCRIPTION_MARGIN = 40.0f;
-const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_UPGRADE_LABEL_MAP = {
-	{ FirearmAttributeIndex::Damage, "Damage" },
-	{ FirearmAttributeIndex::ReloadTime, "Reload Time" },
-	{ FirearmAttributeIndex::MagazineCapacity, "Max Ammo" },
-	{ FirearmAttributeIndex::CriticalChance, "Critical Chance" }
-};
-const std::unordered_map<FirearmAttributeIndex, Vector2> Shop::FIREARM_UPGRADE_POSITION = {
-	{ FirearmAttributeIndex::Damage, Vector2(200.0f, 230.0f) },
-	{ FirearmAttributeIndex::ReloadTime, Vector2(475.0f, 230.0f) },
-	{ FirearmAttributeIndex::MagazineCapacity, Vector2(200.0f, 430.0f) },
-	{ FirearmAttributeIndex::CriticalChance, Vector2(475.0f, 430.0f) }
-};
-const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP = {
-	{ FirearmAttributeIndex::Damage, "Increase firearm damage by " },
-	{ FirearmAttributeIndex::ReloadTime, "Reduce time take to reload to " },
-	{ FirearmAttributeIndex::MagazineCapacity, "Expand magazine, holding up to " },
-	{ FirearmAttributeIndex::CriticalChance, "Increase critical chance by " }
-};
-const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP = {
-	{ FirearmAttributeIndex::Damage, " times." },
-	{ FirearmAttributeIndex::ReloadTime, "s." },
-	{ FirearmAttributeIndex::MagazineCapacity, " rounds." },
-	{ FirearmAttributeIndex::CriticalChance, " times." }
-};
-const int Shop::NAVIGATION_LABEL_SIZE = 48;
-const std::unordered_map<Shop::ShopMenuIndex, std::string> Shop::MENU_NAVIGATION_LABEL_MAP = {
-	{ ShopMenuIndex::Firearm, "Firearm" },
-	{ ShopMenuIndex::Melee, "Melee" },
-	{ ShopMenuIndex::Utility, "Utility" }
-};
-const std::unordered_map<Shop::ShopMenuIndex, Vector2> Shop::MENU_NAVIGATION_POSITION = {
-	{ ShopMenuIndex::Firearm, Vector2(170.0f, 80.0f) },
-	{ ShopMenuIndex::Melee, Vector2(490.0f, 80.0f) },
-	{ ShopMenuIndex::Utility, Vector2(810.0f, 80.0f) }
-};
-const float Shop::FIREARM_ATTRIBUTE_VALUE_LEFT = 1075.0f;
-const int Shop::FIREARM_ATTRIBUTE_LABEL_SIZE = 24;
-const int Shop::FIREARM_ATTRIBUTE_AMOUNT_DECIMAL = 1;
-const std::string Shop::FIREARM_ATTRIBUTE_FRAME_PATH = "./Asset/Attribute_Frame.png";
-const std::unordered_map<FirearmAttributeIndex, Vector2> Shop::FIREARM_ATTRIBUTE_POSITION_MAP = {
-	{ FirearmAttributeIndex::Damage, Vector2(775.0f, 220.0f) },
-	{ FirearmAttributeIndex::ReloadTime, Vector2(775.0f, 265.0f) },
-	{ FirearmAttributeIndex::MagazineCapacity, Vector2(775.0f, 310.0f) },
-	{ FirearmAttributeIndex::CriticalChance, Vector2(775.0f, 355.0f) }
-};
-const std::unordered_map<FirearmAttributeIndex, std::string> Shop::FIREARM_ATTRIBUTE_LABEL_MAP = {
-	{ FirearmAttributeIndex::Damage, "Damage" },
-	{ FirearmAttributeIndex::ReloadTime, "Reload Time" },
-	{ FirearmAttributeIndex::MagazineCapacity, "Max Ammo" },
-	{ FirearmAttributeIndex::CriticalChance, "Critical Chance" }
-};
-const Vector2 Shop::FIREARM_ATTRIBUTE_FRAME_POSITION = Vector2(750.0f, 200.0f);
+Shop* Shop::instance = nullptr;
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Shop::FirearmUpgrade::FirearmUpgrade(FirearmAttributeIndex initAttribute, std::function<bool(float, float)> initBetterNode) {
-
-	name = "Upgrade";
-	description = "Upgrade description";
-	currentUpgrade = nullptr;
-	tailNode = nullptr;
-	attribute = initAttribute;
-	betterNode = initBetterNode;
-
-}
-
-void Shop::FirearmUpgrade::AddUpgrade(Shop::UpgradeNode* newUpgrade) {
-
-	if (!currentUpgrade) {
-
-		currentUpgrade = newUpgrade;
-		tailNode = newUpgrade;
-		return;
-
-	}
-
-	if (!newUpgrade || !betterNode)
-		throw std::exception("Adding new upgrade worth less than previous one");
-
-	tailNode->next = newUpgrade;
-	tailNode = newUpgrade;
-
-}
-
-void Shop::FirearmUpgrade::UpgradeNext(Firearm* firearm) {
-
-	if (!currentUpgrade || !firearm)
-		return;
-
-	UpgradeNode* nextUpgrade = currentUpgrade->next;
-
-	firearm->ModifyAttributeMultiplier(attribute, currentUpgrade->amount);
-
-	std::cout << "Upgrading to next tier. New amount: " << currentUpgrade->amount << " for " << currentUpgrade->cost << " cost" << std::endl;
-
-	delete currentUpgrade;
-	currentUpgrade = nextUpgrade;
-
-}
-
-int Shop::FirearmUpgrade::NextUpgradeCost() {
-
-	if (currentUpgrade)
-		return currentUpgrade->cost;
-
-	return INT_MAX;
-
-}
-
-float Shop::FirearmUpgrade::NextUpgradeAmount() {
-
-	if (currentUpgrade)
-		return currentUpgrade->amount;
-
-	return 0.0f;
-
-}
-
-Shop::FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(Shop* initShop, FirearmAttributeIndex initAttribute) {
-
-	if (!initShop)
-		throw std::exception("Updating node does not link to a shop object!");
-
-	linkedShop = initShop;
-	assignedAttribute = initAttribute;
-
-	label = "Label";
-	amount = 0.0f;
-	descriptionMargin = 0.0f;
-	cost = 0;
-	amountDecimalPlace = 0;
-
-	labelObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Text* label_text = labelObject->AddComponent<Text>();
-	label_text->showOnScreen = true;
-	labelObject->Render = [label_text]() {
-		label_text->Render();
-		};
-	buttonObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Image* frame_image = buttonObject->AddComponent<Image>();
-	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UpgradeSlot), true);
-	frame_image->showOnScreen = true;
-	Button* button_button = buttonObject->AddComponent<Button>();
-	button_button->backgroundColor = Color::TRANSPARENT;
-	button_button->OnClick = [this]() {
-		linkedShop->BuyUpgrade(assignedAttribute);
-		};
-	buttonObject->Render = [frame_image]() {
-		frame_image->Render();
-		};
-	descriptionObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Text* description_text = descriptionObject->AddComponent<Text>();
-	description_text->showOnScreen = true;
-	description_text->wrapLength = buttonObject->transform->scale.x - 2.0f * descriptionMargin;
-	descriptionObject->Render = [description_text]() {
-		description_text->Render();
-		};
-	amountObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Text* amount_text = amountObject->AddComponent<Text>();
-	amount_text->showOnScreen = true;
-	amount_text->wrapLength = buttonObject->transform->scale.x - 2.0f * descriptionMargin;
-	amountObject->Render = [amount_text]() {
-		amount_text->Render();
-		};
-	costObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Text* cost_text = costObject->AddComponent<Text>();
-	cost_text->showOnScreen = true;
-	costObject->Render = [cost_text]() {
-		cost_text->Render();
-		};
-
-}
-
-void Shop::FirearmUpgradeUIGroup::Update(Vector2 framePosition) {
-
-	// Frame
-	buttonObject->transform->position = Math::SDLToC00(framePosition, buttonObject->transform->scale);
-
-	// Label
-	labelObject->name = label + OBJECT_NAME_SUFFIX;
-	Text* label_text = labelObject->GetComponent<Text>();
-	label_text->LoadText(label, UPGRADE_LABEL_COLOR, UPGRADE_LABEL_SIZE);
-	label_text->transform->position = Vector2(
-		buttonObject->transform->position.x,
-		buttonObject->transform->position.y - (buttonObject->transform->scale - labelObject->transform->scale).y / 2.0f + UPGRADE_LABEL_OFFSET_Y
-	);
-
-	// Amount string
-	std::stringstream ss;
-	ss << std::fixed << std::setprecision(amountDecimalPlace) << amount;
-	std::string amountString = ss.str();
-
-	// Description label
-	descriptionObject->name = label + OBJECT_NAME_SUFFIX;
-	Text* description_text = descriptionObject->GetComponent<Text>();
-	description_text->wrapLength = buttonObject->transform->scale.x - 2.0f * descriptionMargin;
-	description_text->LoadText(descriptionPrefix + amountString + descriptionSuffix, UPGRADE_LABEL_COLOR, UPGRADE_DESCRIPTION_SIZE);
-	description_text->transform->position = buttonObject->transform->position;
-
-	// Description amount
-	/*ss.str("");
-	ss.clear();
-	ss << std::setw(descriptionPrefix.size()) << std::setfill('a') << amountString;
-	std::string amountStringSpan = ss.str();
-	amountObject->name = label + OBJECT_NAME_SUFFIX;
-	Text* amount_text = amountObject->GetComponent<Text>();
-	amount_text->wrapLength = buttonObject->transform->scale.x - 2.0f * descriptionMargin;
-	amount_text->LoadText(amountStringSpan, UPGRADE_ATTRIBUTE_COLOR, UPGRADE_DESCRIPTION_SIZE);
-	amountObject->transform->position = Vector2(
-		descriptionObject->transform->position.x,
-		descriptionObject->transform->position.y - (descriptionObject->transform->scale - amountObject->transform->scale).y / 2.0f
-	);*/
-
-	// Cost
-	costObject->name = label + OBJECT_NAME_SUFFIX;
-	Text* cost_text = costObject->GetComponent<Text>();
-	cost_text->LoadText(COST_PREFIX + std::to_string(cost), UPGRADE_LABEL_COLOR, UPGADE_COST_SIZE);
-	cost_text->transform->position = Vector2(
-		buttonObject->transform->position.x,
-		buttonObject->transform->position.y - (buttonObject->transform->scale - labelObject->transform->scale).y / 2.0f + UPGRADE_COST_OFFSET_Y
-	);
-
-}
-
-void Shop::FirearmUpgradeUIGroup::Show() {
-
-	labelObject->Enable();
-	buttonObject->Enable();
-	descriptionObject->Enable();
-	costObject->Enable();
-	amountObject->Enable();
-
-}
-
-void Shop::FirearmUpgradeUIGroup::Hide() {
-
-	labelObject->Disable();
-	buttonObject->Disable();
-	descriptionObject->Disable();
-	costObject->Disable();
-	amountObject->Disable();
-
-}
-
-Shop::FirearmAttributeInfoGroup::FirearmAttributeInfoGroup() {
-
-	label = "Label";
-	labelSize = 16;
-	labelColor = Color::WHITE;
-	amount = 0.0f;
-	amountDecimalPlace = 0;
-
-	labelObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Text* label_text = labelObject->AddComponent<Text>();
-	label_text->showOnScreen = true;
-	labelObject->Render = [label_text]() {
-		label_text->Render();
-		};
-	amountLabelObject = new GameObject(label + OBJECT_NAME_SUFFIX, Layer::Menu);
-	Text* amountLabel_text = amountLabelObject->AddComponent<Text>();
-	amountLabel_text->showOnScreen = true;
-	amountLabelObject->Render = [amountLabel_text]() {
-		amountLabel_text->Render();
-		};
-
-}
-
-void Shop::FirearmAttributeInfoGroup::Update(Vector2 labelPosition, float amountLabelLeft) {
-
-	labelObject->name = label + OBJECT_NAME_SUFFIX;
-	Text* label_text = labelObject->GetComponent<Text>();
-	label_text->LoadText(label, labelColor, labelSize);
-	label_text->transform->position = Math::SDLToC00(labelPosition, label_text->transform->scale);
-
-	amountLabelObject->name = label + OBJECT_NAME_SUFFIX;
-	Text* amountLabel_text = amountLabelObject->GetComponent<Text>();
-	std::stringstream ss;
-	ss << std::fixed << std::setprecision(amountDecimalPlace) << amount;
-	std::string amountString = ss.str();
-	amountLabel_text->LoadText(amountString, labelColor, labelSize);
-	amountLabel_text->transform->position = Math::SDLToC00(
-		Vector2(amountLabelLeft - amountLabel_text->transform->scale.x, labelPosition.y),
-		amountLabel_text->transform->scale
-	);
-
-}
-
-void Shop::FirearmAttributeInfoGroup::Show() {
-
-	if (labelObject)
-		labelObject->Enable();
-
-	if (amountLabelObject)
-		amountLabelObject->Enable();
-
-}
-
-void Shop::FirearmAttributeInfoGroup::Hide() {
-
-	if (labelObject)
-		labelObject->Disable();
-
-	if (amountLabelObject)
-		amountLabelObject->Disable();
-
-}
-
 void Shop::Show() {
 
-	background->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Background)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm_Label)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee_Label)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->Enable();
 
-	menuNavigationButtonMap.at(ShopMenuIndex::Firearm)->button->Enable();
-	menuNavigationButtonMap.at(ShopMenuIndex::Melee)->button->Enable();
-	menuNavigationButtonMap.at(ShopMenuIndex::Utility)->button->Enable();
-
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::Damage)->Show();
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::ReloadTime)->Show();
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::MagazineCapacity)->Show();
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::CriticalChance)->Show();
-
-	firearmAttributeFrame->Enable();
+	ShowCurrentMenu();
 
 }
 
 void Shop::Hide() {
 
-	background->Disable();
-
-	menuNavigationButtonMap.at(ShopMenuIndex::Firearm)->button->Disable();
-	menuNavigationButtonMap.at(ShopMenuIndex::Melee)->button->Disable();
-	menuNavigationButtonMap.at(ShopMenuIndex::Utility)->button->Disable();
-
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::Damage)->Hide();
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::ReloadTime)->Hide();
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::MagazineCapacity)->Hide();
-	firearmAttributeInfoMap.at(FirearmAttributeIndex::CriticalChance)->Hide();
-
-	firearmAttributeFrame->Disable();
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Disable();
 
 }
 
@@ -381,12 +58,23 @@ void Shop::ShowCurrentMenu() {
 
 	switch (currentMenuIndex) {
 
-	case ShopMenuIndex::Firearm:
+	case ShopMenuIndex::Firearm_Main:
 
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::Damage]->Show();
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::ReloadTime]->Show();
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::MagazineCapacity]->Show();
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::CriticalChance]->Show();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Damage)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Firerate)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Content)->Enable();
+
+		break;
+
+	case ShopMenuIndex::Firearm_Selection:
+
+		uiElementMap.at(UIElementIndex::Firearm_Selection_Grid)->Enable();
 
 		break;
 
@@ -404,12 +92,23 @@ void Shop::HideCurrentMenu() {
 
 	switch (currentMenuIndex) {
 
-	case ShopMenuIndex::Firearm:
+	case ShopMenuIndex::Firearm_Main:
 
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::Damage]->Hide();
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::ReloadTime]->Hide();
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::MagazineCapacity]->Hide();
-		firearmUpgradeUIGroupMap[FirearmAttributeIndex::CriticalChance]->Hide();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Damage)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Firerate)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Content)->Disable();
+
+		break;
+
+	case ShopMenuIndex::Firearm_Selection:
+
+		uiElementMap.at(UIElementIndex::Firearm_Selection_Grid)->Disable();
 
 		break;
 
@@ -424,210 +123,271 @@ void Shop::HideCurrentMenu() {
 }
 
 void Shop::InitializeUI() {
-
-	// Background
-	background = new GameObject("Shop background", Layer::Menu);
-	Image* background_image = background->AddComponent<Image>();
-	background_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_Background), true);
+	/// >>>
+	/// --- BACKGROUND ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Background] = new GameObject("Shop Background", Layer::Menu);
+	Image* background_image = uiElementMap.at(UIElementIndex::Shop_Background)->AddComponent<Image>();
 	background_image->showOnScreen = true;
-	Transform* background_transform = background->GetComponent<Transform>();
-	background_transform->position = Vector2::zero;
-	background->Render = [background_image]() {
+	background_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_Background), true);
+	background_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Background),
+		background_image->transform->scale
+	);
+	uiElementMap.at(UIElementIndex::Shop_Background)->Render = [background_image]() {
 		background_image->Render();
 		};
 
-	// Firearm navigation button
-	ButtonUIGroup* firearmButtonGroup = new ButtonUIGroup;
-	firearmButtonGroup->image = new GameObject("Firearm image", Layer::Menu);
-	Image* firearmButtonGroup_image = firearmButtonGroup->image->AddComponent<Image>();
-	firearmButtonGroup_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
-	firearmButtonGroup_image->showOnScreen = true;
-	firearmButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Firearm), firearmButtonGroup_image->transform->scale);
-	firearmButtonGroup->label = new GameObject("Firearm label", Layer::Menu);
-	Text* firearmButtonGroup_text = firearmButtonGroup->label->AddComponent<Text>();
-	firearmButtonGroup_text->LoadText(MENU_NAVIGATION_LABEL_MAP.at(ShopMenuIndex::Firearm), Color::WHITE, NAVIGATION_LABEL_SIZE);
-	firearmButtonGroup_text->showOnScreen = true;
-	firearmButtonGroup_text->transform->position = firearmButtonGroup_image->transform->position;
-	firearmButtonGroup->button = new GameObject("Firearm button", Layer::Menu);
-	Button* firearmButtonGroup_button = firearmButtonGroup->button->AddComponent<Button>();
-	firearmButtonGroup_button->transform->scale = firearmButtonGroup_image->transform->scale;
-	firearmButtonGroup_button->transform->position = firearmButtonGroup_image->transform->position;
-	firearmButtonGroup_button->OnClick = [this]() {
-		SwitchMenu(ShopMenuIndex::Firearm);
+	/// >>>
+	/// --- FIREARM NAVIGATION ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Navigation_Firearm] = new GameObject("Navigation Firearm", Layer::Menu);
+	Image* navigationFirearm_image = uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->AddComponent<Image>();
+	navigationFirearm_image->showOnScreen = true;
+	navigationFirearm_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
+	navigationFirearm_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Firearm),
+		navigationFirearm_image->transform->scale
+	);
+	Button* navigationFirearm_button = uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->AddComponent<Button>();
+	navigationFirearm_button->backgroundColor = Color::WHITE;
+	navigationFirearm_button->OnClick = [this]() {
+		SwitchMenu(ShopMenuIndex::Firearm_Main);
 		};
-	firearmButtonGroup->button->Render = [firearmButtonGroup_image, firearmButtonGroup_text]() {
-		firearmButtonGroup_image->Render();
-		firearmButtonGroup_text->Render();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->Render = [navigationFirearm_image]() {
+		navigationFirearm_image->Render();
 		};
-	menuNavigationButtonMap[ShopMenuIndex::Firearm] = firearmButtonGroup;
 
-	// Melee navigation button
-	ButtonUIGroup* meleeButtonGroup = new ButtonUIGroup;
-	meleeButtonGroup->image = new GameObject("Melee image", Layer::Menu);
-	Image* meleeButtonGroup_image = meleeButtonGroup->image->AddComponent<Image>();
-	meleeButtonGroup_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
-	meleeButtonGroup_image->showOnScreen = true;
-	meleeButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Melee), meleeButtonGroup_image->transform->scale);
-	meleeButtonGroup->label = new GameObject("Melee label", Layer::Menu);
-	Text* meleeButtonGroup_text = meleeButtonGroup->label->AddComponent<Text>();
-	meleeButtonGroup_text->LoadText(MENU_NAVIGATION_LABEL_MAP.at(ShopMenuIndex::Melee), Color::WHITE, NAVIGATION_LABEL_SIZE);
-	meleeButtonGroup_text->showOnScreen = true;
-	meleeButtonGroup_text->transform->position = meleeButtonGroup_image->transform->position;
-	meleeButtonGroup->button = new GameObject("Melee button", Layer::Menu);
-	Button* meleeButtonGroup_button = meleeButtonGroup->button->AddComponent<Button>();
-	meleeButtonGroup_button->transform->scale = meleeButtonGroup_image->transform->scale;
-	meleeButtonGroup_button->transform->position = meleeButtonGroup_image->transform->position;
-	meleeButtonGroup_button->OnClick = [this]() {
+	/// >>>
+	/// --- FIREARM NAVIGATION LABEL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Navigation_Firearm_Label] = new GameObject("Navigation Firearm Label", Layer::Menu);
+	Text* navigationFirearmLabel_text = uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm_Label)->AddComponent<Text>();
+	navigationFirearmLabel_text->LoadText(
+		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Firearm_Label),
+		Color::WHITE,
+		UI_FONT_SIZE_MAP.at(UIElementIndex::Shop_Navigation_Firearm_Label)
+	);
+	navigationFirearmLabel_text->showOnScreen = true;
+	navigationFirearmLabel_text->transform->position = navigationFirearm_image->transform->position;
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm_Label)->Render = [navigationFirearmLabel_text]() {
+		navigationFirearmLabel_text->Render();
+		};
+
+	/// >>>
+	/// --- MELEE NAVIGATION ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Navigation_Melee] = new GameObject("Navigation Melee", Layer::Menu);
+	Image* navigationMelee_image = uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->AddComponent<Image>();
+	navigationMelee_image->showOnScreen = true;
+	navigationMelee_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
+	navigationMelee_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Melee),
+		navigationMelee_image->transform->scale
+	);
+	Button* navigationMelee_button = uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->AddComponent<Button>();
+	navigationMelee_button->backgroundColor = Color::WHITE;
+	navigationMelee_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Melee);
 		};
-	meleeButtonGroup->button->Render = [meleeButtonGroup_image, meleeButtonGroup_text]() {
-		meleeButtonGroup_image->Render();
-		meleeButtonGroup_text->Render();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->Render = [navigationMelee_image]() {
+		navigationMelee_image->Render();
 		};
-	menuNavigationButtonMap[ShopMenuIndex::Melee] = meleeButtonGroup;
 
-	// Utility navigation button
-	ButtonUIGroup* utilityButtonGroup = new ButtonUIGroup;
-	utilityButtonGroup->image = new GameObject("Utility image", Layer::Menu);
-	Image* utilityButtonGroup_image = utilityButtonGroup->image->AddComponent<Image>();
-	utilityButtonGroup_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
-	utilityButtonGroup_image->showOnScreen = true;
-	utilityButtonGroup_image->transform->position = Math::SDLToC00(MENU_NAVIGATION_POSITION.at(ShopMenuIndex::Utility), utilityButtonGroup_image->transform->scale);
-	utilityButtonGroup->label = new GameObject("Utility label", Layer::Menu);
-	Text* utilityButtonGroup_text = utilityButtonGroup->label->AddComponent<Text>();
-	utilityButtonGroup_text->LoadText(MENU_NAVIGATION_LABEL_MAP.at(ShopMenuIndex::Utility), Color::WHITE, NAVIGATION_LABEL_SIZE);
-	utilityButtonGroup_text->showOnScreen = true;
-	utilityButtonGroup_text->transform->position = utilityButtonGroup_image->transform->position;
-	utilityButtonGroup->button = new GameObject("Utility button", Layer::Menu);
-	Button* utilityButtonGroup_button = utilityButtonGroup->button->AddComponent<Button>();
-	utilityButtonGroup_button->transform->scale = utilityButtonGroup_image->transform->scale;
-	utilityButtonGroup_button->transform->position = utilityButtonGroup_image->transform->position;
-	utilityButtonGroup_button->OnClick = [this, utilityButtonGroup_image]() {
+	/// >>>
+	/// --- MELEE NAVIGATION LABEL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Navigation_Melee_Label] = new GameObject("Navigation Melee Label", Layer::Menu);
+	Text* navigationMeleeLabel_text = uiElementMap.at(UIElementIndex::Shop_Navigation_Melee_Label)->AddComponent<Text>();
+	navigationMeleeLabel_text->LoadText(
+		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Melee_Label),
+		Color::WHITE,
+		UI_FONT_SIZE_MAP.at(UIElementIndex::Shop_Navigation_Melee_Label)
+	);
+	navigationMeleeLabel_text->showOnScreen = true;
+	navigationMeleeLabel_text->transform->position = navigationMelee_image->transform->position;
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee_Label)->Render = [navigationMeleeLabel_text]() {
+		navigationMeleeLabel_text->Render();
+		};
+
+	/// >>>
+	/// --- UTILITY NAVIGATION ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Navigation_Utility] = new GameObject("Navigation Utility", Layer::Menu);
+	Image* navigationUtility_image = uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->AddComponent<Image>();
+	navigationUtility_image->showOnScreen = true;
+	navigationUtility_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
+	navigationUtility_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Utility),
+		navigationUtility_image->transform->scale
+	);
+	Button* navigationUtility_button = uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->AddComponent<Button>();
+	navigationUtility_button->backgroundColor = Color::WHITE;
+	navigationUtility_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Utility);
 		};
-	utilityButtonGroup->button->Render = [utilityButtonGroup_image, utilityButtonGroup_text]() {
-		utilityButtonGroup_image->Render();
-		utilityButtonGroup_text->Render();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->Render = [navigationUtility_image]() {
+		navigationUtility_image->Render();
 		};
-	menuNavigationButtonMap[ShopMenuIndex::Utility] = utilityButtonGroup;
 
-	// Damage upgrade
-	FirearmUpgradeUIGroup* damageUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::Damage);
-	damageUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::Damage]->NextUpgradeAmount();
-	damageUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::Damage]->NextUpgradeCost();
-	damageUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::Damage);
-	damageUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::Damage);
-	damageUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::Damage);
-	damageUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
-	damageUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	damageUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::Damage));
-	firearmUpgradeUIGroupMap[FirearmAttributeIndex::Damage] = damageUpgradeUIGroup;
+	/// >>>
+	/// --- UTILITY NAVIGATION LABEL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Shop_Navigation_Utility_Label] = new GameObject("Navigation Utility Label", Layer::Menu);
+	Text* navigationUtilityLabel_text = uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->AddComponent<Text>();
+	navigationUtilityLabel_text->LoadText(
+		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Utility_Label),
+		Color::WHITE,
+		UI_FONT_SIZE_MAP.at(UIElementIndex::Shop_Navigation_Utility_Label)
+	);
+	navigationUtilityLabel_text->showOnScreen = true;
+	navigationUtilityLabel_text->transform->position = navigationUtility_image->transform->position;
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->Render = [navigationUtilityLabel_text]() {
+		navigationUtilityLabel_text->Render();
+		};
 
-	// Reload time upgrade
-	FirearmUpgradeUIGroup* reloadTimeUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::ReloadTime);
-	reloadTimeUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::ReloadTime]->NextUpgradeAmount();
-	reloadTimeUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::ReloadTime]->NextUpgradeCost();
-	reloadTimeUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::ReloadTime);
-	reloadTimeUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::ReloadTime);
-	reloadTimeUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::ReloadTime);
-	reloadTimeUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
-	reloadTimeUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	reloadTimeUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::ReloadTime));
-	firearmUpgradeUIGroupMap[FirearmAttributeIndex::ReloadTime] = reloadTimeUpgradeUIGroup;
+	/// >>>
+	/// --- DAMAGE UPGRADE ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Damage] = new FirearmUpgradeUIGroup("Damage", FirearmAttributeIndex::Damage);
+	FirearmUpgradeUIGroup* upgradeDamageUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Damage)->As<FirearmUpgradeUIGroup>();
+	upgradeDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
+	upgradeDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
+	upgradeDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
+	upgradeDamageUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::Damage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeDamageUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::Damage)->NextUpgradeCost());
+	upgradeDamageUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 
-	// Max ammo upgrade
-	FirearmUpgradeUIGroup* maxAmmoUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::MagazineCapacity);
-	maxAmmoUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity]->NextUpgradeAmount();
-	maxAmmoUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity]->NextUpgradeCost();
-	maxAmmoUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::MagazineCapacity);
-	maxAmmoUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::MagazineCapacity);
-	maxAmmoUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::MagazineCapacity);
-	maxAmmoUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
-	maxAmmoUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	maxAmmoUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::MagazineCapacity));
-	firearmUpgradeUIGroupMap[FirearmAttributeIndex::MagazineCapacity] = maxAmmoUpgradeUIGroup;
+	/// >>>
+	/// --- CRITICAL DAMAGE UPGRADE ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_CriticalDamage] = new FirearmUpgradeUIGroup("Critical Damage", FirearmAttributeIndex::CriticalDamage);
+	FirearmUpgradeUIGroup* upgradeCriticalDamageUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage)->As<FirearmUpgradeUIGroup>();
+	upgradeCriticalDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
+	upgradeCriticalDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
+	upgradeCriticalDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
+	upgradeCriticalDamageUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeCriticalDamageUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeCost());
+	upgradeCriticalDamageUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 
-	// Critical chance upgrade
-	FirearmUpgradeUIGroup* criticalChanceUpgradeUIGroup = new FirearmUpgradeUIGroup(this, FirearmAttributeIndex::CriticalChance);
-	criticalChanceUpgradeUIGroup->amount = firearmUpgradeMap[FirearmAttributeIndex::CriticalChance]->NextUpgradeAmount();
-	criticalChanceUpgradeUIGroup->cost = firearmUpgradeMap[FirearmAttributeIndex::CriticalChance]->NextUpgradeCost();
-	criticalChanceUpgradeUIGroup->descriptionPrefix = FIREARM_UPGRADE_DESCRIPTION_PREFIX_MAP.at(FirearmAttributeIndex::CriticalChance);
-	criticalChanceUpgradeUIGroup->descriptionSuffix = FIREARM_UPGRADE_DESCRIPTION_SUFFIX_MAP.at(FirearmAttributeIndex::CriticalChance);
-	criticalChanceUpgradeUIGroup->label = FIREARM_UPGRADE_LABEL_MAP.at(FirearmAttributeIndex::CriticalChance);
-	criticalChanceUpgradeUIGroup->descriptionMargin = UPGRADE_DESCRIPTION_MARGIN;
-	criticalChanceUpgradeUIGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	criticalChanceUpgradeUIGroup->Update(FIREARM_UPGRADE_POSITION.at(FirearmAttributeIndex::CriticalChance));
-	firearmUpgradeUIGroupMap[FirearmAttributeIndex::CriticalChance] = criticalChanceUpgradeUIGroup;
+	/// >>>
+	/// --- FIRERATE UPGRADE ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Firerate] = new FirearmUpgradeUIGroup("Firerate", FirearmAttributeIndex::Firerate);
+	FirearmUpgradeUIGroup* upgradeFirerateUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Firerate)->As<FirearmUpgradeUIGroup>();
+	upgradeFirerateUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
+	upgradeFirerateUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
+	upgradeFirerateUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
+	upgradeFirerateUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::Firerate)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeFirerateUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::Firerate)->NextUpgradeCost());
+	upgradeFirerateUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 
-	// -----------------------------------
-	// FIREARM ATTRIBUTE INFO BOARD
-	// -----------------------------------
+	/// >>>
+	/// --- MAGAZINE CAPACITY UPGRADE ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity] = new FirearmUpgradeUIGroup("Magazine capacity", FirearmAttributeIndex::MagazineCapacity);
+	FirearmUpgradeUIGroup* upgradeMagazineCapacityUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity)->As<FirearmUpgradeUIGroup>();
+	upgradeMagazineCapacityUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
+	upgradeMagazineCapacityUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
+	upgradeMagazineCapacityUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
+	upgradeMagazineCapacityUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeMagazineCapacityUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeCost());
+	upgradeMagazineCapacityUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 
-	// -- General --
-	firearmAttributeFrame = new GameObject("Firearm attribute frame", Layer::Menu);
-	Image* firearmAttributeFrame_image = firearmAttributeFrame->AddComponent<Image>();
+	/// >>>
+	/// --- FIREARM VIEWPORT ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_GunViewport] = new GameObject("Firearm Viewport", Layer::Menu);
+	Image* firearmViewport_image = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->AddComponent<Image>();
+	firearmViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_GunViewport), true);
+	firearmViewport_image->showOnScreen = true;
+	firearmViewport_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_GunViewport),
+		firearmViewport_image->transform->scale
+	);
+	Button* firearmViewport_button = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->AddComponent<Button>();
+	firearmViewport_button->backgroundColor = Color::TRANSPARENT;
+	firearmViewport_button->OnClick = [this]() {
+		SwitchMenu(ShopMenuIndex::Firearm_Selection);
+		};
+	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->Render = [firearmViewport_image]() {
+		firearmViewport_image->Render();
+		};
+
+	/// >>>
+	/// --- FIREARM VIEWPORT VISUAL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_GunViewportVisual] = new GameObject("Firearm Viewport Visual", Layer::Menu);
+	Image* firearmViewportVisual_image = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->AddComponent<Image>();
+	firearmViewportVisual_image->showOnScreen = true;
+	firearmViewportVisual_image->transform->position = firearmViewport_image->transform->position;
+	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->Render = [firearmViewportVisual_image]() {
+		firearmViewportVisual_image->Render();
+		};
+
+	/// >>>
+	/// --- FIREARM LABEL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_GunLabel] = new GameObject("Firearm Label", Layer::Menu);
+	Text* firearmLabel_text = uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->AddComponent<Text>();
+	firearmLabel_text->LoadText("<Gun Label>", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Firearm_Main_GunLabel));
+	firearmLabel_text->showOnScreen = true;
+	firearmLabel_text->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_GunLabel),
+		UI_ELEMENT_SCALE_MAP.at(UIElementIndex::Firearm_Main_GunLabel)
+	);
+	uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->Render = [firearmLabel_text]() {
+		firearmLabel_text->Render();
+		};
+
+	/// >>>
+	/// --- FIREARM SELECTION GRID ---
+	/// >>>
+	FirearmSelectionUI* firearmSelectionUI = new FirearmSelectionUI;
+	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Selection_Grid));
+	std::vector<Firearm*> firearmList = Player::Instance()->GetFirearmList();
+	for (Firearm* firearm : firearmList)
+		firearmSelectionUI->AddFirearm(firearm);
+	uiElementMap[UIElementIndex::Firearm_Selection_Grid] = firearmSelectionUI;
+
+	/// >>>
+	/// --- ATTRIBUTE FRAME ---
+	/// >>>
+	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Frame] = new GameObject("Attribute frame", Layer::Menu);
+	Image* firearmAttributeFrame_image = uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->AddComponent<Image>();
 	firearmAttributeFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_AttributeFrame), true);
 	firearmAttributeFrame_image->showOnScreen = true;
-	firearmAttributeFrame->transform->position = Math::SDLToC00(FIREARM_ATTRIBUTE_FRAME_POSITION, firearmAttributeFrame->transform->scale);
-	firearmAttributeFrame->Render = [firearmAttributeFrame_image]() {
+	firearmAttributeFrame_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Frame),
+		firearmAttributeFrame_image->transform->scale
+	);
+	uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->Render = [firearmAttributeFrame_image]() {
 		firearmAttributeFrame_image->Render();
 		};
 
-	// -- Damage --
-	FirearmAttributeInfoGroup* damageInfoGroup = new FirearmAttributeInfoGroup;
-	damageInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::Damage);
-	damageInfoGroup->labelColor = Color::WHITE;
-	damageInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
-	damageInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	damageInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::Damage), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[FirearmAttributeIndex::Damage] = damageInfoGroup;
-
-	// -- Reload time --
-	FirearmAttributeInfoGroup* reloadTimeInfoGroup = new FirearmAttributeInfoGroup;
-	reloadTimeInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::ReloadTime);
-	reloadTimeInfoGroup->labelColor = Color::WHITE;
-	reloadTimeInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
-	reloadTimeInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	reloadTimeInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::ReloadTime), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[FirearmAttributeIndex::ReloadTime] = reloadTimeInfoGroup;
-
-	// -- Max ammo --
-	FirearmAttributeInfoGroup* maxAmmoInfoGroup = new FirearmAttributeInfoGroup;
-	maxAmmoInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::MagazineCapacity);
-	maxAmmoInfoGroup->labelColor = Color::WHITE;
-	maxAmmoInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
-	maxAmmoInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	maxAmmoInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::MagazineCapacity), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[FirearmAttributeIndex::MagazineCapacity] = maxAmmoInfoGroup;
-
-	// -- Critical chance --
-	FirearmAttributeInfoGroup* criticalChanceInfoGroup = new FirearmAttributeInfoGroup;
-	criticalChanceInfoGroup->label = FIREARM_ATTRIBUTE_LABEL_MAP.at(FirearmAttributeIndex::CriticalChance);
-	criticalChanceInfoGroup->labelColor = Color::WHITE;
-	criticalChanceInfoGroup->labelSize = FIREARM_ATTRIBUTE_LABEL_SIZE;
-	criticalChanceInfoGroup->amountDecimalPlace = FIREARM_ATTRIBUTE_AMOUNT_DECIMAL;
-	criticalChanceInfoGroup->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(FirearmAttributeIndex::CriticalChance), FIREARM_ATTRIBUTE_VALUE_LEFT);
-	firearmAttributeInfoMap[FirearmAttributeIndex::CriticalChance] = criticalChanceInfoGroup;
+	/// >>>
+	/// --- ATTRIBUTE FRAME --- 
+	/// >>>
+	FirearmAttributeUIGroup* attributeUIGroup = new FirearmAttributeUIGroup;
+	attributeUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Content));
+	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Content] = attributeUIGroup;
 
 }
 
 void Shop::InitializeUpgrades() {
 
 	// Reload time
-	FirearmUpgrade* reloadTimeUpgrade = new FirearmUpgrade(
-		FirearmAttributeIndex::ReloadTime,
-		[](float newUp, float oldUp) { return newUp < oldUp; }
+	FirearmUpgrade* firerateUpgrade = new FirearmUpgrade(
+		FirearmAttributeIndex::Firerate
 	);
 	// NOT FUCKING MAGIC NUMBERS, JUST RANDOM BULLSHIT GO
-	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(10, 0.9f));
-	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(24, 0.8f));
-	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(45, 0.7f));
-	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(69, 0.65f));
-	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(124, 0.6f));
-	reloadTimeUpgrade->AddUpgrade(new UpgradeNode(372, 0.4f));
-	firearmUpgradeMap[FirearmAttributeIndex::ReloadTime] = reloadTimeUpgrade;
-
-
+	firerateUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
+	firerateUpgrade->AddUpgrade(new UpgradeNode(24, 1.3f));
+	firerateUpgrade->AddUpgrade(new UpgradeNode(45, 1.4f));
+	firerateUpgrade->AddUpgrade(new UpgradeNode(69, 1.5f));
+	firerateUpgrade->AddUpgrade(new UpgradeNode(124, 1.6f));
+	firerateUpgrade->AddUpgrade(new UpgradeNode(372, 1.7f));
+	firearmUpgradeMap[FirearmAttributeIndex::Firerate] = firerateUpgrade;
 
 	// Damage
 	FirearmUpgrade* damageUpgrade = new FirearmUpgrade(
@@ -640,35 +400,61 @@ void Shop::InitializeUpgrades() {
 	firearmUpgradeMap[FirearmAttributeIndex::Damage] = damageUpgrade;
 
 	// Max ammo
-	FirearmUpgrade* maxAmmoUpgrade = new FirearmUpgrade(
+	FirearmUpgrade* magazineCapacityUpgrade = new FirearmUpgrade(
 		FirearmAttributeIndex::MagazineCapacity
 	);
-	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
-	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(54, 1.3f));
-	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(123, 1.5f));
-	maxAmmoUpgrade->AddUpgrade(new UpgradeNode(256, 2.0f));
-	firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity] = maxAmmoUpgrade;
+	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
+	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(54, 1.3f));
+	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(123, 1.5f));
+	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(256, 2.0f));
+	firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity] = magazineCapacityUpgrade;
 
 	// Critical chance
-	FirearmUpgrade* criticalChanceUpgrade = new FirearmUpgrade(
-		FirearmAttributeIndex::CriticalChance
+	FirearmUpgrade* criticalDamageUpgrade = new FirearmUpgrade(
+		FirearmAttributeIndex::CriticalDamage
 	);
-	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(24, 0.3f));
-	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(74, 0.4f));
-	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(125, 0.55f));
-	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(299, 0.6f));
-	criticalChanceUpgrade->AddUpgrade(new UpgradeNode(372, 0.7f));
-	firearmUpgradeMap[FirearmAttributeIndex::CriticalChance] = criticalChanceUpgrade;
+	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(24, 0.3f));
+	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(74, 0.4f));
+	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(125, 0.55f));
+	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(299, 0.6f));
+	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(372, 0.7f));
+	firearmUpgradeMap[FirearmAttributeIndex::CriticalDamage] = criticalDamageUpgrade;
+
+}
+
+Shop::UIElementIndex Shop::GetUIElementIndex(ShopMenuIndex shopMenuIndex) {
+
+	switch (shopMenuIndex) {
+
+	case ShopMenuIndex::Firearm_Main:
+		return UIElementIndex::Shop_Navigation_Firearm;
+		break;
+
+	case ShopMenuIndex::Melee:
+		return UIElementIndex::Shop_Navigation_Melee;
+		break;
+
+	case ShopMenuIndex::Utility:
+		return UIElementIndex::Shop_Navigation_Utility;
+		break;
+
+	default:
+		throw std::exception("Unknown menu index");
+
+	}
 
 }
 
 void Shop::SwitchMenu(ShopMenuIndex targetMenuIndex) {
 
+	if (targetMenuIndex == ShopMenuIndex::Firearm_Main && !currentFirearm)
+		targetMenuIndex = ShopMenuIndex::Firearm_Selection;
+
 	HideCurrentMenu();
 
-	menuNavigationButtonMap.at(currentMenuIndex)->image->GetComponent<Image>()
+	uiElementMap.at(NAVIGATION_INDEX_BY_SHOP_INDEX_MAP.at(currentMenuIndex))->GetComponent<Image>()->GetComponent<Image>()
 		->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
-	menuNavigationButtonMap.at(targetMenuIndex)->image->GetComponent<Image>()
+	uiElementMap.at(NAVIGATION_INDEX_BY_SHOP_INDEX_MAP.at(targetMenuIndex))->GetComponent<Image>()->GetComponent<Image>()
 		->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonSelected), true);
 
 	currentMenuIndex = targetMenuIndex;
@@ -677,42 +463,58 @@ void Shop::SwitchMenu(ShopMenuIndex targetMenuIndex) {
 
 }
 
-Shop::Shop(Player* initPlayer) {
+void Shop::UpdateAttributeList() {
 
-	if (!initPlayer)
-		throw std::exception("Initialize shop with null player");
+	if (!currentFirearm)
+		return;
 
-	linkedPlayer = initPlayer;
+	uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Content)->As<FirearmAttributeUIGroup>()->SetAttribute(currentFirearm, FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 
-	currentMenuIndex = ShopMenuIndex::Firearm;
+}
+
+Shop::Shop() {
+
+	if (instance)
+		throw std::exception("Shop can only have one instance");
+
+	instance = this;
+
+	currentMenuIndex = ShopMenuIndex::Firearm_Main;
+
+	firearmUpgradeMap = {};
 
 	showShop = false;
+
+	currentFirearm = nullptr;
 
 	InitializeUpgrades();
 	InitializeUI();
 
 	SwitchMenu(currentMenuIndex);
 
+	Hide();
+
 }
 
 void Shop::Update() {
 
-	if (GameCore::GetKeyState(SDLK_TAB).started)
+	if (GameCore::GetKeyState(SDLK_TAB).started) {
+
 		showShop = !showShop;
 
-	if (showShop) {
+		if (showShop) {
 
-		linkedPlayer->DisableInteraction();
-		Show();
+			Player::Instance()->DisableInteraction();
 
-		ShowCurrentMenu();
+			Show();
 
-	} else {
+		} else {
 
-		linkedPlayer->EnableInteraction();
-		Hide();
+			Player::Instance()->EnableInteraction();
 
-		HideCurrentMenu();
+			Hide();
+
+		}
 
 	}
 
@@ -720,8 +522,41 @@ void Shop::Update() {
 
 void Shop::BuyUpgrade(FirearmAttributeIndex attribute) {
 
-	FirearmUpgrade* upgrade = firearmUpgradeMap[attribute];
+	if (!currentFirearm)
+		return;
 
-	firearmAttributeInfoMap.at(attribute)->Update(FIREARM_ATTRIBUTE_POSITION_MAP.at(attribute), FIREARM_ATTRIBUTE_VALUE_LEFT);
+	auto it = firearmUpgradeMap.find(attribute);
+
+	if (it == firearmUpgradeMap.end())
+		throw std::exception("Shop: Trying to buy an invalid upgrade");
+
+	if (PlayerStatistic::Instance()->TrySpendMoney((it->second)->NextUpgradeCost())) {
+
+		(it->second)->UpgradeNext(currentFirearm);
+
+		FirearmUpgradeUIGroup* upgradeUI = uiElementMap.at(UPGRADE_INDEX_BY_ATTRIBUTE_MAP.at(attribute))->As<FirearmUpgradeUIGroup>();
+		upgradeUI->SetCost((it->second)->NextUpgradeCost());
+		upgradeUI->SetAmount((it->second)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+
+	}
+
+	UpdateAttributeList();
 
 }
+
+void Shop::SelectFirearm(Firearm* firearm) {
+
+	currentFirearm = firearm;
+
+	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->GetComponent<Image>()->LinkSprite(firearm->GetIconSprite(), true);
+
+	uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->GetComponent<Text>()->LoadText(
+		currentFirearm->GetName(), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Firearm_Main_GunLabel)
+	);
+
+	SwitchMenu(ShopMenuIndex::Firearm_Main);
+	UpdateAttributeList();
+
+}
+
+Shop* Shop::Instance() { return instance; }

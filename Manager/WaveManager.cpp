@@ -59,12 +59,8 @@ void WaveHandler::RemoveZombie() {
 
 	currentProgress = zombieKilled * 1.0f / totalZombie;
 
-	if (zombieLeft == 0 && zombieToSpawn == 0) {
-
-		std::cout << "Wave cleared!" << std::endl;
+	if (zombieLeft == 0 && zombieToSpawn == 0)
 		waveInProgress = false;
-
-	}
 
 }
 

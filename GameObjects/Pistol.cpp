@@ -37,17 +37,13 @@ bool Pistol::TryUse(Player* player) {
 	if (!TryShoot())
 		return false;
 
+	float damage = attributeMap.at(FirearmAttributeIndex::Damage);
+	if (IsCrit())
+		damage *= (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
+
 	// Won't cause memory leak because of self destruction
-	new Bullet(player, player->transform->position, player->GetAimingDirection(), 10);
+	new Bullet(player, player->transform->position, player->GetAimingDirection(), damage);
 
 	return true;
-
-}
-
-float Pistol::GetAttribute(FirearmAttributeIndex attributeIndex) {
-
-	std::cout << "Undefined Pistol::GetAttribute()" << std::endl;
-
-	return 0;
 
 }

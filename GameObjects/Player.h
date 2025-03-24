@@ -45,6 +45,7 @@ private:
 	bool isAiming;
 	Vector2 forward;
 	ItemIndex itemIndex;
+	static Player* instance;
 
 public:
 
@@ -77,5 +78,9 @@ public:
 
 	Vector2 GetForward() const;
 	Vector2 GetAimingDirection();
+
+	std::vector<Firearm*> GetFirearmList();
+
+	static Player* Instance();
 
 };

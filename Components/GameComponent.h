@@ -273,8 +273,11 @@ public:
 	bool TryUseCurrent();
 	ItemIndex GetCurrentItemIndex();
 	Item* GetCurrentItem();
+	template <class T>
+	std::vector<T*> GetItemListOfType();
 
 };
+#include <Inventory.inl>
 
 class AnimationController : public GameComponent {
 

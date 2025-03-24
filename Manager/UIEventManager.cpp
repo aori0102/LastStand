@@ -6,14 +6,13 @@ std::unordered_set<Button*> UIEvent::buttonSet = {};
 
 bool UIEvent::Update() {
 
-	if (!GameCore::GetMouseState(MouseButton::Left).started)
-		return false;
-
 	Vector2 mousePosition = Math::SDLToC00(GameCore::GetMouseInput(), Vector2::zero);
 
-	auto it = buttonSet.begin();
-	while (it != buttonSet.end()) {
+	for (auto it = buttonSet.begin(); it != buttonSet.end(); it++) {
 
+		if (!(*it)->IsActive() || !(*it)->Owner()->IsActive())
+			continue;
+		
 		Bound bound = (*it)->GetBound();
 
 		if (mousePosition.x > bound.Right() ||
@@ -21,21 +20,20 @@ bool UIEvent::Update() {
 			mousePosition.y > bound.Bottom() ||
 			mousePosition.y < bound.Top()) {
 
-			it++;
+			(*it)->OnMouseLeave();
 
 			continue;
 
 		}
 
-		// Button is pressed
-		if ((*it)->IsActive() && (*it)->Owner()->IsActive()) {
+		if (GameCore::GetMouseState(MouseButton::Left).started) {
 
 			(*it)->OnClick();
 			return true;
 
 		}
 
-		it++;
+		(*it)->OnMouseEnter();
 
 	}
 

@@ -1,6 +1,7 @@
 #include <Type.h>
 #include <SDL.h>
 #include <GameCore.h>
+#include <GameComponent.h>
 
 Vector2 Vector2::zero = Vector2(0.0f, 0.0f);
 Vector2 Vector2::up = Vector2(0.0f, 1.0f);
@@ -302,5 +303,40 @@ Color::Color()
 SDL_Color Color::ToSDLColor() {
 
 	return { r, g, b, a };
+
+}
+
+void Align::MiddleVertically(Transform* something, Transform* with) {
+
+	something->position.y = with->position.y;
+
+}
+
+void Align::MiddleHorizontally(Transform* something, Transform* with) {
+
+	something->position.x = with->position.x;
+
+}
+void Align::Top(Transform* something, Transform* with) {
+
+	something->position.y = with->position.y + (with->scale - something->scale).y / 2.0f;
+
+}
+
+void Align::Bottom(Transform* something, Transform* with) {
+
+	something->position.y = with->position.y - (with->scale - something->scale).y / 2.0f;
+
+}
+
+void Align::Left(Transform* something, Transform* with) {
+
+	something->position.x = with->position.x - (with->scale - something->scale).x / 2.0f;
+
+}
+
+void Align::Right(Transform* something, Transform* with) {
+
+	something->position.x = with->position.x + (with->scale - something->scale).x / 2.0f;
 
 }

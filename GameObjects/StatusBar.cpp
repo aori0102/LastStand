@@ -4,14 +4,23 @@
 #include <string>
 #include <MediaManager.h>
 
-StatusBar::StatusBar(PlayerStatistic* initLinkedPlayerStatistic) {
+StatusBar* StatusBar::instance = nullptr;
 
-	std::cout << "Status bar loaded" << std::endl;
+StatusBar::StatusBar() {
 
-	linkedPlayerStatistic = initLinkedPlayerStatistic;
+	if (instance)
+		throw std::exception("Status bar can only have one instance");
 
-	previousPlayerEXP = 0;
+	instance = this;
+
 	previousPlayerLevel = 0;
+	previousPlayerEXP = 0;
+	previousPlayerMoney = 0;
+	previousPlayerEXPNeeded = 0;
+	previousPlayerHealth = 0.0f;
+	previousPlayerMaxHealth = 0.0f;
+	previousPlayerStamina = 0.0f;
+	previousPlayerMaxStamina = 0.0f;
 
 	InitializeUI();
 
@@ -82,7 +91,7 @@ void StatusBar::InitializeUI() {
 		uiElementMap.at(UIElementIndex::HealthBar)->transform->scale
 	);
 	uiElementMap.at(UIElementIndex::HealthBar)->Render = [this, healthBar_image]() {
-		healthBar_image->fillAmount = linkedPlayerStatistic->GetHealth() / linkedPlayerStatistic->GetMaxHealth();
+		healthBar_image->fillAmount = PlayerStatistic::Instance()->GetHealth() / PlayerStatistic::Instance()->GetMaxHealth();
 		healthBar_image->Render();
 		};
 
@@ -97,7 +106,7 @@ void StatusBar::InitializeUI() {
 		uiElementMap.at(UIElementIndex::StaminaBar)->transform->scale
 	);
 	uiElementMap.at(UIElementIndex::StaminaBar)->Render = [this, staminaBar_image]() {
-		staminaBar_image->fillAmount = linkedPlayerStatistic->GetStamina() / linkedPlayerStatistic->GetMaxStamina();
+		staminaBar_image->fillAmount = PlayerStatistic::Instance()->GetStamina() / PlayerStatistic::Instance()->GetMaxStamina();
 		staminaBar_image->Render();
 		};
 
@@ -138,8 +147,8 @@ void StatusBar::InitializeUI() {
 	);
 	exp_text->transform->position.x = uiElementMap.at(UIElementIndex::LevelFrame)->transform->position.x;
 	uiElementMap.at(UIElementIndex::EXP)->Render = [this, exp_text]() {
-		int exp = linkedPlayerStatistic->GetEXP();
-		int expNeeded = linkedPlayerStatistic->GetEXPNeeded();
+		int exp = PlayerStatistic::Instance()->GetEXP();
+		int expNeeded = PlayerStatistic::Instance()->GetEXPNeeded();
 		if (exp != previousPlayerEXP || expNeeded != previousPlayerEXPNeeded) {
 			exp_text->LoadText(std::to_string(exp) + " / " + std::to_string(expNeeded), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::EXP));
 			previousPlayerEXP = exp;
@@ -155,7 +164,7 @@ void StatusBar::InitializeUI() {
 	level_text->showOnScreen = true;
 	level_text->transform->position = uiElementMap.at(UIElementIndex::LevelFrame)->transform->position;
 	uiElementMap.at(UIElementIndex::Level)->Render = [this, level_text]() {
-		int playerLevel = linkedPlayerStatistic->GetLevel();
+		int playerLevel = PlayerStatistic::Instance()->GetLevel();
 		if (playerLevel != previousPlayerLevel) {
 			level_text->LoadText(std::to_string(playerLevel), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::Level));
 			previousPlayerLevel = playerLevel;
@@ -170,8 +179,8 @@ void StatusBar::InitializeUI() {
 	health_text->showOnScreen = true;
 	health_text->transform->position = uiElementMap.at(UIElementIndex::HealthBar)->transform->position;
 	uiElementMap.at(UIElementIndex::Health)->Render = [this, health_text]() {
-		int playerHealth = linkedPlayerStatistic->GetHealth();
-		int playerMaxHealth = linkedPlayerStatistic->GetMaxHealth();
+		int playerHealth = PlayerStatistic::Instance()->GetHealth();
+		int playerMaxHealth = PlayerStatistic::Instance()->GetMaxHealth();
 		if (playerHealth != previousPlayerLevel || playerMaxHealth != previousPlayerMaxHealth) {
 			health_text->LoadText(std::to_string(playerHealth) + " / " + std::to_string(playerMaxHealth), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::Health));
 			playerHealth = playerHealth;
@@ -187,14 +196,42 @@ void StatusBar::InitializeUI() {
 	stamina_text->showOnScreen = true;
 	stamina_text->transform->position = uiElementMap.at(UIElementIndex::StaminaBar)->transform->position;
 	uiElementMap.at(UIElementIndex::Stamina)->Render = [this, stamina_text]() {
-		int playerStamina = linkedPlayerStatistic->GetStamina();
-		int playerMaxStamina = linkedPlayerStatistic->GetMaxStamina();
+		int playerStamina = PlayerStatistic::Instance()->GetStamina();
+		int playerMaxStamina = PlayerStatistic::Instance()->GetMaxStamina();
 		if (playerStamina != previousPlayerLevel || playerMaxStamina != previousPlayerMaxStamina) {
 			stamina_text->LoadText(std::to_string(playerStamina) + " / " + std::to_string(playerMaxStamina), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::Stamina));
 			playerStamina = playerStamina;
 			playerMaxStamina = playerMaxStamina;
 		}
 		stamina_text->Render();
+		};
+
+	// --- MONEY ICON ---
+	uiElementMap[UIElementIndex::MoneyIcon] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyIcon), Layer::Menu);
+	Image* moneyIcon_image = uiElementMap.at(UIElementIndex::MoneyIcon)->AddComponent<Image>();
+	moneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_MoneyIcon), true);
+	moneyIcon_image->showOnScreen = true;
+	uiElementMap.at(UIElementIndex::MoneyIcon)->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::MoneyIcon),
+		moneyIcon_image->transform->scale
+	);
+	uiElementMap.at(UIElementIndex::MoneyIcon)->Render = [moneyIcon_image]() {
+		moneyIcon_image->Render();
+		};
+
+	// --- MONEY LABEL ---
+	uiElementMap[UIElementIndex::MoneyLabel] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyLabel), Layer::Menu);
+	Text* moneyLabel_text = uiElementMap.at(UIElementIndex::MoneyLabel)->AddComponent<Text>();
+	moneyLabel_text->LoadText(std::to_string(previousPlayerMoney), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::MoneyLabel));
+	moneyLabel_text->showOnScreen = true;
+	moneyLabel_text->transform->position = Math::SDLToC00(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::MoneyLabel), moneyLabel_text->transform->scale);
+	uiElementMap.at(UIElementIndex::MoneyLabel)->Render = [this, moneyLabel_text]() {
+		if (PlayerStatistic::Instance()->GetMoney() != previousPlayerMoney) {
+			previousPlayerMoney = PlayerStatistic::Instance()->GetMoney();
+			moneyLabel_text->LoadText(std::to_string(previousPlayerMoney), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::MoneyLabel));
+			moneyLabel_text->transform->position = Math::SDLToC00(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::MoneyLabel), moneyLabel_text->transform->scale);
+		}
+		moneyLabel_text->Render();
 		};
 
 }
@@ -204,3 +241,5 @@ void StatusBar::Update() {
 
 
 }
+
+StatusBar* StatusBar::Instance() { return instance; }

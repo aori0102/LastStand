@@ -8,6 +8,8 @@ enum class MediaObject {
 
 	Entity_Zombie,
 	Entity_Player,
+	Gun_M1911,
+	Gun_Beretta1301,
 	Misc_Bullet,
 	Misc_Background,
 	Misc_HealthBar,
@@ -23,6 +25,7 @@ enum class MediaUI {
 	Status_HealthBar,
 	Status_HealthSymbol,
 	Status_LevelFrame,
+	Status_MoneyIcon,
 	Status_StaminaBar,
 	Status_StaminaSymbol,
 	WaveInfo_NextWaveButton,
@@ -30,9 +33,13 @@ enum class MediaUI {
 	WaveInfo_ProgressBarBackground,
 	Shop_AttributeFrame,
 	Shop_Background,
+	Shop_GunViewport,
+	Shop_GunSelectionSlot,
+	Shop_GunSelectionSlotHovered,
 	Shop_NavigationButtonSelected,
 	Shop_NavigationButtonUnselected,
 	Shop_UpgradeSlot,
+	Shop_UpgradeSlotHovered,
 
 };
 
@@ -71,6 +78,7 @@ private:
 		{ MediaUI::Status_HealthBar, "Status\\HealthBar" },
 		{ MediaUI::Status_HealthSymbol, "Status\\HealthSymbol" },
 		{ MediaUI::Status_LevelFrame, "Status\\LevelFrame" },
+		{ MediaUI::Status_MoneyIcon, "Status\\MoneyIcon" },
 		{ MediaUI::Status_StaminaBar, "Status\\StaminaBar" },
 		{ MediaUI::Status_StaminaSymbol, "Status\\StaminaSymbol" },
 		{ MediaUI::WaveInfo_NextWaveButton, "WaveInfo\\NextWaveButton" },
@@ -78,9 +86,13 @@ private:
 		{ MediaUI::WaveInfo_ProgressBarBackground, "WaveInfo\\ProgressBarBackground" },
 		{ MediaUI::Shop_AttributeFrame, "Shop\\AttributeFrame" },
 		{ MediaUI::Shop_Background, "Shop\\Background" },
+		{ MediaUI::Shop_GunViewport, "Shop\\GunViewport" },
+		{ MediaUI::Shop_GunSelectionSlot, "Shop\\GunSelectionSlot" },
+		{ MediaUI::Shop_GunSelectionSlotHovered, "Shop\\GunSelectionSlotHovered" },
 		{ MediaUI::Shop_NavigationButtonSelected, "Shop\\NavigationButtonSelected" },
 		{ MediaUI::Shop_NavigationButtonUnselected, "Shop\\NavigationButtonUnselected" },
-		{ MediaUI::Shop_UpgradeSlot, "Shop\\UpgradeSlot" }
+		{ MediaUI::Shop_UpgradeSlot, "Shop\\UpgradeSlot" },
+		{ MediaUI::Shop_UpgradeSlotHovered, "Shop\\UpgradeSlotHovered" },
 	};
 
 	// --- OBJECT SPRITE ---
@@ -89,6 +101,8 @@ private:
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
 		{ MediaObject::Entity_Player, "Entity\\Player" },
+		{ MediaObject::Gun_Beretta1301, "Firearm\\Beretta1301" },
+		{ MediaObject::Gun_M1911, "Firearm\\M1911" },
 		{ MediaObject::Misc_Bullet, "Misc\\Bullet" },
 		{ MediaObject::Misc_Background, "Misc\\Background" },
 		{ MediaObject::Misc_HealthBar, "Misc\\HealthBar" },

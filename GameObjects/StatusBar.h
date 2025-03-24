@@ -24,7 +24,9 @@ private:
 		Stamina,
 		StaminaBar,
 		StaminaBarBackground,
-		StaminaSymbol
+		StaminaSymbol,
+		MoneyIcon,
+		MoneyLabel,
 
 	};
 
@@ -42,6 +44,8 @@ private:
 		{ UIElementIndex::StaminaBar, "StaminaBar" },
 		{ UIElementIndex::StaminaBarBackground, "BarBackground" },
 		{ UIElementIndex::StaminaSymbol, "StaminaSymbol" },
+		{ UIElementIndex::MoneyIcon, "MoneyIcon" },
+		{ UIElementIndex::MoneyLabel, "MoneyLabel" },
 
 	};
 
@@ -50,6 +54,7 @@ private:
 		{ UIElementIndex::Level, 48 },
 		{ UIElementIndex::Stamina, 12 },
 		{ UIElementIndex::Health, 12 },
+		{ UIElementIndex::MoneyLabel, 16 },
 	};
 
 	const std::string GROUP_LABEL_PREFIX = "Status_";
@@ -68,6 +73,8 @@ private:
 		{ UIElementIndex::StaminaBar, Vector2(215.0f, 608.0f) },
 		{ UIElementIndex::StaminaBarBackground, Vector2(215.0f, 608.0f) },
 		{ UIElementIndex::StaminaSymbol, Vector2(181.0f, 604.0f) },
+		{ UIElementIndex::MoneyIcon, Vector2(184.0f, 648.0f) },
+		{ UIElementIndex::MoneyLabel, Vector2(221.0f, 656.0f) },
 
 	};
 
@@ -75,16 +82,17 @@ private:
 
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 
-	PlayerStatistic* linkedPlayerStatistic;
-
 	// Variable to check for statistic changes
 	int previousPlayerLevel;
 	int previousPlayerEXP;
+	int previousPlayerMoney;
 	int previousPlayerEXPNeeded;
 	float previousPlayerHealth;
 	float previousPlayerMaxHealth;
 	float previousPlayerStamina;
 	float previousPlayerMaxStamina;
+
+	static StatusBar* instance;
 
 private:
 
@@ -92,8 +100,10 @@ private:
 
 public:
 
-	StatusBar(PlayerStatistic* initLinkedPlayerStatistic);
+	StatusBar();
 
 	void Update() override;
+	
+	static StatusBar* Instance();
 
 };

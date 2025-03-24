@@ -14,9 +14,9 @@ int main(int argc, char* args[]) {
 		GameCore::InitializeGame();
 		GameCore::Loop();
 
-	} catch (std::exception* e) {
+	} catch (const std::exception& e) {
 
-		std::cout << "Unexpected error: " << e->what() << std::endl;
+		std::cout << "Unexpected error: " << e.what() << std::endl;
 
 	}
 

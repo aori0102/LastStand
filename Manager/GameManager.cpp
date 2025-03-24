@@ -6,11 +6,12 @@
 #include <Texture.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
 #include <GameComponent.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
 #include <RenderManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <StatusBar.h>
+#include <StatusBar.h>\#inlaiweljajeloqi3uoitqio4iotqojtiq03tuU#**)(*)(#%@h390th2903u90 u9039u93890U#()&&#@*%@(%*#R))
 #include <PlayerStatistic.h>
 #include <WaveManager.h>
 #include <MediaManager.h>
 #include <Shop.h>
+#include <exception>
 
 GameManager* GameManager::instance = nullptr;
 
@@ -22,63 +23,8 @@ GameManager::GameManager() {
 	new WaveHandler;
 
 	instance = this;
-	money = 0;
 
 	InitializeObject();
-	InitializeUI();
-
-}
-
-bool GameManager::TrySpendMoney(int amount) {
-
-	if (amount > money)
-		return false;
-
-	money -= amount;
-	moneyText->GetComponent<Text>()->LoadText(std::to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
-	return true;
-
-}
-
-void GameManager::InitializeUI() {
-
-	// UI components
-	// Info background
-	infoBackground = new GameObject("Info background", Layer::GUI);
-	Image* infoBackground_image = infoBackground->AddComponent<Image>();
-	Transform* infoBackground_transform = infoBackground->GetComponent<Transform>();
-	infoBackground_image->backgroundColor = Color(0, 0, 0, 125);
-	infoBackground_image->showOnScreen = true;
-	infoBackground_transform->scale = INFO_BOARD_SCALE;
-	infoBackground_transform->position = (INFO_BOARD_SCALE - GameCore::WindowResolution()) / 2.0f;
-	infoBackground->Render = [infoBackground_image]() {
-		infoBackground_image->Render();
-		};
-
-	// Money label
-	moneyLabel = new GameObject("Money label", Layer::GUI);
-	Text* moneyLabel_text = moneyLabel->AddComponent<Text>();
-	Transform* moneyLabel_transform = moneyLabel->GetComponent<Transform>();
-	moneyLabel_text->LoadText(MONEY_LABEL_TEXT, Color::WHITE, MONEY_LABEL_SIZE);
-	moneyLabel_text->showOnScreen = true;
-	moneyLabel_transform->position = (moneyLabel_transform->scale - GameCore::WindowResolution()) / 2.0f;
-	moneyLabel->Render = [moneyLabel_text]() {
-		moneyLabel_text->Render();
-		};
-
-	// Money text
-	moneyText = new GameObject("Money text", Layer::GUI);
-	Text* moneyText_text = moneyText->AddComponent<Text>();
-	moneyText_text->LoadText(std::to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
-	moneyText_text->showOnScreen = true;
-	Transform* moneyText_transform = moneyText->GetComponent<Transform>();
-	moneyText_transform->position = Vector2(
-		moneyLabel_transform->position.x + (moneyLabel_transform->scale + moneyText_transform->scale).x / 2.0f,
-		moneyLabel_transform->position.y
-	);
-	moneyText->Render = [moneyText_text]() {
-		moneyText_text->Render();
-		};
 
 }
 
@@ -119,15 +65,15 @@ void GameManager::InitializeObject() {
 		};
 
 	// Player
-	player = new Player();
-	GameCore::LetCameraFocus(player);
+	new Player();
+	GameCore::LetCameraFocus(Player::Instance());
 
-	playerStatistic = new PlayerStatistic(player);
+	new PlayerStatistic();
 
-	statusBarUI = new StatusBar(playerStatistic);
+	statusBarUI = new StatusBar;
 
 	// Shop
-	shop = new Shop(player);
+	shop = new Shop;
 	shop->name = "Shop";
 
 }
@@ -136,19 +82,13 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 	if (gameObject->IsA<Player>()) {
 
-		// Game over
-
+		throw std::exception("You're dead. You fucking suck. Also, say goodbye to your PC :)");
+		
 	} else if (gameObject->IsA<Zombie>()) {
 
 		// Point, xp, money, etc
-		money += 10;
-		moneyText->GetComponent<Text>()->LoadText(std::to_string(money), Color::WHITE, MONEY_LABEL_SIZE);
-		Transform* moneyText_transform = moneyText->GetComponent<Transform>();
-		Transform* moneyLabel_transform = moneyLabel->GetComponent<Transform>();
-		moneyText_transform->position = Vector2(
-			moneyLabel_transform->position.x + (moneyLabel_transform->scale + moneyText_transform->scale).x / 2.0f,
-			moneyLabel_transform->position.y
-		);
+		PlayerStatistic::Instance()->AddMoney(10);
+		PlayerStatistic::Instance()->AddEXP(gameObject->As<Zombie>()->GetExp());
 
 		WaveHandler::Instance()->RemoveZombie();
 
@@ -165,16 +105,6 @@ void GameManager::Update() {
 
 }
 
-void GameManager::Render() {
-
-	infoBackground->GetComponent<Image>()->Render();
-
-	moneyLabel->GetComponent<Text>()->Render();
-
-	moneyText->GetComponent<Text>()->Render();
-
-}
-
 void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 
 	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
@@ -182,7 +112,7 @@ void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 
 	for (int i = 0; i < amount; i++) {
 
-		Zombie* zombie = new Zombie(player, zombieIndex);
+		Zombie* zombie = new Zombie(Player::Instance(), zombieIndex);
 
 		zombie->transform->position = spawnPositionList[i];
 

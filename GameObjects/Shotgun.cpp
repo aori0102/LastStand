@@ -44,24 +44,20 @@ bool Shotgun::TryUse(Player* player) {
 	if (!TryShoot())
 		return false;
 
+	float damage = attributeMap.at(FirearmAttributeIndex::Damage);
+	if (IsCrit())
+		damage *= (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
+
 	Vector2 direction = player->GetAimingDirection();
 	for (int i = 0; i < PELLET; i++) {
 
 		float angle = Math::DegToRad(Random::Float(-PELLET_SPAN_DEGREE, PELLET_SPAN_DEGREE));
 
 		// Won't cause memory leak because of self destruction
-		new Bullet(player, player->transform->position, direction.Rotate(angle), 8);
+		new Bullet(player, player->transform->position, direction.Rotate(angle), damage);
 
 	}
 
 	return true;
-
-}
-
-float Shotgun::GetAttribute(FirearmAttributeIndex attributeIndex) {
-
-	std::cout << "Undefined Shotgun::GetAttribute()" << std::endl;
-
-	return 0;
 
 }

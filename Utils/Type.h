@@ -6,6 +6,8 @@
 
 #include <SDL.h>
 
+class Transform;
+
 class Vector2 {
 
 public:
@@ -138,5 +140,18 @@ enum class Layer {
 	Zombie,
 	GUI,
 	Menu,
+
+};
+
+class Align {
+
+public:
+
+	static void MiddleVertically(Transform* something, Transform* with);
+	static void MiddleHorizontally(Transform* something, Transform* with);
+	static void Top(Transform* something, Transform* with);
+	static void Bottom(Transform* something, Transform* with);
+	static void Left(Transform* something, Transform* with);
+	static void Right(Transform* something, Transform* with);
 
 };

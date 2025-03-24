@@ -3,6 +3,10 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
+    "FirearmAttributeUIGroup.cpp"
+    "FirearmSelectionUI.cpp"
+    "FirearmUpgrade.cpp"
+    "FirearmUpgradeUIGroup.cpp"
     "Shop.cpp"
 )
 

@@ -9,7 +9,9 @@ Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 
 	UIEvent::RegisterButton(this);
 
-	OnClick = []() { std::cout << "Button is pressed" << std::endl; };
+	OnClick = []() {};
+	OnMouseEnter = []() {};
+	OnMouseLeave = []() {};
 
 }
 

@@ -50,6 +50,12 @@ public:
 	void Dequip();
 	bool IsUsable() const;
 	bool IsStackable() const;
+	template <class T>
+	bool IsType();
+	template <class T>
+	T* ToType();
 	ItemIndex GetIndex() const;
 
 };
+
+#include <Item.inl>
