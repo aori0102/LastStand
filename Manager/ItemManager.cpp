@@ -11,6 +11,8 @@
 #include <Consumable.h>
 #include <Item.h>
 #include <Firearm.h>
+#include <MediaManager.h>
+#include <Texture.h>
 
 /// ----------------------------------
 /// STATIC FIELDS
@@ -28,6 +30,25 @@ ItemManager::ItemManager() {
 		throw std::exception("Item Manager can only have one instance!");
 
 	instance = this;
+
+	itemInfoMap = {
+		{ ItemIndex::None, {} },
+		{ ItemIndex::MedKit, {
+			.iconClip = { 7, 7, 48, 38 },
+			.price = 40,
+			.name = "Med Kit",
+		} },
+		{ ItemIndex::Pistol_M1911, {
+			.iconClip = { 71, 14, 33, 23 },
+			.price = 230,
+			.name = "M1911",
+		} },
+		{ ItemIndex::Shotgun_Beretta1301, {
+			.iconClip = { 5, 59, 99, 26 },
+			.price = 2300,
+			.name = "Beretta 1301 Tactical",
+		} },
+	};
 
 }
 
@@ -60,3 +81,21 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 	return nullptr;
 
 }
+
+void ItemManager::LinkItemIcon(ItemIndex itemIndex, Image* out) {
+
+	if (!out)
+		return;
+
+	auto it = itemInfoMap.find(itemIndex);
+	if (it == itemInfoMap.end())
+		throw std::exception("Item icon does not exist");
+
+	out->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_ItemIcon), false);
+	out->clip = it->second.iconClip;
+
+}
+
+int ItemManager::GetItemPrice(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).price; }
+
+std::string ItemManager::GetItemName(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).name; }

@@ -216,6 +216,17 @@ float Math::DegToRad(float angleInDegree) {
 
 }
 
+Color Math::Temperature(float value) {
+
+	value = Clamp(value, 0.0f, 1.0f);
+
+	if (value <= 0.5f)
+		return Color(Lerp(0, 255, value), Lerp(0, 255, value), 255, 255);
+	else
+		return Color(255, Lerp(0, 255, value), Lerp(0, 255, value), 255);
+
+}
+
 Vector2 Math::SDLToC00(Vector2 position, Vector2 scale) {
 
 	return Vector2(

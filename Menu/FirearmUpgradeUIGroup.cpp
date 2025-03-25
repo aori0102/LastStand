@@ -49,18 +49,19 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(std::string upgradeName, FirearmAtt
 	descriptionSuffix = "";
 
 	Image* upgrade_image = AddComponent<Image>();
-	upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UpgradeSlot), true);
+	upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmUpgradeSlot), true);
 	upgrade_image->showOnScreen = true;
 	Button* upgrade_button = AddComponent<Button>();
 	upgrade_button->backgroundColor = Color::TRANSPARENT;
 	upgrade_button->OnClick = [this]() {
 		Shop::Instance()->BuyUpgrade(firearmAttributeIndex);
+		return true;
 		};
 	upgrade_button->OnMouseEnter = [upgrade_image]() {
-		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UpgradeSlotHovered), true);
+		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmUpgradeSlotHovered), true);
 		};
 	upgrade_button->OnMouseLeave = [upgrade_image]() {
-		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UpgradeSlot), true);
+		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmUpgradeSlot), true);
 		};
 
 	upgradeLabel = new GameObject(upgradeName + " Upgrade Label", Layer::Menu);

@@ -184,6 +184,7 @@ void WaveInfoUI::InitializeUI() {
 	nextWave_button->backgroundColor = Color::TRANSPARENT;
 	nextWave_button->OnClick = []() {
 		WaveHandler::Instance()->InitiateWave();
+		return true;
 		};
 	nextWave_button->transform->position = Math::SDLToC00(UI_POSITION_MAP.at(WaveInfoIndex::NextWaveButton), nextWave_button->transform->scale);
 	uiElementMap.at(WaveInfoIndex::NextWaveButton)->Render = [nextWave_image]() {

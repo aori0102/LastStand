@@ -80,9 +80,17 @@ private:
 		Firearm_Main_Upgrade_CriticalDamage,
 		Firearm_Main_Upgrade_Firerate,
 		Firearm_Main_Upgrade_MagazineCapacity,
-		Firearm_Selection_Grid,
+		Firearm_SelectionGrid,
 		Melee,
-		Utility,
+		Utility_ItemSelectionGrid,
+		Utility_InfoBoard,
+		Utility_ItemViewport,
+		Utility_BuyButton,
+		Utility_ItemVisual,
+		Utility_MoneyIcon,
+		Utility_MoneyLabel,
+		Utility_ItemLabel,
+		Utility_ItemDescription,
 
 	};
 
@@ -114,10 +122,19 @@ private:
 		{ UIElementIndex::Firearm_Main_Attribute_Content, Vector2(775.0f, 395.0f) },
 		{ UIElementIndex::Firearm_Main_GunLabel, Vector2(862.0f, 230.0f) },
 		{ UIElementIndex::Firearm_Main_Attribute_Frame, Vector2(750.0f, 200.0f) },
-		{ UIElementIndex::Firearm_Selection_Grid, Vector2(150.0f, 160.0f) },
+		{ UIElementIndex::Firearm_SelectionGrid, Vector2(150.0f, 160.0f) },
+		{ UIElementIndex::Utility_ItemSelectionGrid, Vector2(170.0f, 205.0f) },
+		{ UIElementIndex::Utility_InfoBoard, Vector2(757.0f, 205.0f) },
+		{ UIElementIndex::Utility_BuyButton, Vector2(853.0f, 583.0f) },
+		{ UIElementIndex::Utility_ItemViewport, Vector2(770.0f, 220.0f) },
+		{ UIElementIndex::Utility_MoneyIcon, Vector2(865.0f, 590.0f) },
 	};
 	const std::unordered_map<UIElementIndex, Vector2> UI_ELEMENT_SCALE_MAP = {
 		{ UIElementIndex::Firearm_Main_GunLabel, Vector2(127.0f, 19.0f) },
+	};
+	const std::unordered_map<UIElementIndex, Vector2> UI_ELEMENT_OFFSET_MAP = {
+		{ UIElementIndex::Utility_MoneyLabel, Vector2(82.0f, 0.0f) },
+		{ UIElementIndex::Utility_ItemLabel, Vector2(0.0f, -38.0f) },
 	};
 	const std::unordered_map<UIElementIndex, std::string> UI_LABEL_MAP = {
 		{ UIElementIndex::Shop_Navigation_Firearm_Label, "Firearm" },
@@ -145,6 +162,8 @@ private:
 		{ UIElementIndex::Shop_Navigation_Melee_Label, 48 },
 		{ UIElementIndex::Shop_Navigation_Utility_Label, 48 },
 		{ UIElementIndex::Firearm_Main_GunLabel, 16 },
+		{ UIElementIndex::Utility_MoneyLabel, 24 },
+		{ UIElementIndex::Utility_ItemLabel, 24 },
 	};
 	const std::unordered_map<FirearmAttributeIndex, UIElementIndex> UPGRADE_INDEX_BY_ATTRIBUTE_MAP = {
 		{ FirearmAttributeIndex::Damage, UIElementIndex::Firearm_Main_Upgrade_Damage },
@@ -176,6 +195,7 @@ private:
 	std::unordered_map<FirearmAttributeIndex, FirearmUpgrade*> firearmUpgradeMap;
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 	Firearm* currentFirearm;
+	ItemIndex currentItemIndex;
 	ShopMenuIndex currentMenuIndex;
 
 	/// ----------------------------------
@@ -200,6 +220,9 @@ public:
 	void Update() override;
 	void BuyUpgrade(FirearmAttributeIndex attribute);
 	void SelectFirearm(Firearm* firearm);
+	void SelectItem(ItemIndex itemIndex);
+	void BuyItem();
+	ItemIndex GetSelectedItem() const;
 	static Shop* Instance();
 
 };

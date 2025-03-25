@@ -13,11 +13,13 @@ enum class MediaObject {
 	Misc_Bullet,
 	Misc_Background,
 	Misc_HealthBar,
+	Misc_ItemIcon,
 
 };
 
 enum class MediaUI {
 
+	Icon_MoneyIcon,
 	Firearm_AmmoFrame,
 	Firearm_AmmoIcon,
 	Status_BarBackground,
@@ -25,21 +27,25 @@ enum class MediaUI {
 	Status_HealthBar,
 	Status_HealthSymbol,
 	Status_LevelFrame,
-	Status_MoneyIcon,
 	Status_StaminaBar,
 	Status_StaminaSymbol,
 	WaveInfo_NextWaveButton,
 	WaveInfo_ProgressBar,
 	WaveInfo_ProgressBarBackground,
-	Shop_AttributeFrame,
+	Shop_FirearmAttributeFrame,
 	Shop_Background,
-	Shop_GunViewport,
-	Shop_GunSelectionSlot,
-	Shop_GunSelectionSlotHovered,
+	Shop_FirearmViewport,
+	Shop_FirearmSelectionSlot,
+	Shop_FirearmSelectionSlotHovered,
 	Shop_NavigationButtonSelected,
 	Shop_NavigationButtonUnselected,
-	Shop_UpgradeSlot,
-	Shop_UpgradeSlotHovered,
+	Shop_FirearmUpgradeSlot,
+	Shop_FirearmUpgradeSlotHovered,
+	Shop_UtilityBuyButton,
+	Shop_UtilityInfoBoard,
+	Shop_UtilityItemBar,
+	Shop_UtilityItemCell,
+	Shop_UtilityItemViewport,
 
 };
 
@@ -78,21 +84,26 @@ private:
 		{ MediaUI::Status_HealthBar, "Status\\HealthBar" },
 		{ MediaUI::Status_HealthSymbol, "Status\\HealthSymbol" },
 		{ MediaUI::Status_LevelFrame, "Status\\LevelFrame" },
-		{ MediaUI::Status_MoneyIcon, "Status\\MoneyIcon" },
+		{ MediaUI::Icon_MoneyIcon, "Icon\\MoneyIcon" },
 		{ MediaUI::Status_StaminaBar, "Status\\StaminaBar" },
 		{ MediaUI::Status_StaminaSymbol, "Status\\StaminaSymbol" },
 		{ MediaUI::WaveInfo_NextWaveButton, "WaveInfo\\NextWaveButton" },
 		{ MediaUI::WaveInfo_ProgressBar, "WaveInfo\\ProgressBar" },
 		{ MediaUI::WaveInfo_ProgressBarBackground, "WaveInfo\\ProgressBarBackground" },
-		{ MediaUI::Shop_AttributeFrame, "Shop\\AttributeFrame" },
+		{ MediaUI::Shop_FirearmAttributeFrame, "Shop\\FirearmAttributeFrame" },
 		{ MediaUI::Shop_Background, "Shop\\Background" },
-		{ MediaUI::Shop_GunViewport, "Shop\\GunViewport" },
-		{ MediaUI::Shop_GunSelectionSlot, "Shop\\GunSelectionSlot" },
-		{ MediaUI::Shop_GunSelectionSlotHovered, "Shop\\GunSelectionSlotHovered" },
+		{ MediaUI::Shop_FirearmViewport, "Shop\\FirearmViewport" },
+		{ MediaUI::Shop_FirearmSelectionSlot, "Shop\\FirearmSelectionSlot" },
+		{ MediaUI::Shop_FirearmSelectionSlotHovered, "Shop\\FirearmSelectionSlotHovered" },
 		{ MediaUI::Shop_NavigationButtonSelected, "Shop\\NavigationButtonSelected" },
 		{ MediaUI::Shop_NavigationButtonUnselected, "Shop\\NavigationButtonUnselected" },
-		{ MediaUI::Shop_UpgradeSlot, "Shop\\UpgradeSlot" },
-		{ MediaUI::Shop_UpgradeSlotHovered, "Shop\\UpgradeSlotHovered" },
+		{ MediaUI::Shop_FirearmUpgradeSlot, "Shop\\FirearmUpgradeSlot" },
+		{ MediaUI::Shop_FirearmUpgradeSlotHovered, "Shop\\FirearmUpgradeSlotHovered" },
+		{ MediaUI::Shop_UtilityBuyButton, "Shop\\UtilityBuyButton" },
+		{ MediaUI::Shop_UtilityInfoBoard, "Shop\\UtilityInfoBoard" },
+		{ MediaUI::Shop_UtilityItemBar, "Shop\\UtilityItemBar" },
+		{ MediaUI::Shop_UtilityItemCell, "Shop\\UtilityItemCell" },
+		{ MediaUI::Shop_UtilityItemViewport, "Shop\\UtilityItemViewport" },
 	};
 
 	// --- OBJECT SPRITE ---
@@ -106,6 +117,7 @@ private:
 		{ MediaObject::Misc_Bullet, "Misc\\Bullet" },
 		{ MediaObject::Misc_Background, "Misc\\Background" },
 		{ MediaObject::Misc_HealthBar, "Misc\\HealthBar" },
+		{ MediaObject::Misc_ItemIcon, "Misc\\ItemIcon" },
 	};
 
 	// --- FONT ---

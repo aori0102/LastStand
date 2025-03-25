@@ -40,6 +40,7 @@ class AnimationManager;
 class Color;
 class GameObject;
 class GameManager;
+class ItemManager;
 class MediaManager;
 class PhysicsManager;
 class Texture;
@@ -89,7 +90,6 @@ private:
 	
 	static Vector2 cameraPosition;
 	static Vector2 windowResolution;
-	static Vector2 cameraOffset;
 
 	// SDL components
 	static SDL_Event* gEvent;
@@ -99,14 +99,12 @@ private:
 	// Managers
 	static AnimationManager* animationManager;
 	static GameManager* gameManager;
+	static ItemManager* itemManager;
 	static MediaManager* mediaManager;
 	static PhysicsManager* physicsManager;
 
 	// Camera
 	static GameObject* cameraFocusObject;
-
-	static std::vector<Vector2> points;
-	static SDL_Texture* debugCameraTexture;
 
 	/// ----------------------------------
 	/// METHODS
@@ -117,7 +115,6 @@ private:
 	static void HandleEvent();
 	static void UpdateEvent();
 	static void UpdateCamera();
-	static void DebugDraw();
 
 	static ActionState* FindKeyState(SDL_Keycode keycode);
 	static ActionState* FindMouseButtonState(MouseButton mouseButton);

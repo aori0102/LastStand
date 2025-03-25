@@ -12,7 +12,7 @@ bool UIEvent::Update() {
 
 		if (!(*it)->IsActive() || !(*it)->Owner()->IsActive())
 			continue;
-		
+
 		Bound bound = (*it)->GetBound();
 
 		if (mousePosition.x > bound.Right() ||
@@ -28,8 +28,8 @@ bool UIEvent::Update() {
 
 		if (GameCore::GetMouseState(MouseButton::Left).started) {
 
-			(*it)->OnClick();
-			return true;
+			if ((*it)->OnClick())
+				return true;
 
 		}
 

@@ -9,7 +9,7 @@ Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 
 	UIEvent::RegisterButton(this);
 
-	OnClick = []() {};
+	OnClick = []() { return false; };
 	OnMouseEnter = []() {};
 	OnMouseLeave = []() {};
 

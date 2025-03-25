@@ -123,7 +123,7 @@ public:
 	void Render() override;
 	Bound GetBound();
 
-	std::function<void()> OnClick;
+	std::function<bool()> OnClick;
 	std::function<void()> OnMouseEnter;
 	std::function<void()> OnMouseLeave;
 

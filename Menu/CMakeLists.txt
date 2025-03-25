@@ -7,6 +7,7 @@ set(SOURCES
     "FirearmSelectionUI.cpp"
     "FirearmUpgrade.cpp"
     "FirearmUpgradeUIGroup.cpp"
+    "ItemSelectionUI.cpp"
     "Shop.cpp"
 )
 

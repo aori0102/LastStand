@@ -168,7 +168,6 @@ void Player::InitializeData() {
 	Inventory* inventory = AddComponent<Inventory>();
 	inventory->AddItem(ItemIndex::Pistol_M1911);
 	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
-	inventory->AddItem(ItemIndex::MedKit);
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
@@ -344,6 +343,12 @@ void Player::Update() {
 		HandleActions();
 
 	}
+
+}
+
+void Player::GiveItem(ItemIndex itemIndex) {
+
+	GetComponent<Inventory>()->AddItem(itemIndex);
 
 }
 

@@ -107,7 +107,6 @@ public:
 	void Dequip() override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
 	std::string GetName() const;
-	Sprite* GetIconSprite() const;
 
 };
 

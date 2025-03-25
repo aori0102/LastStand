@@ -283,5 +283,3 @@ float Firearm::GetAttribute(FirearmAttributeIndex attributeIndex) {
 }
 
 std::string Firearm::GetName() const { return firearmName; }
-
-Sprite* Firearm::GetIconSprite() const { return MediaManager::Instance()->GetObjectSprite(FIREARM_ICON_INDEX_MAP.at(GetIndex())); }

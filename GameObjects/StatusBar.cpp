@@ -209,7 +209,7 @@ void StatusBar::InitializeUI() {
 	// --- MONEY ICON ---
 	uiElementMap[UIElementIndex::MoneyIcon] = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyIcon), Layer::Menu);
 	Image* moneyIcon_image = uiElementMap.at(UIElementIndex::MoneyIcon)->AddComponent<Image>();
-	moneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_MoneyIcon), true);
+	moneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
 	moneyIcon_image->showOnScreen = true;
 	uiElementMap.at(UIElementIndex::MoneyIcon)->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::MoneyIcon),

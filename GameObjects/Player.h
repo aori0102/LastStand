@@ -77,6 +77,7 @@ public:
 	void DisableInteraction();
 	void EnableInteraction();
 	void Update() override;
+	void GiveItem(ItemIndex itemIndex);
 
 	Vector2 GetForward() const;
 	Vector2 GetAimingDirection();

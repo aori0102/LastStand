@@ -1,6 +1,6 @@
-#include <FirearmSelectionUI.h>
+#include <ItemSelectionUI.h>
 
-#include <Firearm.h>
+#include <Item.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Shop.h>
@@ -10,14 +10,14 @@
 /// STATIC FIELDS
 /// ----------------------------------
 
-const int FirearmSelectionUI::MAX_COLUMN = 3;
-const Vector2 FirearmSelectionUI::CELL_SIZE = Vector2(340.0f, 195.0f);
+const int ItemSelectionUI::MAX_COLUMN = 2;
+const Vector2 ItemSelectionUI::CELL_SIZE = Vector2(292.0f, 112.0f);
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void FirearmSelectionUI::UpdateNodeVisual() {
+void ItemSelectionUI::UpdateNodeVisual() {
 
 	int row = 0, col = 0;
 
@@ -44,59 +44,55 @@ void FirearmSelectionUI::UpdateNodeVisual() {
 
 }
 
-FirearmSelectionUI::FirearmSelectionUI() {
+ItemSelectionUI::ItemSelectionUI() {
 
 	headNode = nullptr;
 	lastNode = nullptr;
 
 }
 
-void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
+void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 
 	SlotNode* tempNode = headNode;
 	while (tempNode) {
 
 		// Firearm already added
-		if (tempNode->firearm == newFirearm)
+		if (tempNode->itemIndex == newItemIndex)
 			return;
 
 		tempNode = tempNode->nextSlot;
 
 	}
 
+	SlotNode* newSlot = new SlotNode;
+
 	if (!headNode) {
 
-		headNode = new SlotNode;
+		headNode = newSlot;
 		lastNode = headNode;
 
 	} else {
 
-		lastNode->nextSlot = new SlotNode;
+		lastNode->nextSlot = newSlot;
 		lastNode = lastNode->nextSlot;
 
 	}
 
 	lastNode->nextSlot = nullptr;
-	lastNode->firearm = newFirearm;
+	lastNode->itemIndex = newItemIndex;
 
 	lastNode->frame = new GameObject("", Layer::Menu);
 	Image* frame_image = lastNode->frame->AddComponent<Image>();
 	frame_image->showOnScreen = true;
-	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);
+	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemBar), true);
 	Button* frame_button = lastNode->frame->AddComponent<Button>();
 	frame_button->backgroundColor = Color::TRANSPARENT;
-	frame_button->OnClick = [this, newFirearm]() {
+	frame_button->OnClick = [this, newSlot]() {
 		if (!IsActive())
 			return false;
-
-		Shop::Instance()->SelectFirearm(newFirearm);
+		// Shop select item
+		Shop::Instance()->SelectItem(newSlot->itemIndex);
 		return true;
-		};
-	frame_button->OnMouseEnter = [frame_image]() {
-		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlotHovered), true);
-		};
-	frame_button->OnMouseLeave = [frame_image]() {
-		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);
 		};
 	lastNode->frame->Render = [this, frame_image]() {
 		if (IsActive())
@@ -105,9 +101,8 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 
 	lastNode->visual = new GameObject("", Layer::Menu);
 	Image* visual_image = lastNode->visual->AddComponent<Image>();
-	ItemManager::Instance()->LinkItemIcon(newFirearm->GetIndex(), visual_image);
 	visual_image->showOnScreen = true;
-
+	ItemManager::Instance()->LinkItemIcon(newItemIndex, visual_image);
 	lastNode->visual->transform->position = lastNode->frame->transform->position;
 	lastNode->visual->Render = [this, visual_image]() {
 		if (IsActive())
@@ -118,13 +113,13 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 
 }
 
-void FirearmSelectionUI::RemoveFirearm(Firearm* removingFirearm) {
+void ItemSelectionUI::RemoveItem(ItemIndex removingItemIndex) {
 
 	SlotNode* tempNode = headNode;
 	SlotNode* prevNode = nullptr;
 	while (tempNode) {
 
-		if (tempNode->firearm == removingFirearm) {
+		if (tempNode->itemIndex == removingItemIndex) {
 
 			if (!prevNode)
 				headNode = tempNode->nextSlot;
@@ -146,7 +141,7 @@ void FirearmSelectionUI::RemoveFirearm(Firearm* removingFirearm) {
 
 }
 
-void FirearmSelectionUI::SetPosition(Vector2 positionInSDL) {
+void ItemSelectionUI::SetPosition(Vector2 positionInSDL) {
 
 	position = positionInSDL;
 

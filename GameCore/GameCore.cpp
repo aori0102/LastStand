@@ -11,6 +11,7 @@
 #include <AnimationManager.h>
 #include <GameComponent.h>
 #include <GameManager.h>
+#include <ItemManager.h>
 #include <MediaManager.h>
 #include <PhysicsManager.h>
 #include <RenderManager.h>
@@ -19,7 +20,6 @@
 #include <SDL_ttf.h>
 #include <Texture.h>
 #include <UIEventManager.h>
-
 
 /// ----------------------------------
 /// STATIC FIELDS
@@ -50,7 +50,6 @@ std::unordered_set<GameObject*> GameCore::gameObjectSet = {};
 
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
-Vector2 GameCore::cameraOffset = Random::Direction();
 
 SDL_Event* GameCore::gEvent = new SDL_Event;
 SDL_Renderer* GameCore::gRenderer = nullptr;
@@ -58,6 +57,7 @@ SDL_Window* GameCore::gWindow = nullptr;
 
 AnimationManager* GameCore::animationManager = nullptr;
 GameManager* GameCore::gameManager = nullptr;
+ItemManager* GameCore::itemManager = nullptr;
 PhysicsManager* GameCore::physicsManager = nullptr;
 MediaManager* GameCore::mediaManager = nullptr;
 
@@ -231,47 +231,7 @@ void GameCore::UpdateCamera() {
 	wobble.x = std::sinf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.x * direction.x;
 	wobble.y = std::cosf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.y * direction.y;
 	cameraPosition = Vector2::Lerp(cameraPosition, cameraFocusObject->transform->position + wobble, CAMERA_FOLLOW_SPEED);
-	cameraOffset = wobble;
 	currentCameraZoom = Math::Lerp(currentCameraZoom, targetCameraZoom, deltaTime * CAMERA_ZOOM_SPEED);
-
-}
-
-std::vector<Vector2> GameCore::points = {};
-SDL_Texture* GameCore::debugCameraTexture = nullptr;
-void GameCore::DebugDraw() {
-
-	if (points.size() > 100000)
-		throw std::exception("End!");
-
-	SDL_SetRenderTarget(gRenderer, debugCameraTexture);
-
-	if (!debugCameraTexture) {
-
-		debugCameraTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, windowResolution.x, windowResolution.y);
-		SDL_SetTextureBlendMode(debugCameraTexture, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
-		SDL_RenderClear(gRenderer);
-
-	}
-
-	SDL_SetRenderDrawColor(gRenderer, 255, 0, 255, 255);
-
-	Vector2 pos = Math::C00ToSDL(cameraPosition, windowResolution) + windowResolution / 2.0f;
-	SDL_RenderDrawPointF(gRenderer, pos.x, pos.y);
-
-	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
-	SDL_RenderDrawLineF(gRenderer, 0.0f, 360.0f, 1280.0f, 360.0f);
-	SDL_RenderDrawLineF(gRenderer, 640.0f, 0.0f, 640.0f, 720.0f);
-
-	std::cout << "Offset magnitude: " << cameraOffset.Magnitude() << std::endl;
-
-	points.push_back(cameraPosition);
-
-	SDL_SetRenderTarget(gRenderer, nullptr);
-
-	SDL_FRect quad = { 0, 0, windowResolution.x,windowResolution.y };
-	SDL_RenderCopyF(gRenderer, debugCameraTexture, nullptr, &quad);
-
 
 }
 
@@ -438,9 +398,6 @@ void GameCore::Loop() {
 
 		RenderManager::RenderAll();
 
-		// Debug
-		DebugDraw();
-
 		// Update renderer data
 		SDL_RenderPresent(gRenderer);
 
@@ -471,6 +428,7 @@ void GameCore::InitializeGame() {
 	mediaManager = new MediaManager;
 	physicsManager = new PhysicsManager;
 	animationManager = new AnimationManager;
+	itemManager = new ItemManager;
 	gameManager = new GameManager;
 
 	Random::Init();

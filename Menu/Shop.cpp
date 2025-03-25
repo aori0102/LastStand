@@ -17,6 +17,8 @@
 #include <FirearmUpgradeUIGroup.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <ItemManager.h>
+#include <ItemSelectionUI.h>
 #include <MediaManager.h>
 #include <Player.h>
 #include <PlayerStatistic.h>
@@ -74,7 +76,7 @@ void Shop::ShowCurrentMenu() {
 
 	case ShopMenuIndex::Firearm_Selection:
 
-		uiElementMap.at(UIElementIndex::Firearm_Selection_Grid)->Enable();
+		uiElementMap.at(UIElementIndex::Firearm_SelectionGrid)->Enable();
 
 		break;
 
@@ -82,6 +84,16 @@ void Shop::ShowCurrentMenu() {
 		break;
 
 	case ShopMenuIndex::Utility:
+
+		uiElementMap.at(UIElementIndex::Utility_ItemSelectionGrid)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_InfoBoard)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_BuyButton)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_ItemViewport)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_MoneyIcon)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_ItemVisual)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_ItemLabel)->Enable();
+
 		break;
 
 	}
@@ -108,7 +120,7 @@ void Shop::HideCurrentMenu() {
 
 	case ShopMenuIndex::Firearm_Selection:
 
-		uiElementMap.at(UIElementIndex::Firearm_Selection_Grid)->Disable();
+		uiElementMap.at(UIElementIndex::Firearm_SelectionGrid)->Disable();
 
 		break;
 
@@ -116,6 +128,16 @@ void Shop::HideCurrentMenu() {
 		break;
 
 	case ShopMenuIndex::Utility:
+
+		uiElementMap.at(UIElementIndex::Utility_ItemSelectionGrid)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_InfoBoard)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_BuyButton)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_ItemViewport)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_MoneyIcon)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_ItemVisual)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_ItemLabel)->Disable();
+
 		break;
 
 	}
@@ -153,6 +175,7 @@ void Shop::InitializeUI() {
 	navigationFirearm_button->backgroundColor = Color::WHITE;
 	navigationFirearm_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Firearm_Main);
+		return true;
 		};
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->Render = [navigationFirearm_image]() {
 		navigationFirearm_image->Render();
@@ -189,6 +212,7 @@ void Shop::InitializeUI() {
 	navigationMelee_button->backgroundColor = Color::WHITE;
 	navigationMelee_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Melee);
+		return true;
 		};
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->Render = [navigationMelee_image]() {
 		navigationMelee_image->Render();
@@ -225,6 +249,7 @@ void Shop::InitializeUI() {
 	navigationUtility_button->backgroundColor = Color::WHITE;
 	navigationUtility_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Utility);
+		return true;
 		};
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->Render = [navigationUtility_image]() {
 		navigationUtility_image->Render();
@@ -299,7 +324,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	uiElementMap[UIElementIndex::Firearm_Main_GunViewport] = new GameObject("Firearm Viewport", Layer::Menu);
 	Image* firearmViewport_image = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->AddComponent<Image>();
-	firearmViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_GunViewport), true);
+	firearmViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmViewport), true);
 	firearmViewport_image->showOnScreen = true;
 	firearmViewport_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_GunViewport),
@@ -309,6 +334,7 @@ void Shop::InitializeUI() {
 	firearmViewport_button->backgroundColor = Color::TRANSPARENT;
 	firearmViewport_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Firearm_Selection);
+		return true;
 		};
 	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->Render = [firearmViewport_image]() {
 		firearmViewport_image->Render();
@@ -344,18 +370,18 @@ void Shop::InitializeUI() {
 	/// --- FIREARM SELECTION GRID ---
 	/// >>>
 	FirearmSelectionUI* firearmSelectionUI = new FirearmSelectionUI;
-	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Selection_Grid));
+	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_SelectionGrid));
 	std::vector<Firearm*> firearmList = Player::Instance()->GetFirearmList();
 	for (Firearm* firearm : firearmList)
 		firearmSelectionUI->AddFirearm(firearm);
-	uiElementMap[UIElementIndex::Firearm_Selection_Grid] = firearmSelectionUI;
+	uiElementMap[UIElementIndex::Firearm_SelectionGrid] = firearmSelectionUI;
 
 	/// >>>
 	/// --- ATTRIBUTE FRAME ---
 	/// >>>
 	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Frame] = new GameObject("Attribute frame", Layer::Menu);
 	Image* firearmAttributeFrame_image = uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->AddComponent<Image>();
-	firearmAttributeFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_AttributeFrame), true);
+	firearmAttributeFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmAttributeFrame), true);
 	firearmAttributeFrame_image->showOnScreen = true;
 	firearmAttributeFrame_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Frame),
@@ -366,11 +392,131 @@ void Shop::InitializeUI() {
 		};
 
 	/// >>>
-	/// --- ATTRIBUTE FRAME --- 
+	/// --- ATTRIBUTE CONTENT --- 
 	/// >>>
 	FirearmAttributeUIGroup* attributeUIGroup = new FirearmAttributeUIGroup;
 	attributeUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Content));
 	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Content] = attributeUIGroup;
+
+	/// >>>
+	/// --- UTILITY INFO BOARD ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_InfoBoard] = new GameObject("Utility game object", Layer::Menu);
+	Image* utilityInfoBoard_image = uiElementMap.at(UIElementIndex::Utility_InfoBoard)->AddComponent<Image>();
+	utilityInfoBoard_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityInfoBoard), true);
+	utilityInfoBoard_image->showOnScreen = true;
+	utilityInfoBoard_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_InfoBoard),
+		utilityInfoBoard_image->transform->scale
+	);
+	uiElementMap.at(UIElementIndex::Utility_InfoBoard)->Render = [utilityInfoBoard_image]() {
+		utilityInfoBoard_image->Render();
+		};
+
+	/// >>>
+	/// --- UTILITY ITEM VIEWPORT ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_ItemViewport] = new GameObject("Utility viewport", Layer::Menu);
+	Image* utilityItemViewport_image = uiElementMap.at(UIElementIndex::Utility_ItemViewport)->AddComponent<Image>();
+	utilityItemViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemViewport), true);
+	utilityItemViewport_image->showOnScreen = true;
+	utilityItemViewport_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemViewport),
+		utilityItemViewport_image->transform->scale
+	);
+	uiElementMap.at(UIElementIndex::Utility_ItemViewport)->Render = [utilityItemViewport_image]() {
+		utilityItemViewport_image->Render();
+		};
+
+	/// >>>
+	/// --- UTILITY BUY BUTTON ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_BuyButton] = new GameObject("Utility buy button", Layer::Menu);
+	Image* utilityBuyButton_image = uiElementMap.at(UIElementIndex::Utility_BuyButton)->AddComponent<Image>();
+	utilityBuyButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityBuyButton), true);
+	utilityBuyButton_image->showOnScreen = true;
+	utilityBuyButton_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_BuyButton),
+		utilityBuyButton_image->transform->scale
+	);
+	Button* utilityInfoBoard_button = uiElementMap.at(UIElementIndex::Utility_BuyButton)->AddComponent<Button>();
+	utilityInfoBoard_button->backgroundColor = Color::TRANSPARENT;
+	utilityInfoBoard_button->OnClick = [utilityInfoBoard_button]() {
+		Shop::Instance()->BuyItem();
+		return true;
+		};
+	uiElementMap.at(UIElementIndex::Utility_BuyButton)->Render = [utilityBuyButton_image]() {
+		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
+			utilityBuyButton_image->Render();
+		};
+
+	/// >>>
+	/// --- ITEM SELECTION GRID ---
+	/// >>>
+	ItemSelectionUI* itemSelectionUI = new ItemSelectionUI;
+	itemSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemSelectionGrid));
+	itemSelectionUI->AddItem(ItemIndex::MedKit);
+	itemSelectionUI->AddItem(ItemIndex::Shotgun_Beretta1301);
+	uiElementMap[UIElementIndex::Utility_ItemSelectionGrid] = itemSelectionUI;
+
+	/// >>>
+	/// --- MONEY ICON ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_MoneyIcon] = new GameObject("Utility money icon", Layer::Menu);
+	Image* utilityMoneyIcon_image = uiElementMap.at(UIElementIndex::Utility_MoneyIcon)->AddComponent<Image>();
+	utilityMoneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
+	utilityMoneyIcon_image->showOnScreen = true;
+	utilityMoneyIcon_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_MoneyIcon),
+		utilityMoneyIcon_image->transform->scale
+	);
+	uiElementMap.at(UIElementIndex::Utility_MoneyIcon)->Render = [utilityMoneyIcon_image]() {
+		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
+			utilityMoneyIcon_image->Render();
+		};
+
+	/// >>>
+	/// --- MONEY LABEL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_MoneyLabel] = new GameObject("Utility money label", Layer::Menu);
+	Text* utilityMoneyLabel_text = uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->AddComponent<Text>();
+	utilityMoneyLabel_text->LoadText("12,000", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_MoneyLabel));
+	utilityMoneyLabel_text->showOnScreen = true;
+	Align::Left(utilityMoneyLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_BuyButton)->transform);
+	Align::MiddleVertically(utilityMoneyLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_BuyButton)->transform);
+	utilityMoneyLabel_text->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_MoneyLabel);
+	uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->Render = [utilityMoneyLabel_text]() {
+		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
+			utilityMoneyLabel_text->Render();
+		};
+
+	/// >>>
+	/// --- ITEM VISUAL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_ItemVisual] = new GameObject("Utility money icon", Layer::Menu);
+	Image* utilityItemVisual_image = uiElementMap.at(UIElementIndex::Utility_ItemVisual)->AddComponent<Image>();
+	utilityItemVisual_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
+	utilityItemVisual_image->showOnScreen = true;
+	utilityItemVisual_image->transform->position = uiElementMap.at(UIElementIndex::Utility_ItemViewport)->transform->position;
+	uiElementMap.at(UIElementIndex::Utility_ItemVisual)->Render = [utilityItemVisual_image]() {
+		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
+			utilityItemVisual_image->Render();
+		};
+
+	/// >>>
+	/// --- ITEM LABEL ---
+	/// >>>
+	uiElementMap[UIElementIndex::Utility_ItemLabel] = new GameObject("Utility item label", Layer::Menu);
+	Text* utilityItemLabel_text = uiElementMap.at(UIElementIndex::Utility_ItemLabel)->AddComponent<Text>();
+	utilityItemLabel_text->LoadText("<Item Name>", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemLabel));
+	utilityItemLabel_text->showOnScreen = true;
+	Align::Bottom(utilityItemLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_ItemViewport)->transform);
+	Align::MiddleHorizontally(utilityItemLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_ItemViewport)->transform);
+	utilityItemLabel_text->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_ItemLabel);
+	uiElementMap.at(UIElementIndex::Utility_ItemLabel)->Render = [utilityItemLabel_text]() {
+		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
+			utilityItemLabel_text->Render();
+		};
 
 }
 
@@ -486,6 +632,7 @@ Shop::Shop() {
 	showShop = false;
 
 	currentFirearm = nullptr;
+	currentItemIndex = ItemIndex::None;
 
 	InitializeUpgrades();
 	InitializeUI();
@@ -548,7 +695,7 @@ void Shop::SelectFirearm(Firearm* firearm) {
 
 	currentFirearm = firearm;
 
-	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->GetComponent<Image>()->LinkSprite(firearm->GetIconSprite(), true);
+	ItemManager::Instance()->LinkItemIcon(firearm->GetIndex(), uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->GetComponent<Image>());
 
 	uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->GetComponent<Text>()->LoadText(
 		currentFirearm->GetName(), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Firearm_Main_GunLabel)
@@ -558,5 +705,36 @@ void Shop::SelectFirearm(Firearm* firearm) {
 	UpdateAttributeList();
 
 }
+
+void Shop::SelectItem(ItemIndex itemIndex) {
+
+	currentItemIndex = itemIndex;
+
+	ItemManager::Instance()->LinkItemIcon(itemIndex, uiElementMap.at(UIElementIndex::Utility_ItemVisual)->GetComponent<Image>());
+	uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->GetComponent<Text>()->LoadText(
+		std::to_string(ItemManager::Instance()->GetItemPrice(itemIndex)), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_MoneyLabel)
+	);
+	Align::Left(uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->transform, uiElementMap.at(UIElementIndex::Utility_BuyButton)->transform);
+	uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_MoneyLabel);
+
+	uiElementMap.at(UIElementIndex::Utility_ItemLabel)->GetComponent<Text>()->LoadText(
+		ItemManager::Instance()->GetItemName(itemIndex), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemLabel)
+	);
+
+}
+
+void Shop::BuyItem() {
+
+	if (currentItemIndex == ItemIndex::None)
+		return;
+
+	if (!PlayerStatistic::Instance()->TrySpendMoney(ItemManager::Instance()->GetItemPrice(currentItemIndex)))
+		return;
+
+	Player::Instance()->GiveItem(currentItemIndex);
+
+}
+
+ItemIndex Shop::GetSelectedItem() const { return currentItemIndex; }
 
 Shop* Shop::Instance() { return instance; }
