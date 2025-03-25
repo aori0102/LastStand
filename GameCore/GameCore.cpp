@@ -26,6 +26,12 @@
 /// ----------------------------------
 
 const float GameCore::CAMERA_ZOOM_SPEED = 14.0f;
+const float GameCore::CAMERA_FOLLOW_SPEED = 16.0f;
+const float GameCore::CAMERA_WOBBLE_AMPLITUDE = 7.0f;
+const float GameCore::CAMERA_NOISE_AMPLITUDE = 58.0f;
+const float GameCore::CAMERA_WOBBLE_BASE_FREQUENCY = 0.8f;
+const float GameCore::CAMERA_POSITIONAL_DISTORTION_FREQUENCY = 0.3f;
+const float GameCore::CAMERA_ROTATIONAL_DISTORTION_FREQUENCY = 0.2f;
 
 bool GameCore::gQuit = false;
 bool GameCore::selectedUI = false;
@@ -44,6 +50,7 @@ std::unordered_set<GameObject*> GameCore::gameObjectSet = {};
 
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
+Vector2 GameCore::cameraOffset = Random::Direction();
 
 SDL_Event* GameCore::gEvent = new SDL_Event;
 SDL_Renderer* GameCore::gRenderer = nullptr;
@@ -211,9 +218,60 @@ void GameCore::UpdateCamera() {
 		return;
 
 	// Get focus object component and update camera
-	cameraPosition = cameraFocusObject->transform->position;
+	//cameraPosition = cameraFocusObject->transform->position;
 
+	Vector2 noisePostionalFrequency(CAMERA_POSITIONAL_DISTORTION_FREQUENCY, CAMERA_POSITIONAL_DISTORTION_FREQUENCY);
+	Vector2 noiseRotationalFrequency(CAMERA_ROTATIONAL_DISTORTION_FREQUENCY, CAMERA_ROTATIONAL_DISTORTION_FREQUENCY);
+	Vector2 noise;
+	noise.x = Algorithm::PerlinNoise(noisePostionalFrequency * time) * CAMERA_NOISE_AMPLITUDE;
+	noise.y = Algorithm::PerlinNoise(noisePostionalFrequency * time) * CAMERA_NOISE_AMPLITUDE;
+	float angle = Algorithm::PerlinNoise(noiseRotationalFrequency * time) * Math::PI * 2.0f;
+	Vector2 direction = Vector2::right.Rotate(angle);
+	Vector2 wobble;
+	wobble.x = std::sinf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.x * direction.x;
+	wobble.y = std::cosf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.y * direction.y;
+	cameraPosition = Vector2::Lerp(cameraPosition, cameraFocusObject->transform->position + wobble, CAMERA_FOLLOW_SPEED);
+	cameraOffset = wobble;
 	currentCameraZoom = Math::Lerp(currentCameraZoom, targetCameraZoom, deltaTime * CAMERA_ZOOM_SPEED);
+
+}
+
+std::vector<Vector2> GameCore::points = {};
+SDL_Texture* GameCore::debugCameraTexture = nullptr;
+void GameCore::DebugDraw() {
+
+	if (points.size() > 100000)
+		throw std::exception("End!");
+
+	SDL_SetRenderTarget(gRenderer, debugCameraTexture);
+
+	if (!debugCameraTexture) {
+
+		debugCameraTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, windowResolution.x, windowResolution.y);
+		SDL_SetTextureBlendMode(debugCameraTexture, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
+		SDL_RenderClear(gRenderer);
+
+	}
+
+	SDL_SetRenderDrawColor(gRenderer, 255, 0, 255, 255);
+
+	Vector2 pos = Math::C00ToSDL(cameraPosition, windowResolution) + windowResolution / 2.0f;
+	SDL_RenderDrawPointF(gRenderer, pos.x, pos.y);
+
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	SDL_RenderDrawLineF(gRenderer, 0.0f, 360.0f, 1280.0f, 360.0f);
+	SDL_RenderDrawLineF(gRenderer, 640.0f, 0.0f, 640.0f, 720.0f);
+
+	std::cout << "Offset magnitude: " << cameraOffset.Magnitude() << std::endl;
+
+	points.push_back(cameraPosition);
+
+	SDL_SetRenderTarget(gRenderer, nullptr);
+
+	SDL_FRect quad = { 0, 0, windowResolution.x,windowResolution.y };
+	SDL_RenderCopyF(gRenderer, debugCameraTexture, nullptr, &quad);
+
 
 }
 
@@ -380,6 +438,9 @@ void GameCore::Loop() {
 
 		RenderManager::RenderAll();
 
+		// Debug
+		DebugDraw();
+
 		// Update renderer data
 		SDL_RenderPresent(gRenderer);
 
@@ -413,6 +474,7 @@ void GameCore::InitializeGame() {
 	gameManager = new GameManager;
 
 	Random::Init();
+	Algorithm::PerlinInit();
 
 }
 

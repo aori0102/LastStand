@@ -40,6 +40,7 @@ public:
 	bool operator==(const Vector2& other);
 	bool operator!=(const Vector2& other);
 
+	static Vector2 Lerp(Vector2 from, Vector2 to, float time);
 	Vector2 Normalize();
 	Vector2 Rotate(float angleInRadian);
 	Vector2 Inverse();
@@ -60,6 +61,7 @@ public:
 	static float Clamp(float value, float lowerBound, float upperBound);
 	static float RadToDeg(float angleInRadian);
 	static float DegToRad(float angleInDegree);
+	static float Fade(float t);
 	static Vector2 SDLToC00(Vector2 position, Vector2 scale);
 	static Vector2 C00ToSDL(Vector2 position, Vector2 scale);
 
@@ -75,10 +77,9 @@ private:
 public:
 
 	static void Init();
-
 	static int Int(int min, int max);
-
 	static float Float(float min, float max);
+	static Vector2 Direction();
 
 	template <typename T>
 	requires std::is_arithmetic_v<T>
@@ -123,11 +124,19 @@ public:
 
 class Algorithm {
 
+private:
+
+	static std::vector<int> perlinPermutationTable;
+
+	static float PerlinGrad(int hash, Vector2 v);
+
 public:
 
 	template <typename T>
 	static void Shuffle(std::vector<T>& array);
-
+	static void PerlinInit();
+	static float PerlinNoise(Vector2 v);
+		
 };
 #include <../Utils/Type.inl>
 

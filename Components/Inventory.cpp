@@ -8,6 +8,8 @@
 
 #include <exception>
 
+#include <Consumable.h>
+#include <Firearm.h>
 #include <Item.h>
 #include <ItemManager.h>
 #include <Player.h>
@@ -73,10 +75,14 @@ void Inventory::SelectSlot(InventorySlotIndex slotIndex) {
 
 bool Inventory::TryUseCurrent() {
 
-	if (currentSlotIndex == InventorySlotIndex::None || !hotBar.at(currentSlotIndex))
+	if (currentSlotIndex == InventorySlotIndex::None)
 		return false;
 
-	return hotBar.at(currentSlotIndex)->TryUse(Owner()->As<Player>());
+	Item* currentItem = hotBar.at(currentSlotIndex);
+	if (!currentItem)
+		return false;
+
+	return currentItem->TryUse(Owner()->As<Player>());
 
 }
 

@@ -30,6 +30,7 @@ private:
 	static const float CAMERA_AIM_ZOOM;
 	static const float DEFAULT_MOVEMENT_SPEED;
 	static const float AIM_MOVEMENT_SPEED;
+	static const float SPRINT_MOVEMENT_SPEED;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -43,6 +44,7 @@ private:
 	float aimDeviation;
 	bool isMoving;
 	bool isAiming;
+	bool isSprinting;
 	Vector2 forward;
 	ItemIndex itemIndex;
 	static Player* instance;

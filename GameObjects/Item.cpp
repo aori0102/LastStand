@@ -6,6 +6,8 @@
 
 #include <Item.h>
 
+#include <MediaManager.h>
+
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
@@ -18,14 +20,7 @@ Item::Item(ItemIndex initItemIndex) {
 	stackable = false;
 	usable = true;
 	
-	OnEquip = []() {};
-	OnDequip = []() {};
-
 }
-
-void Item::Equip() { OnEquip(); }
-
-void Item::Dequip() { OnDequip(); }
 
 bool Item::IsUsable() const { return usable; }
 

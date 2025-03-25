@@ -22,20 +22,17 @@ const float Shotgun::PELLET_SPAN_DEGREE = 12.0f;
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Shotgun::Shotgun(FirearmID initFirearmID) : Firearm(initFirearmID), Item(ItemIndex::Shotgun) {
+Shotgun::Shotgun(ItemIndex initItemIndex) : Firearm(initItemIndex) {
 
-	switch (initFirearmID) {
+	switch (initItemIndex) {
 
-	case FirearmID::Beretta1301:
+	case ItemIndex::Shotgun_Beretta1301:
 		break;
 
 	default:
 		throw std::exception("Invalid ID for shotgun");
 
 	}
-
-	OnEquip = [this]() { ShowUI(); };
-	OnDequip = [this]() { HideUI(); };
 
 }
 

@@ -112,6 +112,15 @@ Vector2 Vector2::operator/=(const float& other) {
 
 }
 
+Vector2 Vector2::Lerp(Vector2 from, Vector2 to, float time) {
+
+	return Vector2(
+		Math::Lerp(from.x, to.x, time),
+		Math::Lerp(from.y, to.y, time)
+	);
+
+}
+
 Vector2 Vector2::Normalize() {
 
 	float magnitude = Magnitude();
@@ -233,6 +242,12 @@ float Math::Lerp(float start, float end, float time) {
 
 }
 
+float Math::Fade(float t) {
+
+	return t * t * t * (t * (t * 6 - 15) + 10);
+
+}
+
 std::mt19937 Random::randomEngine = std::mt19937(std::random_device{}());
 
 float Random::Float(float min, float max) {
@@ -252,6 +267,14 @@ int Random::Int(int min, int max) {
 
 	std::uniform_int_distribution<int> dist(min, max);
 	return dist(randomEngine);
+
+}
+
+Vector2 Random::Direction() {
+
+	float angle = Random::Float(0.0f, 2.0f * Math::PI);
+
+	return Vector2::right.Rotate(angle).Normalize();
 
 }
 
@@ -306,6 +329,68 @@ SDL_Color Color::ToSDLColor() {
 
 }
 
+// --- ALGORITHM ---
+std::vector<int> Algorithm::perlinPermutationTable = std::vector<int>(512, 0);
+
+float Algorithm::PerlinGrad(int hash, Vector2 v) {
+
+	int h = hash & 3;	// Select one of 4 gradient directions
+	float a = h & 1 ? v.x : -v.x;
+	float b = h & 2 ? v.y : -v.y;
+
+	return a + b;
+
+}
+
+void Algorithm::PerlinInit() {
+
+	std::vector<int> p(256);
+	for (int i = 0; i < 256; i++)
+		p[i] = i;
+
+	Shuffle(p);
+
+	for (int i = 0; i < 256; i++) {
+
+		perlinPermutationTable[i] = p[i];
+		perlinPermutationTable[256 + i] = p[i];	// Double array to prevent overflow
+
+	}
+
+}
+
+float Algorithm::PerlinNoise(Vector2 v) {
+
+	// Get integer grid coord
+	int x_coord = (int)std::floorf(v.x) & 255;
+	int y_coord = (int)std::floorf(v.y) & 255;
+
+	// Get fractional part
+	Vector2 fractional(v.x - floorf(v.x), v.y - floorf(v.y));
+
+	// Apply fade function
+	float a = Math::Fade(fractional.x);
+	float b = Math::Fade(fractional.y);
+
+	// Get gradient hashes for four corner
+	int c1 = perlinPermutationTable[x_coord + perlinPermutationTable[y_coord]];
+	int c2 = perlinPermutationTable[x_coord + perlinPermutationTable[y_coord + 1]];
+	int c3 = perlinPermutationTable[x_coord + 1 + perlinPermutationTable[y_coord]];
+	int c4 = perlinPermutationTable[x_coord + 1 + perlinPermutationTable[y_coord + 1]];
+
+	// Compute dot product
+	float g1 = PerlinGrad(c1, fractional);
+	float g2 = PerlinGrad(c2, fractional + Vector2::left);
+	float g3 = PerlinGrad(c3, fractional + Vector2::down);
+	float g4 = PerlinGrad(c4, fractional + Vector2::left + Vector2::down);
+
+	// Interpolate
+	float lerp_x1 = Math::Lerp(g1, g2, a);
+	float lerp_x2 = Math::Lerp(g3, g4, a);
+	return Math::Lerp(lerp_x1, lerp_x2, b);
+
+}
+
 void Align::MiddleVertically(Transform* something, Transform* with) {
 
 	something->position.y = with->position.y;
@@ -317,6 +402,7 @@ void Align::MiddleHorizontally(Transform* something, Transform* with) {
 	something->position.x = with->position.x;
 
 }
+
 void Align::Top(Transform* something, Transform* with) {
 
 	something->position.y = with->position.y + (with->scale - something->scale).y / 2.0f;

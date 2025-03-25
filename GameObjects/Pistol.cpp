@@ -15,11 +15,11 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Pistol::Pistol(FirearmID initFirearmID) : Firearm(initFirearmID), Item(ItemIndex::Pistol) {
+Pistol::Pistol(ItemIndex initItemIndex) : Firearm(initItemIndex) {
 
-	switch (initFirearmID) {
+	switch (initItemIndex) {
 
-	case FirearmID::M1911:
+	case ItemIndex::Pistol_M1911:
 		break;
 
 	default:
@@ -27,13 +27,10 @@ Pistol::Pistol(FirearmID initFirearmID) : Firearm(initFirearmID), Item(ItemIndex
 
 	}
 
-	OnEquip = [this]() { ShowUI(); };
-	OnDequip = [this]() { HideUI(); };
-
 }
 
 bool Pistol::TryUse(Player* player) {
-
+	
 	if (!TryShoot())
 		return false;
 

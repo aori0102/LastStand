@@ -15,6 +15,50 @@
 
 class Image;
 class Sprite;
+class AnimationClip;
+
+struct AnimationTransition {
+
+	AnimationNode* to = nullptr;
+	std::function<bool()> condition = []() { return true; };
+
+	AnimationTransition(AnimationNode* initTo, std::function<bool()> initCondition)
+		: to(initTo), condition(initCondition) {}
+
+};
+
+class AnimationNode {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	bool isStateMachine;
+	std::vector<AnimationTransition*> transitionList;
+	AnimationClip* animationClip;
+
+	friend class AnimationController;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+private:
+
+	AnimationNode(AnimationClip* initAnimationClip, bool initIsStateMachine);
+	AnimationNode* PlayNode();
+	void StopNode();
+
+public:
+
+	bool IsLoop();
+	bool IsEnded();
+	bool IsStateMachine() const;
+	void RenderCurrent(Vector2 position, Vector2 scale, float angle);
+
+};
 
 class AnimationFrame {
 
@@ -47,8 +91,8 @@ class AnimationClip : public GameObject {
 
 private:
 
-	friend class AnimationController;
 	friend class AnimationManager;
+	friend class AnimationNode;
 
 	float startTick;		// When the animation is played
 	float currentFrameStartTick;

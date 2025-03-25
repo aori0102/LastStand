@@ -26,13 +26,6 @@ enum class FirearmAttributeIndex {
 
 };
 
-enum class FirearmID {
-
-	M1911,
-	Beretta1301,
-
-};
-
 enum class ReloadType {
 
 	Magazine,
@@ -40,7 +33,7 @@ enum class ReloadType {
 
 };
 
-class Firearm : public GameObject {
+class Firearm : public GameObject, public Item {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS
@@ -56,9 +49,9 @@ private:
 
 protected:
 
-	static const std::unordered_map<FirearmID, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
-	static const std::unordered_map<FirearmID, MediaObject> FIREARM_ICON_INDEX_MAP;
-	static const std::unordered_map<FirearmID, std::string> FIREARM_NAME_MAP;
+	static const std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
+	static const std::unordered_map<ItemIndex, MediaObject> FIREARM_ICON_INDEX_MAP;
+	static const std::unordered_map<ItemIndex, std::string> FIREARM_NAME_MAP;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -72,7 +65,6 @@ private:
 	bool isReloading;
 	bool stopReload;
 	std::string firearmName;
-	FirearmID firearmID;
 	ReloadType reloadType;
 
 	// UI
@@ -106,19 +98,20 @@ protected:
 
 public:
 
-	Firearm(FirearmID initFirearmID);
+	Firearm(ItemIndex initItemIndex);
 
 	void Update() override;
 	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
 	void Reload();
+	void Equip() override;
+	void Dequip() override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
 	std::string GetName() const;
-	FirearmID GetFirearmID() const;
 	Sprite* GetIconSprite() const;
 
 };
 
-class Pistol : public Item, public Firearm {
+class Pistol : public Firearm {
 
 	/// ----------------------------------
 	/// FIELDS
@@ -132,13 +125,13 @@ private:
 
 public:
 
-	Pistol(FirearmID initFirearmID);
+	Pistol(ItemIndex initItemIndex);
 
 	bool TryUse(Player* player) override;
 
 };
 
-class Shotgun : public Item, public Firearm {
+class Shotgun : public Firearm {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS
@@ -155,7 +148,7 @@ private:
 
 public:
 
-	Shotgun(FirearmID initFirearmID);
+	Shotgun(ItemIndex initItemIndex);
 
 	bool TryUse(Player* player) override;
 

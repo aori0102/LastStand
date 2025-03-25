@@ -4,6 +4,7 @@
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
     "Animation.cpp"
+    "AnimationNode.cpp"
     "Type.cpp"
 )
 

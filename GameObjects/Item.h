@@ -14,8 +14,10 @@ enum class ItemIndex {
 
 	None,
 
-	Pistol,
-	Shotgun,
+	Pistol_M1911,
+	Shotgun_Beretta1301,
+
+	MedKit,
 
 };
 
@@ -34,8 +36,6 @@ protected:
 	float useCooldown;
 	bool stackable;
 	bool usable;
-	std::function<void()> OnEquip;
-	std::function<void()> OnDequip;
 
 	/// ----------------------------------
 	/// METHODS
@@ -45,9 +45,9 @@ public:
 
 	Item(ItemIndex initItemIndex);
 
+	virtual void Equip() = 0;
+	virtual void Dequip() = 0;
 	virtual bool TryUse(Player* player) = 0;
-	void Equip();
-	void Dequip();
 	bool IsUsable() const;
 	bool IsStackable() const;
 	template <class T>

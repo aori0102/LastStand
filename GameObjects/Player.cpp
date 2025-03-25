@@ -30,8 +30,9 @@ const float Player::STANDING_AIM_DEVIATION = 10.0f;
 const float Player::ADS_AIM_DEVIATION = 5.0f;
 const float Player::MOVEMENT_SPEED_CHANGE_RATE = 50.0f;
 const float Player::CAMERA_AIM_ZOOM = 1.3f;
-const float Player::DEFAULT_MOVEMENT_SPEED = 700.0f;
-const float Player::AIM_MOVEMENT_SPEED = 400.0f;
+const float Player::DEFAULT_MOVEMENT_SPEED = 500.0f;
+const float Player::AIM_MOVEMENT_SPEED = 300.0f;
+const float Player::SPRINT_MOVEMENT_SPEED = 750.0f;
 Player* Player::instance = nullptr;
 
 /// ----------------------------------
@@ -47,13 +48,11 @@ void Player::HandleActions() {
 	if (GameCore::GetMouseState(MouseButton::Right).started) {
 
 		GameCore::SetCameraZoom(CAMERA_AIM_ZOOM);
-		targetMovementSpeed = AIM_MOVEMENT_SPEED;
 		isAiming = true;
 
 	} else if (GameCore::GetMouseState(MouseButton::Right).canceled) {
 
 		GameCore::SetCameraZoom(1.0f);
-		targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 		isAiming = false;
 
 	}
@@ -88,9 +87,22 @@ void Player::HandleActions() {
 
 	}
 
+	// Sprint
+	if (GameCore::GetKeyState(SDLK_LSHIFT).started)
+		isSprinting = true;
+	else if (GameCore::GetKeyState(SDLK_LSHIFT).canceled)
+		isSprinting = false;
+
 }
 
 void Player::HandleMovement() {
+
+	if (isAiming)
+		targetMovementSpeed = AIM_MOVEMENT_SPEED;
+	else if (isSprinting)
+		targetMovementSpeed = SPRINT_MOVEMENT_SPEED;
+	else
+		targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 
 	currentMovementSpeed = Math::Lerp(currentMovementSpeed, targetMovementSpeed, GameCore::DeltaTime() * MOVEMENT_SPEED_CHANGE_RATE);
 
@@ -154,15 +166,16 @@ void Player::InitializeData() {
 
 	AddComponent<BoxCollider>();
 	Inventory* inventory = AddComponent<Inventory>();
-	inventory->AddItem(ItemIndex::Pistol);
-	inventory->AddItem(ItemIndex::Shotgun);
+	inventory->AddItem(ItemIndex::Pistol_M1911);
+	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
+	inventory->AddItem(ItemIndex::MedKit);
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
 	rigidBody->drag = 6.0f;
 
 	Humanoid* humanoid = AddComponent<Humanoid>();
-	humanoid->SetHealth(250.0f);
+	humanoid->SetHealth(100.0f);
 	humanoid->OnDeath = [this]() {
 		GameManager::Instance()->ReportDead(this);
 		};
@@ -183,27 +196,22 @@ void Player::InitializeAnimation() {
 	animController->AddAnimationClip(AnimationIndex::Player_Pistol_Shoot);
 	animController->AddAnimationClip(AnimationIndex::Player_Shotgun_Idle);
 	animController->AddAnimationClip(AnimationIndex::Player_Shotgun_Shoot);
+	animController->AddAnimationClip(AnimationIndex::Player_MedKit);
+	animController->AddAnimationClip(AnimationIndex::Player_Item_Transition, true);
 
 	animController->MakeDefault(AnimationIndex::Player_Idle);
 
+	// --- ITEM STATE MACHINE ---
 	animController->AddTransition(
 		AnimationIndex::Player_Idle,
-		AnimationIndex::Player_Pistol_Idle,
+		AnimationIndex::Player_Item_Transition,
 		[this]() {
-			return itemIndex == ItemIndex::Pistol;
+			return itemIndex != ItemIndex::None;
 		}
 	);
 
 	animController->AddTransition(
-		AnimationIndex::Player_Idle,
-		AnimationIndex::Player_Shotgun_Idle,
-		[this]() {
-			return itemIndex == ItemIndex::Shotgun;
-		}
-	);
-
-	animController->AddTransition(
-		AnimationIndex::Player_Pistol_Idle,
+		AnimationIndex::Player_Item_Transition,
 		AnimationIndex::Player_Idle,
 		[this]() {
 			return itemIndex == ItemIndex::None;
@@ -211,18 +219,59 @@ void Player::InitializeAnimation() {
 	);
 
 	animController->AddTransition(
-		AnimationIndex::Player_Shotgun_Idle,
-		AnimationIndex::Player_Idle,
+		AnimationIndex::Player_Item_Transition,
+		AnimationIndex::Player_Pistol_Idle,
 		[this]() {
-			return itemIndex == ItemIndex::None;
+			return itemIndex == ItemIndex::Pistol_M1911;
 		}
 	);
 
+	animController->AddTransition(
+		AnimationIndex::Player_Item_Transition,
+		AnimationIndex::Player_Shotgun_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::Shotgun_Beretta1301;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Item_Transition,
+		AnimationIndex::Player_MedKit,
+		[this]() {
+			return itemIndex == ItemIndex::MedKit;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Pistol_Idle,
+		AnimationIndex::Player_Item_Transition,
+		[this]() {
+			return itemIndex != ItemIndex::Pistol_M1911;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Shotgun_Idle,
+		AnimationIndex::Player_Item_Transition,
+		[this]() {
+			return itemIndex != ItemIndex::Shotgun_Beretta1301;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_MedKit,
+		AnimationIndex::Player_Item_Transition,
+		[this]() {
+			return itemIndex != ItemIndex::MedKit;
+		}
+	);
+
+	// --- PISTOL ---
 	animController->AddTransition(
 		AnimationIndex::Player_Pistol_Idle,
 		AnimationIndex::Player_Pistol_Shoot,
 		[this]() {
-			return itemIndex == ItemIndex::Pistol && usingItem;
+			return usingItem;
 		}
 	);
 
@@ -231,33 +280,18 @@ void Player::InitializeAnimation() {
 		AnimationIndex::Player_Pistol_Idle
 	);
 
+	// --- SHOTGUN ---
 	animController->AddTransition(
 		AnimationIndex::Player_Shotgun_Idle,
 		AnimationIndex::Player_Shotgun_Shoot,
 		[this]() {
-			return itemIndex == ItemIndex::Shotgun && usingItem;
+			return usingItem;
 		}
 	);
 
 	animController->AddTransition(
 		AnimationIndex::Player_Shotgun_Shoot,
 		AnimationIndex::Player_Shotgun_Idle
-	);
-
-	animController->AddTransition(
-		AnimationIndex::Player_Pistol_Idle,
-		AnimationIndex::Player_Shotgun_Idle,
-		[this]() {
-			return itemIndex == ItemIndex::Shotgun;
-		}
-	);
-
-	animController->AddTransition(
-		AnimationIndex::Player_Shotgun_Idle,
-		AnimationIndex::Player_Pistol_Idle,
-		[this]() {
-			return itemIndex == ItemIndex::Pistol;
-		}
 	);
 
 }

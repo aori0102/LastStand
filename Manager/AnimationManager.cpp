@@ -23,21 +23,21 @@ AnimationManager* AnimationManager::instance = nullptr;
 
 void AnimationManager::InitializeAnimation() {
 
-	// Player Idle
+	// --- PLAYER IDLE ---
 	animationClipMap[AnimationIndex::Player_Idle] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), Layer::Player);
 	animationClipMap.at(AnimationIndex::Player_Idle)->AddAnimationFrame(new AnimationFrame(
 		{ 16, 16, 256, 256 }, 0.0f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Idle)->loop = true;
 
-	// Player Pistol Idle
+	// --- PLAYER PISTOL IDLE ---
 	animationClipMap[AnimationIndex::Player_Pistol_Idle] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), Layer::Player);
 	animationClipMap.at(AnimationIndex::Player_Pistol_Idle)->AddAnimationFrame(new AnimationFrame(
 		{ 304, 16, 256, 256 }, 0.0f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Pistol_Idle)->loop = true;
 
-	// Player Pistol Shoot
+	// --- PLAYER PISTOL SHOOT ---
 	animationClipMap[AnimationIndex::Player_Pistol_Shoot] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), Layer::Player);
 	animationClipMap.at(AnimationIndex::Player_Pistol_Shoot)->AddAnimationFrame(new AnimationFrame(
 		{ 16, 304, 256, 256 }, 0.05f, 5.0f
@@ -47,14 +47,14 @@ void AnimationManager::InitializeAnimation() {
 	));
 	animationClipMap.at(AnimationIndex::Player_Pistol_Shoot)->loop = false;
 
-	// Player Shotgun Idle
+	// --- PLAYER SHOTGUN IDLE ---
 	animationClipMap[AnimationIndex::Player_Shotgun_Idle] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), Layer::Player);
 	animationClipMap.at(AnimationIndex::Player_Shotgun_Idle)->AddAnimationFrame(new AnimationFrame(
 		{ 592, 16, 256, 256 }, 0.0f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Shotgun_Idle)->loop = true;
 
-	// Player Shotgun Shoot
+	// --- PLAYER SHOTGUN SHOOT ---
 	animationClipMap[AnimationIndex::Player_Shotgun_Shoot] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), Layer::Player);
 	animationClipMap.at(AnimationIndex::Player_Shotgun_Shoot)->AddAnimationFrame(new AnimationFrame(
 		{ 16, 592, 256, 256 }, 0.035f, 5.0f
@@ -72,6 +72,13 @@ void AnimationManager::InitializeAnimation() {
 		{ 1168, 592, 256, 256 }, 0.0f, 5.0f
 	));
 	animationClipMap.at(AnimationIndex::Player_Shotgun_Shoot)->loop = false;
+
+	// --- PLAYER MED KIT ---
+	animationClipMap[AnimationIndex::Player_MedKit] = new AnimationClip(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), Layer::Player);
+	animationClipMap.at(AnimationIndex::Player_MedKit)->AddAnimationFrame(new AnimationFrame(
+		{ 880, 16, 256, 256 }, 0.0f, 5.0f
+	));
+	animationClipMap.at(AnimationIndex::Player_MedKit)->loop = true;
 
 }
 

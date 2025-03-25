@@ -17,24 +17,23 @@
 
 void AnimationController::OnComponentUpdate() {
 
-	if (!currentAnimationNode || !currentAnimationNode->animationClip->ended)
+	if (!currentAnimationNode || !currentAnimationNode->IsEnded())
 		return;
 
 	for (AnimationTransition* transition : currentAnimationNode->transitionList) {
 
 		if (transition->condition()) {
 
-			currentAnimationNode->animationClip->Stop();
-			transition->to->animationClip->Play();
-			currentAnimationNode = transition->to;
+			currentAnimationNode->StopNode();
+			currentAnimationNode = transition->to->PlayNode();
 			return;
 
 		}
 
 	}
 
-	if (currentAnimationNode->animationClip->loop)
-		currentAnimationNode->animationClip->Play();
+	if (currentAnimationNode->IsLoop())
+		currentAnimationNode->PlayNode();
 
 }
 
@@ -73,15 +72,17 @@ AnimationController::AnimationController(GameObject* initOwner) : GameComponent(
 
 }
 
-void AnimationController::AddAnimationClip(AnimationIndex animationIndex) {
-
-	AnimationClip* animClip = AnimationManager::Instance()->GetAnimationClip(animationIndex);
+void AnimationController::AddAnimationClip(AnimationIndex animationIndex, bool isStateMachine) {
 
 	auto it_to = animationNodeMap.find(animationIndex);
 	if (it_to != animationNodeMap.end())
 		return;
 
-	animationNodeMap[animationIndex] = new AnimationNode(AnimationManager::Instance()->GetAnimationClip(animationIndex));
+	AnimationClip* animClip = nullptr;
+	if (!isStateMachine)
+		animClip = AnimationManager::Instance()->GetAnimationClip(animationIndex);
+
+	animationNodeMap[animationIndex] = new AnimationNode(animClip, isStateMachine);
 
 }
 
@@ -114,7 +115,7 @@ void AnimationController::MakeDefault(AnimationIndex animationIndex) {
 	defaultAnimationNode = it->second;
 	currentAnimationNode = defaultAnimationNode;
 
-	currentAnimationNode->animationClip->Play();
+	currentAnimationNode->PlayNode();
 
 }
 
@@ -123,6 +124,6 @@ void AnimationController::RenderCurrent(Vector2 position, Vector2 scale, float a
 	if (!currentAnimationNode)
 		return;
 
-	currentAnimationNode->animationClip->RenderCurrent(position, scale, angle);
+	currentAnimationNode->RenderCurrent(position, scale, angle);
 
 }

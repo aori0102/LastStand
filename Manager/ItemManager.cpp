@@ -8,6 +8,7 @@
 
 #include <exception>
 
+#include <Consumable.h>
 #include <Item.h>
 #include <Firearm.h>
 
@@ -27,6 +28,7 @@ ItemManager::ItemManager() {
 		throw std::exception("Item Manager can only have one instance!");
 
 	instance = this;
+
 }
 
 ItemManager* ItemManager::Instance() { return instance; }
@@ -35,17 +37,21 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	switch (itemIndex) {
 
-	case ItemIndex::Pistol: {
+	case ItemIndex::Pistol_M1911:
 
-		Pistol* pistol = new Pistol(FirearmID::M1911);
-		return pistol;
+		return new Pistol(itemIndex);
 
-	}
+	case ItemIndex::Shotgun_Beretta1301:
 
-	case ItemIndex::Shotgun: {
+		return new Shotgun(itemIndex);
 
-		Shotgun* shotgun = new Shotgun(FirearmID::Beretta1301);
-		return shotgun;
+	case ItemIndex::MedKit: {
+
+		Consumable* medkit = new Consumable(itemIndex);
+		medkit->health = 30.0f;
+		medkit->stackable = 7.0f;
+
+		return medkit;
 
 	}
 

@@ -4,6 +4,7 @@
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
     "Bullet.cpp"
+    "Consumable.cpp"
     "Firearm.cpp"
     "FirearmUpgrade.cpp"
     "Item.cpp"

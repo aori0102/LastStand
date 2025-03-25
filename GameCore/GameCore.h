@@ -53,6 +53,12 @@ class GameCore {
 private:
 
 	static const float CAMERA_ZOOM_SPEED;
+	static const float CAMERA_FOLLOW_SPEED;
+	static const float CAMERA_WOBBLE_AMPLITUDE;
+	static const float CAMERA_NOISE_AMPLITUDE;
+	static const float CAMERA_WOBBLE_BASE_FREQUENCY;
+	static const float CAMERA_POSITIONAL_DISTORTION_FREQUENCY;
+	static const float CAMERA_ROTATIONAL_DISTORTION_FREQUENCY;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -83,6 +89,7 @@ private:
 	
 	static Vector2 cameraPosition;
 	static Vector2 windowResolution;
+	static Vector2 cameraOffset;
 
 	// SDL components
 	static SDL_Event* gEvent;
@@ -98,6 +105,9 @@ private:
 	// Camera
 	static GameObject* cameraFocusObject;
 
+	static std::vector<Vector2> points;
+	static SDL_Texture* debugCameraTexture;
+
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
@@ -107,6 +117,7 @@ private:
 	static void HandleEvent();
 	static void UpdateEvent();
 	static void UpdateCamera();
+	static void DebugDraw();
 
 	static ActionState* FindKeyState(SDL_Keycode keycode);
 	static ActionState* FindMouseButtonState(MouseButton mouseButton);

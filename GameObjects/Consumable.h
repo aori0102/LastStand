@@ -6,25 +6,17 @@
 
 #pragma once
 
-#include <unordered_map>
+#include <Item.h>
 
-class AnimationClip;
+class Player;
 
-enum class AnimationIndex {
+class Consumable : public Item {
 
-	Player_Idle,
-	Player_Pistol_Idle,
-	Player_Pistol_Shoot,
-	Player_Shotgun_Idle,
-	Player_Shotgun_Shoot,
-	Player_MedKit,
-	Player_Item_Transition,
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
-	Total,
-
-};
-
-class AnimationManager {
+private:
 
 	/// ----------------------------------
 	/// FIELDS
@@ -32,24 +24,22 @@ class AnimationManager {
 
 private:
 
-	static AnimationManager* instance;
+	float health;
+	float stamina;
 
-	std::unordered_map<AnimationIndex, AnimationClip*> animationClipMap;
+	friend class ItemManager;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-private:
-
-	void InitializeAnimation();
-
 public:
 
-	AnimationManager();
-
-	static AnimationManager* Instance();
-
-	AnimationClip* GetAnimationClip(AnimationIndex animationIndex);
+	Consumable(ItemIndex initItemIndex);
+	bool TryUse(Player* player) override; 
+	void Equip() override;
+	void Dequip() override;
+	float GetHealth() const;
+	float GetStamina() const;
 
 };

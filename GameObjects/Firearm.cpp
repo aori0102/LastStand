@@ -20,8 +20,8 @@ const float Firearm::RESERVE_AMMO_LABEL_OFFSET = 0.0f;
 const Vector2 Firearm::AMMO_FRAME_POSTIION = Vector2(1119.0f, 660.0f);
 const Vector2 Firearm::AMMO_ICON_POSTIION = Vector2(1130.0f, 676.0f);
 
-const std::unordered_map<FirearmID, std::unordered_map<FirearmAttributeIndex, float>> Firearm::BASE_ATTRIBUTE_MAP = {
-	{ FirearmID::M1911, {
+const std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, float>> Firearm::BASE_ATTRIBUTE_MAP = {
+	{ ItemIndex::Pistol_M1911, {
 		{ FirearmAttributeIndex::CriticalChance, 0.3f },
 		{ FirearmAttributeIndex::CriticalDamage, 1.0f },
 		{ FirearmAttributeIndex::Damage, 6.8f },
@@ -30,7 +30,7 @@ const std::unordered_map<FirearmID, std::unordered_map<FirearmAttributeIndex, fl
 		{ FirearmAttributeIndex::ReloadTime, 2.4f },
 		}
 	},
-	{ FirearmID::Beretta1301, {
+	{ ItemIndex::Shotgun_Beretta1301, {
 		{ FirearmAttributeIndex::CriticalChance, 0.3f },
 		{ FirearmAttributeIndex::CriticalDamage, 1.0f },
 		{ FirearmAttributeIndex::Damage, 4.7f },
@@ -40,13 +40,13 @@ const std::unordered_map<FirearmID, std::unordered_map<FirearmAttributeIndex, fl
 		}
 	},
 };
-const std::unordered_map<FirearmID, MediaObject> Firearm::FIREARM_ICON_INDEX_MAP = {
-	{ FirearmID::M1911, MediaObject::Gun_M1911 },
-	{ FirearmID::Beretta1301, MediaObject::Gun_Beretta1301 },
+const std::unordered_map<ItemIndex, MediaObject> Firearm::FIREARM_ICON_INDEX_MAP = {
+	{ ItemIndex::Pistol_M1911, MediaObject::Gun_M1911 },
+	{ ItemIndex::Shotgun_Beretta1301, MediaObject::Gun_Beretta1301 },
 };
-const std::unordered_map<FirearmID, std::string> Firearm::FIREARM_NAME_MAP = {
-	{ FirearmID::M1911, "M1911"},
-	{ FirearmID::Beretta1301, "Beretta 1301"},
+const std::unordered_map<ItemIndex, std::string> Firearm::FIREARM_NAME_MAP = {
+	{ ItemIndex::Pistol_M1911, "M1911" },
+	{ ItemIndex::Shotgun_Beretta1301, "Beretta 1301" },
 };
 
 /// ----------------------------------
@@ -150,22 +150,20 @@ void Firearm::HideUI() {
 
 }
 
-Firearm::Firearm(FirearmID initFirearmID) {
+Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
 
-	firearmID = initFirearmID;
-
-	if (BASE_ATTRIBUTE_MAP.find(firearmID) == BASE_ATTRIBUTE_MAP.end())
+	if (BASE_ATTRIBUTE_MAP.find(GetIndex()) == BASE_ATTRIBUTE_MAP.end())
 		throw std::exception("Firearm: FIrearm data does not exist");
 
 	lastReloadTick = 0.0f;
 	lastShootTick = 0.0f;
 	isReloading = false;
 	stopReload = false;
-	firearmName = FIREARM_NAME_MAP.at(firearmID);
+	firearmName = FIREARM_NAME_MAP.at(GetIndex());
 
-	switch (firearmID) {
+	switch (GetIndex()) {
 
-	case FirearmID::Beretta1301:
+	case ItemIndex::Shotgun_Beretta1301:
 		reloadType = ReloadType::PerAmmo;
 		break;
 
@@ -182,7 +180,7 @@ Firearm::Firearm(FirearmID initFirearmID) {
 		{ FirearmAttributeIndex::MagazineCapacity, 1.0f },
 		{ FirearmAttributeIndex::ReloadTime , 1.0f },
 	};
-	attributeMap = BASE_ATTRIBUTE_MAP.at(firearmID);
+	attributeMap = BASE_ATTRIBUTE_MAP.at(GetIndex());
 
 	currentAmmo = 0;
 	reserveAmmo = 120;
@@ -249,7 +247,7 @@ void Firearm::Update() {
 void Firearm::ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount) {
 
 	attributeMultiplierMap.at(attributeIndex) = amount;
-	attributeMap.at(attributeIndex) = BASE_ATTRIBUTE_MAP.at(firearmID).at(attributeIndex) * amount;
+	attributeMap.at(attributeIndex) = BASE_ATTRIBUTE_MAP.at(GetIndex()).at(attributeIndex) * amount;
 
 }
 
@@ -266,6 +264,18 @@ void Firearm::Reload() {
 
 }
 
+void Firearm::Equip() {
+
+	ShowUI();
+
+}
+
+void Firearm::Dequip() {
+
+	HideUI();
+
+}
+
 float Firearm::GetAttribute(FirearmAttributeIndex attributeIndex) {
 
 	return attributeMap.at(attributeIndex);
@@ -274,6 +284,4 @@ float Firearm::GetAttribute(FirearmAttributeIndex attributeIndex) {
 
 std::string Firearm::GetName() const { return firearmName; }
 
-FirearmID Firearm::GetFirearmID() const { return firearmID; }
-
-Sprite* Firearm::GetIconSprite() const { return MediaManager::Instance()->GetObjectSprite(FIREARM_ICON_INDEX_MAP.at(firearmID)); }
+Sprite* Firearm::GetIconSprite() const { return MediaManager::Instance()->GetObjectSprite(FIREARM_ICON_INDEX_MAP.at(GetIndex())); }

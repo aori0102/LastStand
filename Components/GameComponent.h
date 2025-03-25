@@ -17,6 +17,7 @@
 #include <Type.h>
 
 class AnimationClip;
+class AnimationNode;
 class BoxCollider;
 class GameObject;
 class Item;
@@ -287,28 +288,6 @@ class AnimationController : public GameComponent {
 
 private:
 
-	struct AnimationNode;
-
-	struct AnimationTransition {
-
-		AnimationNode* to = nullptr;
-		std::function<bool()> condition = []() { return true; };
-
-		AnimationTransition(AnimationNode* initTo, std::function<bool()> initCondition)
-			: to(initTo), condition(initCondition) {}
-
-	};
-
-	struct AnimationNode {
-
-		AnimationClip* animationClip = nullptr;
-		std::vector<AnimationTransition*> transitionList = {};
-
-		AnimationNode(AnimationClip* initAnimationClip)
-			: animationClip(initAnimationClip), transitionList({}) {}
-
-	};
-
 	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
@@ -333,7 +312,7 @@ public:
 
 	AnimationController(GameObject* initOwner);
 
-	void AddAnimationClip(AnimationIndex animationIndex);
+	void AddAnimationClip(AnimationIndex animationIndex, bool isStateMachine = false);
 	void AddTransition(AnimationIndex from, AnimationIndex to, std::function<bool()> condition = []() { return true; });
 	void MakeDefault(AnimationIndex animationIndex);
 	void RenderCurrent(Vector2 position, Vector2 scale, float angle);

@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <unordered_map>
+
 class Item;
 enum class ItemIndex;
 
@@ -18,6 +20,7 @@ class ItemManager {
 private:
 
 	static ItemManager* instance;
+	std::unordered_map<ItemIndex, Item*> prefabMap;
 
 	/// ----------------------------------
 	/// METHODS
