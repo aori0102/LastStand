@@ -11,6 +11,20 @@
 
 enum class ItemIndex;
 
+class SlotNode {
+
+public:
+
+	SlotNode* nextSlot;
+	GameObject* frame;
+	GameObject* cell;
+	GameObject* visual;
+	ItemIndex itemIndex;
+
+	SlotNode();
+
+};
+
 class ItemSelectionUI : public GameObject {
 
 	/// ----------------------------------
@@ -18,16 +32,6 @@ class ItemSelectionUI : public GameObject {
 	/// ----------------------------------
 
 private:
-
-	struct SlotNode {
-
-		SlotNode* nextSlot = nullptr;
-		GameObject* frame = nullptr;
-		GameObject* cell = nullptr;
-		GameObject* visual = nullptr;
-		ItemIndex itemIndex = ItemIndex::None;
-
-	};
 
 	static const int MAX_COLUMN;
 	static const Vector2 CELL_SIZE;

@@ -22,6 +22,8 @@
 #include <MediaManager.h>
 #include <Player.h>
 #include <PlayerStatistic.h>
+#include <SkillInfoUI.h>
+#include <SkillList.h>
 #include <Texture.h>
 #include <Type.h>
 
@@ -39,10 +41,10 @@ void Shop::Show() {
 
 	uiElementMap.at(UIElementIndex::Shop_Background)->Enable();
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->Enable();
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Skill)->Enable();
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->Enable();
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm_Label)->Enable();
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee_Label)->Enable();
+	uiElementMap.at(UIElementIndex::Shop_Navigation_Skill_Label)->Enable();
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->Enable();
 
 	ShowCurrentMenu();
@@ -80,7 +82,13 @@ void Shop::ShowCurrentMenu() {
 
 		break;
 
-	case ShopMenuIndex::Melee:
+	case ShopMenuIndex::Skill:
+
+		uiElementMap.at(UIElementIndex::Skill_List)->Enable();
+		uiElementMap.at(UIElementIndex::Skill_InfoBoard)->Enable();
+		uiElementMap.at(UIElementIndex::Skill_PointIcon)->Enable();
+		uiElementMap.at(UIElementIndex::Skill_PointLabel)->Enable();
+
 		break;
 
 	case ShopMenuIndex::Utility:
@@ -93,6 +101,7 @@ void Shop::ShowCurrentMenu() {
 		uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->Enable();
 		uiElementMap.at(UIElementIndex::Utility_ItemVisual)->Enable();
 		uiElementMap.at(UIElementIndex::Utility_ItemLabel)->Enable();
+		uiElementMap.at(UIElementIndex::Utility_ItemStackLabel)->Enable();
 
 		break;
 
@@ -124,7 +133,13 @@ void Shop::HideCurrentMenu() {
 
 		break;
 
-	case ShopMenuIndex::Melee:
+	case ShopMenuIndex::Skill:
+
+		uiElementMap.at(UIElementIndex::Skill_List)->Disable();
+		uiElementMap.at(UIElementIndex::Skill_InfoBoard)->Disable();
+		uiElementMap.at(UIElementIndex::Skill_PointIcon)->Disable();
+		uiElementMap.at(UIElementIndex::Skill_PointLabel)->Disable();
+
 		break;
 
 	case ShopMenuIndex::Utility:
@@ -137,6 +152,7 @@ void Shop::HideCurrentMenu() {
 		uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->Disable();
 		uiElementMap.at(UIElementIndex::Utility_ItemVisual)->Disable();
 		uiElementMap.at(UIElementIndex::Utility_ItemLabel)->Disable();
+		uiElementMap.at(UIElementIndex::Utility_ItemStackLabel)->Disable();
 
 		break;
 
@@ -148,44 +164,46 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- BACKGROUND ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Background] = new GameObject("Shop Background", Layer::Menu);
-	Image* background_image = uiElementMap.at(UIElementIndex::Shop_Background)->AddComponent<Image>();
-	background_image->showOnScreen = true;
-	background_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_Background), true);
-	background_image->transform->position = Math::SDLToC00(
+	GameObject* shopBackground = new GameObject("Shop Background", Layer::Menu);
+	Image* shopBackground_image = shopBackground->AddComponent<Image>();
+	shopBackground_image->showOnScreen = true;
+	shopBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_Background), true);
+	shopBackground_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Background),
-		background_image->transform->scale
+		shopBackground_image->transform->scale
 	);
-	uiElementMap.at(UIElementIndex::Shop_Background)->Render = [background_image]() {
-		background_image->Render();
+	shopBackground->Render = [shopBackground_image]() {
+		shopBackground_image->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Background] = shopBackground;
 
 	/// >>>
 	/// --- FIREARM NAVIGATION ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Navigation_Firearm] = new GameObject("Navigation Firearm", Layer::Menu);
-	Image* navigationFirearm_image = uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->AddComponent<Image>();
+	GameObject* navigationFirearm = new GameObject("Navigation Firearm", Layer::Menu);
+	Image* navigationFirearm_image = navigationFirearm->AddComponent<Image>();
 	navigationFirearm_image->showOnScreen = true;
 	navigationFirearm_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
 	navigationFirearm_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Firearm),
 		navigationFirearm_image->transform->scale
 	);
-	Button* navigationFirearm_button = uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->AddComponent<Button>();
+	Button* navigationFirearm_button = navigationFirearm->AddComponent<Button>();
 	navigationFirearm_button->backgroundColor = Color::WHITE;
 	navigationFirearm_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Firearm_Main);
 		return true;
 		};
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm)->Render = [navigationFirearm_image]() {
+	navigationFirearm->Render = [navigationFirearm_image]() {
 		navigationFirearm_image->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Navigation_Firearm] = navigationFirearm;
 
 	/// >>>
 	/// --- FIREARM NAVIGATION LABEL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Navigation_Firearm_Label] = new GameObject("Navigation Firearm Label", Layer::Menu);
-	Text* navigationFirearmLabel_text = uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm_Label)->AddComponent<Text>();
+	GameObject* navigationFirearmLabel = new GameObject("Navigation Firearm Label", Layer::Menu);
+	Text* navigationFirearmLabel_text = navigationFirearmLabel->AddComponent<Text>();
 	navigationFirearmLabel_text->LoadText(
 		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Firearm_Label),
 		Color::WHITE,
@@ -193,73 +211,77 @@ void Shop::InitializeUI() {
 	);
 	navigationFirearmLabel_text->showOnScreen = true;
 	navigationFirearmLabel_text->transform->position = navigationFirearm_image->transform->position;
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Firearm_Label)->Render = [navigationFirearmLabel_text]() {
+	navigationFirearmLabel->Render = [navigationFirearmLabel_text]() {
 		navigationFirearmLabel_text->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Navigation_Firearm_Label] = navigationFirearmLabel;
 
 	/// >>>
-	/// --- MELEE NAVIGATION ---
+	/// --- SKILL NAVIGATION ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Navigation_Melee] = new GameObject("Navigation Melee", Layer::Menu);
-	Image* navigationMelee_image = uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->AddComponent<Image>();
-	navigationMelee_image->showOnScreen = true;
-	navigationMelee_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
-	navigationMelee_image->transform->position = Math::SDLToC00(
-		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Melee),
-		navigationMelee_image->transform->scale
+	GameObject* navigationSkill = new GameObject("Navigation Melee", Layer::Menu);
+	Image* navigationSkill_image = navigationSkill->AddComponent<Image>();
+	navigationSkill_image->showOnScreen = true;
+	navigationSkill_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
+	navigationSkill_image->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Skill),
+		navigationSkill_image->transform->scale
 	);
-	Button* navigationMelee_button = uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->AddComponent<Button>();
+	Button* navigationMelee_button = navigationSkill->AddComponent<Button>();
 	navigationMelee_button->backgroundColor = Color::WHITE;
 	navigationMelee_button->OnClick = [this]() {
-		SwitchMenu(ShopMenuIndex::Melee);
+		SwitchMenu(ShopMenuIndex::Skill);
 		return true;
 		};
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee)->Render = [navigationMelee_image]() {
-		navigationMelee_image->Render();
+	navigationSkill->Render = [navigationSkill_image]() {
+		navigationSkill_image->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Navigation_Skill] = navigationSkill;
 
 	/// >>>
-	/// --- MELEE NAVIGATION LABEL ---
+	/// --- SKILL NAVIGATION LABEL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Navigation_Melee_Label] = new GameObject("Navigation Melee Label", Layer::Menu);
-	Text* navigationMeleeLabel_text = uiElementMap.at(UIElementIndex::Shop_Navigation_Melee_Label)->AddComponent<Text>();
-	navigationMeleeLabel_text->LoadText(
-		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Melee_Label),
+	GameObject* navigationSkillLabel = new GameObject("Navigation Melee Label", Layer::Menu);
+	Text* navigationSkillLabel_text = navigationSkillLabel->AddComponent<Text>();
+	navigationSkillLabel_text->LoadText(
+		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Skill_Label),
 		Color::WHITE,
-		UI_FONT_SIZE_MAP.at(UIElementIndex::Shop_Navigation_Melee_Label)
+		UI_FONT_SIZE_MAP.at(UIElementIndex::Shop_Navigation_Skill_Label)
 	);
-	navigationMeleeLabel_text->showOnScreen = true;
-	navigationMeleeLabel_text->transform->position = navigationMelee_image->transform->position;
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Melee_Label)->Render = [navigationMeleeLabel_text]() {
-		navigationMeleeLabel_text->Render();
+	navigationSkillLabel_text->showOnScreen = true;
+	navigationSkillLabel_text->transform->position = navigationSkill_image->transform->position;
+	navigationSkillLabel->Render = [navigationSkillLabel_text]() {
+		navigationSkillLabel_text->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Navigation_Skill_Label] = navigationSkillLabel;
 
 	/// >>>
 	/// --- UTILITY NAVIGATION ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Navigation_Utility] = new GameObject("Navigation Utility", Layer::Menu);
-	Image* navigationUtility_image = uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->AddComponent<Image>();
+	GameObject* navigationUtility = new GameObject("Navigation Utility", Layer::Menu);
+	Image* navigationUtility_image = navigationUtility->AddComponent<Image>();
 	navigationUtility_image->showOnScreen = true;
 	navigationUtility_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
 	navigationUtility_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Shop_Navigation_Utility),
 		navigationUtility_image->transform->scale
 	);
-	Button* navigationUtility_button = uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->AddComponent<Button>();
+	Button* navigationUtility_button = navigationUtility->AddComponent<Button>();
 	navigationUtility_button->backgroundColor = Color::WHITE;
 	navigationUtility_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Utility);
 		return true;
 		};
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility)->Render = [navigationUtility_image]() {
+	navigationUtility->Render = [navigationUtility_image]() {
 		navigationUtility_image->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Navigation_Utility] = navigationUtility;
 
 	/// >>>
 	/// --- UTILITY NAVIGATION LABEL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Shop_Navigation_Utility_Label] = new GameObject("Navigation Utility Label", Layer::Menu);
-	Text* navigationUtilityLabel_text = uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->AddComponent<Text>();
+	GameObject* navigationUtilityLabel = new GameObject("Navigation Utility Label", Layer::Menu);
+	Text* navigationUtilityLabel_text = navigationUtilityLabel->AddComponent<Text>();
 	navigationUtilityLabel_text->LoadText(
 		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Utility_Label),
 		Color::WHITE,
@@ -267,104 +289,108 @@ void Shop::InitializeUI() {
 	);
 	navigationUtilityLabel_text->showOnScreen = true;
 	navigationUtilityLabel_text->transform->position = navigationUtility_image->transform->position;
-	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->Render = [navigationUtilityLabel_text]() {
+	navigationUtilityLabel->Render = [navigationUtilityLabel_text]() {
 		navigationUtilityLabel_text->Render();
 		};
+	uiElementMap[UIElementIndex::Shop_Navigation_Utility_Label] = navigationUtilityLabel;
 
 	/// >>>
 	/// --- DAMAGE UPGRADE ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Damage] = new FirearmUpgradeUIGroup("Damage", FirearmAttributeIndex::Damage);
-	FirearmUpgradeUIGroup* upgradeDamageUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Damage)->As<FirearmUpgradeUIGroup>();
+	FirearmUpgradeUIGroup* upgradeDamageUIGroup = new FirearmUpgradeUIGroup("Damage", FirearmAttributeIndex::Damage);
 	upgradeDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::Damage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 	upgradeDamageUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::Damage)->NextUpgradeCost());
 	upgradeDamageUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Damage] = upgradeDamageUIGroup;
 
 	/// >>>
 	/// --- CRITICAL DAMAGE UPGRADE ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_CriticalDamage] = new FirearmUpgradeUIGroup("Critical Damage", FirearmAttributeIndex::CriticalDamage);
-	FirearmUpgradeUIGroup* upgradeCriticalDamageUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage)->As<FirearmUpgradeUIGroup>();
+	FirearmUpgradeUIGroup* upgradeCriticalDamageUIGroup = new FirearmUpgradeUIGroup("Critical Damage", FirearmAttributeIndex::CriticalDamage);
 	upgradeCriticalDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 	upgradeCriticalDamageUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeCost());
 	upgradeCriticalDamageUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_CriticalDamage] = upgradeCriticalDamageUIGroup;
 
 	/// >>>
 	/// --- FIRERATE UPGRADE ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Firerate] = new FirearmUpgradeUIGroup("Firerate", FirearmAttributeIndex::Firerate);
-	FirearmUpgradeUIGroup* upgradeFirerateUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_Firerate)->As<FirearmUpgradeUIGroup>();
+	FirearmUpgradeUIGroup* upgradeFirerateUIGroup = new FirearmUpgradeUIGroup("Firerate", FirearmAttributeIndex::Firerate);
 	upgradeFirerateUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::Firerate)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 	upgradeFirerateUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::Firerate)->NextUpgradeCost());
 	upgradeFirerateUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Firerate] = upgradeFirerateUIGroup;
 
 	/// >>>
 	/// --- MAGAZINE CAPACITY UPGRADE ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity] = new FirearmUpgradeUIGroup("Magazine capacity", FirearmAttributeIndex::MagazineCapacity);
-	FirearmUpgradeUIGroup* upgradeMagazineCapacityUIGroup = uiElementMap.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity)->As<FirearmUpgradeUIGroup>();
+	FirearmUpgradeUIGroup* upgradeMagazineCapacityUIGroup = new FirearmUpgradeUIGroup("Magazine capacity", FirearmAttributeIndex::MagazineCapacity);
 	upgradeMagazineCapacityUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 	upgradeMagazineCapacityUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeCost());
 	upgradeMagazineCapacityUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
+	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity] = upgradeMagazineCapacityUIGroup;
 
 	/// >>>
 	/// --- FIREARM VIEWPORT ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_GunViewport] = new GameObject("Firearm Viewport", Layer::Menu);
-	Image* firearmViewport_image = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->AddComponent<Image>();
+	GameObject* firearmViewport = new GameObject("Firearm Viewport", Layer::Menu);
+	Image* firearmViewport_image = firearmViewport->AddComponent<Image>();
 	firearmViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmViewport), true);
 	firearmViewport_image->showOnScreen = true;
 	firearmViewport_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_GunViewport),
 		firearmViewport_image->transform->scale
 	);
-	Button* firearmViewport_button = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->AddComponent<Button>();
+	Button* firearmViewport_button = firearmViewport->AddComponent<Button>();
 	firearmViewport_button->backgroundColor = Color::TRANSPARENT;
 	firearmViewport_button->OnClick = [this]() {
 		SwitchMenu(ShopMenuIndex::Firearm_Selection);
 		return true;
 		};
-	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewport)->Render = [firearmViewport_image]() {
+	firearmViewport->Render = [firearmViewport_image]() {
 		firearmViewport_image->Render();
 		};
+	uiElementMap[UIElementIndex::Firearm_Main_GunViewport] = firearmViewport;
 
 	/// >>>
 	/// --- FIREARM VIEWPORT VISUAL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_GunViewportVisual] = new GameObject("Firearm Viewport Visual", Layer::Menu);
-	Image* firearmViewportVisual_image = uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->AddComponent<Image>();
+	GameObject* firearmViewportVisual = new GameObject("Firearm Viewport Visual", Layer::Menu);
+	Image* firearmViewportVisual_image = firearmViewportVisual->AddComponent<Image>();
 	firearmViewportVisual_image->showOnScreen = true;
 	firearmViewportVisual_image->transform->position = firearmViewport_image->transform->position;
-	uiElementMap.at(UIElementIndex::Firearm_Main_GunViewportVisual)->Render = [firearmViewportVisual_image]() {
+	firearmViewportVisual->Render = [firearmViewportVisual_image]() {
 		firearmViewportVisual_image->Render();
 		};
+	uiElementMap[UIElementIndex::Firearm_Main_GunViewportVisual] = firearmViewportVisual;
 
 	/// >>>
 	/// --- FIREARM LABEL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_GunLabel] = new GameObject("Firearm Label", Layer::Menu);
-	Text* firearmLabel_text = uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->AddComponent<Text>();
+	GameObject* firearmLabel = new GameObject("Firearm Label", Layer::Menu);
+	Text* firearmLabel_text = firearmLabel->AddComponent<Text>();
 	firearmLabel_text->LoadText("<Gun Label>", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Firearm_Main_GunLabel));
 	firearmLabel_text->showOnScreen = true;
 	firearmLabel_text->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_GunLabel),
 		UI_ELEMENT_SCALE_MAP.at(UIElementIndex::Firearm_Main_GunLabel)
 	);
-	uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->Render = [firearmLabel_text]() {
+	firearmLabel->Render = [firearmLabel_text]() {
 		firearmLabel_text->Render();
 		};
+	uiElementMap[UIElementIndex::Firearm_Main_GunLabel] = firearmLabel;
 
 	/// >>>
 	/// --- FIREARM SELECTION GRID ---
@@ -379,17 +405,18 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ATTRIBUTE FRAME ---
 	/// >>>
-	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Frame] = new GameObject("Attribute frame", Layer::Menu);
-	Image* firearmAttributeFrame_image = uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->AddComponent<Image>();
+	GameObject* firearmAttributeFrame = new GameObject("Attribute frame", Layer::Menu);
+	Image* firearmAttributeFrame_image = firearmAttributeFrame->AddComponent<Image>();
 	firearmAttributeFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmAttributeFrame), true);
 	firearmAttributeFrame_image->showOnScreen = true;
 	firearmAttributeFrame_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Frame),
 		firearmAttributeFrame_image->transform->scale
 	);
-	uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Frame)->Render = [firearmAttributeFrame_image]() {
+	firearmAttributeFrame->Render = [firearmAttributeFrame_image]() {
 		firearmAttributeFrame_image->Render();
 		};
+	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Frame] = firearmAttributeFrame;
 
 	/// >>>
 	/// --- ATTRIBUTE CONTENT --- 
@@ -401,54 +428,72 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- UTILITY INFO BOARD ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_InfoBoard] = new GameObject("Utility game object", Layer::Menu);
-	Image* utilityInfoBoard_image = uiElementMap.at(UIElementIndex::Utility_InfoBoard)->AddComponent<Image>();
+	GameObject* utilityInfoBoard = new GameObject("Utility game object", Layer::Menu);
+	Image* utilityInfoBoard_image = utilityInfoBoard->AddComponent<Image>();
 	utilityInfoBoard_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityInfoBoard), true);
 	utilityInfoBoard_image->showOnScreen = true;
 	utilityInfoBoard_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_InfoBoard),
 		utilityInfoBoard_image->transform->scale
 	);
-	uiElementMap.at(UIElementIndex::Utility_InfoBoard)->Render = [utilityInfoBoard_image]() {
+	utilityInfoBoard->Render = [utilityInfoBoard_image]() {
 		utilityInfoBoard_image->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_InfoBoard] = utilityInfoBoard;
 
 	/// >>>
 	/// --- UTILITY ITEM VIEWPORT ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_ItemViewport] = new GameObject("Utility viewport", Layer::Menu);
-	Image* utilityItemViewport_image = uiElementMap.at(UIElementIndex::Utility_ItemViewport)->AddComponent<Image>();
+	GameObject* utilityItemViewport = new GameObject("Utility viewport", Layer::Menu);
+	Image* utilityItemViewport_image = utilityItemViewport->AddComponent<Image>();
 	utilityItemViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemViewport), true);
 	utilityItemViewport_image->showOnScreen = true;
 	utilityItemViewport_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemViewport),
 		utilityItemViewport_image->transform->scale
 	);
-	uiElementMap.at(UIElementIndex::Utility_ItemViewport)->Render = [utilityItemViewport_image]() {
+	utilityItemViewport->Render = [utilityItemViewport_image]() {
 		utilityItemViewport_image->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_ItemViewport] = utilityItemViewport;
+
+	/// >>>
+	/// --- UTILITY ITEM STACK LABEL ---
+	/// >>>
+	GameObject* utilityItemStackLabel = new GameObject("Utility Item Stack Label", Layer::Menu);
+	Text* utilityItemStackLabel_text = utilityItemStackLabel->AddComponent<Text>();
+	utilityItemStackLabel_text->LoadText("", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemStackLabel));
+	utilityItemStackLabel_text->showOnScreen = true;
+	Align::Right(utilityItemStackLabel->transform, utilityItemViewport->transform);
+	Align::Bottom(utilityItemStackLabel->transform, utilityItemViewport->transform);
+	utilityItemStackLabel->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_ItemStackLabel);
+	utilityItemStackLabel->Render = [utilityItemStackLabel_text]() {
+		utilityItemStackLabel_text->Render();
+		};
+	uiElementMap[UIElementIndex::Utility_ItemStackLabel] = utilityItemStackLabel;
 
 	/// >>>
 	/// --- UTILITY BUY BUTTON ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_BuyButton] = new GameObject("Utility buy button", Layer::Menu);
-	Image* utilityBuyButton_image = uiElementMap.at(UIElementIndex::Utility_BuyButton)->AddComponent<Image>();
+	GameObject* utilityBuyButton = new GameObject("Utility buy button", Layer::Menu);
+	Image* utilityBuyButton_image = utilityBuyButton->AddComponent<Image>();
 	utilityBuyButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityBuyButton), true);
 	utilityBuyButton_image->showOnScreen = true;
 	utilityBuyButton_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_BuyButton),
 		utilityBuyButton_image->transform->scale
 	);
-	Button* utilityInfoBoard_button = uiElementMap.at(UIElementIndex::Utility_BuyButton)->AddComponent<Button>();
+	Button* utilityInfoBoard_button = utilityBuyButton->AddComponent<Button>();
 	utilityInfoBoard_button->backgroundColor = Color::TRANSPARENT;
 	utilityInfoBoard_button->OnClick = [utilityInfoBoard_button]() {
 		Shop::Instance()->BuyItem();
 		return true;
 		};
-	uiElementMap.at(UIElementIndex::Utility_BuyButton)->Render = [utilityBuyButton_image]() {
+	utilityBuyButton->Render = [utilityBuyButton_image]() {
 		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
 			utilityBuyButton_image->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_BuyButton] = utilityBuyButton;
 
 	/// >>>
 	/// --- ITEM SELECTION GRID ---
@@ -456,67 +501,164 @@ void Shop::InitializeUI() {
 	ItemSelectionUI* itemSelectionUI = new ItemSelectionUI;
 	itemSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemSelectionGrid));
 	itemSelectionUI->AddItem(ItemIndex::MedKit);
-	itemSelectionUI->AddItem(ItemIndex::Shotgun_Beretta1301);
+	itemSelectionUI->AddItem(ItemIndex::Ammo_Slug);
+	itemSelectionUI->AddItem(ItemIndex::Ammo_9mm);
 	uiElementMap[UIElementIndex::Utility_ItemSelectionGrid] = itemSelectionUI;
 
 	/// >>>
 	/// --- MONEY ICON ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_MoneyIcon] = new GameObject("Utility money icon", Layer::Menu);
-	Image* utilityMoneyIcon_image = uiElementMap.at(UIElementIndex::Utility_MoneyIcon)->AddComponent<Image>();
+	GameObject* utilityMoneyIcon = new GameObject("Utility money icon", Layer::Menu);
+	Image* utilityMoneyIcon_image = utilityMoneyIcon->AddComponent<Image>();
 	utilityMoneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
 	utilityMoneyIcon_image->showOnScreen = true;
 	utilityMoneyIcon_image->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_MoneyIcon),
 		utilityMoneyIcon_image->transform->scale
 	);
-	uiElementMap.at(UIElementIndex::Utility_MoneyIcon)->Render = [utilityMoneyIcon_image]() {
+	utilityMoneyIcon->Render = [utilityMoneyIcon_image]() {
 		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
 			utilityMoneyIcon_image->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_MoneyIcon] = utilityMoneyIcon;
 
 	/// >>>
 	/// --- MONEY LABEL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_MoneyLabel] = new GameObject("Utility money label", Layer::Menu);
-	Text* utilityMoneyLabel_text = uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->AddComponent<Text>();
+	GameObject* utilityMoneyLabel = new GameObject("Utility money label", Layer::Menu);
+	Text* utilityMoneyLabel_text = utilityMoneyLabel->AddComponent<Text>();
 	utilityMoneyLabel_text->LoadText("12,000", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_MoneyLabel));
 	utilityMoneyLabel_text->showOnScreen = true;
 	Align::Left(utilityMoneyLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_BuyButton)->transform);
 	Align::MiddleVertically(utilityMoneyLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_BuyButton)->transform);
 	utilityMoneyLabel_text->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_MoneyLabel);
-	uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->Render = [utilityMoneyLabel_text]() {
+	utilityMoneyLabel->Render = [utilityMoneyLabel_text]() {
 		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
 			utilityMoneyLabel_text->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_MoneyLabel] = utilityMoneyLabel;
 
 	/// >>>
 	/// --- ITEM VISUAL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_ItemVisual] = new GameObject("Utility money icon", Layer::Menu);
-	Image* utilityItemVisual_image = uiElementMap.at(UIElementIndex::Utility_ItemVisual)->AddComponent<Image>();
+	GameObject* utilityItemVisual = new GameObject("Utility money icon", Layer::Menu);
+	Image* utilityItemVisual_image = utilityItemVisual->AddComponent<Image>();
 	utilityItemVisual_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
 	utilityItemVisual_image->showOnScreen = true;
 	utilityItemVisual_image->transform->position = uiElementMap.at(UIElementIndex::Utility_ItemViewport)->transform->position;
-	uiElementMap.at(UIElementIndex::Utility_ItemVisual)->Render = [utilityItemVisual_image]() {
+	utilityItemVisual->Render = [utilityItemVisual_image]() {
 		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
 			utilityItemVisual_image->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_ItemVisual] = utilityItemVisual;
 
 	/// >>>
 	/// --- ITEM LABEL ---
 	/// >>>
-	uiElementMap[UIElementIndex::Utility_ItemLabel] = new GameObject("Utility item label", Layer::Menu);
-	Text* utilityItemLabel_text = uiElementMap.at(UIElementIndex::Utility_ItemLabel)->AddComponent<Text>();
+	GameObject* utilityItemLabel = new GameObject("Utility item label", Layer::Menu);
+	Text* utilityItemLabel_text = utilityItemLabel->AddComponent<Text>();
 	utilityItemLabel_text->LoadText("<Item Name>", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemLabel));
 	utilityItemLabel_text->showOnScreen = true;
 	Align::Bottom(utilityItemLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_ItemViewport)->transform);
 	Align::MiddleHorizontally(utilityItemLabel_text->transform, uiElementMap.at(UIElementIndex::Utility_ItemViewport)->transform);
 	utilityItemLabel_text->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_ItemLabel);
-	uiElementMap.at(UIElementIndex::Utility_ItemLabel)->Render = [utilityItemLabel_text]() {
+	utilityItemLabel->Render = [utilityItemLabel_text]() {
 		if (Shop::Instance()->GetSelectedItem() != ItemIndex::None)
 			utilityItemLabel_text->Render();
 		};
+	uiElementMap[UIElementIndex::Utility_ItemLabel] = utilityItemLabel;
+
+	/// >>>
+	/// --- SKILL INFO BOARD ---
+	/// >>>
+	uiElementMap[UIElementIndex::Skill_InfoBoard] = new SkillInfoUI;
+
+	/// >>>
+	/// --- SKILL LIST ---
+	/// >>>
+	SkillList* skillList = new SkillList;
+	skillList->AddSkill(SkillListIndex::First, new SkillNode{
+		.skillPoint = 1,
+		.value = 0.1f,
+		.name = "Health I",
+		.description = "Increase Max HP by 10%",
+		});
+	skillList->AddSkill(SkillListIndex::First, new SkillNode{
+		.skillPoint = 2,
+		.value = 0.1f,
+		.name = "Health II",
+		.description = "Increase Max HP by 10%",
+		});
+	skillList->AddSkill(SkillListIndex::First, new SkillNode{
+		.skillPoint = 3,
+		.value = 0.1f,
+		.name = "Health III",
+		.description = "Increase Max HP by 10%",
+		});
+	skillList->AddSkill(SkillListIndex::Second, new SkillNode{
+		.skillPoint = 3,
+		.value = 1.0f / 1.2f,
+		.name = "Quick Hand",
+		.description = "Increase reload speed by 20%",
+		});
+	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+		.skillPoint = 1,
+		.value = 0.05f,
+		.name = "Accuracy I",
+		.description = "Increase critical chance by 5%",
+		});
+	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+		.skillPoint = 2,
+		.value = 0.05f,
+		.name = "Accuracy II",
+		.description = "Increase critical chance by 5%",
+		});
+	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+		.skillPoint = 3,
+		.value = 0.05f,
+		.name = "Accuracy III",
+		.description = "Increase critical chance by 5%",
+		});
+	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+		.skillPoint = 4,
+		.value = 0.05f,
+		.name = "Accuracy IV",
+		.description = "Increase critical chance by 5%",
+		});
+	skillList->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_List));
+	uiElementMap[UIElementIndex::Skill_List] = skillList;
+
+	/// >>>
+	/// --- SKILL POINT ICON ---
+	/// >>>
+
+	GameObject* skillPointIcon = new GameObject("Skill Point Icon", Layer::Menu);
+	Image* skillPointIcon_image = skillPointIcon->AddComponent<Image>();
+	skillPointIcon_image->showOnScreen = true;
+	skillPointIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_SkillPointIcon), true);
+	skillPointIcon->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_PointIcon), skillPointIcon->transform->scale
+	);
+	skillPointIcon->Render = [skillPointIcon_image]() {
+		skillPointIcon_image->Render();
+		};
+	uiElementMap[UIElementIndex::Skill_PointIcon] = skillPointIcon;
+
+	/// >>>
+	/// --- SKILL POINT LABEL ---
+	/// >>>
+
+	GameObject* skillPointLabel = new GameObject("Skill Point Label", Layer::Menu);
+	Text* skillPointLabel_text = skillPointLabel->AddComponent<Text>();
+	skillPointLabel_text->showOnScreen = true;
+	skillPointLabel_text->LoadText("0", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Skill_PointLabel));
+	skillPointLabel->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_PointLabel), skillPointLabel->transform->scale
+	);
+	skillPointLabel->Render = [skillPointLabel_text]() {
+		skillPointLabel_text->Render();
+		};
+	uiElementMap[UIElementIndex::Skill_PointLabel] = skillPointLabel;
 
 }
 
@@ -576,8 +718,8 @@ Shop::UIElementIndex Shop::GetUIElementIndex(ShopMenuIndex shopMenuIndex) {
 		return UIElementIndex::Shop_Navigation_Firearm;
 		break;
 
-	case ShopMenuIndex::Melee:
-		return UIElementIndex::Shop_Navigation_Melee;
+	case ShopMenuIndex::Skill:
+		return UIElementIndex::Shop_Navigation_Skill;
 		break;
 
 	case ShopMenuIndex::Utility:
@@ -710,6 +852,7 @@ void Shop::SelectItem(ItemIndex itemIndex) {
 
 	currentItemIndex = itemIndex;
 
+	// Update viewport
 	ItemManager::Instance()->LinkItemIcon(itemIndex, uiElementMap.at(UIElementIndex::Utility_ItemVisual)->GetComponent<Image>());
 	uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->GetComponent<Text>()->LoadText(
 		std::to_string(ItemManager::Instance()->GetItemPrice(itemIndex)), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_MoneyLabel)
@@ -717,9 +860,22 @@ void Shop::SelectItem(ItemIndex itemIndex) {
 	Align::Left(uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->transform, uiElementMap.at(UIElementIndex::Utility_BuyButton)->transform);
 	uiElementMap.at(UIElementIndex::Utility_MoneyLabel)->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_MoneyLabel);
 
+	// Update label
 	uiElementMap.at(UIElementIndex::Utility_ItemLabel)->GetComponent<Text>()->LoadText(
 		ItemManager::Instance()->GetItemName(itemIndex), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemLabel)
 	);
+
+	// Update stack label
+	GameObject* itemStackLabel = uiElementMap.at(UIElementIndex::Utility_ItemStackLabel);
+	GameObject* viewport = uiElementMap.at(UIElementIndex::Utility_ItemViewport);
+	itemStackLabel->GetComponent<Text>()->LoadText(
+		UI_LABEL_MAP.at(UIElementIndex::Utility_ItemStackLabel) + std::to_string(ItemManager::Instance()->GetItemShopStack(itemIndex)),
+		Color::WHITE,
+		UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemStackLabel)
+	);
+	Align::Right(itemStackLabel->transform, viewport->transform);
+	Align::Bottom(itemStackLabel->transform, viewport->transform);
+	itemStackLabel->transform->position += UI_ELEMENT_OFFSET_MAP.at(UIElementIndex::Utility_ItemStackLabel);
 
 }
 
@@ -731,7 +887,34 @@ void Shop::BuyItem() {
 	if (!PlayerStatistic::Instance()->TrySpendMoney(ItemManager::Instance()->GetItemPrice(currentItemIndex)))
 		return;
 
-	Player::Instance()->GiveItem(currentItemIndex);
+	Player::Instance()->GiveItem(currentItemIndex, ItemManager::Instance()->GetItemShopStack(currentItemIndex));
+
+}
+
+void Shop::SelectSkillNode(SkillNode* skillNode) {
+
+	uiElementMap.at(UIElementIndex::Skill_InfoBoard)->As<SkillInfoUI>()->UpdateSkillInfo(skillNode);
+
+}
+
+void Shop::BuySkillNode() {
+
+	SkillList* skillList = uiElementMap.at(UIElementIndex::Skill_List)->As<SkillList>();
+
+	if (PlayerStatistic::Instance()->TryConsumeSkillPoint(skillList->GetCurrentSkillCost()))
+		skillList->UpgradeSelected();
+
+}
+
+void Shop::UpdateSkillPoint(int amount) {
+
+	GameObject* skillPointLabel = uiElementMap.at(UIElementIndex::Skill_PointLabel);
+	skillPointLabel->GetComponent<Text>()->LoadText(
+		std::to_string(amount), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Skill_PointLabel)
+	);
+	skillPointLabel->transform->position = Math::SDLToC00(
+		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_PointLabel), skillPointLabel->transform->scale
+	);
 
 }
 

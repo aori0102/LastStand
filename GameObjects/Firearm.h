@@ -14,6 +14,7 @@
 class Player;
 class Sprite;
 enum class MediaObject;
+enum class AmmunitionID;
 
 enum class FirearmAttributeIndex {
 
@@ -33,6 +34,16 @@ enum class ReloadType {
 
 };
 
+struct FirearmInfo {
+
+	AmmunitionID ammunitionID;
+	MediaObject iconIndex;
+	ReloadType reloadType;
+	std::string name;
+	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
+
+};
+
 class Firearm : public GameObject, public Item {
 
 	/// ----------------------------------
@@ -47,11 +58,9 @@ private:
 	static const Vector2 AMMO_FRAME_POSTIION;
 	static const Vector2 AMMO_ICON_POSTIION;
 
-protected:
+public:
 
-	static const std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, float>> BASE_ATTRIBUTE_MAP;
-	static const std::unordered_map<ItemIndex, MediaObject> FIREARM_ICON_INDEX_MAP;
-	static const std::unordered_map<ItemIndex, std::string> FIREARM_NAME_MAP;
+	static const std::unordered_map<ItemIndex, FirearmInfo> BASE_FIREARM_INFO_MAP;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -60,6 +69,8 @@ protected:
 private:
 
 	// Logic handling
+	int currentAmmo;
+	int previousReverseAmmo;
 	float lastReloadTick;
 	float lastShootTick;
 	bool isReloading;
@@ -76,8 +87,6 @@ private:
 
 protected:
 
-	int currentAmmo;
-	int reserveAmmo;
 	std::unordered_map<FirearmAttributeIndex, float> attributeMultiplierMap;
 	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 
@@ -105,6 +114,7 @@ public:
 	void Reload();
 	void Equip() override;
 	void Dequip() override;
+	void UpdateReserveLabel();
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
 	std::string GetName() const;
 

@@ -20,6 +20,7 @@ enum class MediaObject {
 enum class MediaUI {
 
 	Icon_MoneyIcon,
+	Icon_SkillPointIcon,
 	Firearm_AmmoFrame,
 	Firearm_AmmoIcon,
 	Status_BarBackground,
@@ -46,6 +47,16 @@ enum class MediaUI {
 	Shop_UtilityItemBar,
 	Shop_UtilityItemCell,
 	Shop_UtilityItemViewport,
+	Shop_SkillNode,
+	Shop_SkillNode_Selected,
+	Shop_SkillNode_Acquired,
+	Shop_SkillConnector,
+	Shop_SkillInfoBoard,
+	Shop_SkillInfoBoardUnselected,
+	Shop_SkillIconFrame,
+	Shop_SkillBuyButton,
+	HotBar_Selection,
+	HotBar_Slot,
 
 };
 
@@ -85,6 +96,7 @@ private:
 		{ MediaUI::Status_HealthSymbol, "Status\\HealthSymbol" },
 		{ MediaUI::Status_LevelFrame, "Status\\LevelFrame" },
 		{ MediaUI::Icon_MoneyIcon, "Icon\\MoneyIcon" },
+		{ MediaUI::Icon_SkillPointIcon, "Icon\\SkillPointIcon" },
 		{ MediaUI::Status_StaminaBar, "Status\\StaminaBar" },
 		{ MediaUI::Status_StaminaSymbol, "Status\\StaminaSymbol" },
 		{ MediaUI::WaveInfo_NextWaveButton, "WaveInfo\\NextWaveButton" },
@@ -104,6 +116,16 @@ private:
 		{ MediaUI::Shop_UtilityItemBar, "Shop\\UtilityItemBar" },
 		{ MediaUI::Shop_UtilityItemCell, "Shop\\UtilityItemCell" },
 		{ MediaUI::Shop_UtilityItemViewport, "Shop\\UtilityItemViewport" },
+		{ MediaUI::Shop_SkillNode, "Shop\\SkillNode" },
+		{ MediaUI::Shop_SkillNode_Selected, "Shop\\SkillNodeSelected" },
+		{ MediaUI::Shop_SkillNode_Acquired, "Shop\\SkillNodeAcquired" },
+		{ MediaUI::Shop_SkillConnector, "Shop\\SkillConnector" },
+		{ MediaUI::Shop_SkillBuyButton, "Shop\\SkillBuyButton" },
+		{ MediaUI::Shop_SkillIconFrame, "Shop\\SkillIconFrame" },
+		{ MediaUI::Shop_SkillInfoBoard, "Shop\\SkillInfoBoard" },
+		{ MediaUI::Shop_SkillInfoBoardUnselected, "Shop\\SkillInfoBoardUnselected" },
+		{ MediaUI::HotBar_Selection, "HotBar\\HotBarSelection" },
+		{ MediaUI::HotBar_Slot, "HotBar\\HotBarSlot" },
 	};
 
 	// --- OBJECT SPRITE ---

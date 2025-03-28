@@ -10,17 +10,7 @@
 
 class Player;
 
-enum class ItemIndex {
-
-	None,
-
-	Pistol_M1911,
-	Shotgun_Beretta1301,
-
-	MedKit,
-
-};
-
+enum class ItemIndex;
 class Item {
 
 	/// ----------------------------------
@@ -33,6 +23,7 @@ private:
 
 protected:
 
+	int currentStack;
 	float useCooldown;
 	bool stackable;
 	bool usable;
@@ -43,11 +34,15 @@ protected:
 
 public:
 
-	Item(ItemIndex initItemIndex);
+	Item(ItemIndex initItemIndex, int amount = 1);
 
 	virtual void Equip() = 0;
 	virtual void Dequip() = 0;
 	virtual bool TryUse(Player* player) = 0;
+	virtual bool TryAddToStack(int amount = 1);
+	virtual bool TryRemoveFromStack(int amount = 1);
+	bool IsSufficient(int amount) const;
+	int GetCurrentStack() const;
 	bool IsUsable() const;
 	bool IsStackable() const;
 	template <class T>

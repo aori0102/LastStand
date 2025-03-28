@@ -9,6 +9,8 @@ set(SOURCES
     "FirearmUpgradeUIGroup.cpp"
     "ItemSelectionUI.cpp"
     "Shop.cpp"
+    "SkillInfoUI.cpp"
+    "SkillList.cpp"
 )
 
 # Add this directory as a static library

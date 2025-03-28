@@ -13,12 +13,6 @@ class Player;
 class Consumable : public Item {
 
 	/// ----------------------------------
-	/// STRUCTURES AND CONSTANTS
-	/// ----------------------------------
-
-private:
-
-	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
 
@@ -35,10 +29,13 @@ private:
 
 public:
 
-	Consumable(ItemIndex initItemIndex);
+	Consumable(ItemIndex initItemIndex, int amount = 1);
 	bool TryUse(Player* player) override; 
+	bool TryAddToStack(int amount) override;
+	bool TryRemoveFromStack(int amount) override;
 	void Equip() override;
 	void Dequip() override;
+	int GetCurrentStack() const;
 	float GetHealth() const;
 	float GetStamina() const;
 

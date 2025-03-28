@@ -13,7 +13,20 @@
 
 class Item;
 class Image;
-enum class ItemIndex;
+
+enum class ItemIndex {
+
+	None,
+
+	Pistol_M1911,
+	Shotgun_Beretta1301,
+
+	MedKit,
+
+	Ammo_Slug,
+	Ammo_9mm,
+
+};
 
 class ItemManager {
 
@@ -27,6 +40,7 @@ private:
 
 		SDL_Rect iconClip = { 0, 0, 0, 0 };
 		int price = 0;
+		int shopStack = 1;
 		std::string name = "N/A";
 
 	};
@@ -38,14 +52,20 @@ private:
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void InitializeItemInfo();
+
 public:
 
 	ItemManager();
 	
-	static ItemManager* Instance();
-	Item* CreateItem(ItemIndex itemIndex, int amount = 1);
 	void LinkItemIcon(ItemIndex itemIndex, Image* out);
 	int GetItemPrice(ItemIndex itemIndex);
+	int GetItemShopStack(ItemIndex itemIndex);
 	std::string GetItemName(ItemIndex itemIndex);
+	Item* CreateItem(ItemIndex itemIndex, int amount = 1);
+
+	static ItemManager* Instance();
 
 };

@@ -20,6 +20,7 @@ class AnimationClip;
 class AnimationNode;
 class BoxCollider;
 class GameObject;
+class HotBarUI;
 class Item;
 class Player;
 class Transform;
@@ -251,15 +252,23 @@ enum class InventorySlotIndex {
 
 class Inventory : public GameComponent {
 
+private:
+
+	struct ItemState {
+		Item* item;
+		InventorySlotIndex slot;
+	};
+
 	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
 
 private:
 
-	std::unordered_map<ItemIndex, Item*> storage;
-	std::unordered_map<InventorySlotIndex, Item*> hotBar;
+	std::unordered_map<ItemIndex, ItemState*> storage;
+	std::unordered_map<InventorySlotIndex, ItemIndex> hotBar;
 	InventorySlotIndex currentSlotIndex;
+	HotBarUI* hotBarUI;
 
 	/// ----------------------------------
 	/// METHODS
@@ -269,9 +278,12 @@ public:
 
 	Inventory(GameObject* initOwner);
 
-	void AddItem(ItemIndex itemIndex);
+	void AddItem(ItemIndex itemIndex, int amount = 1);
+	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	void SelectSlot(InventorySlotIndex slotIndex);
 	bool TryUseCurrent();
+	int GetItemCount(ItemIndex itemIndex);
+	bool IsSufficient(ItemIndex itemIndex, int amount);
 	ItemIndex GetCurrentItemIndex();
 	Item* GetCurrentItem();
 	template <class T>

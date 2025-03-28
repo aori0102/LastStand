@@ -10,6 +10,7 @@
 
 #include <GameComponent.h>
 #include <Player.h>
+#include <Shop.h>
 #include <WaveManager.h>
 
 /// ----------------------------------
@@ -30,6 +31,7 @@ PlayerStatistic::PlayerStatistic() {
 	instance = this;
 
 	playerMoney = 0;
+	playerSkillPoint = 0;
 	playerLevel = 0;
 	playerEXP = 0;
 	playerEXPNeeded = PLAYER_BASE_EXP;
@@ -44,6 +46,8 @@ void PlayerStatistic::AddEXP(int amount) {
 
 		playerEXP -= playerEXPNeeded;
 		playerLevel++;
+		playerSkillPoint++;
+		Shop::Instance()->UpdateSkillPoint(playerSkillPoint);
 		playerEXPNeeded = std::powf(PLAYER_EXP_MULTIPLIER, playerLevel) * static_cast<float>(PLAYER_BASE_EXP);
 
 	}
@@ -110,6 +114,18 @@ bool PlayerStatistic::TrySpendMoney(int amount) {
 		return false;
 
 	playerMoney -= amount;
+	return true;
+
+}
+
+bool PlayerStatistic::TryConsumeSkillPoint(int amount) {
+
+	if (amount > playerSkillPoint)
+		return false;
+
+	playerSkillPoint -= amount;
+	Shop::Instance()->UpdateSkillPoint(playerSkillPoint);
+
 	return true;
 
 }

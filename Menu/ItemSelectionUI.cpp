@@ -17,6 +17,16 @@ const Vector2 ItemSelectionUI::CELL_SIZE = Vector2(292.0f, 112.0f);
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+SlotNode::SlotNode() {
+
+	nextSlot = nullptr;
+	frame = nullptr;
+	cell = nullptr;
+	visual = nullptr;
+	itemIndex = ItemIndex::None;
+
+}
+
 void ItemSelectionUI::UpdateNodeVisual() {
 
 	int row = 0, col = 0;

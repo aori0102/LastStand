@@ -9,8 +9,8 @@ std::vector<T*> Inventory::GetItemListOfType() {
 
 	for (auto it = storage.begin(); it != storage.end(); it++) {
 
-		if ((it->second)->IsType<T>())
-			res.push_back((it->second)->ToType<T>());
+		if ((it->second)->item->IsType<T>())
+			res.push_back((it->second)->item->ToType<T>());
 
 	}
 

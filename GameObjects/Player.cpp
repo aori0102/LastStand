@@ -8,9 +8,11 @@
 
 #include <functional>
 
+#include <Ammunition.h>
 #include <AnimationManager.h>
 #include <Animation.h>
 #include <Item.h>
+#include <ItemManager.h>
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <GameCore.h>
@@ -33,6 +35,8 @@ const float Player::CAMERA_AIM_ZOOM = 1.3f;
 const float Player::DEFAULT_MOVEMENT_SPEED = 500.0f;
 const float Player::AIM_MOVEMENT_SPEED = 300.0f;
 const float Player::SPRINT_MOVEMENT_SPEED = 750.0f;
+const float Player::STAMINA_DRAIN_RATE = 29.0f;
+const float Player::STAMINA_RECOVERY_RATE = 9.0f;
 Player* Player::instance = nullptr;
 
 /// ----------------------------------
@@ -99,7 +103,7 @@ void Player::HandleMovement() {
 
 	if (isAiming)
 		targetMovementSpeed = AIM_MOVEMENT_SPEED;
-	else if (isSprinting)
+	else if (isSprinting && GetComponent<Humanoid>()->GetStamina() > 0)
 		targetMovementSpeed = SPRINT_MOVEMENT_SPEED;
 	else
 		targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
@@ -144,6 +148,17 @@ void Player::HandleFacing() {
 
 }
 
+void Player::HandleStamina() {
+
+	Humanoid* humanoid = GetComponent<Humanoid>();
+
+	if (isSprinting)
+		humanoid->DrainStamina(STAMINA_DRAIN_RATE * GameCore::DeltaTime());
+	else
+		humanoid->GainStamina(STAMINA_RECOVERY_RATE * GameCore::DeltaTime());
+
+}
+
 void Player::InitializeData() {
 
 	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
@@ -168,6 +183,8 @@ void Player::InitializeData() {
 	Inventory* inventory = AddComponent<Inventory>();
 	inventory->AddItem(ItemIndex::Pistol_M1911);
 	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
+	inventory->AddItem(ItemIndex::MedKit);
+	inventory->AddItem(ItemIndex::Ammo_Slug, 25);
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
@@ -206,14 +223,6 @@ void Player::InitializeAnimation() {
 		AnimationIndex::Player_Item_Transition,
 		[this]() {
 			return itemIndex != ItemIndex::None;
-		}
-	);
-
-	animController->AddTransition(
-		AnimationIndex::Player_Item_Transition,
-		AnimationIndex::Player_Idle,
-		[this]() {
-			return itemIndex == ItemIndex::None;
 		}
 	);
 
@@ -262,6 +271,21 @@ void Player::InitializeAnimation() {
 		AnimationIndex::Player_Item_Transition,
 		[this]() {
 			return itemIndex != ItemIndex::MedKit;
+		}
+	);
+
+	// Items with no holding animation
+	animController->AddTransition(
+		AnimationIndex::Player_Item_Transition,
+		AnimationIndex::Player_Idle,
+		[this]() {
+			switch (itemIndex) {
+			case ItemIndex::Ammo_Slug:
+			case ItemIndex::Ammo_9mm:
+			case ItemIndex::None:
+				return true;
+			}
+			return false;
 		}
 	);
 
@@ -344,11 +368,25 @@ void Player::Update() {
 
 	}
 
+	HandleStamina();
+
 }
 
-void Player::GiveItem(ItemIndex itemIndex) {
+void Player::GiveItem(ItemIndex itemIndex, int amount) {
 
-	GetComponent<Inventory>()->AddItem(itemIndex);
+	GetComponent<Inventory>()->AddItem(itemIndex, amount);
+
+}
+
+int Player::GetAmmoCount(AmmunitionID ammunitionID) {
+
+	return GetComponent<Inventory>()->GetItemCount(Ammunition::AMMO_ITEM_INDEX_MAP.at(ammunitionID));
+
+}
+
+bool Player::TryConsumeAmmo(AmmunitionID ammunitionID, int amount) {
+
+	return GetComponent<Inventory>()->TryRemoveItem(Ammunition::AMMO_ITEM_INDEX_MAP.at(ammunitionID), amount);
 
 }
 

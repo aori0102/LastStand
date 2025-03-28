@@ -9,6 +9,7 @@
 #include <exception>
 
 #include <Bullet.h>
+#include <ItemManager.h>
 #include <Player.h>
 
 /// ----------------------------------

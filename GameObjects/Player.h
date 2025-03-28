@@ -13,6 +13,7 @@
 
 class Firearm;
 enum class ItemIndex;
+enum class AmmunitionID;
 
 class Player : public GameObject {
 
@@ -31,6 +32,8 @@ private:
 	static const float DEFAULT_MOVEMENT_SPEED;
 	static const float AIM_MOVEMENT_SPEED;
 	static const float SPRINT_MOVEMENT_SPEED;
+	static const float STAMINA_DRAIN_RATE;
+	static const float STAMINA_RECOVERY_RATE;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -66,6 +69,7 @@ private:
 	void HandleActions();
 	void HandleMovement();
 	void HandleFacing();
+	void HandleStamina();
 	void InitializeAnimation();
 	void InitializeData();
 
@@ -77,7 +81,11 @@ public:
 	void DisableInteraction();
 	void EnableInteraction();
 	void Update() override;
-	void GiveItem(ItemIndex itemIndex);
+	void GiveItem(ItemIndex itemIndex, int amount = 1);
+
+	int GetAmmoCount(AmmunitionID);
+
+	bool TryConsumeAmmo(AmmunitionID ammunitionID, int amount = 1);
 
 	Vector2 GetForward() const;
 	Vector2 GetAimingDirection();
