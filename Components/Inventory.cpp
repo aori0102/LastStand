@@ -33,9 +33,7 @@ Inventory::Inventory(GameObject* initOwner) : GameComponent(initOwner) {
 		{ InventorySlotIndex::Forth, ItemIndex::None },
 		{ InventorySlotIndex::Fifth, ItemIndex::None },
 	};
-
 	currentSlotIndex = InventorySlotIndex::None;
-
 	hotBarUI = new HotBarUI;
 
 }
@@ -79,6 +77,40 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 
 }
 
+void Inventory::SelectSlot(InventorySlotIndex slotIndex) {
+
+	Item* currentItem = GetCurrentItem();
+
+	if (currentItem)
+		currentItem->Dequip();
+
+	if (currentSlotIndex == slotIndex)
+		currentSlotIndex = InventorySlotIndex::None;
+	else
+		currentSlotIndex = slotIndex;
+
+	currentItem = GetCurrentItem();
+
+	if (currentItem)
+		currentItem->Equip();
+
+	hotBarUI->SwitchSlot(currentSlotIndex);
+
+}
+
+bool Inventory::IsSufficient(ItemIndex itemIndex, int amount) {
+
+	for (auto it = storage.begin(); it != storage.end(); it++) {
+
+		if (it->first == itemIndex)
+			return (it->second)->item->IsSufficient(amount);
+
+	}
+
+	return false;
+
+}
+
 bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 
 	auto it_storage = storage.find(itemIndex);
@@ -116,53 +148,6 @@ bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 
 }
 
-int Inventory::GetItemCount(ItemIndex itemIndex) {
-
-	for (auto it = storage.begin(); it != storage.end(); it++) {
-
-		if (it->first == itemIndex)
-			return (it->second)->item->GetCurrentStack();
-
-	}
-
-	return 0;
-
-}
-
-bool Inventory::IsSufficient(ItemIndex itemIndex, int amount) {
-
-	for (auto it = storage.begin(); it != storage.end(); it++) {
-
-		if (it->first == itemIndex)
-			return (it->second)->item->IsSufficient(amount);
-
-	}
-
-	return false;
-
-}
-
-void Inventory::SelectSlot(InventorySlotIndex slotIndex) {
-
-	Item* currentItem = GetCurrentItem();
-
-	if (currentItem)
-		currentItem->Dequip();
-
-	if (currentSlotIndex == slotIndex)
-		currentSlotIndex = InventorySlotIndex::None;
-	else
-		currentSlotIndex = slotIndex;
-
-	currentItem = GetCurrentItem();
-
-	if (currentItem)
-		currentItem->Equip();
-
-	hotBarUI->SwitchSlot(currentSlotIndex);
-
-}
-
 bool Inventory::TryUseCurrent() {
 
 	if (currentSlotIndex == InventorySlotIndex::None)
@@ -178,6 +163,19 @@ bool Inventory::TryUseCurrent() {
 		TryRemoveItem(currentItem->GetIndex());
 
 	return isUsed;
+
+}
+
+int Inventory::GetItemCount(ItemIndex itemIndex) {
+
+	for (auto it = storage.begin(); it != storage.end(); it++) {
+
+		if (it->first == itemIndex)
+			return (it->second)->item->GetCurrentStack();
+
+	}
+
+	return 0;
 
 }
 

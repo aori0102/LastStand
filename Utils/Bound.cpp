@@ -4,32 +4,32 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
-
-#include <GameCore.h>
-#include <PhysicsManager.h>
+#include <Type.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-GameComponent::GameComponent(GameObject* initOwner) {
+float Bound::Top() {
 
-	if (!initOwner)
-		throw std::exception("Initialize game component with NULL GameObject owner");
-
-	owner = initOwner;
-
-	transform = owner->transform;
+	return (center - extents).y;
 
 }
 
-void GameComponent::OnComponentDestroyed() {}
+float Bound::Left() {
 
-void GameComponent::OnComponentUpdate() {}
+	return (center - extents).x;
 
-GameObject* GameComponent::Owner() {
+}
 
-	return owner;
+float Bound::Bottom() {
+
+	return (center + extents).y;
+
+}
+
+float Bound::Right() {
+
+	return (center + extents).x;
 
 }

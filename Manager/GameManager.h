@@ -1,37 +1,34 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <unordered_set>
 #include <string>
-#include <Type.h>
-#include <GameComponent.h>
+#include <unordered_set>
 #include <vector>
 
+#include <Type.h>
+
+class GameObject;
+class Player;
 class PlayerStatistic;
-class Zombie;
 class Shop;
 class StatusBar;
+class Zombie;
 enum class ZombieIndex;
 
-class GameManager : public GameObject {
+class GameManager {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
-	static GameManager* instance;
-
-	// Entity
-	std::unordered_set<Zombie*> enemySet;
-
-	StatusBar* statusBarUI;
-
-	// Systems
-	Shop* shop;
-
-	// Map setting
-	GameObject* background;
-
 	const Vector2 MAP_SIZE = Vector2(3000.0f, 3000.0f);
-
-	// Spawn settings
 	const std::vector<Vector2> SPAWN_POSITION_LIST =
 	{
 	Vector2(-1450.0f, 500.0f),
@@ -44,27 +41,38 @@ private:
 	Vector2(500.0f, -1450.0f)
 	};
 
-	// Border
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	std::unordered_set<Zombie*> zombieSet;
+	GameObject* background;
 	GameObject* northBorder;
 	GameObject* southBorder;
 	GameObject* westBorder;
 	GameObject* eastBorder;
+	Player* player;
+	PlayerStatistic* playerStatistic;
+	StatusBar* statusBar;
+	Shop* shop;
 
-private:
+	static GameManager* instance;
 
-	void Render();
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
 	GameManager();
-
+	~GameManager();
 	void InitializeObject();
-
-	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void ReportDead(GameObject* gameObject);
-
+	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void Update();
 
-	static GameManager* Instance() { return instance; }
+	static GameManager* Instance();
 
 };

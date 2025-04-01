@@ -10,7 +10,15 @@
 #include <GameCore.h>
 #include <Type.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 PhysicsManager* PhysicsManager::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 PhysicsManager::PhysicsManager() {
 
@@ -25,7 +33,26 @@ PhysicsManager::PhysicsManager() {
 
 }
 
-PhysicsManager* PhysicsManager::Instance() { return instance; }
+PhysicsManager::~PhysicsManager() {
+
+	boxColliderSet.clear();
+	rigidBodySet.clear();
+
+	for (auto it = colliderHitMap.begin(); it != colliderHitMap.end(); it++)
+		(it->second).clear();
+
+	colliderHitMap.clear();
+
+	instance = nullptr;
+
+}
+
+void PhysicsManager::Update() {
+
+	for (auto it = rigidBodySet.begin(); it != rigidBodySet.end(); it++)
+		(*it)->Update();
+
+}
 
 void PhysicsManager::RegisterBoxCollider(BoxCollider* boxCollider) {
 
@@ -51,16 +78,36 @@ void PhysicsManager::UnregisterRigidBody(RigidBody* rigidBody) {
 
 }
 
-void PhysicsManager::Update() {
+void PhysicsManager::LateCollisionCall() {
 
-	for (auto it = rigidBodySet.begin(); it != rigidBodySet.end(); it++)
-		(*it)->Update();
+	auto it_first = colliderHitMap.begin();
+	while (it_first != colliderHitMap.end()) {
+
+		auto it_second = (it_first->second).begin();
+		while (it_second != (it_first->second).end()) {
+
+			(it_first->first)->Owner()->OnCollisionEnter(*it_second);
+
+			it_second++;
+
+		}
+
+		(it_first->second).clear();
+
+		it_first++;
+
+	}
+
+	colliderHitMap.clear();
 
 }
 
 bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo) {
 
 	if (movementVector == Vector2::zero)
+		return false;
+
+	if (!collider->IsActive())
 		return false;
 
 	// Get this collider's bound
@@ -81,6 +128,9 @@ bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitI
 	for (BoxCollider* otherCollier : boxColliderSet) {
 
 		if (otherCollier == collider)
+			continue;
+
+		if (!otherCollier->IsActive())
 			continue;
 
 		if (collider->ignoreLayerSet.contains(otherCollier->Owner()->GetLayer()))
@@ -425,26 +475,4 @@ bool PhysicsManager::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, 
 
 }
 
-void PhysicsManager::LateCollisionCall() {
-
-	auto it_first = colliderHitMap.begin();
-	while (it_first != colliderHitMap.end()) {
-
-		auto it_second = (it_first->second).begin();
-		while (it_second != (it_first->second).end()) {
-
-			(it_first->first)->Owner()->OnCollisionEnter(*it_second);
-
-			it_second++;
-
-		}
-
-		(it_first->second).clear();
-
-		it_first++;
-
-	}
-
-	colliderHitMap.clear();
-
-}
+PhysicsManager* PhysicsManager::Instance() { return instance; }

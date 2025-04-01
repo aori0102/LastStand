@@ -7,12 +7,22 @@ Texture::Texture() {
 
 	textureDimension = Vector2::zero;
 
+	opacity = 0.0f;
+
 }
 
 void Texture::FreeTexture() {
 
 	SDL_DestroyTexture(texture);
 	texture = nullptr;
+
+}
+
+void Texture::SetOpacity(float amount) {
+
+	opacity = amount;
+
+	SDL_SetTextureAlphaMod(texture, opacity * 255);
 
 }
 

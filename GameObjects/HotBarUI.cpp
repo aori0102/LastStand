@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <HotBarUI.h>
 
 #include <GameComponent.h>
@@ -7,10 +13,15 @@
 #include <MediaManager.h>
 #include <Texture.h>
 
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
+
 HotBarUI::HotBarUI() {
 
-	Vector2 slotPosition = HOTBAR_POSITION;
+	slotSelected = false;
 
+	Vector2 slotPosition = HOTBAR_POSITION;
 	for (int i = static_cast<int>(InventorySlotIndex::First); i <= static_cast<int>(InventorySlotIndex::Fifth); i++) {
 
 		SlotUI* hotBarSlot = new SlotUI;
@@ -21,7 +32,7 @@ HotBarUI::HotBarUI() {
 		Image* hotBarSlotFrame_image = hotBarSlot->frame->AddComponent<Image>();
 		hotBarSlotFrame_image->showOnScreen = true;
 		hotBarSlotFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::HotBar_Slot), true);
-		hotBarSlotFrame_image->transform->position = Math::SDLToC00(slotPosition,hotBarSlotFrame_image->transform->scale);
+		hotBarSlotFrame_image->transform->position = Math::SDLToC00(slotPosition, hotBarSlotFrame_image->transform->scale);
 		hotBarSlot->frame->Render = [hotBarSlotFrame_image]() {
 			hotBarSlotFrame_image->Render();
 			};
@@ -51,6 +62,8 @@ HotBarUI::HotBarUI() {
 
 	}
 
+	targetSelectionPosition = Vector2::zero;
+
 	hotbarSelection = new GameObject("HotBar selection", Layer::GUI);
 	Image* hotbarSelection_image = hotbarSelection->AddComponent<Image>();
 	hotbarSelection_image->showOnScreen = true;
@@ -59,20 +72,6 @@ HotBarUI::HotBarUI() {
 		hotbarSelection_image->Render();
 		};
 	hotbarSelection->Disable();
-
-	slotSelected = false;
-	targetSelectionPosition = Vector2::zero;
-
-}
-
-void HotBarUI::Update() {
-
-	if (!slotSelected)
-		return;
-
-	hotbarSelection->transform->position = Vector2::Lerp(
-		hotbarSelection->transform->position, targetSelectionPosition, GameCore::DeltaTime() * SELECTION_SWITCH_SPEED
-	);
 
 }
 
@@ -119,5 +118,36 @@ void HotBarUI::UpdateSlot(InventorySlotIndex slotIndex, ItemIndex itemIndex, int
 		hotbarSlotMap.at(slotIndex)->label->Disable();
 
 	ItemManager::Instance()->LinkItemIcon(itemIndex, hotbarSlotMap.at(slotIndex)->visual->GetComponent<Image>());
+
+}
+
+void HotBarUI::Update() {
+
+	if (!slotSelected)
+		return;
+
+	hotbarSelection->transform->position = Vector2::Lerp(
+		hotbarSelection->transform->position, targetSelectionPosition, GameCore::DeltaTime() * SELECTION_SWITCH_SPEED
+	);
+
+}
+
+void HotBarUI::OnDestroy() {
+
+	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
+
+		GameObject::Destroy((it->second)->frame);
+		GameObject::Destroy((it->second)->visual);
+		GameObject::Destroy((it->second)->label);
+
+		delete (it->second);
+		it->second = nullptr;
+
+	}
+
+	hotbarSlotMap.clear();
+
+	GameObject::Destroy(hotbarSelection);
+	hotbarSelection = nullptr;
 
 }

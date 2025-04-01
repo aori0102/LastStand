@@ -21,15 +21,38 @@
 const float ZombieAttribute::DAMAGE_MULTIPLIER = 1.03f;
 const float ZombieAttribute::HEALTH_MULTIPLIER = 1.07f;
 const float ZombieAttribute::EXP_MULTIPLIER = 1.01f;
-
 const float Zombie::KNOCKBACK_FORCE = 50.0f;
 const float Zombie::HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const float Zombie::HEALTH_BAR_SCALE = 0.4f;
 const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRIBUTE_MAP = {
-	{ ZombieIndex::Normal, ZombieAttribute(60.0f, 32.0f, 6.0f, 3.0f) },
-	{ ZombieIndex::Bomber, ZombieAttribute(54.0f, 73.0f, 9.0f, 5.0f) },
-	{ ZombieIndex::Lurker, ZombieAttribute(104.0f, 21.0f, 3.0f, 7.0f) },
-	{ ZombieIndex::Tanker, ZombieAttribute(30.0f, 148.0f, 3.0f, 9.0f) },
+	{ ZombieIndex::Normal, ZombieAttribute{
+		.movementSpeed = 60.0f,
+		.health = 32.0f,
+		.damage = 6.0f,
+		.exp = 3.0f
+		}
+	},
+	{ ZombieIndex::Lurker, ZombieAttribute{
+		.movementSpeed = 104.0f,
+		.health = 21.0f,
+		.damage = 3.0f,
+		.exp = 7.0f
+		}
+	},
+	{ ZombieIndex::Bomber, ZombieAttribute{
+		.movementSpeed = 54.0f,
+		.health = 73.0f,
+		.damage = 9.0f,
+		.exp = 5.0f
+		}
+	},
+	{ ZombieIndex::Tanker, ZombieAttribute{
+		.movementSpeed = 30.0f,
+		.health = 148.0f,
+		.damage = 3.0f,
+		.exp = 9.0f
+		}
+	},
 };
 const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP = {
 	{ ZombieIndex::Normal, { 16, 16, 96, 96 } },
@@ -38,16 +61,21 @@ const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP =
 	{ ZombieIndex::Tanker, { 16, 16, 96, 96 } },
 };
 
-Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject("Zombie", Layer::Zombie) {
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
+
+Zombie::Zombie(ZombieIndex initZombieIndex) : GameObject("Zombie", Layer::Zombie) {
 
 	zombieIndex = initZombieIndex;
 
-	zombieAttribute = new ZombieAttribute(
-		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed,
-		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health,
-		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage,
-		ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp
-	);
+	// Attribute
+	zombieAttribute = new ZombieAttribute{
+		.movementSpeed = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed,
+		.health = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health,
+		.damage = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage,
+		.exp = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp
+	};
 	// Calculation of zombie's attribute uses the following formula
 	// y = bm(d * ln(x) + sqrt(m ^ x))
 	// Where
@@ -57,15 +85,16 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 	// x is the wave
 	zombieAttribute->health *= ZombieAttribute::HEALTH_MULTIPLIER
 		* (
-			WaveHandler::Instance()->GetDifficulty() * std::logf(WaveHandler::Instance()->GetCurrentWave()) +
-			std::sqrtf(std::powf(ZombieAttribute::HEALTH_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave()))
+			WaveManager::Instance()->GetDifficulty() * std::logf(WaveManager::Instance()->GetCurrentWave()) +
+			std::sqrtf(std::powf(ZombieAttribute::HEALTH_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
 			);
 	zombieAttribute->damage *= ZombieAttribute::DAMAGE_MULTIPLIER
 		* (
-			WaveHandler::Instance()->GetDifficulty() * std::logf(WaveHandler::Instance()->GetCurrentWave()) +
-			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave()))
+			WaveManager::Instance()->GetDifficulty() * std::logf(WaveManager::Instance()->GetCurrentWave()) +
+			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
 			);
 
+	// Components
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->drag = 10.0f;
 	rigidBody->mass = 60.0f;
@@ -85,7 +114,8 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 
 	transform->scale = Vector2(50.0f, 50.0f);
 
-	// Initialize health bar
+	// Fields
+
 	healthBar = new GameObject();
 	Image* healthBar_image = healthBar->AddComponent<Image>();
 	healthBar_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_HealthBar), true);
@@ -93,9 +123,6 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 	healthBar_image->fillAmount = 1.0f;
 	healthBar_image->showOnScreen = false;
 	healthBar->transform->scale *= HEALTH_BAR_SCALE;
-
-	target = initTarget;
-	//movementSpeed = 100.0f;
 
 	Render = [image, healthBar_image, humanoid, this, boxCollider]() {
 
@@ -114,24 +141,28 @@ Zombie::Zombie(GameObject* initTarget, ZombieIndex initZombieIndex) : GameObject
 
 void Zombie::Update() {
 
-	if (target) {
 
-		Vector2 forward = (target->transform->position - transform->position).Normalize();
 
-		transform->Translate(
-			forward * GameCore::DeltaTime() * ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed
-		);
+	Vector2 forward = (Player::Instance()->transform->position - transform->position).Normalize();
 
-		// Calculate rotation
-		GetComponent<Image>()->angle = Math::RadToDeg(forward.Angle());
+	transform->Translate(
+		forward * GameCore::DeltaTime() * ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed
+	);
 
-	}
+	// Calculate rotation
+	GetComponent<Image>()->angle = Math::RadToDeg(forward.Angle());
 
 }
 
 void Zombie::OnDestroy() {
 
 	GameManager::Instance()->ReportDead(this);
+
+	Destroy(healthBar);
+	healthBar = nullptr;
+
+	delete zombieAttribute;
+	zombieAttribute = nullptr;
 
 }
 
@@ -155,8 +186,8 @@ float Zombie::GetExp() const {
 
 	return zombieAttribute->exp * ZombieAttribute::EXP_MULTIPLIER
 		* (
-			WaveHandler::Instance()->GetDifficulty() * logf(WaveHandler::Instance()->GetCurrentWave() +
-			sqrtf(powf(ZombieAttribute::EXP_MULTIPLIER, WaveHandler::Instance()->GetCurrentWave())))
+			WaveManager::Instance()->GetDifficulty() * logf(WaveManager::Instance()->GetCurrentWave() +
+				sqrtf(powf(ZombieAttribute::EXP_MULTIPLIER, WaveManager::Instance()->GetCurrentWave())))
 			);
 
 }

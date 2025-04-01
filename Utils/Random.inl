@@ -4,25 +4,19 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <Item.h>
+#include <Type.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-template <class T>
-bool Item::IsType() {
+template <typename T>
+requires std::is_arithmetic_v<T>
+T Random::Sign(T value) {
 
-	return ToType<T>() != nullptr;
-
-}
-
-template <class T>
-T* Item::ToType() {
-
-	T* converted = dynamic_cast<T*>(this);
-
-	return converted;
+	if (Random::Int(0, INT_MAX) & 1)
+		return value;
+	else
+		return -value;
 
 }
-

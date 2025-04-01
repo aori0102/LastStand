@@ -1,4 +1,14 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <GameComponent.h>
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 
@@ -8,6 +18,13 @@ Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 	maxStamina = 100.0f;
 
 	OnDeath = []() {};
+
+}
+
+void Humanoid::SetHealth(float amount) {
+
+	health = amount;
+	maxHealth = amount;
 
 }
 
@@ -54,10 +71,3 @@ float Humanoid::GetMaxHealth() const { return maxHealth; }
 float Humanoid::GetStamina() const { return stamina; }
 
 float Humanoid::GetMaxStamina() const { return maxStamina; }
-
-void Humanoid::SetHealth(float amount) {
-
-	health = amount;
-	maxHealth = amount;
-
-}

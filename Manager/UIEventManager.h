@@ -1,18 +1,38 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_set>
 
 class Button;
 
-class UIEvent {
+class UIEventManager {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
-	static std::unordered_set<Button*> buttonSet;
+	std::unordered_set<Button*> buttonSet;		// Reference to all button UI texture
+
+	static UIEventManager* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
-	static bool Update();	// Return whether a UI is clicked
-	static void RegisterButton(Button* button);
+	UIEventManager();
+	~UIEventManager();
+	void RegisterButton(Button* button);
+	bool Update();	// Return whether a UI is clicked
+
+	static UIEventManager* Instance();
 
 };

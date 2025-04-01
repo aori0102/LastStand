@@ -4,36 +4,22 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
+#include <Type.h>
+
+#include <algorithm>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-template<class T>
-bool GameComponent::TryGetComponent() {
+template <typename T>
+void Algorithm::Shuffle(std::vector<T>& array) {
 
-	return owner->TryGetComponent<T>();
+	for (int i = array.size() - 1; i > 0; i--) {
 
-}
+		int randomIndex = Random::Int(0, i);
+		std::swap(array[i], array[randomIndex]);
 
-template<class T>
-bool GameComponent::TryGetComponent(T*& out) {
-
-	return owner->TryGetComponent<T>(out);
-
-}
-
-template <class T>
-T* GameComponent::GetComponent() {
-
-	return owner->GetComponent<T>();
-
-}
-
-template <class T>
-T* GameComponent::AddComponent() {
-
-	return owner->AddComponent<T>();
+	}
 
 }

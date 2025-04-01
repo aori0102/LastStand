@@ -10,8 +10,8 @@
 
 #include <Ammunition.h>
 #include <Consumable.h>
-#include <Item.h>
 #include <Firearm.h>
+#include <Item.h>
 #include <MediaManager.h>
 #include <Texture.h>
 
@@ -30,34 +30,34 @@ void ItemManager::InitializeItemInfo() {
 	itemInfoMap = {
 		{ ItemIndex::None, {} },
 		{ ItemIndex::MedKit, {
-			.iconClip = { 7, 139, 48, 38 },
 			.price = 40,
 			.shopStack = 1,
 			.name = "Med Kit",
+			.iconClip = { 7, 139, 48, 38 },
 		} },
 		{ ItemIndex::Pistol_M1911, {
-			.iconClip = { 73, 145, 48, 34 },
 			.price = 230,
 			.shopStack = 0,
 			.name = "M1911",
+			.iconClip = { 73, 145, 48, 34 },
 		} },
 		{ ItemIndex::Shotgun_Beretta1301, {
-			.iconClip = { 135, 132, 55, 58 },
 			.price = 2300,
 			.shopStack = 0,
 			.name = "Beretta 1301 Tactical",
+			.iconClip = { 135, 132, 55, 58 },
 		} },
 		{ ItemIndex::Ammo_Slug, {
-			.iconClip = { 206, 144, 36, 27 },
 			.price = 25,
 			.shopStack = 8,
 			.name = "Slug",
+			.iconClip = { 206, 144, 36, 27 },
 		} },
 		{ ItemIndex::Ammo_9mm, {
-			.iconClip = { 265, 145, 38, 24 },
 			.price = 40,
 			.shopStack = 30,
 			.name = "9mm",
+			.iconClip = { 265, 145, 38, 24 },
 		} },
 	};
 
@@ -73,6 +73,34 @@ ItemManager::ItemManager() {
 	InitializeItemInfo();
 
 }
+
+ItemManager::~ItemManager() {
+
+	itemInfoMap.clear();
+
+	instance = nullptr;
+
+}
+
+void ItemManager::LinkItemIcon(ItemIndex itemIndex, Image* out) {
+
+	if (!out)
+		return;
+
+	auto it = itemInfoMap.find(itemIndex);
+	if (it == itemInfoMap.end())
+		throw std::exception("Item icon does not exist");
+
+	out->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_ItemIcon), false);
+	out->clip = it->second.iconClip;
+
+}
+
+int ItemManager::GetItemPrice(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).price; }
+
+int ItemManager::GetItemShopStack(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).shopStack; }
+
+std::string ItemManager::GetItemName(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).name; }
 
 Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
@@ -115,25 +143,5 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 	}
 
 }
-
-void ItemManager::LinkItemIcon(ItemIndex itemIndex, Image* out) {
-
-	if (!out)
-		return;
-
-	auto it = itemInfoMap.find(itemIndex);
-	if (it == itemInfoMap.end())
-		throw std::exception("Item icon does not exist");
-
-	out->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_ItemIcon), false);
-	out->clip = it->second.iconClip;
-
-}
-
-int ItemManager::GetItemPrice(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).price; }
-
-int ItemManager::GetItemShopStack(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).shopStack; }
-
-std::string ItemManager::GetItemName(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).name; }
 
 ItemManager* ItemManager::Instance() { return instance; }

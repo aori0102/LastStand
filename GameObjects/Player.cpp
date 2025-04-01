@@ -11,15 +11,15 @@
 #include <Ammunition.h>
 #include <AnimationManager.h>
 #include <Animation.h>
-#include <Item.h>
-#include <ItemManager.h>
+#include <Bullet.h>
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <Item.h>
+#include <ItemManager.h>
 #include <MediaManager.h>
 #include <PhysicsManager.h>
-#include <Bullet.h>
 #include <Texture.h>
 #include <Type.h>
 
@@ -159,50 +159,6 @@ void Player::HandleStamina() {
 
 }
 
-void Player::InitializeData() {
-
-	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
-	aimDeviation = STANDING_AIM_DEVIATION;
-
-	itemIndex = ItemIndex::None;
-
-	canInteract = true;
-	usingItem = false;
-	isMoving = false;
-	isAiming = false;
-
-	Image* playerSprite = AddComponent<Image>();
-	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
-	playerSprite->showOnScreen = false;
-
-	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
-
-	transform->scale = Vector2(50.0f, 50.0f);
-
-	AddComponent<BoxCollider>();
-	Inventory* inventory = AddComponent<Inventory>();
-	inventory->AddItem(ItemIndex::Pistol_M1911);
-	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
-	inventory->AddItem(ItemIndex::MedKit);
-	inventory->AddItem(ItemIndex::Ammo_Slug, 25);
-
-	RigidBody* rigidBody = AddComponent<RigidBody>();
-	rigidBody->mass = 60.0f;
-	rigidBody->drag = 6.0f;
-
-	Humanoid* humanoid = AddComponent<Humanoid>();
-	humanoid->SetHealth(100.0f);
-	humanoid->OnDeath = [this]() {
-		GameManager::Instance()->ReportDead(this);
-		};
-
-	currentAnimationStartTick = 0.0f;
-	currentAnimationTime = 0.0f;
-
-	Render = [this]() { PlayerRender(); };
-
-}
-
 void Player::InitializeAnimation() {
 
 	AnimationController* animController = AddComponent<AnimationController>();
@@ -319,6 +275,61 @@ void Player::InitializeAnimation() {
 
 }
 
+void Player::InitializeData() {
+
+	// Components
+	transform->scale = Vector2(50.0f, 50.0f);
+	AddComponent<BoxCollider>();
+	
+	Image* playerSprite = AddComponent<Image>();
+	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
+	playerSprite->showOnScreen = false;
+
+	Inventory* inventory = AddComponent<Inventory>();
+	inventory->AddItem(ItemIndex::Pistol_M1911);
+	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
+	inventory->AddItem(ItemIndex::MedKit);
+	inventory->AddItem(ItemIndex::Ammo_Slug, 25);
+	inventory->AddItem(ItemIndex::Ammo_9mm, 80);
+
+	RigidBody* rigidBody = AddComponent<RigidBody>();
+	rigidBody->mass = 60.0f;
+	rigidBody->drag = 6.0f;
+
+	Humanoid* humanoid = AddComponent<Humanoid>();
+	humanoid->SetHealth(100.0f);
+	humanoid->OnDeath = [this]() {
+		GameManager::Instance()->ReportDead(this);
+		};
+
+	// Field
+
+	isMoving = false;
+	isAiming = false;
+	isSprinting = false;
+	canInteract = true;
+	usingItem = false;
+	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
+	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
+	targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
+	aimDeviation = STANDING_AIM_DEVIATION;
+	playerAttributeMap = {
+		{ PlayerAttribute::Accuracy, 0.3f },
+		{ PlayerAttribute::ReloadSpeed, 1.0f },
+		{ PlayerAttribute::MaxHealth, 100.0f },
+	};
+	itemIndex = ItemIndex::None;
+	forward = Vector2::zero;
+
+	canInteract = true;
+	usingItem = false;
+	currentAnimationTime = 0.0f;
+	currentAnimationStartTick = 0.0f;
+
+	Render = [this]() { PlayerRender(); };
+
+}
+
 Player::Player() : GameObject("Player", Layer::Player) {
 
 	if (instance)
@@ -356,6 +367,52 @@ void Player::EnableInteraction() {
 
 }
 
+void Player::GiveItem(ItemIndex itemIndex, int amount) {
+
+	GetComponent<Inventory>()->AddItem(itemIndex, amount);
+
+}
+
+void Player::SetAttribute(PlayerAttribute playerAttribute, float value) {
+
+	playerAttributeMap.at(playerAttribute) = value;
+
+	switch (playerAttribute) {
+
+	case PlayerAttribute::MaxHealth:
+
+		GetComponent<Humanoid>()->SetHealth(value);
+
+		break;
+
+	case PlayerAttribute::ReloadSpeed: {
+
+		std::vector<Firearm*> firearmList = GetFirearmList();
+		for (Firearm* firearm : firearmList)
+			firearm->ModifyAttributeMultiplier(
+				FirearmAttributeIndex::ReloadTime, 1.0f / value
+			);
+
+		break;
+
+	}
+
+	case PlayerAttribute::Accuracy: {
+
+		std::vector<Firearm*> firearmList = GetFirearmList();
+		for (Firearm* firearm : firearmList)
+			firearm->ModifyAttributeMultiplier(
+				FirearmAttributeIndex::CriticalChance, value
+			);
+
+		break;
+
+	}
+
+	}
+
+}
+
 void Player::Update() {
 
 	if (canInteract) {
@@ -372,9 +429,11 @@ void Player::Update() {
 
 }
 
-void Player::GiveItem(ItemIndex itemIndex, int amount) {
+void Player::OnDestroy() {
 
-	GetComponent<Inventory>()->AddItem(itemIndex, amount);
+	playerAttributeMap.clear();
+
+	instance = nullptr;
 
 }
 
@@ -384,23 +443,23 @@ int Player::GetAmmoCount(AmmunitionID ammunitionID) {
 
 }
 
+float Player::GetAttribute(PlayerAttribute playerAttribute) { return playerAttributeMap.at(playerAttribute); }
+
 bool Player::TryConsumeAmmo(AmmunitionID ammunitionID, int amount) {
 
 	return GetComponent<Inventory>()->TryRemoveItem(Ammunition::AMMO_ITEM_INDEX_MAP.at(ammunitionID), amount);
 
 }
 
-std::vector<Firearm*> Player::GetFirearmList() {
-
-	return GetComponent<Inventory>()->GetItemListOfType<Firearm>();
-
-}
-
-Vector2 Player::GetForward() const { return forward; }
-
 Vector2 Player::GetAimingDirection() {
 
 	return forward.Rotate(Math::DegToRad(Random::Sign(Random::Float(0.0f, aimDeviation))));
+
+}
+
+std::vector<Firearm*> Player::GetFirearmList() {
+
+	return GetComponent<Inventory>()->GetItemListOfType<Firearm>();
 
 }
 

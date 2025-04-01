@@ -1,33 +1,44 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <RenderManager.h>
+
 #include <GameComponent.h>
 
-std::set<GameObject*, decltype(&GameObject::CompareByLayer)> RenderManager::renderObjectSet = std::set<GameObject*, decltype(&GameObject::CompareByLayer)>(&GameObject::CompareByLayer);
-std::unordered_set<Layer> RenderManager::noZoomLayerList = {
-	Layer::Menu,
-	Layer::GUI
-};
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
+RenderManager* RenderManager::instance = nullptr;
 
-void RenderManager::UpdateRenderObject(GameObject* gameObject) {
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
-	RemoveRenderObject(gameObject);
+RenderManager::RenderManager() {
 
-	renderObjectSet.insert(gameObject);
+	if (instance)
+		throw std::exception("RenderManager can only have 1 instance!");
+
+	renderObjectSet = std::set<GameObject*, decltype(&GameObject::CompareByLayer)>(&GameObject::CompareByLayer);
+	noZoomLayerList = {
+		Layer::Menu,
+		Layer::GUI
+	};
+
+	instance = this;
 
 }
 
-void RenderManager::RenderAll() {
+RenderManager::~RenderManager() {
 
-	std::erase_if(renderObjectSet, [](GameObject* obj) { return obj == nullptr; });
-	//std::cout << "----- Start rendering... -----" << std::endl;
-	for (auto obj : renderObjectSet) {
+	renderObjectSet.clear();
+	noZoomLayerList.clear();
 
-		if (obj->IsActive()) {
-			//std::cout << "Rendering " << obj->name << " (Layer: " << (int)obj->GetLayer() << " | ID: " << obj->ID() << ")" << std::endl;
-			obj->Render();
-		}
-
-	}
+	instance = nullptr;
 
 }
 
@@ -38,8 +49,30 @@ void RenderManager::RemoveRenderObject(GameObject* gameObject) {
 
 }
 
+void RenderManager::RenderAll() {
+
+	std::erase_if(renderObjectSet, [](GameObject* obj) { return obj == nullptr; });
+	for (auto obj : renderObjectSet) {
+
+		if (obj->IsActive())
+			obj->Render();
+
+	}
+
+}
+
+void RenderManager::UpdateRenderObject(GameObject* gameObject) {
+
+	RemoveRenderObject(gameObject);
+
+	renderObjectSet.insert(gameObject);
+
+}
+
 bool RenderManager::AffectByZoom(Layer layer) {
 
 	return !noZoomLayerList.contains(layer);
 
 }
+
+RenderManager* RenderManager::Instance() { return instance; }

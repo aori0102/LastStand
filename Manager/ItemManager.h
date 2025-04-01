@@ -31,22 +31,29 @@ enum class ItemIndex {
 class ItemManager {
 
 	/// ----------------------------------
-	/// FIELDS
+	/// STRUCTURES AND CONSTANTS
 	/// ----------------------------------
 
 private:
 
 	struct ItemInfo {
 
-		SDL_Rect iconClip = { 0, 0, 0, 0 };
 		int price = 0;
 		int shopStack = 1;
 		std::string name = "N/A";
+		SDL_Rect iconClip = { 0, 0, 0, 0 };
 
 	};
 
-	static ItemManager* instance;
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
 	std::unordered_map<ItemIndex, ItemInfo> itemInfoMap;
+
+	static ItemManager* instance;
 
 	/// ----------------------------------
 	/// METHODS
@@ -59,7 +66,7 @@ private:
 public:
 
 	ItemManager();
-	
+	~ItemManager();
 	void LinkItemIcon(ItemIndex itemIndex, Image* out);
 	int GetItemPrice(ItemIndex itemIndex);
 	int GetItemShopStack(ItemIndex itemIndex);

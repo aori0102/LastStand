@@ -29,12 +29,24 @@ enum class ItemIndex;
 
 class GameComponent {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	GameObject* owner;
 
 	friend class GameObject;
 	friend class GameCore;
+
+public:
+
+	Transform* transform;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 protected:
 
@@ -47,38 +59,41 @@ public:
 
 	GameObject* Owner();
 
-	Transform* transform;
-
-	template<class T>
-	T* GetComponent();
-
-	template<class T>
-	bool TryGetComponent();
-
-	template<class T>
-	bool TryGetComponent(T*& out);
-
-	template<class T>
-	T* AddComponent();
+	template<class T> bool TryGetComponent();
+	template<class T> bool TryGetComponent(T*& out);
+	template<class T> T* GetComponent();
+	template<class T> T* AddComponent();
 
 };
 
 class GameObject {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
-	std::unordered_map<std::type_index, GameComponent*> componentMap;
-
-	// The set to delete game objects
-	static std::unordered_set<GameObject*> deletionSet;
-
-	Layer layer;
-
 	int id;
+	bool enabled;
+	std::unordered_map<std::type_index, GameComponent*> componentMap;
+	Layer layer;
 
 	static int currentID;
 
-	bool enabled;
+	// The set that stores all game object requested to be deleted
+	// by the user
+	static std::unordered_set<GameObject*> deletionSet;
+
+public:
+
+	std::string name;
+	std::function<void()> Render;
+	Transform* transform;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 protected:
 
@@ -86,59 +101,33 @@ protected:
 
 public:
 
-	std::string name;
-
 	GameObject();
 	GameObject(std::string initName);
 	GameObject(std::string initName, Layer initLayer);
+	int ID() const;
+	void Enable();
+	void Disable();
+	void UpdateComponents();
+	bool IsActive() const;
+	Layer GetLayer() const;
+
 	virtual ~GameObject();
-
-	Transform* transform;
-
-	int ID();
-
 	virtual void Update();
-
 	virtual void OnDestroy();
-
 	virtual void OnCollisionEnter(BoxCollider* other);
 	virtual void OnCollisionExit(BoxCollider* other);
 
-	Layer GetLayer() const { return layer; }
-
-	void Enable();
-	void Disable();
-	bool IsActive();
-
-	void UpdateComponents();
-
-	std::function<void()> Render;
-
-	static bool CompareByLayer(const GameObject* a, const GameObject* b);
-
-	static int GetNextID();
-
-	template<class T>
-	T* GetComponent();
-
-	template<class T>
-	bool TryGetComponent();
-
-	template<class T>
-	bool TryGetComponent(T*& out);
-
-	template<class T>
-	T* AddComponent();
-
-	template<class T>
-	bool IsA();
-
-	template<class T>
-	T* As();
+	template<class T> bool IsA();
+	template<class T> bool TryGetComponent();
+	template<class T> bool TryGetComponent(T*& out);
+	template<class T> T* AddComponent();
+	template<class T> T* GetComponent();
+	template<class T> T* As();
 
 	static void CleanUpCache();
-
 	static void Destroy(GameObject* gameObject);
+	static int GetNextID();
+	static bool CompareByLayer(const GameObject* a, const GameObject* b);
 
 };
 #include "GameObject.inl"
@@ -146,43 +135,68 @@ public:
 
 class Transform : public GameComponent {
 
-public:
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
-	Transform(GameObject* initOwner);
+public:
 
 	Vector2 position;
 	Vector2 scale;
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	Transform(GameObject* initOwner);
 	void Translate(Vector2 movementVector, bool tryNavigate = true);
 
 };
 
 class BoxCollider : public GameComponent {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	bool enabled;
+
 public:
 
 	std::set<Layer> ignoreLayerSet;
-
 	Vector2 localPosition;	// The position relative to the game object's transform
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
 
 	BoxCollider(GameObject* initOwner);
 	BoxCollider(GameObject* initOwner, Layer initLayer);
-
 	void Debug();
-
-	Bound GetBound();
-
+	void Enable();
+	void Disable();
 	void OnComponentDestroyed() override;
+	bool IsActive() const;
+	Bound GetBound();
 
 };
 
 class Humanoid : public GameComponent {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	float health;
 	float maxHealth;
-
 	float stamina;
 	float maxStamina;
 
@@ -190,51 +204,53 @@ public:
 
 	std::function<void()> OnDeath;
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
 public:
 
 	Humanoid(GameObject* initOwner);
-
-	float GetHealth() const;
-	float GetMaxHealth() const;
-
-	float GetStamina() const;
-	float GetMaxStamina() const;
-
 	void SetHealth(float amount);
-
 	void Damage(float amount);
 	void Heal(float amount);
-
 	void DrainStamina(float amount);
 	void GainStamina(float amount);
+	float GetHealth() const;
+	float GetMaxHealth() const;
+	float GetStamina() const;
+	float GetMaxStamina() const;
 
 };
 
 class RigidBody : public GameComponent {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
-	Vector2 initialForce;
-
 	float lastUpdateTick;
+	Vector2 initialForce;
 
 public:
 
-	float mass;
 	float drag;
-
+	float mass;
 	Vector2 momentum;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
 	RigidBody(GameObject* initOwner);
-
 	void AddForce(Vector2 force);
 	void Update();
-
-	Vector2 GetAcceleration();
-
 	void OnComponentDestroyed() override;
+	Vector2 GetAcceleration();
 
 };
 
@@ -251,6 +267,10 @@ enum class InventorySlotIndex {
 };
 
 class Inventory : public GameComponent {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -277,17 +297,16 @@ private:
 public:
 
 	Inventory(GameObject* initOwner);
-
 	void AddItem(ItemIndex itemIndex, int amount = 1);
-	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	void SelectSlot(InventorySlotIndex slotIndex);
+	bool IsSufficient(ItemIndex itemIndex, int amount);
+	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	bool TryUseCurrent();
 	int GetItemCount(ItemIndex itemIndex);
-	bool IsSufficient(ItemIndex itemIndex, int amount);
 	ItemIndex GetCurrentItemIndex();
 	Item* GetCurrentItem();
-	template <class T>
-	std::vector<T*> GetItemListOfType();
+
+	template <class T> std::vector<T*> GetItemListOfType();
 
 };
 #include <Inventory.inl>
@@ -295,21 +314,14 @@ public:
 class AnimationController : public GameComponent {
 
 	/// ----------------------------------
-	/// STRUCTURES AND CONSTANTS
-	/// ----------------------------------
-
-private:
-
-	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
 
 private:
 
+	std::unordered_map<AnimationIndex, AnimationNode*> animationNodeMap;
 	AnimationNode* defaultAnimationNode;
 	AnimationNode* currentAnimationNode;
-
-	std::unordered_map<AnimationIndex, AnimationNode*> animationNodeMap;
 
 	/// ----------------------------------
 	/// METHODS
@@ -317,13 +329,12 @@ private:
 
 private:
 
-	void OnComponentUpdate() override;
 	void OnComponentDestroyed() override;
+	void OnComponentUpdate() override;
 
 public:
 
 	AnimationController(GameObject* initOwner);
-
 	void AddAnimationClip(AnimationIndex animationIndex, bool isStateMachine = false);
 	void AddTransition(AnimationIndex from, AnimationIndex to, std::function<bool()> condition = []() { return true; });
 	void MakeDefault(AnimationIndex animationIndex);

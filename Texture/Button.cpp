@@ -7,7 +7,7 @@ Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 	backgroundColor = Color::WHITE;
 	isActive = true;
 
-	UIEvent::RegisterButton(this);
+	UIEventManager::Instance()->RegisterButton(this);
 
 	OnClick = []() { return false; };
 	OnMouseEnter = []() {};

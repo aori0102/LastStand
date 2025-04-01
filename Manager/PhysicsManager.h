@@ -11,10 +11,10 @@
 
 #include <Type.h>
 
-class GameObject;
-class BoxCollider;
-class RigidBody;
 class Bound;
+class BoxCollider;
+class GameObject;
+class RigidBody;
 
 class HitInfo {
 
@@ -48,8 +48,8 @@ private:
 
 private:
 
-	std::unordered_set<BoxCollider*> boxColliderSet;
-	std::unordered_set<RigidBody*> rigidBodySet;
+	std::unordered_set<BoxCollider*> boxColliderSet;	// Reference to all colliders in game
+	std::unordered_set<RigidBody*> rigidBodySet;		// Reference to all rigid bodies in game
 	std::unordered_map<BoxCollider*, std::unordered_set<BoxCollider*>> colliderHitMap;
 
 	static PhysicsManager* instance;
@@ -61,22 +61,17 @@ private:
 public:
 
 	PhysicsManager();
-
-	static PhysicsManager* Instance();
-
+	~PhysicsManager();
 	void Update();
-
 	void RegisterBoxCollider(BoxCollider* boxCollider);
 	void UnregisterBoxCollider(BoxCollider* boxCollider);
-
 	void RegisterRigidBody(RigidBody* rigidBody);
 	void UnregisterRigidBody(RigidBody* rigidBody);
-
+	void LateCollisionCall();
 	bool BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo = nullptr);
 	bool RayCast(Vector2 origin, Vector2 end, HitInfo* hitInfo = nullptr);
-
 	bool ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart = nullptr, Vector2* newEnd = nullptr);
 
-	void LateCollisionCall();
+	static PhysicsManager* Instance();
 
 };

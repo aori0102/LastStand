@@ -3,9 +3,15 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
-    "Animation.cpp"
+    "Algorithm.cpp"
+    "Align.cpp"
+    "AnimationClip.cpp"
     "AnimationNode.cpp"
-    "Type.cpp"
+    "Bound.cpp"
+    "Color.cpp"
+    "Math.cpp"
+    "Random.cpp"
+    "Vector2.cpp"
 )
 
 # Add this directory as a static library

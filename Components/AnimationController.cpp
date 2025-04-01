@@ -15,6 +15,32 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+void AnimationController::OnComponentDestroyed() {
+
+	for (auto it_node = animationNodeMap.begin(); it_node != animationNodeMap.end(); it_node++) {
+
+		for (auto it_transition = it_node->second->transitionList.begin(); it_transition != it_node->second->transitionList.end(); it_transition++) {
+
+			delete (*it_transition);
+			*it_transition = nullptr;
+
+		}
+
+		delete it_node->second;
+		it_node->second = nullptr;
+
+	}
+
+	animationNodeMap.clear();
+
+	delete defaultAnimationNode;
+	defaultAnimationNode = nullptr;
+
+	delete currentAnimationNode;
+	currentAnimationNode = nullptr;
+
+}
+
 void AnimationController::OnComponentUpdate() {
 
 	if (!currentAnimationNode || !currentAnimationNode->IsEnded())
@@ -34,32 +60,6 @@ void AnimationController::OnComponentUpdate() {
 
 	if (currentAnimationNode->IsLoop())
 		currentAnimationNode->PlayNode();
-
-}
-
-void AnimationController::OnComponentDestroyed() {
-
-	delete defaultAnimationNode;
-	defaultAnimationNode = nullptr;
-
-	delete currentAnimationNode;
-	currentAnimationNode = nullptr;
-
-	for (auto it_node = animationNodeMap.begin(); it_node != animationNodeMap.end(); it_node++) {
-
-		for (auto it_transition = it_node->second->transitionList.begin(); it_transition != it_node->second->transitionList.end(); it_transition++) {
-
-			delete (*it_transition);
-			*it_transition = nullptr;
-
-		}
-
-		delete it_node->second;
-		it_node->second = nullptr;
-
-	}
-
-	animationNodeMap.clear();
 
 }
 

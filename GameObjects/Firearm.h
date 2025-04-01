@@ -13,8 +13,8 @@
 
 class Player;
 class Sprite;
-enum class MediaObject;
 enum class AmmunitionID;
+enum class MediaObject;
 
 enum class FirearmAttributeIndex {
 
@@ -36,11 +36,11 @@ enum class ReloadType {
 
 struct FirearmInfo {
 
+	std::string name;
+	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 	AmmunitionID ammunitionID;
 	MediaObject iconIndex;
 	ReloadType reloadType;
-	std::string name;
-	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 
 };
 
@@ -69,12 +69,12 @@ public:
 private:
 
 	// Logic handling
+	bool isReloading;
+	bool stopReload;
 	int currentAmmo;
 	int previousReverseAmmo;
 	float lastReloadTick;
 	float lastShootTick;
-	bool isReloading;
-	bool stopReload;
 	std::string firearmName;
 	ReloadType reloadType;
 
@@ -87,7 +87,6 @@ private:
 
 protected:
 
-	std::unordered_map<FirearmAttributeIndex, float> attributeMultiplierMap;
 	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 
 	/// ----------------------------------
@@ -108,13 +107,15 @@ protected:
 public:
 
 	Firearm(ItemIndex initItemIndex);
-
-	void Update() override;
 	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
 	void Reload();
+	void UpdateReserveLabel();
 	void Equip() override;
 	void Dequip() override;
-	void UpdateReserveLabel();
+	void Update() override;
+	void OnDestroy() override;
+	bool TryAddToStack(int amount = 1) override;
+	bool TryRemoveFromStack(int amount = 1) override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
 	std::string GetName() const;
 
@@ -135,7 +136,6 @@ private:
 public:
 
 	Pistol(ItemIndex initItemIndex);
-
 	bool TryUse(Player* player) override;
 
 };
@@ -158,7 +158,6 @@ private:
 public:
 
 	Shotgun(ItemIndex initItemIndex);
-
 	bool TryUse(Player* player) override;
 
 };

@@ -15,6 +15,12 @@ class Firearm;
 enum class ItemIndex;
 enum class AmmunitionID;
 
+enum class PlayerAttribute {
+	ReloadSpeed,
+	Accuracy,
+	MaxHealth,
+};
+
 class Player : public GameObject {
 
 	/// ----------------------------------
@@ -41,24 +47,25 @@ private:
 
 private:
 
+	bool isMoving;
+	bool isAiming;
+	bool isSprinting;
 	float playerForwardAngle;
 	float currentMovementSpeed;
 	float targetMovementSpeed;
 	float aimDeviation;
-	bool isMoving;
-	bool isAiming;
-	bool isSprinting;
-	Vector2 forward;
+	std::unordered_map<PlayerAttribute, float> playerAttributeMap;
 	ItemIndex itemIndex;
+	Vector2 forward;
+
 	static Player* instance;
 
 public:
 
-	float currentAnimationTime;
-	float currentAnimationStartTick;
-
 	bool canInteract;
 	bool usingItem;
+	float currentAnimationTime;
+	float currentAnimationStartTick;
 
 	/// ----------------------------------
 	/// METHODS
@@ -76,20 +83,17 @@ private:
 public:
 
 	Player();
-
 	void PlayerRender();
 	void DisableInteraction();
 	void EnableInteraction();
-	void Update() override;
 	void GiveItem(ItemIndex itemIndex, int amount = 1);
-
+	void SetAttribute(PlayerAttribute playerAttribute, float value);
+	void Update() override;
+	void OnDestroy() override;
 	int GetAmmoCount(AmmunitionID);
-
+	float GetAttribute(PlayerAttribute playerAttribute);
 	bool TryConsumeAmmo(AmmunitionID ammunitionID, int amount = 1);
-
-	Vector2 GetForward() const;
 	Vector2 GetAimingDirection();
-
 	std::vector<Firearm*> GetFirearmList();
 
 	static Player* Instance();

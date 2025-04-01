@@ -1,8 +1,21 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <GameComponent.h>
-#include <PhysicsManager.h>
+
 #include <GameCore.h>
+#include <PhysicsManager.h>
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 BoxCollider::BoxCollider(GameObject* initOwner) : GameComponent(initOwner) {
+
+	enabled = true;
 
 	ignoreLayerSet = {};
 	localPosition = Vector2::zero;
@@ -13,16 +26,12 @@ BoxCollider::BoxCollider(GameObject* initOwner) : GameComponent(initOwner) {
 
 BoxCollider::BoxCollider(GameObject* initOwner, Layer initLayer) : GameComponent(initOwner) {
 
+	enabled = true;
+
 	ignoreLayerSet = {};
 	localPosition = Vector2::zero;
 
 	PhysicsManager::Instance()->RegisterBoxCollider(this);
-
-}
-
-void BoxCollider::OnComponentDestroyed() {
-
-	PhysicsManager::Instance()->UnregisterBoxCollider(this);
 
 }
 
@@ -34,6 +43,28 @@ void BoxCollider::Debug() {
 	GameCore::DrawRectangle(bound.center, bound.extents, false, false, Color::GREEN, Owner()->GetLayer());
 
 }
+
+void BoxCollider::Enable() {
+
+	enabled = true;
+
+}
+
+void BoxCollider::Disable() {
+
+	enabled = false;
+
+}
+
+void BoxCollider::OnComponentDestroyed() {
+
+	ignoreLayerSet.clear();
+
+	PhysicsManager::Instance()->UnregisterBoxCollider(this);
+
+}
+
+bool BoxCollider::IsActive() const { return enabled; }
 
 Bound BoxCollider::GetBound() {
 

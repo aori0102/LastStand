@@ -36,11 +36,12 @@ bool Pistol::TryUse(Player* player) {
 		return false;
 
 	float damage = attributeMap.at(FirearmAttributeIndex::Damage);
-	if (IsCrit())
+	bool isCrit = IsCrit();
+	if (isCrit)
 		damage *= (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
 
 	// Won't cause memory leak because of self destruction
-	new Bullet(player, player->transform->position, player->GetAimingDirection(), damage);
+	new Bullet(player->transform->position, player->GetAimingDirection(), damage, isCrit);
 
 	return true;
 

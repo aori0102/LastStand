@@ -1,6 +1,17 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <GameComponent.h>
-#include <PhysicsManager.h>
+
 #include <GameCore.h>
+#include <PhysicsManager.h>
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 Transform::Transform(GameObject* initOwner) : GameComponent(initOwner) {
 

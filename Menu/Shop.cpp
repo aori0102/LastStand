@@ -579,51 +579,59 @@ void Shop::InitializeUI() {
 	SkillList* skillList = new SkillList;
 	skillList->AddSkill(SkillListIndex::First, new SkillNode{
 		.skillPoint = 1,
-		.value = 0.1f,
+		.value = 120.0f,
 		.name = "Health I",
-		.description = "Increase Max HP by 10%",
+		.description = "Increase Player Max HP to 120",
+		.playerAttribute = PlayerAttribute::MaxHealth,
 		});
 	skillList->AddSkill(SkillListIndex::First, new SkillNode{
 		.skillPoint = 2,
-		.value = 0.1f,
+		.value = 130.0f,
 		.name = "Health II",
-		.description = "Increase Max HP by 10%",
+		.description = "Increase Player Max HP to 130",
+		.playerAttribute = PlayerAttribute::MaxHealth,
 		});
 	skillList->AddSkill(SkillListIndex::First, new SkillNode{
-		.skillPoint = 3,
-		.value = 0.1f,
+		.skillPoint = 5,
+		.value = 150.0f,
 		.name = "Health III",
-		.description = "Increase Max HP by 10%",
+		.description = "Increase Player Max HP to 150",
+		.playerAttribute = PlayerAttribute::MaxHealth,
 		});
 	skillList->AddSkill(SkillListIndex::Second, new SkillNode{
-		.skillPoint = 3,
-		.value = 1.0f / 1.2f,
+		.skillPoint = 1,
+		.value = 2.9f,
 		.name = "Quick Hand",
 		.description = "Increase reload speed by 20%",
+		.playerAttribute = PlayerAttribute::ReloadSpeed,
 		});
 	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
 		.skillPoint = 1,
-		.value = 0.05f,
+		.value = 0.35f,
 		.name = "Accuracy I",
-		.description = "Increase critical chance by 5%",
+		.description = "Increase accuracy to 35%",
+		.playerAttribute = PlayerAttribute::Accuracy,
 		});
 	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
 		.skillPoint = 2,
-		.value = 0.05f,
+		.value = 0.4f,
 		.name = "Accuracy II",
-		.description = "Increase critical chance by 5%",
+		.description = "Increase accuracy to 40%",
+		.playerAttribute = PlayerAttribute::Accuracy,
 		});
 	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
 		.skillPoint = 3,
-		.value = 0.05f,
+		.value = 0.45f,
 		.name = "Accuracy III",
-		.description = "Increase critical chance by 5%",
+		.description = "Increase accuracy to 45%",
+		.playerAttribute = PlayerAttribute::Accuracy,
 		});
 	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
 		.skillPoint = 4,
-		.value = 0.05f,
+		.value = 0.5f,
 		.name = "Accuracy IV",
-		.description = "Increase critical chance by 5%",
+		.description = "Increase accuracy to 50%",
+		.playerAttribute = PlayerAttribute::Accuracy,
 		});
 	skillList->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_List));
 	uiElementMap[UIElementIndex::Skill_List] = skillList;

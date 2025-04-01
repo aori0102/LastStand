@@ -30,6 +30,7 @@ private:
 	int playerEXP;
 	int playerEXPNeeded;
 	int playerSkillPoint;
+
 	static PlayerStatistic* instance;
 
 	/// ----------------------------------
@@ -39,9 +40,11 @@ private:
 public:
 
 	PlayerStatistic();
-
+	~PlayerStatistic();
 	void AddEXP(int amount);
 	void AddMoney(int amount);
+	bool TrySpendMoney(int amount);
+	bool TryConsumeSkillPoint(int amount);
 	int GetLevel() const;
 	int GetEXP() const;
 	int GetMoney() const;
@@ -50,8 +53,7 @@ public:
 	float GetMaxHealth() const;
 	float GetStamina() const;
 	float GetMaxStamina() const;
-	bool TrySpendMoney(int amount);
-	bool TryConsumeSkillPoint(int amount);
+
 	static PlayerStatistic* Instance();
 
 };

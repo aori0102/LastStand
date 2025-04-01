@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Ammunition.h>
 
 #include <vector>
@@ -7,18 +13,24 @@
 #include <ItemManager.h>
 #include <Player.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 const std::unordered_map<AmmunitionID, ItemIndex> Ammunition::AMMO_ITEM_INDEX_MAP = {
 	{ AmmunitionID::Slug, ItemIndex::Ammo_Slug },
 	{ AmmunitionID::Nine_Mil, ItemIndex::Ammo_9mm },
 };
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 Ammunition::Ammunition(AmmunitionID initAmmunitionID, int amount) : Item(AMMO_ITEM_INDEX_MAP.at(initAmmunitionID), amount) {
 
 	ammunitionID = initAmmunitionID;
 
 }
-
-AmmunitionID Ammunition::GetAmmunitionID() const { return ammunitionID; }
 
 void Ammunition::Equip() {}
 
@@ -57,3 +69,5 @@ bool Ammunition::TryRemoveFromStack(int amount) {
 }
 
 bool Ammunition::TryUse(Player* player) { return false; }
+
+AmmunitionID Ammunition::GetAmmunitionID() const { return ammunitionID; }

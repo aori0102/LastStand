@@ -32,9 +32,9 @@ class AnimationManager {
 
 private:
 
-	static AnimationManager* instance;
-
 	std::unordered_map<AnimationIndex, AnimationClip*> animationClipMap;
+
+	static AnimationManager* instance;
 
 	/// ----------------------------------
 	/// METHODS
@@ -47,9 +47,9 @@ private:
 public:
 
 	AnimationManager();
+	~AnimationManager();
+	AnimationClip* GetAnimationClip(AnimationIndex animationIndex);
 
 	static AnimationManager* Instance();
-
-	AnimationClip* GetAnimationClip(AnimationIndex animationIndex);
 
 };

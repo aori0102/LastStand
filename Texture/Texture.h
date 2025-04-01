@@ -41,6 +41,8 @@ class Texture {
 
 protected:
 
+	float opacity;
+
 	SDL_Texture* texture;
 
 	Vector2 textureDimension;
@@ -51,6 +53,7 @@ protected:
 
 public:
 
+	void SetOpacity(float amount);
 	SDL_Texture* GetTexture();
 	Vector2 GetTextureDimension() const;
 

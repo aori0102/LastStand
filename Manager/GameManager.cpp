@@ -1,30 +1,77 @@
-#include <GameManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Zombie.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilhowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinginghowtfisthiscompilinghowtfisthiscompiling
-#include <Player.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <string>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <GameCore.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <Texture.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <GameComponent.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <RenderManager.h>\howtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompilinghowtfisthiscompiling
-#include <StatusBar.h>\#inlaiweljajeloqi3uoitqio4iotqojtiq03tuU#**)(*)(#%@h390th2903u90 u9039u93890U#()&&#@*%@(%*#R))
-#include <PlayerStatistic.h>
-#include <WaveManager.h>
-#include <MediaManager.h>
-#include <Shop.h>
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
+#include <GameManager.h>
+
 #include <exception>
+#include <string>
+
+#include <GameComponent.h>
+#include <GameCore.h>
+#include <MediaManager.h>
+#include <Player.h>
+#include <PlayerStatistic.h>
+#include <RenderManager.h>
+#include <Shop.h>
+#include <StatusBar.h>
+#include <Texture.h>
+#include <WaveManager.h>
+#include <Zombie.h>
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
 GameManager* GameManager::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 GameManager::GameManager() {
 
 	if (instance)
 		throw std::exception("Only one GameManager is allowed");
 
-	new WaveHandler;
-
 	instance = this;
 
 	InitializeObject();
+
+}
+
+GameManager::~GameManager() {
+
+	delete background;
+	background = nullptr;
+
+	delete northBorder;
+	northBorder = nullptr;
+
+	delete southBorder;
+	southBorder = nullptr;
+
+	delete westBorder;
+	westBorder = nullptr;
+
+	delete eastBorder;
+	eastBorder = nullptr;
+
+	delete player;
+	player = nullptr;
+
+	delete playerStatistic;
+	playerStatistic = nullptr;
+
+	delete statusBar;
+	statusBar = nullptr;
+
+	delete shop;
+	shop = nullptr;
+
+	instance = nullptr;
 
 }
 
@@ -57,7 +104,7 @@ void GameManager::InitializeObject() {
 	// Map background
 	background = new GameObject("Background", Layer::Background);
 	Image* background_image = background->AddComponent<Image>();
-	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background),true);
+	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background), true);
 	background_image->showOnScreen = false;
 	background->GetComponent<Transform>()->position = Vector2::zero;
 	background->Render = [background_image]() {
@@ -65,16 +112,11 @@ void GameManager::InitializeObject() {
 		};
 
 	// Player
-	new Player();
+	player = new Player();
 	GameCore::LetCameraFocus(Player::Instance());
-
-	new PlayerStatistic();
-
-	statusBarUI = new StatusBar;
-
-	// Shop
+	playerStatistic = new PlayerStatistic();
+	statusBar = new StatusBar;
 	shop = new Shop;
-	shop->name = "Shop";
 
 }
 
@@ -83,25 +125,16 @@ void GameManager::ReportDead(GameObject* gameObject) {
 	if (gameObject->IsA<Player>()) {
 
 		throw std::exception("You're dead. You fucking suck. Also, say goodbye to your PC :)");
-		
+
 	} else if (gameObject->IsA<Zombie>()) {
 
 		// Point, xp, money, etc
 		PlayerStatistic::Instance()->AddMoney(10);
 		PlayerStatistic::Instance()->AddEXP(gameObject->As<Zombie>()->GetExp());
 
-		WaveHandler::Instance()->RemoveZombie();
+		WaveManager::Instance()->RemoveZombie();
 
 	}
-
-}
-
-void GameManager::Update() {
-
-	northBorder->GetComponent<BoxCollider>()->Debug();
-	southBorder->GetComponent<BoxCollider>()->Debug();
-	westBorder->GetComponent<BoxCollider>()->Debug();
-	eastBorder->GetComponent<BoxCollider>()->Debug();
 
 }
 
@@ -112,10 +145,18 @@ void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 
 	for (int i = 0; i < amount; i++) {
 
-		Zombie* zombie = new Zombie(Player::Instance(), zombieIndex);
+		Zombie* zombie = new Zombie(zombieIndex);
 
 		zombie->transform->position = spawnPositionList[i];
 
 	}
 
 }
+
+void GameManager::Update() {
+
+	WaveManager::Instance()->Update();
+
+}
+
+GameManager* GameManager::Instance() { return instance; }

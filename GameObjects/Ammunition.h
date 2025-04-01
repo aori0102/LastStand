@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -16,22 +22,34 @@ enum class AmmunitionID {
 
 class Ammunition : public Item {
 
-private:
-
-	AmmunitionID ammunitionID;
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 public:
 
 	static const std::unordered_map<AmmunitionID, ItemIndex> AMMO_ITEM_INDEX_MAP;
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	AmmunitionID ammunitionID;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
 	Ammunition(AmmunitionID initAmmunitionID, int amount = 1);
-
-	AmmunitionID GetAmmunitionID() const;
-
 	void Equip() override;
 	void Dequip() override;
 	bool TryAddToStack(int amount = 1) override;
 	bool TryRemoveFromStack(int amount = 1) override;
 	bool TryUse(Player* player) override;
+	AmmunitionID GetAmmunitionID() const;
 
 };

@@ -13,17 +13,22 @@
 #include <GameComponent.h>
 #include <SDL.h>
 
+class AnimationClip;
 class Image;
 class Sprite;
-class AnimationClip;
 
 struct AnimationTransition {
 
 	AnimationNode* to = nullptr;
 	std::function<bool()> condition = []() { return true; };
 
-	AnimationTransition(AnimationNode* initTo, std::function<bool()> initCondition)
-		: to(initTo), condition(initCondition) {}
+};
+
+struct AnimationFrame {
+
+	float scale = 1.0f;
+	float duration = 0.0f;
+	SDL_Rect clip = { 0, 0, 0, 0 };
 
 };
 
@@ -48,8 +53,9 @@ private:
 private:
 
 	AnimationNode(AnimationClip* initAnimationClip, bool initIsStateMachine);
-	AnimationNode* PlayNode();
+	~AnimationNode();
 	void StopNode();
+	AnimationNode* PlayNode();
 
 public:
 
@@ -57,29 +63,6 @@ public:
 	bool IsEnded();
 	bool IsStateMachine() const;
 	void RenderCurrent(Vector2 position, Vector2 scale, float angle);
-
-};
-
-class AnimationFrame {
-
-	/// ----------------------------------
-	/// FIELDS
-	/// ----------------------------------
-
-public:
-
-	float scale;
-	float duration;
-	SDL_Rect clip;
-
-	/// ----------------------------------
-	/// METHODS
-	/// ----------------------------------
-
-public:
-
-	AnimationFrame(SDL_Rect initClip, float initDuration, float initScale)
-		: clip(initClip), duration(initDuration), scale(initScale) {}
 
 };
 
@@ -91,18 +74,18 @@ class AnimationClip : public GameObject {
 
 private:
 
-	friend class AnimationManager;
-	friend class AnimationNode;
-
-	float startTick;		// When the animation is played
-	float currentFrameStartTick;
-	float animationLength;
 	bool isPlaying;
 	bool loop;
 	bool ended;
+	float startTick;		// When the animation is played
+	float currentFrameStartTick;
+	float animationLength;
 	std::vector<AnimationFrame*> animationTimeline;
 	std::vector<AnimationFrame*>::iterator currentFrame;
 	Sprite* animationSpriteSheet;
+
+	friend class AnimationManager;
+	friend class AnimationNode;
 
 public:
 
@@ -113,18 +96,14 @@ public:
 private:
 
 	AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer);
-
 	void Play();
 	void Stop();
 	void EndAndReset();
-
-	void Update() override;
-
 	void AddAnimationFrame(AnimationFrame* animationFrame);
-
 	void RenderCurrent(Vector2 position, Vector2 scale, float angle = 0.0f);
+	void Update() override;
+	void OnDestroy() override;
 	bool IsPlaying() const;
-
 	float GetAnimationLength() const;
 
 };

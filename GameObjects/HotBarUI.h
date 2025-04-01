@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -9,6 +15,10 @@ enum class InventorySlotIndex;
 enum class ItemIndex;
 
 class HotBarUI : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -25,17 +35,29 @@ private:
 	const float LABEL_OFFSET = 8.0f;
 	const int LABEL_FONT_SIZE = 12;
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
 	bool slotSelected;
+	std::unordered_map<InventorySlotIndex, SlotUI*> hotbarSlotMap;
 	Vector2 targetSelectionPosition;
 	GameObject* hotbarSelection;
-	std::unordered_map<InventorySlotIndex, SlotUI*> hotbarSlotMap;
-
-	HotBarUI();
-
-	void Update() override;
-	void SwitchSlot(InventorySlotIndex slotIndex);
-	void UpdateSlot(InventorySlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
 
 	friend class Inventory;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+private:
+
+	HotBarUI();
+	void SwitchSlot(InventorySlotIndex slotIndex);
+	void UpdateSlot(InventorySlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
+	void Update() override;
+	void OnDestroy() override;
 
 };

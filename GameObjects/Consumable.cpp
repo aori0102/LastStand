@@ -1,7 +1,17 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Consumable.h>
 
 #include <GameComponent.h>
 #include <Player.h>
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 Consumable::Consumable(ItemIndex initItemIndex, int amount) : Item(initItemIndex, amount) {
 
@@ -9,6 +19,10 @@ Consumable::Consumable(ItemIndex initItemIndex, int amount) : Item(initItemIndex
 	stamina = 0.0f;
 
 }
+
+void Consumable::Equip() {}
+
+void Consumable::Dequip() {}
 
 bool Consumable::TryUse(Player* player) {
 
@@ -42,10 +56,6 @@ bool Consumable::TryRemoveFromStack(int amount) {
 	return true;
 
 }
-
-void Consumable::Equip() {}
-
-void Consumable::Dequip() {}
 
 int Consumable::GetCurrentStack() const { return currentStack; }
 

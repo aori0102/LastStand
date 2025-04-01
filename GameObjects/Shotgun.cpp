@@ -42,17 +42,24 @@ bool Shotgun::TryUse(Player* player) {
 	if (!TryShoot())
 		return false;
 
-	float damage = attributeMap.at(FirearmAttributeIndex::Damage);
-	if (IsCrit())
-		damage *= (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
-
+	float baseDamage = attributeMap.at(FirearmAttributeIndex::Damage);;
+	float damage;
+	bool isCrit;
 	Vector2 direction = player->GetAimingDirection();
+
 	for (int i = 0; i < PELLET; i++) {
+
+		isCrit = IsCrit();
+
+		if (isCrit)
+			damage = baseDamage * (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
+		else
+			damage = baseDamage;
 
 		float angle = Math::DegToRad(Random::Float(-PELLET_SPAN_DEGREE, PELLET_SPAN_DEGREE));
 
 		// Won't cause memory leak because of self destruction
-		new Bullet(player, player->transform->position, direction.Rotate(angle), damage);
+		new Bullet(player->transform->position, direction.Rotate(angle), damage, isCrit);
 
 	}
 

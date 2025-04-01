@@ -43,18 +43,6 @@ public:
 	float damage;
 	float exp;
 
-	/// ----------------------------------
-	/// METHODS
-	/// ----------------------------------
-
-public:
-
-	ZombieAttribute(float initMovementSpeed, float initHealth, float initDamage, float initExp)
-		: movementSpeed(initMovementSpeed), health(initHealth), damage(initDamage), exp(initExp) {}
-
-	ZombieAttribute()
-		: movementSpeed(0.0f), health(0.0f), damage(0.0f), exp(0.0f) {}
-
 };
 
 class Zombie : public GameObject {
@@ -78,10 +66,8 @@ private:
 
 private:
 
-	GameObject* healthBar;
-	GameObject* target;
-
 	ZombieIndex zombieIndex;
+	GameObject* healthBar;
 	ZombieAttribute* zombieAttribute;
 
 	/// ----------------------------------
@@ -90,8 +76,7 @@ private:
 
 public:
 
-	Zombie(GameObject* initTarget, ZombieIndex initZombieIndex);
-
+	Zombie(ZombieIndex initZombieIndex);
 	void Update() override;
 	void OnDestroy() override;
 	void OnCollisionEnter(BoxCollider* other) override;

@@ -1,24 +1,42 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <set>
 #include <unordered_set>
+
 #include <GameComponent.h>
 
 class RenderManager {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
-	static std::set<GameObject*, decltype(&GameObject::CompareByLayer)> renderObjectSet;
+	std::set<GameObject*, decltype(&GameObject::CompareByLayer)> renderObjectSet;
+	std::unordered_set<Layer> noZoomLayerList;		// Layers that are not affected by zoom in (usually UI)
 
-	static std::unordered_set<Layer> noZoomLayerList;
+	static RenderManager* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
-	static void UpdateRenderObject(GameObject* gameObject);
-	static void RemoveRenderObject(GameObject* gameObject);
+	RenderManager();
+	~RenderManager();
+	void RemoveRenderObject(GameObject* gameObject);
+	void RenderAll();
+	void UpdateRenderObject(GameObject* gameObject);
+	bool AffectByZoom(Layer layer);
 
-	static void RenderAll();
-
-	static bool AffectByZoom(Layer layer);
+	static RenderManager* Instance();
 
 };

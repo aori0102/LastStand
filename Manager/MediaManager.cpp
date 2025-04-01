@@ -1,26 +1,25 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <MediaManager.h>
-#include <Texture.h>
+
 #include <exception>
 #include <iostream>
 
+#include <Texture.h>
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 MediaManager* MediaManager::instance = nullptr;
 
-MediaManager::MediaManager() {
-
-	std::cout << "[MediaManager] Initializing..." << std::endl;
-
-	if (instance)
-		throw std::exception("Media Manager can only have one instance!");
-
-	instance = this;
-
-	InitializeMediaUI();
-	InitializeMediaObject();
-	InitializeMediaFont();
-
-	std::cout << "[MediaManager] Initialization complete!" << std::endl;
-
-}
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void MediaManager::InitializeMediaUI() {
 
@@ -79,6 +78,44 @@ void MediaManager::InitializeMediaFont() {
 		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;
 
 	}
+
+}
+
+MediaManager::MediaManager() {
+
+	std::cout << "[MediaManager] Initializing..." << std::endl;
+
+	if (instance)
+		throw std::exception("Media Manager can only have one instance!");
+
+	instance = this;
+
+	InitializeMediaUI();
+	InitializeMediaObject();
+	InitializeMediaFont();
+
+	std::cout << "[MediaManager] Initialization complete!" << std::endl;
+
+}
+
+MediaManager::~MediaManager() {
+
+	for (auto it_ui = uiSpriteMap.begin(); it_ui != uiSpriteMap.end(); it_ui++)
+		delete (it_ui->second);
+
+	uiSpriteMap.clear();
+
+	for (auto it_object = objectSpriteMap.begin(); it_object != objectSpriteMap.end(); it_object++)
+		delete (it_object->second);
+
+	objectSpriteMap.clear();
+
+	for (auto it_font = fontMap.begin(); it_font != fontMap.end(); it_font++)
+		delete (it_font->second);
+
+	fontMap.clear();
+
+	instance = nullptr;
 
 }
 

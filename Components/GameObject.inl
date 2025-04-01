@@ -1,39 +1,16 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <GameComponent.h>
+
 #include <type_traits>
 
-template <class T>
-T* GameObject::GetComponent() {
-
-	if (!std::is_base_of<GameComponent, T>::value)
-		return nullptr;
-
-	auto it = componentMap.find(typeid(T));
-
-	if (it == componentMap.end())
-		return nullptr;
-	else
-		return static_cast<T*>(componentMap.at(typeid(T)));
-
-}
-
-template <class T>
-T* GameObject::AddComponent() {
-
-	if (!std::is_base_of<GameComponent, T>::value)
-		return nullptr;
-
-	auto it = componentMap.find(typeid(T));
-
-	if (it != componentMap.end())
-		return static_cast<T*>(it->second);
-
-	T* component = new T(this);
-
-	componentMap[typeid(T)] = component;
-
-	return static_cast<T*>(component);
-
-}
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 template<class T>
 bool GameObject::IsA() {
@@ -59,6 +36,40 @@ bool GameObject::TryGetComponent(T*& out) {
 	out = GetComponent<T>();
 
 	return out != nullptr;
+
+}
+
+template <class T>
+T* GameObject::AddComponent() {
+
+	if (!std::is_base_of<GameComponent, T>::value)
+		return nullptr;
+
+	auto it = componentMap.find(typeid(T));
+
+	if (it != componentMap.end())
+		return static_cast<T*>(it->second);
+
+	T* component = new T(this);
+
+	componentMap[typeid(T)] = component;
+
+	return static_cast<T*>(component);
+
+}
+
+template <class T>
+T* GameObject::GetComponent() {
+
+	if (!std::is_base_of<GameComponent, T>::value)
+		return nullptr;
+
+	auto it = componentMap.find(typeid(T));
+
+	if (it == componentMap.end())
+		return nullptr;
+	else
+		return static_cast<T*>(componentMap.at(typeid(T)));
 
 }
 

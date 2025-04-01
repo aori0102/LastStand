@@ -3,6 +3,7 @@
 #include <exception>
 
 #include <MediaManager.h>
+#include <Player.h>
 #include <Shop.h>
 #include <Texture.h>
 
@@ -168,6 +169,10 @@ SkillNode* SkillList::UpgradeSelected() {
 	selectedNode->skillNodeUI->skillNodeBackground->GetComponent<Image>()->LinkSprite(
 		MediaManager::Instance()->GetUISprite(MediaUI::Shop_SkillNode_Acquired), true
 	);
+
+	// Modify attribute after upgrade
+	Player::Instance()->SetAttribute(selectedNode->playerAttribute, selectedNode->value);
+
 	selectedNode->acquired = true;
 	if (selectedNode->next)
 		selectedNode->next->available = true;

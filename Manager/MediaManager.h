@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -76,17 +82,17 @@ class Sprite;
 
 class MediaManager {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
-	static MediaManager* instance;
-
+	const int DEFAULT_FONT_SIZE = 16;
 	const std::string ASSET_FOLDER_PATH = ".\\Asset\\";
+	const std::string FONT_SUBFOLDER = "Font\\";
 	const std::string SPRITE_EXTENSION = ".png";
 	const std::string FONT_EXTENSION = ".ttf";
-
-	// --- UI SPRITE ---
-
-	std::unordered_map<MediaUI, Sprite*> uiSpriteMap;
 	const std::unordered_map<MediaUI, std::string> MEDIA_UI_PATH_MAP = {
 		{ MediaUI::Firearm_AmmoFrame, "Firearm\\AmmoFrame" },
 		{ MediaUI::Firearm_AmmoIcon, "Firearm\\AmmoIcon" },
@@ -127,10 +133,6 @@ private:
 		{ MediaUI::HotBar_Selection, "HotBar\\HotBarSelection" },
 		{ MediaUI::HotBar_Slot, "HotBar\\HotBarSlot" },
 	};
-
-	// --- OBJECT SPRITE ---
-
-	std::unordered_map<MediaObject, Sprite*> objectSpriteMap;
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
 		{ MediaObject::Entity_Player, "Entity\\Player" },
@@ -141,14 +143,25 @@ private:
 		{ MediaObject::Misc_HealthBar, "Misc\\HealthBar" },
 		{ MediaObject::Misc_ItemIcon, "Misc\\ItemIcon" },
 	};
-
-	// --- FONT ---
-	std::unordered_map<MediaFont, TTF_Font*> fontMap;
-	const std::string FONT_SUBFOLDER = "Font\\";
-	const int DEFAULT_FONT_SIZE = 16;
 	const std::unordered_map<MediaFont, std::string> FONT_PATH_MAP = {
 		{ MediaFont::RimouskiSb_Regular, "RimouskiSb_Regular" },
 	};
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	std::unordered_map<MediaUI, Sprite*> uiSpriteMap;
+	std::unordered_map<MediaObject, Sprite*> objectSpriteMap;
+	std::unordered_map<MediaFont, TTF_Font*> fontMap;
+
+	static MediaManager* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 
@@ -158,11 +171,11 @@ private:
 
 public:
 
+	MediaManager();
+	~MediaManager();
 	Sprite* GetUISprite(MediaUI mediaUI);
 	Sprite* GetObjectSprite(MediaObject mediaObject);
 	TTF_Font* GetFont(MediaFont mediaFont);
-
-	MediaManager();
 
 	static MediaManager* Instance();
 

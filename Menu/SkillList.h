@@ -6,6 +6,8 @@
 #include <GameComponent.h>
 #include <Type.h>
 
+enum class PlayerAttribute;
+
 enum class SkillListIndex {
 
 	First,
@@ -31,11 +33,17 @@ struct SkillNodeUI {
 struct SkillNode {
 
 	int skillPoint;
+
 	bool acquired;
 	bool available;
+
 	float value;
+
 	std::string name;
 	std::string description;
+
+	PlayerAttribute playerAttribute;
+
 	SkillNode* next;
 
 	SkillNodeUI* skillNodeUI;

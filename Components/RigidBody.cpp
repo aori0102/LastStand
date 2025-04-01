@@ -1,15 +1,26 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <GameComponent.h>
+
 #include <GameCore.h>
 #include <PhysicsManager.h>
 
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
+
 RigidBody::RigidBody(GameObject* initOwner) : GameComponent(initOwner) {
+
+	lastUpdateTick = 0.0f;
+	initialForce = Vector2::zero;
 
 	drag = 1.0f;
 	mass = 1.0f;
-
-	initialForce = Vector2::zero;
-
-	lastUpdateTick = 0.0f;
+	momentum = Vector2::zero;
 
 	PhysicsManager::Instance()->RegisterRigidBody(this);
 

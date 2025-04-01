@@ -10,6 +10,7 @@ set(SOURCES
     "PhysicsManager.cpp"
     "RenderManager.cpp"
     "UIEventManager.cpp"
+    "WaveInfoUI.cpp"
     "WaveManager.cpp"
 )
 

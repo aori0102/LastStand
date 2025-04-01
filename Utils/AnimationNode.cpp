@@ -1,11 +1,37 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Animation.h>
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 AnimationNode::AnimationNode(AnimationClip* initAnimationClip, bool initIsStateMachine) {
 
-	animationClip = initAnimationClip;
 	isStateMachine = initIsStateMachine;
-
 	transitionList = {};
+	animationClip = initAnimationClip;
+
+}
+
+AnimationNode::~AnimationNode() {
+
+	for (auto it = transitionList.begin(); it != transitionList.end(); it++)
+		delete (*it);
+
+	transitionList.clear();
+
+}
+
+void AnimationNode::StopNode() {
+
+	// If this is a state machine, it should not be playable at first
+	if (!isStateMachine)
+		animationClip->Stop();
 
 }
 
@@ -33,14 +59,6 @@ AnimationNode* AnimationNode::PlayNode() {
 
 	animationClip->Play();
 	return this;
-
-}
-
-void AnimationNode::StopNode() {
-
-	// If this is a state machine, it should not be playable at first
-	if (!isStateMachine)
-		animationClip->Stop();
 
 }
 

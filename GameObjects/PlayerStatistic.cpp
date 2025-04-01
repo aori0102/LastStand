@@ -38,6 +38,12 @@ PlayerStatistic::PlayerStatistic() {
 
 }
 
+PlayerStatistic::~PlayerStatistic() {
+
+	instance = nullptr;
+
+}
+
 void PlayerStatistic::AddEXP(int amount) {
 
 	playerEXP += amount;
@@ -57,6 +63,28 @@ void PlayerStatistic::AddEXP(int amount) {
 void PlayerStatistic::AddMoney(int amount) {
 
 	playerMoney += amount;
+
+}
+
+bool PlayerStatistic::TrySpendMoney(int amount) {
+
+	if (amount > playerMoney)
+		return false;
+
+	playerMoney -= amount;
+	return true;
+
+}
+
+bool PlayerStatistic::TryConsumeSkillPoint(int amount) {
+
+	if (amount > playerSkillPoint)
+		return false;
+
+	playerSkillPoint -= amount;
+	Shop::Instance()->UpdateSkillPoint(playerSkillPoint);
+
+	return true;
 
 }
 
@@ -105,28 +133,6 @@ float PlayerStatistic::GetStamina() const {
 float PlayerStatistic::GetMaxStamina() const {
 
 	return Player::Instance()->GetComponent<Humanoid>()->GetMaxStamina();
-
-}
-
-bool PlayerStatistic::TrySpendMoney(int amount) {
-
-	if (amount > playerMoney)
-		return false;
-
-	playerMoney -= amount;
-	return true;
-
-}
-
-bool PlayerStatistic::TryConsumeSkillPoint(int amount) {
-
-	if (amount > playerSkillPoint)
-		return false;
-
-	playerSkillPoint -= amount;
-	Shop::Instance()->UpdateSkillPoint(playerSkillPoint);
-
-	return true;
 
 }
 

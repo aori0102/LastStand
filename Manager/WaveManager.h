@@ -1,11 +1,24 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <unordered_map>
-#include <Type.h>
-#include <GameComponent.h>
 #include <string>
+#include <unordered_map>
 
-class WaveHandler : public GameObject {
+#include <Type.h>
+
+class GameObject;
+class WaveInfoUI;
+
+class WaveManager {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -15,102 +28,104 @@ private:
 	const int MIN_HORDE = 4;
 	const int MAX_HORDE = 8;
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
-	static WaveHandler* instance;
-
+	bool waveInProgress;
 	int currentWave;
-
 	int totalZombie;
 	int zombieLeft;
 	int zombieToSpawn;
 	int zombieKilled;
 	float lastSpawnTick;
-
 	float difficulty;
 	float currentProgress;
+	WaveInfoUI* waveInfoUI;
 
-	bool waveInProgress;
+	static WaveManager* instance;
 
-public:
-
-	int GetCurrentWave() const { return currentWave; }
-	int GetTotalZombie() const { return totalZombie; }
-	int GetZombieLeft() const { return zombieLeft; }
-	float GetDifficulty() const { return difficulty; }
-	float GetCurrentProgress() const { return currentProgress; }
-	bool WaveInProgress() const { return waveInProgress; }
-	static WaveHandler* Instance() { return instance; }
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
-	WaveHandler();
-
+	WaveManager();
+	~WaveManager();
 	void InitiateWave();
-	void Update() override;
+	void Update();
 	void RemoveZombie();
+	bool WaveInProgress() const;
+	int GetCurrentWave() const;
+	int GetTotalZombie() const;
+	int GetZombieLeft() const;
+	float GetDifficulty() const;
+	float GetCurrentProgress() const;
+
+	static WaveManager* Instance();
 
 };
 
 class WaveInfoUI {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
 	enum class WaveInfoIndex {
 
 		ProgressLabel,
-		Progress,
+		ProgressBarLabel,
 		ProgressBarBackground,
 		ProgressBar,
-		Wave,
+		WaveLabel,
 		NextWaveButton,
 		NextWaveLabel,
 
 	};
 
-	const std::unordered_map<WaveInfoIndex, std::string> UI_LABEL_MAP = {
-		{ WaveInfoIndex::ProgressLabel, "ProgressLabel"},
-		{ WaveInfoIndex::Progress, "Progress" },
-		{ WaveInfoIndex::ProgressBar, "ProgressBar" },
-		{ WaveInfoIndex::ProgressBarBackground, "ProgressBarBackground" },
-		{ WaveInfoIndex::Wave, "Wave" },
-		{ WaveInfoIndex::NextWaveButton, "NextWaveButton" },
-		{ WaveInfoIndex::NextWaveLabel, "NextWaveLabel" },
-	};
-
-	const std::unordered_map<WaveInfoIndex, std::string> UI_TEXT_MAP = {
-		{ WaveInfoIndex::ProgressLabel, "Wave progress" },
-		{ WaveInfoIndex::Wave, "Wave " },
-		{ WaveInfoIndex::NextWaveLabel, "Next wave" },
-		{ WaveInfoIndex::Progress, "%" },
-	};
-
+	const std::string FOLDER_PATH = "./Asset/WaveInfo/";
+	const std::string FILE_EXTENSION = ".png";
 	const std::unordered_map<WaveInfoIndex, int> UI_TEXT_SIZE_MAP = {
 		{ WaveInfoIndex::ProgressLabel, 20 },
-		{ WaveInfoIndex::Progress, 15 },
-		{ WaveInfoIndex::Wave, 36 },
+		{ WaveInfoIndex::ProgressBarLabel, 15 },
+		{ WaveInfoIndex::WaveLabel, 36 },
 		{ WaveInfoIndex::NextWaveLabel, 24 },
 	};
-
+	const std::unordered_map<WaveInfoIndex, std::string> UI_TEXT_MAP = {
+		{ WaveInfoIndex::ProgressLabel, "Wave progress" },
+		{ WaveInfoIndex::WaveLabel, "Wave " },
+		{ WaveInfoIndex::NextWaveLabel, "Next wave" },
+		{ WaveInfoIndex::ProgressBarLabel, "%" },
+	};
 	const std::unordered_map<WaveInfoIndex, Vector2> UI_POSITION_MAP = {
 		{ WaveInfoIndex::ProgressLabel, Vector2(0.0f, 12.0f) },
-		{ WaveInfoIndex::Progress, Vector2(0.0f, 56.0f) },
+		{ WaveInfoIndex::ProgressBarLabel, Vector2(0.0f, 56.0f) },
 		{ WaveInfoIndex::ProgressBar, Vector2(490.0f, 42.0f) },
 		{ WaveInfoIndex::ProgressBarBackground, Vector2(490.0f, 42.0f) },
 		{ WaveInfoIndex::NextWaveButton, Vector2(540.0f, 650.0f) },
 	};
 
-	const std::string FOLDER_PATH = "./Asset/WaveInfo/";
-	const std::string FILE_EXTENSION = ".png";
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
-	static WaveInfoUI* instance;
-
-	std::unordered_map<WaveInfoIndex, GameObject*> uiElementMap;
-
 	int previousProgress;
 	int previousWave;
+	std::unordered_map<WaveInfoIndex, GameObject*> uiElementMap;
+
+	static WaveInfoUI* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 
@@ -119,5 +134,8 @@ private:
 public:
 
 	WaveInfoUI();
+	~WaveInfoUI();
+
+	static WaveInfoUI* Instance();
 
 };

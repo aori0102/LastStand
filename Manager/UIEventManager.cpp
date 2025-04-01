@@ -1,10 +1,52 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <UIEventManager.h>
+
+#include <exception>
+
 #include <Texture.h>
 #include <GameCore.h>
 
-std::unordered_set<Button*> UIEvent::buttonSet = {};
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
-bool UIEvent::Update() {
+UIEventManager* UIEventManager::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
+
+UIEventManager::UIEventManager() {
+
+	if (instance)
+		throw std::exception("UIEventManager can only have 1 instance!");
+
+	buttonSet = {};
+
+	instance = this;
+
+}
+
+UIEventManager::~UIEventManager() {
+
+	buttonSet.clear();
+
+	instance = nullptr;
+
+}
+
+void UIEventManager::RegisterButton(Button* button) {
+
+	buttonSet.insert(button);
+
+}
+
+bool UIEventManager::Update() {
 
 	Vector2 mousePosition = Math::SDLToC00(GameCore::GetMouseInput(), Vector2::zero);
 
@@ -41,8 +83,4 @@ bool UIEvent::Update() {
 
 }
 
-void UIEvent::RegisterButton(Button* button) {
-
-	buttonSet.insert(button);
-
-}
+UIEventManager* UIEventManager::Instance() { return instance; }
