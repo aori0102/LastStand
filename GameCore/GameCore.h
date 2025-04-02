@@ -12,9 +12,10 @@
 #include <vector>
 
 #include <SDL.h>
-#include <Type.h>
+#include <Utils.h>
 
 class AnimationManager;
+class AudioManager;
 class Color;
 class GameObject;
 class GameManager;
@@ -83,6 +84,7 @@ private:
 	static Vector2 cameraPosition;
 	static Vector2 windowResolution;
 	static AnimationManager* animationManager;
+	static AudioManager* audioManager;
 	static GameManager* gameManager;
 	static GameObject* cameraFocusObject;
 	static ItemManager* itemManager;

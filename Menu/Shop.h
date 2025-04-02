@@ -13,7 +13,7 @@
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <RenderManager.h>
-#include <Type.h>
+#include <Utils.h>
 
 struct ButtonUIGroup;
 struct SkillNode;

@@ -74,12 +74,16 @@ void AnimationClip::AddAnimationFrame(AnimationFrame* animationFrame) {
 
 }
 
-void AnimationClip::RenderCurrent(Vector2 position, Vector2 scale, float angle) {
+void AnimationClip::RenderCurrent(Vector2 position, float angle) {
 
 	if (currentFrame == animationTimeline.end())
 		return;
 
-	GameCore::RenderCopy(animationSpriteSheet, position, scale * (*currentFrame)->scale, false, GetLayer(), &((*currentFrame)->clip), angle);
+	AnimationFrame* frame = *currentFrame;
+
+	Vector2 scale(frame->clip.w, frame->clip.h);
+
+	GameCore::RenderCopy(animationSpriteSheet, position, scale * frame->scale, false, GetLayer(), &(frame->clip), angle);
 
 }
 

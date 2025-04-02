@@ -9,7 +9,7 @@
 #include <string>
 #include <unordered_map>
 
-#include <Type.h>
+#include <Utils.h>
 
 class GameObject;
 class WaveInfoUI;

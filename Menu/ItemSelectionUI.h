@@ -7,7 +7,7 @@
 #pragma once
 
 #include <GameComponent.h>
-#include <Type.h>
+#include <Utils.h>
 
 enum class ItemIndex;
 

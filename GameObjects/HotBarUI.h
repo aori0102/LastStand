@@ -9,9 +9,9 @@
 #include <unordered_map>
 
 #include <GameComponent.h>
-#include <Type.h>
+#include <Utils.h>
 
-enum class InventorySlotIndex;
+enum class HotBarSlotIndex;
 enum class ItemIndex;
 
 class HotBarUI : public GameObject {
@@ -42,7 +42,7 @@ private:
 private:
 
 	bool slotSelected;
-	std::unordered_map<InventorySlotIndex, SlotUI*> hotbarSlotMap;
+	std::unordered_map<HotBarSlotIndex, SlotUI*> hotbarSlotMap;
 	Vector2 targetSelectionPosition;
 	GameObject* hotbarSelection;
 
@@ -55,8 +55,8 @@ private:
 private:
 
 	HotBarUI();
-	void SwitchSlot(InventorySlotIndex slotIndex);
-	void UpdateSlot(InventorySlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
+	void SwitchSlot(HotBarSlotIndex slotIndex);
+	void UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
 	void Update() override;
 	void OnDestroy() override;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Type.h>
+#include <Utils.h>
 #include <string>
 #include <GameComponent.h>
 

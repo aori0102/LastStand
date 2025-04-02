@@ -8,10 +8,12 @@ set(SOURCES
     "Consumable.cpp"
     "Firearm.cpp"
     "HotBarUI.cpp"
+    "InventoryUI.cpp"
     "Item.cpp"
     "Pistol.cpp"
     "Player.cpp"
     "PlayerStatistic.cpp"
+    "Rifle.cpp"
     "Shotgun.cpp"
     "StatusBar.cpp"
     "Zombie.cpp"
@@ -28,6 +30,7 @@ target_include_directories(GAME_OBJECTS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 	${SDL2_INCLUDE_DIRS} 
     ${SDL2_IMAGE_INCLUDE_DIRS}
     ${SDL2_TTF_INCLUDE_DIRS}
+    ${SDL2_MIXER_INCLUDE_DIRS}
 )
 target_include_directories(GAME_OBJECTS PUBLIC
     ${CMAKE_SOURCE_DIR}/UTILS
@@ -39,6 +42,7 @@ target_link_libraries(GAME_OBJECTS PRIVATE
 	${SDL2_LIBRARIES}
     ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_TTF_LIBRARIES}
+    ${SDL2_MIXER_LIBRARIES}
 )
 target_link_libraries(GAME_OBJECTS PUBLIC  
     UTILS

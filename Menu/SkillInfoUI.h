@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GameComponent.h>
-#include <Type.h>
+#include <Utils.h>
 
 struct SkillNode;
 

@@ -39,7 +39,6 @@ struct FirearmInfo {
 	std::string name;
 	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 	AmmunitionID ammunitionID;
-	MediaObject iconIndex;
 	ReloadType reloadType;
 
 };
@@ -158,6 +157,25 @@ private:
 public:
 
 	Shotgun(ItemIndex initItemIndex);
+	bool TryUse(Player* player) override;
+
+};
+
+class Rifle : public Firearm {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	Rifle(ItemIndex initItemIndex);
 	bool TryUse(Player* player) override;
 
 };

@@ -21,7 +21,7 @@
 #include <MediaManager.h>
 #include <PhysicsManager.h>
 #include <Texture.h>
-#include <Type.h>
+#include <Utils.h>
 
 /// ----------------------------------
 /// STATIC FIELDS
@@ -63,20 +63,29 @@ void Player::HandleActions() {
 	// Hotbar
 	Inventory* inventory = GetComponent<Inventory>();
 	if (GameCore::GetKeyState(SDLK_1).started)
-		inventory->SelectSlot(InventorySlotIndex::First);
+		inventory->SelectSlot(HotBarSlotIndex::First);
 	else if (GameCore::GetKeyState(SDLK_2).started)
-		inventory->SelectSlot(InventorySlotIndex::Second);
+		inventory->SelectSlot(HotBarSlotIndex::Second);
 	else if (GameCore::GetKeyState(SDLK_3).started)
-		inventory->SelectSlot(InventorySlotIndex::Third);
+		inventory->SelectSlot(HotBarSlotIndex::Third);
 	else if (GameCore::GetKeyState(SDLK_4).started)
-		inventory->SelectSlot(InventorySlotIndex::Forth);
+		inventory->SelectSlot(HotBarSlotIndex::Forth);
 	else if (GameCore::GetKeyState(SDLK_5).started)
-		inventory->SelectSlot(InventorySlotIndex::Fifth);
+		inventory->SelectSlot(HotBarSlotIndex::Fifth);
 
 	itemIndex = inventory->GetCurrentItemIndex();
 
 	// Use item
-	usingItem = GameCore::GetMouseState(MouseButton::Left).started && inventory->TryUseCurrent();
+	if (itemIndex == ItemIndex::Rifle_M4)
+		usingItem = GameCore::GetMouseState(MouseButton::Left).performed;
+	else
+		usingItem = GameCore::GetMouseState(MouseButton::Left).started;
+
+	usingItem = usingItem && inventory->TryUseCurrent();
+
+	// Toggle inventory UI
+	if (GameCore::GetKeyState(SDLK_i).started)
+		inventory->ToggleInventory();
 
 	// Reload firearm
 	if (GameCore::GetKeyState(SDLK_r).started) {
@@ -168,6 +177,8 @@ void Player::InitializeAnimation() {
 	animController->AddAnimationClip(AnimationIndex::Player_Pistol_Shoot);
 	animController->AddAnimationClip(AnimationIndex::Player_Shotgun_Idle);
 	animController->AddAnimationClip(AnimationIndex::Player_Shotgun_Shoot);
+	animController->AddAnimationClip(AnimationIndex::Player_Rifle_Idle);
+	animController->AddAnimationClip(AnimationIndex::Player_Rifle_Shoot);
 	animController->AddAnimationClip(AnimationIndex::Player_MedKit);
 	animController->AddAnimationClip(AnimationIndex::Player_Item_Transition, true);
 
@@ -200,6 +211,14 @@ void Player::InitializeAnimation() {
 
 	animController->AddTransition(
 		AnimationIndex::Player_Item_Transition,
+		AnimationIndex::Player_Rifle_Idle,
+		[this]() {
+			return itemIndex == ItemIndex::Rifle_M4;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Item_Transition,
 		AnimationIndex::Player_MedKit,
 		[this]() {
 			return itemIndex == ItemIndex::MedKit;
@@ -219,6 +238,14 @@ void Player::InitializeAnimation() {
 		AnimationIndex::Player_Item_Transition,
 		[this]() {
 			return itemIndex != ItemIndex::Shotgun_Beretta1301;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Rifle_Idle,
+		AnimationIndex::Player_Item_Transition,
+		[this]() {
+			return itemIndex != ItemIndex::Rifle_M4;
 		}
 	);
 
@@ -273,6 +300,20 @@ void Player::InitializeAnimation() {
 		AnimationIndex::Player_Shotgun_Idle
 	);
 
+	// --- RIFLE ---
+	animController->AddTransition(
+		AnimationIndex::Player_Rifle_Idle,
+		AnimationIndex::Player_Rifle_Shoot,
+		[this]() {
+			return usingItem;
+		}
+	);
+
+	animController->AddTransition(
+		AnimationIndex::Player_Rifle_Shoot,
+		AnimationIndex::Player_Rifle_Idle
+	);
+
 }
 
 void Player::InitializeData() {
@@ -286,7 +327,7 @@ void Player::InitializeData() {
 	playerSprite->showOnScreen = false;
 
 	Inventory* inventory = AddComponent<Inventory>();
-	inventory->AddItem(ItemIndex::Pistol_M1911);
+	inventory->AddItem(ItemIndex::Rifle_M4);
 	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
 	inventory->AddItem(ItemIndex::MedKit);
 	inventory->AddItem(ItemIndex::Ammo_Slug, 25);
@@ -307,7 +348,6 @@ void Player::InitializeData() {
 	isMoving = false;
 	isAiming = false;
 	isSprinting = false;
-	canInteract = true;
 	usingItem = false;
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
 	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
@@ -321,7 +361,6 @@ void Player::InitializeData() {
 	itemIndex = ItemIndex::None;
 	forward = Vector2::zero;
 
-	canInteract = true;
 	usingItem = false;
 	currentAnimationTime = 0.0f;
 	currentAnimationStartTick = 0.0f;
@@ -352,18 +391,6 @@ void Player::PlayerRender() {
 	);
 
 	GetComponent<BoxCollider>()->Debug();
-
-}
-
-void Player::DisableInteraction() {
-
-	canInteract = false;
-
-}
-
-void Player::EnableInteraction() {
-
-	canInteract = true;
 
 }
 
@@ -415,15 +442,11 @@ void Player::SetAttribute(PlayerAttribute playerAttribute, float value) {
 
 void Player::Update() {
 
-	if (canInteract) {
-
 		HandleMovement();
 
 		HandleFacing();
 
 		HandleActions();
-
-	}
 
 	HandleStamina();
 

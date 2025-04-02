@@ -22,7 +22,7 @@ HotBarUI::HotBarUI() {
 	slotSelected = false;
 
 	Vector2 slotPosition = HOTBAR_POSITION;
-	for (int i = static_cast<int>(InventorySlotIndex::First); i <= static_cast<int>(InventorySlotIndex::Fifth); i++) {
+	for (int i = static_cast<int>(HotBarSlotIndex::First); i <= static_cast<int>(HotBarSlotIndex::Fifth); i++) {
 
 		SlotUI* hotBarSlot = new SlotUI;
 
@@ -56,7 +56,7 @@ HotBarUI::HotBarUI() {
 			hotBarSlotLabel_text->Render();
 			};
 
-		hotbarSlotMap[static_cast<InventorySlotIndex>(i)] = hotBarSlot;
+		hotbarSlotMap[static_cast<HotBarSlotIndex>(i)] = hotBarSlot;
 
 		slotPosition.y += hotBarSlotFrame_image->transform->scale.y + HOTBAR_SLOT_GAP;
 
@@ -75,9 +75,9 @@ HotBarUI::HotBarUI() {
 
 }
 
-void HotBarUI::SwitchSlot(InventorySlotIndex slotIndex) {
+void HotBarUI::SwitchSlot(HotBarSlotIndex slotIndex) {
 
-	if (slotIndex == InventorySlotIndex::None) {
+	if (slotIndex == HotBarSlotIndex::None) {
 
 		slotSelected = false;
 		hotbarSelection->Disable();
@@ -92,9 +92,9 @@ void HotBarUI::SwitchSlot(InventorySlotIndex slotIndex) {
 
 }
 
-void HotBarUI::UpdateSlot(InventorySlotIndex slotIndex, ItemIndex itemIndex, int amount) {
+void HotBarUI::UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int amount) {
 
-	if (slotIndex == InventorySlotIndex::None)
+	if (slotIndex == HotBarSlotIndex::None)
 		return;
 
 	if (itemIndex == ItemIndex::None) {

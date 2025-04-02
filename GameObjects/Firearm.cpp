@@ -6,6 +6,7 @@
 
 #include <Firearm.h>
 
+#include <AudioManager.h>
 #include <Ammunition.h>
 #include <GameCore.h>
 #include <ItemManager.h>
@@ -30,12 +31,11 @@ const std::unordered_map<ItemIndex, FirearmInfo> Firearm::BASE_FIREARM_INFO_MAP 
 			{ FirearmAttributeIndex::CriticalChance, 0.3f },
 			{ FirearmAttributeIndex::CriticalDamage, 1.0f },
 			{ FirearmAttributeIndex::Damage, 6.8f },
-			{ FirearmAttributeIndex::Firerate, 356.0f },
+			{ FirearmAttributeIndex::Firerate, 316.9f },
 			{ FirearmAttributeIndex::MagazineCapacity, 20 },
 			{ FirearmAttributeIndex::ReloadTime, 2.4f },
 		},
 		.ammunitionID = AmmunitionID::Nine_Mil,
-		.iconIndex = MediaObject::Gun_M1911,
 		.reloadType = ReloadType::Magazine,
 	} },
 	{ ItemIndex::Shotgun_Beretta1301, FirearmInfo {
@@ -44,15 +44,26 @@ const std::unordered_map<ItemIndex, FirearmInfo> Firearm::BASE_FIREARM_INFO_MAP 
 			{ FirearmAttributeIndex::CriticalChance, 0.3f },
 			{ FirearmAttributeIndex::CriticalDamage, 1.0f },
 			{ FirearmAttributeIndex::Damage, 4.1f },
-			{ FirearmAttributeIndex::Firerate, 192.0f },
+			{ FirearmAttributeIndex::Firerate, 192.6f },
 			{ FirearmAttributeIndex::MagazineCapacity, 8 },
 			{ FirearmAttributeIndex::ReloadTime, 0.4f },
 		},
 		.ammunitionID = AmmunitionID::Slug,
-		.iconIndex = MediaObject::Gun_Beretta1301,
 		.reloadType = ReloadType::PerAmmo,
 	} },
-
+	{ ItemIndex::Rifle_M4, FirearmInfo {
+		.name = "M4",
+		.attributeMap = {
+			{ FirearmAttributeIndex::CriticalChance, 0.3f },
+			{ FirearmAttributeIndex::CriticalDamage, 1.0f },
+			{ FirearmAttributeIndex::Damage, 14.8f },
+			{ FirearmAttributeIndex::Firerate, 614.2f },
+			{ FirearmAttributeIndex::MagazineCapacity, 42 },
+			{ FirearmAttributeIndex::ReloadTime, 4.3f },
+		},
+		.ammunitionID = AmmunitionID::Nine_Mil,
+		.reloadType = ReloadType::Magazine,
+	} },
 };
 
 /// ----------------------------------
@@ -118,6 +129,8 @@ bool Firearm::TryShoot() {
 	}
 
 	if (currentAmmo > 0 && GameCore::Time() >= lastShootTick + 60.0f / attributeMap.at(FirearmAttributeIndex::Firerate)) {
+
+		AudioManager::Instance()->PlayOneShot(MediaSFX::GunShot);
 
 		lastShootTick = GameCore::Time();
 		currentAmmo--;
@@ -262,6 +275,8 @@ void Firearm::Equip() {
 }
 
 void Firearm::Dequip() {
+
+	isReloading = false;
 
 	HideUI();
 

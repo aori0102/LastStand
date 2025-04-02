@@ -14,13 +14,14 @@
 #include <unordered_set>
 #include <vector>
 
-#include <Type.h>
+#include <Utils.h>
 
 class AnimationClip;
 class AnimationNode;
 class BoxCollider;
 class GameObject;
 class HotBarUI;
+class InventoryUI;
 class Item;
 class Player;
 class Transform;
@@ -254,7 +255,7 @@ public:
 
 };
 
-enum class InventorySlotIndex {
+enum class HotBarSlotIndex {
 
 	None,
 
@@ -276,7 +277,7 @@ private:
 
 	struct ItemState {
 		Item* item;
-		InventorySlotIndex slot;
+		HotBarSlotIndex slot;
 	};
 
 	/// ----------------------------------
@@ -286,19 +287,26 @@ private:
 private:
 
 	std::unordered_map<ItemIndex, ItemState*> storage;
-	std::unordered_map<InventorySlotIndex, ItemIndex> hotBar;
-	InventorySlotIndex currentSlotIndex;
+	std::unordered_map<HotBarSlotIndex, ItemIndex> hotBar;
+	HotBarSlotIndex currentSlotIndex;
 	HotBarUI* hotBarUI;
+	InventoryUI* inventoryUI;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void OnComponentDestroyed() override;
+
 public:
 
 	Inventory(GameObject* initOwner);
 	void AddItem(ItemIndex itemIndex, int amount = 1);
-	void SelectSlot(InventorySlotIndex slotIndex);
+	void SelectSlot(HotBarSlotIndex slotIndex);
+	void ToggleInventory();
+	void LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex itemIndex);
 	bool IsSufficient(ItemIndex itemIndex, int amount);
 	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	bool TryUseCurrent();

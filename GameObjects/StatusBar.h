@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 #include <GameComponent.h>
-#include <Type.h>
+#include <Utils.h>
 
 class PlayerStatistic;
 

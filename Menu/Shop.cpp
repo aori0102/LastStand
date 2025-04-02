@@ -25,7 +25,7 @@
 #include <SkillInfoUI.h>
 #include <SkillList.h>
 #include <Texture.h>
-#include <Type.h>
+#include <Utils.h>
 
 /// ----------------------------------
 /// STATIC FIELDS
@@ -503,6 +503,7 @@ void Shop::InitializeUI() {
 	itemSelectionUI->AddItem(ItemIndex::MedKit);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_Slug);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_9mm);
+	itemSelectionUI->AddItem(ItemIndex::Ammo_556);
 	uiElementMap[UIElementIndex::Utility_ItemSelectionGrid] = itemSelectionUI;
 
 	/// >>>
@@ -799,19 +800,7 @@ void Shop::Update() {
 
 		showShop = !showShop;
 
-		if (showShop) {
-
-			Player::Instance()->DisableInteraction();
-
-			Show();
-
-		} else {
-
-			Player::Instance()->EnableInteraction();
-
-			Hide();
-
-		}
+		showShop ? Show() : Hide();
 
 	}
 

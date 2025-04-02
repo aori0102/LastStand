@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <Type.h>
+#include <Utils.h>
 #include <functional>
 
 #include <GameComponent.h>

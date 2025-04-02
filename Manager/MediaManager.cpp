@@ -81,6 +81,26 @@ void MediaManager::InitializeMediaFont() {
 
 }
 
+void MediaManager::InitializeMediaSFX() {
+
+	std::cout << "[MediaManager] Loading SFX Media..." << std::endl;
+
+	int completed = 0;
+	int total = SFX_PATH_MAP.size();
+
+	for (auto it = SFX_PATH_MAP.begin(); it != SFX_PATH_MAP.end(); it++) {
+
+		sfxMap[it->first] = Mix_LoadWAV((ASSET_FOLDER_PATH + AUDIO_SUBFOLDER + it->second + AUDIO_EXTENSION).c_str());
+		if (!sfxMap.at(it->first))
+			throw std::exception(("SFX " + it->second + " failed to load. Error: " + Mix_GetError()).c_str());
+
+		completed++;
+		std::cout << "[MediaManager] Progress: " << completed << " / " << total << std::endl;
+
+	}
+
+}
+
 MediaManager::MediaManager() {
 
 	std::cout << "[MediaManager] Initializing..." << std::endl;
@@ -93,6 +113,7 @@ MediaManager::MediaManager() {
 	InitializeMediaUI();
 	InitializeMediaObject();
 	InitializeMediaFont();
+	InitializeMediaSFX();
 
 	std::cout << "[MediaManager] Initialization complete!" << std::endl;
 
@@ -141,6 +162,15 @@ TTF_Font* MediaManager::GetFont(MediaFont mediaFont) {
 
 	if (fontMap.contains(mediaFont))
 		return fontMap.at(mediaFont);
+
+	return nullptr;
+
+}
+
+Mix_Chunk* MediaManager::GetSFX(MediaSFX mediaSFX) {
+
+	if (sfxMap.contains(mediaSFX))
+		return sfxMap.at(mediaSFX);
 
 	return nullptr;
 

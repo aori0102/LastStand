@@ -76,11 +76,11 @@ bool AnimationNode::IsEnded() {
 
 bool AnimationNode::IsStateMachine() const { return isStateMachine; }
 
-void AnimationNode::RenderCurrent(Vector2 position, Vector2 scale, float angle) {
+void AnimationNode::RenderCurrent(Vector2 position, float angle) {
 
 	if (isStateMachine) // This should not happen
 		throw std::exception("Unexpected! this is a state machine!");
 
-	animationClip->RenderCurrent(position, scale, angle);
+	animationClip->RenderCurrent(position, angle);
 
 }

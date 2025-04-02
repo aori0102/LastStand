@@ -17,6 +17,7 @@ enum class AmmunitionID {
 
 	Slug,
 	Nine_Mil,
+	Five_Five_Six,
 	
 };
 

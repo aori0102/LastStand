@@ -13,7 +13,7 @@
 #include <MediaManager.h>
 #include <Player.h>
 #include <Texture.h>
-#include <Type.h>
+#include <Utils.h>
 #include <Zombie.h>
 
 /// ----------------------------------

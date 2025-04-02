@@ -21,6 +21,7 @@ target_include_directories(TEXTURE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 	${SDL2_INCLUDE_DIRS} 
     ${SDL2_IMAGE_INCLUDE_DIRS}
     ${SDL2_TTF_INCLUDE_DIRS}
+    ${SDL2_MIXER_INCLUDE_DIRS}
 )
 target_include_directories(TEXTURE PUBLIC 
     ${CMAKE_SOURCE_DIR}/UTILS
@@ -33,6 +34,7 @@ target_link_libraries(TEXTURE PRIVATE
 	${SDL2_LIBRARIES}
     ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_TTF_LIBRARIES}
+    ${SDL2_MIXER_LIBRARIES}
 )
 target_link_libraries(TEXTURE PUBLIC     
     UTILS

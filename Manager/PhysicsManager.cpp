@@ -8,7 +8,7 @@
 
 #include <GameComponent.h>
 #include <GameCore.h>
-#include <Type.h>
+#include <Utils.h>
 
 /// ----------------------------------
 /// STATIC FIELDS

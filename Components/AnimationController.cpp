@@ -88,21 +88,32 @@ void AnimationController::AddAnimationClip(AnimationIndex animationIndex, bool i
 
 void AnimationController::AddTransition(AnimationIndex from, AnimationIndex to, std::function<bool()> condition) {
 
-	auto it_from = animationNodeMap.find(from);
-	if (it_from == animationNodeMap.end())
-		throw std::exception("Animation controller cannot handle linking from an unassigned animation clip");
+	try {
 
-	auto it_to = animationNodeMap.find(to);
-	if (it_to == animationNodeMap.end())
-		throw std::exception("Animation controller cannot handle linking to an unassigned animation clip");
+		auto it_from = animationNodeMap.find(from);
+		if (it_from == animationNodeMap.end())
+			throw std::exception("Animation controller cannot handle linking from an unassigned animation clip");
 
-	auto it_transition = std::find_if(
-		it_from->second->transitionList.begin(),
-		it_from->second->transitionList.end(),
-		[it_to](AnimationTransition* animTrans) { return it_to->second == animTrans->to; }
-	);
-	if (it_transition == it_from->second->transitionList.end())
-		it_from->second->transitionList.push_back(new AnimationTransition(it_to->second, condition));
+		auto it_to = animationNodeMap.find(to);
+		if (it_to == animationNodeMap.end())
+			throw std::exception("Animation controller cannot handle linking to an unassigned animation clip");
+
+		auto it_transition = std::find_if(
+			it_from->second->transitionList.begin(),
+			it_from->second->transitionList.end(),
+			[it_to](AnimationTransition* animTrans) { return it_to->second == animTrans->to; }
+		);
+		if (it_transition == it_from->second->transitionList.end())
+			it_from->second->transitionList.push_back(new AnimationTransition{
+				.to = it_to->second,
+				.condition = condition
+				});
+
+	} catch (...) {
+
+		std::cout << "Fatal! Unresolved error trying to add transition! Possibly forgoting to add the animation node?" << std::endl;
+
+	}
 
 }
 
@@ -124,6 +135,6 @@ void AnimationController::RenderCurrent(Vector2 position, Vector2 scale, float a
 	if (!currentAnimationNode)
 		return;
 
-	currentAnimationNode->RenderCurrent(position, scale, angle);
+	currentAnimationNode->RenderCurrent(position, angle);
 
 }

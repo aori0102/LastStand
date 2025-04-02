@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <AnimationManager.h>
+#include <AudioManager.h>
 #include <GameComponent.h>
 #include <GameManager.h>
 #include <ItemManager.h>
@@ -17,6 +18,7 @@
 #include <RenderManager.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <Texture.h>
 #include <UIEventManager.h>
@@ -57,6 +59,7 @@ SDL_Renderer* GameCore::renderer = nullptr;
 SDL_Window* GameCore::window = nullptr;
 
 AnimationManager* GameCore::animationManager = nullptr;
+AudioManager* GameCore::audioManager = nullptr;
 GameManager* GameCore::gameManager = nullptr;
 ItemManager* GameCore::itemManager = nullptr;
 PhysicsManager* GameCore::physicsManager = nullptr;
@@ -276,7 +279,7 @@ bool GameCore::InitializeProgram() {
 		// Initialize SDL2
 		std::cout << "Initializing SDL2..." << std::endl;
 
-		if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 
 			errorCode = "Failed to initialize SDL2. SDL Error: ";
 			errorCode += SDL_GetError();
@@ -338,6 +341,16 @@ bool GameCore::InitializeProgram() {
 		} else
 			std::cout << "SDL2 TTF initialized" << std::endl;
 
+		// Initialize MIX
+		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+
+			errorCode = "Failed to initialize SDL2 Mixer. MIX Error: ";
+			errorCode += Mix_GetError();
+			throw std::exception(errorCode.c_str());
+
+		} else
+			std::cout << "SDL2 Mixer initialized" << std::endl;
+
 		// Success, terminate
 		std::cout << "Done!" << std::endl;
 		return true;
@@ -362,6 +375,9 @@ bool GameCore::InitializeManager() {
 
 		std::cout << "Initializing MediaManager..." << std::endl;
 		mediaManager = new MediaManager;
+
+		std::cout << "Initializing AudioManager..." << std::endl;
+		audioManager = new AudioManager;
 
 		std::cout << "Initializing RenderManager..." << std::endl;
 		renderManager = new RenderManager;
@@ -579,6 +595,9 @@ void GameCore::Close() {
 
 	// Flush game objects and components
 
+	// Flush audio system
+	Mix_CloseAudio();
+
 	// Close window and renderer
 	SDL_DestroyWindow(window);
 	window = nullptr;
@@ -589,6 +608,7 @@ void GameCore::Close() {
 	// Close SDL libraries
 	TTF_Quit();
 	IMG_Quit();
+	Mix_Quit();
 	SDL_Quit();
 
 }

@@ -20,6 +20,7 @@
 const std::unordered_map<AmmunitionID, ItemIndex> Ammunition::AMMO_ITEM_INDEX_MAP = {
 	{ AmmunitionID::Slug, ItemIndex::Ammo_Slug },
 	{ AmmunitionID::Nine_Mil, ItemIndex::Ammo_9mm },
+	{ AmmunitionID::Five_Five_Six, ItemIndex::Ammo_556 },
 };
 
 /// ----------------------------------

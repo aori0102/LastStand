@@ -62,7 +62,6 @@ private:
 
 public:
 
-	bool canInteract;
 	bool usingItem;
 	float currentAnimationTime;
 	float currentAnimationStartTick;
@@ -84,8 +83,6 @@ public:
 
 	Player();
 	void PlayerRender();
-	void DisableInteraction();
-	void EnableInteraction();
 	void GiveItem(ItemIndex itemIndex, int amount = 1);
 	void SetAttribute(PlayerAttribute playerAttribute, float value);
 	void Update() override;

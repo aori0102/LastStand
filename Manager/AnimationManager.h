@@ -13,11 +13,18 @@ class AnimationClip;
 enum class AnimationIndex {
 
 	Player_Idle,
+
 	Player_Pistol_Idle,
 	Player_Pistol_Shoot,
+
 	Player_Shotgun_Idle,
 	Player_Shotgun_Shoot,
+
+	Player_Rifle_Idle,
+	Player_Rifle_Shoot,
+
 	Player_MedKit,
+
 	Player_Item_Transition,
 
 	Total,
@@ -25,6 +32,14 @@ enum class AnimationIndex {
 };
 
 class AnimationManager {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
+private:
+
+	const float PLAYER_SPRITE_SCALE = 1.0f;
 
 	/// ----------------------------------
 	/// FIELDS

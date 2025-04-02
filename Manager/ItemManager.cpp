@@ -47,6 +47,12 @@ void ItemManager::InitializeItemInfo() {
 			.name = "Beretta 1301 Tactical",
 			.iconClip = { 135, 132, 55, 58 },
 		} },
+		{ ItemIndex::Rifle_M4, {
+			.price = 300,
+			.shopStack = 1,
+			.name = "M4",
+			.iconClip = { 321, 129, 62, 62 },
+		} },
 		{ ItemIndex::Ammo_Slug, {
 			.price = 25,
 			.shopStack = 8,
@@ -58,6 +64,12 @@ void ItemManager::InitializeItemInfo() {
 			.shopStack = 30,
 			.name = "9mm",
 			.iconClip = { 265, 145, 38, 24 },
+		} },
+		{ ItemIndex::Ammo_556, {
+			.price = 90,
+			.shopStack = 30,
+			.name = "5.56 NATO",
+			.iconClip = { 393, 145, 38, 24 },
 		} },
 	};
 
@@ -114,6 +126,10 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 		return new Shotgun(itemIndex);
 
+	case ItemIndex::Rifle_M4:
+
+		return new Rifle(itemIndex);
+
 	case ItemIndex::MedKit: {
 
 		Consumable* medkit = new Consumable(itemIndex, amount);
@@ -126,15 +142,23 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	case ItemIndex::Ammo_Slug: {
 
-		Ammunition* slug = new Ammunition(AmmunitionID::Slug, amount);
+		Ammunition* ammo = new Ammunition(AmmunitionID::Slug, amount);
 
-		return slug;
+		return ammo;
 
 	}
 
 	case ItemIndex::Ammo_9mm: {
 
 		Ammunition* ammo = new Ammunition(AmmunitionID::Nine_Mil, amount);
+
+		return ammo;
+
+	}
+
+	case ItemIndex::Ammo_556: {
+
+		Ammunition* ammo = new Ammunition(AmmunitionID::Five_Five_Six, amount);
 
 		return ammo;
 

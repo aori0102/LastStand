@@ -8,6 +8,8 @@
 
 #include <unordered_map>
 #include <string>
+
+#include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
 enum class MediaObject {
@@ -63,12 +65,23 @@ enum class MediaUI {
 	Shop_SkillBuyButton,
 	HotBar_Selection,
 	HotBar_Slot,
+	Inventory_Background,
+	Inventory_HotBarSlot,
+	Inventory_HotBarSlot_Selected,
+	Inventory_Slot,
+	Inventory_Slot_Selected,
 
 };
 
-enum class MediaAudio {
+enum class MediaMusic {
 
 
+
+};
+
+enum class MediaSFX {
+
+	GunShot,
 
 };
 
@@ -91,8 +104,10 @@ private:
 	const int DEFAULT_FONT_SIZE = 16;
 	const std::string ASSET_FOLDER_PATH = ".\\Asset\\";
 	const std::string FONT_SUBFOLDER = "Font\\";
+	const std::string AUDIO_SUBFOLDER = "Audio\\";
 	const std::string SPRITE_EXTENSION = ".png";
 	const std::string FONT_EXTENSION = ".ttf";
+	const std::string AUDIO_EXTENSION = ".wav";
 	const std::unordered_map<MediaUI, std::string> MEDIA_UI_PATH_MAP = {
 		{ MediaUI::Firearm_AmmoFrame, "Firearm\\AmmoFrame" },
 		{ MediaUI::Firearm_AmmoIcon, "Firearm\\AmmoIcon" },
@@ -132,6 +147,11 @@ private:
 		{ MediaUI::Shop_SkillInfoBoardUnselected, "Shop\\SkillInfoBoardUnselected" },
 		{ MediaUI::HotBar_Selection, "HotBar\\HotBarSelection" },
 		{ MediaUI::HotBar_Slot, "HotBar\\HotBarSlot" },
+		{ MediaUI::Inventory_Slot, "Inventory\\Slot" },
+		{ MediaUI::Inventory_Slot_Selected, "Inventory\\SlotSelected" },
+		{ MediaUI::Inventory_Background, "Inventory\\Background" },
+		{ MediaUI::Inventory_HotBarSlot, "Inventory\\HotBarSlot" },
+		{ MediaUI::Inventory_HotBarSlot_Selected, "Inventory\\HotBarSlotSelected" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
@@ -146,6 +166,9 @@ private:
 	const std::unordered_map<MediaFont, std::string> FONT_PATH_MAP = {
 		{ MediaFont::RimouskiSb_Regular, "RimouskiSb_Regular" },
 	};
+	const std::unordered_map<MediaSFX, std::string> SFX_PATH_MAP = {
+		{ MediaSFX::GunShot, "GunShot" },
+	};
 
 	/// ----------------------------------
 	/// FIELDS
@@ -156,6 +179,7 @@ private:
 	std::unordered_map<MediaUI, Sprite*> uiSpriteMap;
 	std::unordered_map<MediaObject, Sprite*> objectSpriteMap;
 	std::unordered_map<MediaFont, TTF_Font*> fontMap;
+	std::unordered_map<MediaSFX, Mix_Chunk*> sfxMap;
 
 	static MediaManager* instance;
 
@@ -168,6 +192,7 @@ private:
 	void InitializeMediaUI();
 	void InitializeMediaObject();
 	void InitializeMediaFont();
+	void InitializeMediaSFX();
 
 public:
 
@@ -176,6 +201,7 @@ public:
 	Sprite* GetUISprite(MediaUI mediaUI);
 	Sprite* GetObjectSprite(MediaObject mediaObject);
 	TTF_Font* GetFont(MediaFont mediaFont);
+	Mix_Chunk* GetSFX(MediaSFX mediaSFX);
 
 	static MediaManager* Instance();
 

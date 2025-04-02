@@ -20,11 +20,13 @@ enum class ItemIndex {
 
 	Pistol_M1911,
 	Shotgun_Beretta1301,
+	Rifle_M4,
 
 	MedKit,
 
 	Ammo_Slug,
 	Ammo_9mm,
+	Ammo_556,
 
 };
 

@@ -62,7 +62,7 @@ public:
 	bool IsLoop();
 	bool IsEnded();
 	bool IsStateMachine() const;
-	void RenderCurrent(Vector2 position, Vector2 scale, float angle);
+	void RenderCurrent(Vector2 position, float angle);
 
 };
 
@@ -100,7 +100,7 @@ private:
 	void Stop();
 	void EndAndReset();
 	void AddAnimationFrame(AnimationFrame* animationFrame);
-	void RenderCurrent(Vector2 position, Vector2 scale, float angle = 0.0f);
+	void RenderCurrent(Vector2 position, float angle = 0.0f);
 	void Update() override;
 	void OnDestroy() override;
 	bool IsPlaying() const;

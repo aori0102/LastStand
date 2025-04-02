@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <Type.h>
+#include <Utils.h>
 
 class Bound;
 class BoxCollider;
