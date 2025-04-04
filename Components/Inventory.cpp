@@ -27,10 +27,14 @@ void Inventory::OnComponentDestroyed() {
 
 	GameObject::Destroy(inventoryUI);
 	inventoryUI = nullptr;
-
+	
 	for (auto it = storage.begin(); it != storage.end(); it++) {
 
-		delete (it->second)->item;
+		std::cout << it->second << std::endl;
+		std::cout << it->second->item << std::endl;
+
+		ItemManager::Instance()->NukeItem((it->second)->item);
+
 		delete (it->second);
 
 	}
@@ -54,8 +58,8 @@ Inventory::Inventory(GameObject* initOwner) : GameComponent(initOwner) {
 		{ HotBarSlotIndex::Fifth, ItemIndex::None },
 	};
 	currentSlotIndex = HotBarSlotIndex::None;
-	hotBarUI = new HotBarUI;
-	inventoryUI = new InventoryUI;
+	hotBarUI = GameObject::Instantiate<HotBarUI>();
+	inventoryUI = GameObject::Instantiate<InventoryUI>();
 	inventoryUI->Disable();
 
 }
@@ -144,6 +148,12 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 	if (it_hotBar == hotBar.end() || it_hotBar->second == itemIndex)
 		// The item is not found or already the same
 		return;
+
+	// If the item in the hot bar is a valid item and still belongs to the same hotbar (was not moved to a 
+	// different one), make it no longer belongs to the hot bar. This prevents more than one item
+	// info pointing to the same hot bar
+	if (it_hotBar->second != ItemIndex::None && (storage.find(it_hotBar->second)->second)->slot == it_hotBar->first)
+		storage.find(it_hotBar->second)->second->slot = HotBarSlotIndex::None;
 
 	if (itemIndex == ItemIndex::None) {
 

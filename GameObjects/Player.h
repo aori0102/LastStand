@@ -82,11 +82,11 @@ private:
 public:
 
 	Player();
+	~Player();
 	void PlayerRender();
 	void GiveItem(ItemIndex itemIndex, int amount = 1);
 	void SetAttribute(PlayerAttribute playerAttribute, float value);
 	void Update() override;
-	void OnDestroy() override;
 	int GetAmmoCount(AmmunitionID);
 	float GetAttribute(PlayerAttribute playerAttribute);
 	bool TryConsumeAmmo(AmmunitionID ammunitionID, int amount = 1);

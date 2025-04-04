@@ -8,15 +8,21 @@
 
 #include <exception>
 
+#include <AudioManager.h>
 #include <Bullet.h>
 #include <ItemManager.h>
+#include <MediaManager.h>
 #include <Player.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Rifle::Rifle(ItemIndex initItemIndex) : Firearm(initItemIndex) {
+void Rifle::SetFirearmItemID(ItemIndex initItemIndex) {
+
+	auto it_baseFirearmInfo = BASE_FIREARM_INFO_MAP.find(initItemIndex);
+	if (it_baseFirearmInfo == BASE_FIREARM_INFO_MAP.end())
+		throw std::exception("Firearm: Firearm data does not exist");
 
 	switch (initItemIndex) {
 
@@ -24,9 +30,14 @@ Rifle::Rifle(ItemIndex initItemIndex) : Firearm(initItemIndex) {
 		break;
 
 	default:
-		throw std::exception("Invalid ID for pistol");
+		throw std::exception("Invalid ID for a rifle!");
 
 	}
+
+	attributeMap = BASE_FIREARM_INFO_MAP.at(initItemIndex).attributeMap;
+	reloadType = BASE_FIREARM_INFO_MAP.at(initItemIndex).reloadType;
+
+	SetIndex(initItemIndex);
 
 }
 
@@ -40,8 +51,11 @@ bool Rifle::TryUse(Player* player) {
 	if (isCrit)
 		damage *= (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
 
+	AudioManager::Instance()->PlayOneShot(MediaSFX::RifleShot);
+
 	// Won't cause memory leak because of self destruction
-	new Bullet(player->transform->position, player->GetAimingDirection(), damage, isCrit);
+	Bullet* bullet = GameObject::Instantiate<Bullet>("Bullet", Layer::Bullet);
+	bullet->SetUpBullet(player->transform->position, player->GetAimingDirection(), damage, isCrit);
 
 	return true;
 

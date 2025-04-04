@@ -10,13 +10,20 @@
 #include <unordered_set>
 #include <vector>
 
+#include <GameComponent.h>
 #include <Utils.h>
-
-class GameObject;
+class AudioManager;
+class AnimationManager;
+class ItemManager;
+class MediaManager;
+class PhysicsManager;
 class Player;
 class PlayerStatistic;
+class RenderManager;
 class Shop;
 class StatusBar;
+class UIEventManager;
+class WaveManager;
 class Zombie;
 enum class ZombieIndex;
 
@@ -47,7 +54,14 @@ private:
 
 private:
 
-	std::unordered_set<Zombie*> zombieSet;
+	AudioManager* audioManager;
+	AnimationManager* animationManager;
+	PhysicsManager* physicsManager;
+	MediaManager* mediaManager;
+	UIEventManager* uiEventManager;
+	RenderManager* renderManager;
+	ItemManager* itemManager;
+	WaveManager* waveManager;
 	GameObject* background;
 	GameObject* northBorder;
 	GameObject* southBorder;

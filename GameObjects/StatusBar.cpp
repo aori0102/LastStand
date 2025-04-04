@@ -25,7 +25,7 @@ StatusBar* StatusBar::instance = nullptr;
 void StatusBar::InitializeUI() {
 
 	// --- FRAME ---
-	GameObject* frame= new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::Frame), Layer::Menu);
+	GameObject* frame = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::Frame), Layer::Menu);
 	Image* frame_image = frame->AddComponent<Image>();
 	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_Frame), true);
 	frame_image->showOnScreen = true;
@@ -39,7 +39,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::Frame] = frame;
 
 	// --- LEVEL FRAME ---
-	GameObject* levelFrame = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::LevelFrame), Layer::Menu);
+	GameObject* levelFrame = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::LevelFrame), Layer::Menu);
 	Image* levelFrame_image = levelFrame->AddComponent<Image>();
 	levelFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_LevelFrame), true);
 	levelFrame_image->showOnScreen = true;
@@ -53,7 +53,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::LevelFrame] = levelFrame;
 
 	// --- HEALTH BAR BACKGROUND ---
-	GameObject* healthBarBackground = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBarBackground), Layer::Menu);
+	GameObject* healthBarBackground = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBarBackground), Layer::Menu);
 	Image* healthBarBackground_image = healthBarBackground->AddComponent<Image>();
 	healthBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_BarBackground), true);
 	healthBarBackground_image->showOnScreen = true;
@@ -67,7 +67,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::HealthBarBackground] = healthBarBackground;
 
 	// --- STAMINA BAR BACKGROUND ---
-	GameObject* staminaBarBackground = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBarBackground), Layer::Menu);
+	GameObject* staminaBarBackground = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBarBackground), Layer::Menu);
 	Image* staminaBarBackground_image = staminaBarBackground->AddComponent<Image>();
 	staminaBarBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_BarBackground), true);
 	staminaBarBackground_image->showOnScreen = true;
@@ -81,7 +81,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::StaminaBarBackground] = staminaBarBackground;
 
 	// --- HEALTH BAR ---
-	GameObject* healthBar = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBar), Layer::Menu);
+	GameObject* healthBar = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthBar), Layer::Menu);
 	Image* healthBar_image = healthBar->AddComponent<Image>();
 	healthBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_HealthBar), true);
 	healthBar_image->showOnScreen = true;
@@ -97,7 +97,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::HealthBar] = healthBar;
 
 	// --- STAMINA BAR ---
-	GameObject* staminaBar = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBar), Layer::Menu);
+	GameObject* staminaBar = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaBar), Layer::Menu);
 	Image* staminaBar_image = staminaBar->AddComponent<Image>();
 	staminaBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_StaminaBar), true);
 	staminaBar_image->showOnScreen = true;
@@ -113,7 +113,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::StaminaBar] = staminaBar;
 
 	// --- HEALTH SYMBOL ---
-	GameObject* healthSymbol= new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthSymbol), Layer::Menu);
+	GameObject* healthSymbol = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthSymbol), Layer::Menu);
 	Image* healthSymbol_image = healthSymbol->AddComponent<Image>();
 	healthSymbol_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_HealthSymbol), true);
 	healthSymbol_image->showOnScreen = true;
@@ -127,7 +127,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::HealthSymbol] = healthSymbol;
 
 	// --- STAMINA SYMBOL ---
-	GameObject* staminaSymbol = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaSymbol), Layer::Menu);
+	GameObject* staminaSymbol = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaSymbol), Layer::Menu);
 	Image* staminaSymbol_image = staminaSymbol->AddComponent<Image>();
 	staminaSymbol_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Status_StaminaSymbol), true);
 	staminaSymbol_image->showOnScreen = true;
@@ -141,7 +141,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::StaminaSymbol] = staminaSymbol;
 
 	// --- EXP LABEL ---
-	 GameObject* expLabel= new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::EXPLabel), Layer::Menu);
+	GameObject* expLabel = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::EXPLabel), Layer::Menu);
 	Text* expLabel_text = expLabel->AddComponent<Text>();
 	expLabel_text->LoadText(std::to_string(previousPlayerEXP) + " / " + std::to_string(previousPlayerEXPNeeded), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::EXPLabel));
 	expLabel_text->showOnScreen = true;
@@ -163,7 +163,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::EXPLabel] = expLabel;
 
 	// --- LEVEL ---
-	GameObject* levelLabel = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::LevelLabel), Layer::Menu);
+	GameObject* levelLabel = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::LevelLabel), Layer::Menu);
 	Text* levelLabel_text = levelLabel->AddComponent<Text>();
 	levelLabel_text->LoadText(std::to_string(previousPlayerLevel), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::LevelLabel));
 	levelLabel_text->showOnScreen = true;
@@ -179,7 +179,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::LevelLabel] = levelLabel;
 
 	// --- HEALTH ---
-	GameObject* healthLabel = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthLabel), Layer::Menu);
+	GameObject* healthLabel = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::HealthLabel), Layer::Menu);
 	Text* healthLabel_text = healthLabel->AddComponent<Text>();
 	healthLabel_text->LoadText(std::to_string(previousPlayerHealth) + " / " + std::to_string(previousPlayerMaxHealth), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::HealthLabel));
 	healthLabel_text->showOnScreen = true;
@@ -197,7 +197,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::HealthLabel] = healthLabel;
 
 	// --- STAMINA ---
-	GameObject* staminaLabel = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaLabel), Layer::Menu);
+	GameObject* staminaLabel = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::StaminaLabel), Layer::Menu);
 	Text* staminaLabel_text = staminaLabel->AddComponent<Text>();
 	staminaLabel_text->LoadText(std::to_string(previousPlayerStamina) + " / " + std::to_string(previousPlayerMaxStamina), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::StaminaLabel));
 	staminaLabel_text->showOnScreen = true;
@@ -215,7 +215,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::StaminaLabel] = staminaLabel;
 
 	// --- MONEY ICON ---
-	GameObject* moneyIcon = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyIcon), Layer::Menu);
+	GameObject* moneyIcon = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyIcon), Layer::Menu);
 	Image* moneyIcon_image = moneyIcon->AddComponent<Image>();
 	moneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
 	moneyIcon_image->showOnScreen = true;
@@ -229,7 +229,7 @@ void StatusBar::InitializeUI() {
 	uiElementMap[UIElementIndex::MoneyIcon] = moneyIcon;
 
 	// --- MONEY LABEL ---
-	GameObject* moneyLabel = new GameObject(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyLabel), Layer::Menu);
+	GameObject* moneyLabel = GameObject::Instantiate(UI_ELEMENT_LABEL_MAP.at(UIElementIndex::MoneyLabel), Layer::Menu);
 	Text* moneyLabel_text = moneyLabel->AddComponent<Text>();
 	moneyLabel_text->LoadText(std::to_string(previousPlayerMoney), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::MoneyLabel));
 	moneyLabel_text->showOnScreen = true;
@@ -266,13 +266,7 @@ StatusBar::StatusBar() {
 
 }
 
-void StatusBar::Update() {
-
-
-
-}
-
-void StatusBar::OnDestroy() {
+StatusBar::~StatusBar() {
 
 	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
 		GameObject::Destroy(it->second);
@@ -280,6 +274,12 @@ void StatusBar::OnDestroy() {
 	uiElementMap.clear();
 
 	instance = nullptr;
+
+}
+
+void StatusBar::Update() {
+
+
 
 }
 

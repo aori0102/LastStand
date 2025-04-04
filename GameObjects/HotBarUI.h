@@ -54,10 +54,13 @@ private:
 
 private:
 
-	HotBarUI();
 	void SwitchSlot(HotBarSlotIndex slotIndex);
 	void UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
 	void Update() override;
-	void OnDestroy() override;
+
+public:
+
+	HotBarUI();
+	~HotBarUI();
 
 };

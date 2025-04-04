@@ -265,6 +265,7 @@ void Player::InitializeAnimation() {
 			switch (itemIndex) {
 			case ItemIndex::Ammo_Slug:
 			case ItemIndex::Ammo_9mm:
+			case ItemIndex::Ammo_556:
 			case ItemIndex::None:
 				return true;
 			}
@@ -321,17 +322,19 @@ void Player::InitializeData() {
 	// Components
 	transform->scale = Vector2(50.0f, 50.0f);
 	AddComponent<BoxCollider>();
-	
+
 	Image* playerSprite = AddComponent<Image>();
 	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
 	playerSprite->showOnScreen = false;
 
 	Inventory* inventory = AddComponent<Inventory>();
 	inventory->AddItem(ItemIndex::Rifle_M4);
+	inventory->AddItem(ItemIndex::Pistol_M1911);
 	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
 	inventory->AddItem(ItemIndex::MedKit);
 	inventory->AddItem(ItemIndex::Ammo_Slug, 25);
 	inventory->AddItem(ItemIndex::Ammo_9mm, 80);
+	inventory->AddItem(ItemIndex::Ammo_556, 180);
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
@@ -371,6 +374,8 @@ void Player::InitializeData() {
 
 Player::Player() : GameObject("Player", Layer::Player) {
 
+	std::cout << "Player created with address " << this << std::endl;
+
 	if (instance)
 		throw std::exception("This is a singleplayer game!");
 
@@ -379,6 +384,14 @@ Player::Player() : GameObject("Player", Layer::Player) {
 	InitializeData();
 
 	InitializeAnimation();
+
+}
+
+Player::~Player() {
+
+	playerAttributeMap.clear();
+
+	instance = nullptr;
 
 }
 
@@ -442,21 +455,10 @@ void Player::SetAttribute(PlayerAttribute playerAttribute, float value) {
 
 void Player::Update() {
 
-		HandleMovement();
-
-		HandleFacing();
-
-		HandleActions();
-
+	HandleMovement();
+	HandleFacing();
+	HandleActions();
 	HandleStamina();
-
-}
-
-void Player::OnDestroy() {
-
-	playerAttributeMap.clear();
-
-	instance = nullptr;
 
 }
 

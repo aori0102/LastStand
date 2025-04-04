@@ -81,7 +81,9 @@ enum class MediaMusic {
 
 enum class MediaSFX {
 
-	GunShot,
+	RifleShot,
+	PistolShot,
+	ShotgunShot,
 
 };
 
@@ -167,7 +169,9 @@ private:
 		{ MediaFont::RimouskiSb_Regular, "RimouskiSb_Regular" },
 	};
 	const std::unordered_map<MediaSFX, std::string> SFX_PATH_MAP = {
-		{ MediaSFX::GunShot, "GunShot" },
+		{ MediaSFX::RifleShot, "RifleShot" },
+		{ MediaSFX::ShotgunShot, "ShotgunShot" },
+		{ MediaSFX::PistolShot, "PistolShot" },
 	};
 
 	/// ----------------------------------

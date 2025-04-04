@@ -34,24 +34,24 @@ const int Bullet::DAMAGE_INDICATOR_DECIMAL = 2;
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Bullet::Bullet(Vector2 initPosition, Vector2 initDirection, float initDamage, bool isCrit) : GameObject("Bullet", Layer::Bullet) {
+Bullet::Bullet() : GameObject("Bullet", Layer::Bullet) {
 
 	// Components
-	transform->position = initPosition;
-
 	Image* bullet_image = AddComponent<Image>();
 	bullet_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Bullet), false);
 	bullet_image->showOnScreen = false;
-	bullet_image->angle = Math::RadToDeg(initDirection.Angle());
 
 	BoxCollider* boxCollider = AddComponent<BoxCollider>();
 	boxCollider->ignoreLayerSet = { Layer::Player, Layer::Bullet };
 
 	// Fields
 	hitHumanoid = false;
-	damage = initDamage;
+	damage = 0.0f;
 	spawnTime = GameCore::Time();
 	hitTime = 0.0f;
+	direction = Vector2::zero;
+
+	damageIndicator = nullptr;
 
 	indicatorOpacityFunction = [](float t) {
 		Math::Clamp(t, 0.0f, 1.0f);
@@ -67,35 +67,23 @@ Bullet::Bullet(Vector2 initPosition, Vector2 initDirection, float initDamage, bo
 		);
 		};
 
-	direction = initDirection;
-
 	float angleInRad = std::abs(Math::DegToRad(DAMAGE_INDICATOR_ANGLE_OFFSET));
 	float indicatorAngle = Random::Float(-angleInRad, angleInRad);
 	damageIndicatorPopUpDirection = Vector2::up.Rotate(indicatorAngle);
-
-	damageIndicator = new GameObject("Damage indicator", Layer::Bullet);
-	std::stringstream ss;
-	ss << std::fixed << std::setprecision(DAMAGE_INDICATOR_DECIMAL) << initDamage;
-	Text* damageIndicator_text = damageIndicator->AddComponent<Text>();
-	damageIndicator_text->LoadText(
-		ss.str(), isCrit ? Color::YELLOW : Color::RED, DAMAGE_INDICATOR_FONT_SIZE
-	);
-	damageIndicator_text->showOnScreen = false;
-	damageIndicator->Render = [this, damageIndicator_text]() {
-		if (!hitHumanoid)
-			return;
-		float time = (GameCore::Time() - hitTime) / DAMAGE_INDICATOR_SHOW_TIME;
-		damageIndicator_text->transform->position = transform->position + indicatorOffsetFunction(time);
-		damageIndicator_text->SetOpacity(indicatorOpacityFunction(time));
-
-		damageIndicator_text->Render();
-		};
-	damageIndicator->Disable();
 
 	Render = [this, bullet_image]() {
 		if (!hitHumanoid)
 			bullet_image->Render();
 		};
+
+}
+
+Bullet::~Bullet() {
+
+	std::cout << "Destroying bullet\n";
+
+	GameObject::Destroy(damageIndicator);
+	damageIndicator = nullptr;
 
 }
 
@@ -114,6 +102,36 @@ void Bullet::Update() {
 			GameObject::Destroy(this);
 
 	}
+
+}
+
+void Bullet::SetUpBullet(Vector2 initPosition, Vector2 initDirection, float initDamage, bool isCrit) {
+
+	transform->position = initPosition;
+
+	direction = initDirection;
+
+	damage = initDamage;
+	GetComponent<Image>()->angle = Math::RadToDeg(initDirection.Angle());
+
+	damageIndicator = GameObject::Instantiate("Damage Indicator", Layer::Bullet);
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(DAMAGE_INDICATOR_DECIMAL) << initDamage;
+	Text* damageIndicator_text = damageIndicator->AddComponent<Text>();
+	damageIndicator_text->LoadText(
+		ss.str(), isCrit ? Color::YELLOW : Color::RED, DAMAGE_INDICATOR_FONT_SIZE
+	);
+	damageIndicator_text->showOnScreen = false;
+	damageIndicator->Render = [this, damageIndicator_text]() {
+		if (!hitHumanoid)
+			return;
+		float time = (GameCore::Time() - hitTime) / DAMAGE_INDICATOR_SHOW_TIME;
+		damageIndicator_text->transform->position = transform->position + indicatorOffsetFunction(time);
+		damageIndicator_text->SetOpacity(indicatorOpacityFunction(time));
+
+		damageIndicator_text->Render();
+		};
+	damageIndicator->Disable();
 
 }
 
@@ -141,11 +159,5 @@ void Bullet::OnCollisionEnter(BoxCollider* collider) {
 		hitTime = GameCore::Time();
 
 	}
-
-}
-
-void Bullet::OnDestroy() {
-
-	GameObject::Destroy(damageIndicator);
 
 }

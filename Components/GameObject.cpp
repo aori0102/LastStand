@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include <GameCore.h>
+#include <GameManager.h>
 #include <RenderManager.h>
 
 /// ----------------------------------
@@ -18,10 +19,57 @@
 
 int GameObject::currentID = 0;
 std::unordered_set<GameObject*> GameObject::deletionSet = {};
+std::unordered_set<GameObject*> GameObject::gameObjectSet = {};
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
+
+void GameObject::CleanUpDeleted() {
+
+	std::unordered_set<GameObject*> toBeDeleted = deletionSet;
+	deletionSet.clear();
+
+	for (auto gameObject : toBeDeleted) {
+
+		gameObjectSet.erase(gameObject);
+		RenderManager::Instance()->RemoveRenderObject(gameObject);
+
+		delete gameObject;
+		gameObject = nullptr;
+
+	}
+
+	deletionSet.clear();
+
+}
+
+void GameObject::UpdateAll() {
+
+	for (auto gameObject : gameObjectSet) {
+
+		//std::cout << "Updating " << gameObject->name << " (" << gameObject << ")\n";
+
+		gameObject->UpdateComponents();
+		gameObject->Update();
+
+		//std::cout << "YES\n";
+
+	}
+
+}
+
+void GameObject::DropNuke() {
+
+	for (auto obj : gameObjectSet) {
+
+		Destroy(obj);
+
+	}
+	
+	CleanUpDeleted();
+
+}
 
 void GameObject::SetLayer(Layer newLayer) {
 
@@ -31,37 +79,10 @@ void GameObject::SetLayer(Layer newLayer) {
 
 }
 
-GameObject::GameObject() {
+void GameObject::UpdateObjectToDatabase(GameObject* obj) {
 
-	id = GameObject::GetNextID();
-	enabled = true;
-	componentMap = {};
-	layer = Layer::Default;
-
-	name = "Game Object";
-	if (!Render)
-		Render = []() {};
-	transform = AddComponent<Transform>();
-
-	GameCore::RegisterGameObject(this);
-	RenderManager::Instance()->UpdateRenderObject(this);
-
-}
-
-GameObject::GameObject(std::string initName) {
-
-	id = GameObject::GetNextID();
-	enabled = true;
-	componentMap = {};
-	layer = Layer::Default;
-
-	name = initName;
-	if (!Render)
-		Render = []() {};
-	transform = AddComponent<Transform>();
-
-	GameCore::RegisterGameObject(this);
-	RenderManager::Instance()->UpdateRenderObject(this);
+	gameObjectSet.insert(obj);
+	RenderManager::Instance()->UpdateRenderObject(obj);
 
 }
 
@@ -76,9 +97,6 @@ GameObject::GameObject(std::string initName, Layer initLayer) {
 	if (!Render)
 		Render = []() {};
 	transform = AddComponent<Transform>();
-
-	GameCore::RegisterGameObject(this);
-	RenderManager::Instance()->UpdateRenderObject(this);
 
 }
 
@@ -109,60 +127,55 @@ Layer GameObject::GetLayer() const { return layer; }
 
 GameObject::~GameObject() {
 
+	std::cout << "Destructing " << name << " (" << this << ")\n";
+
 	// Clean up components
 	auto it = componentMap.begin();
 	while (it != componentMap.end()) {
 
+		if (dynamic_cast<Transform*>(it->second))
+			std::cout << "Deleting Transform\n";
+		else if (dynamic_cast<BoxCollider*>(it->second))
+			std::cout << "Deleting BoxCollider\n";
+		else if (dynamic_cast<Humanoid*>(it->second))
+			std::cout << "Deleting Humanoid\n";
+		else if (dynamic_cast<Inventory*>(it->second))
+			std::cout << "Deleting Inventory\n";
+		else if (dynamic_cast<AnimationController*>(it->second))
+			std::cout << "Deleting AnimationController\n";
+		else if (dynamic_cast<RigidBody*>(it->second))
+			std::cout << "Deleting RigidBody\n";
+
+		std::cout << "OnComponentDestroyed\n";
+
 		(it->second)->OnComponentDestroyed();
+
+		std::cout << "Deleting\n";
 
 		delete it->second;
 		it->second = nullptr;
+
+		std::cout << "Incrementing\n";
 
 		it++;
 
 	}
 	componentMap.clear();
 
-	// Remove game object
-	GameCore::UnregisterGameObject(this);
-
-	OnDestroy();
-
 }
 
 void GameObject::Update() {}
-
-void GameObject::OnDestroy() {}
 
 void GameObject::OnCollisionEnter(BoxCollider* other) {}
 
 void GameObject::OnCollisionExit(BoxCollider* other) {}
 
-void GameObject::CleanUpCache() {
-	// Clean up objects those are to be deleted
-
-	// This set contains all objects that are deleted this frame
-	// to avoid calling OnDestroy() on a deallocated object
-	std::set<GameObject*> deletedObjectSet;
-
-	while (!deletionSet.empty()) {
-
-		auto it = deletionSet.begin();
-
-		if (!deletedObjectSet.contains(*it))
-			(*it)->OnDestroy();
-		RenderManager::Instance()->RemoveRenderObject(*it);
-
-		deletedObjectSet.insert(*it);
-		delete (*it);
-
-		deletionSet.erase(it);
-
-	}
-
-}
-
 void GameObject::Destroy(GameObject* gameObject) {
+
+	if (!gameObjectSet.contains(gameObject))
+		return;
+
+	gameObject->Disable();
 
 	deletionSet.insert(gameObject);
 

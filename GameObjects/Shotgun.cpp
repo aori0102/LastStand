@@ -8,8 +8,10 @@
 
 #include <exception>
 
+#include <AudioManager.h>
 #include <Bullet.h>
 #include <ItemManager.h>
+#include <MediaManager.h>
 #include <Player.h>
 
 /// ----------------------------------
@@ -23,7 +25,11 @@ const float Shotgun::PELLET_SPAN_DEGREE = 12.0f;
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Shotgun::Shotgun(ItemIndex initItemIndex) : Firearm(initItemIndex) {
+void Shotgun::SetFirearmItemID(ItemIndex initItemIndex) {
+
+	auto it_baseFirearmInfo = BASE_FIREARM_INFO_MAP.find(initItemIndex);
+	if (it_baseFirearmInfo == BASE_FIREARM_INFO_MAP.end())
+		throw std::exception("Firearm: Firearm data does not exist");
 
 	switch (initItemIndex) {
 
@@ -31,9 +37,14 @@ Shotgun::Shotgun(ItemIndex initItemIndex) : Firearm(initItemIndex) {
 		break;
 
 	default:
-		throw std::exception("Invalid ID for shotgun");
+		throw std::exception("Invalid ID for a shotgun!");
 
 	}
+
+	attributeMap = BASE_FIREARM_INFO_MAP.at(initItemIndex).attributeMap;
+	reloadType = BASE_FIREARM_INFO_MAP.at(initItemIndex).reloadType;
+
+	SetIndex(initItemIndex);
 
 }
 
@@ -47,6 +58,8 @@ bool Shotgun::TryUse(Player* player) {
 	bool isCrit;
 	Vector2 direction = player->GetAimingDirection();
 
+	AudioManager::Instance()->PlayOneShot(MediaSFX::ShotgunShot);
+
 	for (int i = 0; i < PELLET; i++) {
 
 		isCrit = IsCrit();
@@ -59,7 +72,8 @@ bool Shotgun::TryUse(Player* player) {
 		float angle = Math::DegToRad(Random::Float(-PELLET_SPAN_DEGREE, PELLET_SPAN_DEGREE));
 
 		// Won't cause memory leak because of self destruction
-		new Bullet(player->transform->position, direction.Rotate(angle), damage, isCrit);
+		Bullet* bullet = GameObject::Instantiate<Bullet>("Bullet", Layer::Bullet);
+		bullet->SetUpBullet(player->transform->position, player->GetAimingDirection(), damage, isCrit);
 
 	}
 

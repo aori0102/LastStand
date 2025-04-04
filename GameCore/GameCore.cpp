@@ -49,24 +49,14 @@ std::string GameCore::gameName = "Last Stand";
 std::unordered_map<SDL_Keycode, ActionState> GameCore::keyStateDictionary = {};
 std::unordered_map<MouseButton, ActionState> GameCore::mouseButtonStateDictionary = {};
 
-std::unordered_set<GameObject*> GameCore::gameObjectSet = {};
-
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
 
-SDL_Event* GameCore::gameEvent = new SDL_Event;
+SDL_Event* GameCore::gameEvent = nullptr;
 SDL_Renderer* GameCore::renderer = nullptr;
 SDL_Window* GameCore::window = nullptr;
 
-AnimationManager* GameCore::animationManager = nullptr;
-AudioManager* GameCore::audioManager = nullptr;
 GameManager* GameCore::gameManager = nullptr;
-ItemManager* GameCore::itemManager = nullptr;
-PhysicsManager* GameCore::physicsManager = nullptr;
-MediaManager* GameCore::mediaManager = nullptr;
-RenderManager* GameCore::renderManager = nullptr;
-UIEventManager* GameCore::uiEventManager = nullptr;
-WaveManager* GameCore::waveManager = nullptr;
 
 GameObject* GameCore::cameraFocusObject = nullptr;
 
@@ -244,35 +234,18 @@ void GameCore::UpdateCamera() {
 
 void GameCore::FlushManager() {
 
-	delete uiEventManager;
-	uiEventManager = nullptr;
-
-	delete mediaManager;
-	mediaManager = nullptr;
-
-	delete renderManager;
-	renderManager = nullptr;
-
-	delete physicsManager;
-	physicsManager = nullptr;
-
-	delete animationManager;
-	animationManager = nullptr;
-
-	delete itemManager;
-	itemManager = nullptr;
+	std::cout << "Flushing Game Managers..." << std::endl;
 
 	delete gameManager;
 	gameManager = nullptr;
-
-	delete waveManager;
-	waveManager = nullptr;
 
 }
 
 bool GameCore::InitializeProgram() {
 
 	try {
+
+		gameEvent = new SDL_Event;
 
 		std::string errorCode;
 
@@ -370,32 +343,8 @@ bool GameCore::InitializeManager() {
 
 	try {
 
-		std::cout << "Initializing UIEventManager..." << std::endl;
-		uiEventManager = new UIEventManager;
-
-		std::cout << "Initializing MediaManager..." << std::endl;
-		mediaManager = new MediaManager;
-
-		std::cout << "Initializing AudioManager..." << std::endl;
-		audioManager = new AudioManager;
-
-		std::cout << "Initializing RenderManager..." << std::endl;
-		renderManager = new RenderManager;
-
-		std::cout << "Initializing PhysicsManager..." << std::endl;
-		physicsManager = new PhysicsManager;
-
-		std::cout << "Initializing AnimationManager..." << std::endl;
-		animationManager = new AnimationManager;
-
-		std::cout << "Initializing ItemManager..." << std::endl;
-		itemManager = new ItemManager;
-
 		std::cout << "Initializing GameManager..." << std::endl;
 		gameManager = new GameManager;
-
-		std::cout << "Initializing WaveManager..." << std::endl;
-		waveManager = new WaveManager;
 
 	} catch (const std::exception& e) {
 
@@ -546,9 +495,6 @@ void GameCore::Loop() {
 
 	while (!quit) {
 
-		// Flush the game object beforehand
-		GameObject::CleanUpCache();
-
 		// Update time
 		float currentTime = static_cast<float>(SDL_GetTicks64()) / 1000.0f;
 		deltaTime = currentTime - time;
@@ -570,17 +516,9 @@ void GameCore::Loop() {
 
 		PhysicsManager::Instance()->Update();
 
-		// Handle game object
-		for (auto it = gameObjectSet.begin(); it != gameObjectSet.end(); it++) {
-
-			(*it)->UpdateComponents();
-			(*it)->Update();
-
-		}
+		GameManager::Instance()->Update();
 
 		PhysicsManager::Instance()->LateCollisionCall();
-
-		GameManager::Instance()->Update();
 
 		RenderManager::Instance()->RenderAll();
 
@@ -593,7 +531,11 @@ void GameCore::Loop() {
 
 void GameCore::Close() {
 
-	// Flush game objects and components
+	quit = true;
+	delete gameEvent;
+	gameEvent = nullptr;
+
+	FlushManager();
 
 	// Flush audio system
 	Mix_CloseAudio();
@@ -610,18 +552,6 @@ void GameCore::Close() {
 	IMG_Quit();
 	Mix_Quit();
 	SDL_Quit();
-
-}
-
-void GameCore::RegisterGameObject(GameObject* gameObject) {
-
-	gameObjectSet.insert(gameObject);
-
-}
-
-void GameCore::UnregisterGameObject(GameObject* gameObject) {
-
-	gameObjectSet.erase(gameObject);
 
 }
 

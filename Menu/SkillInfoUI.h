@@ -37,7 +37,10 @@ private:
 
 	bool showingSkill;
 
-	SkillInfoUI();
 	void UpdateSkillInfo(SkillNode* skillNode);
+
+public:
+
+	SkillInfoUI();
 
 };

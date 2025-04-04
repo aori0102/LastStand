@@ -69,7 +69,7 @@ T* GameObject::GetComponent() {
 	if (it == componentMap.end())
 		return nullptr;
 	else
-		return static_cast<T*>(componentMap.at(typeid(T)));
+		return static_cast<T*>(it->second);
 
 }
 
@@ -77,5 +77,20 @@ template<class T>
 T* GameObject::As() {
 
 	return dynamic_cast<T*>(this);
+
+}
+
+template <class T>
+T* GameObject::Instantiate(std::string initName, Layer initLayer) {
+
+	static_assert(std::is_base_of<GameObject, T>::value, "T must inherit from GameObject!");
+
+	GameObject* object = new T;
+	object->name = initName;
+	object->layer = initLayer;
+
+	UpdateObjectToDatabase(object);
+
+	return dynamic_cast<T*>(object);
 
 }

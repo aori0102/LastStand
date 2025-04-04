@@ -19,6 +19,8 @@ int main(int argc, char* args[]) {
 
 	}
 
+	GameCore::Close();
+
 	return 0;
 
 }

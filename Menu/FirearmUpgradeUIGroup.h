@@ -47,8 +47,9 @@ private:
 
 public:
 
-	FirearmUpgradeUIGroup(std::string upgradeName, FirearmAttributeIndex initFirearmAttributeIndex);
+	FirearmUpgradeUIGroup();
 
+	void SetAttribute(FirearmAttributeIndex firearmAttributeIndex);
 	void SetLabel(std::string label);
 	void SetDescriptionPrefix(std::string prefix);
 	void SetDescriptionSuffix(std::string suffix);

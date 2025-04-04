@@ -136,6 +136,11 @@ MediaManager::~MediaManager() {
 
 	fontMap.clear();
 
+	for (auto it_sfx = sfxMap.begin(); it_sfx != sfxMap.end(); it_sfx++)
+		delete (it_sfx->second);
+
+	sfxMap.clear();
+
 	instance = nullptr;
 
 }

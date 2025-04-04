@@ -13,23 +13,6 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-AnimationClip::AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer) : GameObject("Animation", initLayer) {
-
-	if (!initAnimationSpriteSheet)
-		throw std::exception("Animation extracting from null sprite sheet");
-
-	isPlaying = false;
-	loop = false;
-	ended = false;
-	startTick = 0.0f;
-	currentFrameStartTick = 0.0f;
-	animationLength = 0.0f;
-	animationTimeline = {};
-	currentFrame = animationTimeline.begin();
-	animationSpriteSheet = initAnimationSpriteSheet;
-
-}
-
 void AnimationClip::Play() {
 
 	if (isPlaying)
@@ -87,10 +70,19 @@ void AnimationClip::RenderCurrent(Vector2 position, float angle) {
 
 }
 
+void AnimationClip::SetSprite(Sprite* initAnimationSpriteSheet) {
+
+	animationSpriteSheet = initAnimationSpriteSheet;
+
+}
+
 void AnimationClip::Update() {
 
 	if (!isPlaying)
 		return;
+
+	if (!animationSpriteSheet)
+		throw std::exception("AnimationClip was not initialized with a sprite sheet!");
 
 	if (GameCore::Time() >= currentFrameStartTick + (*currentFrame)->duration) {
 
@@ -105,7 +97,25 @@ void AnimationClip::Update() {
 
 }
 
-void AnimationClip::OnDestroy() {
+float AnimationClip::GetAnimationLength() const { return animationLength; }
+
+bool AnimationClip::IsPlaying() const { return isPlaying; }
+
+AnimationClip::AnimationClip() {
+
+	isPlaying = false;
+	loop = false;
+	ended = false;
+	startTick = 0.0f;
+	currentFrameStartTick = 0.0f;
+	animationLength = 0.0f;
+	animationTimeline = {};
+	currentFrame = animationTimeline.begin();
+	animationSpriteSheet = nullptr;
+
+}
+
+AnimationClip::~AnimationClip() {
 
 	animationSpriteSheet = nullptr;
 
@@ -115,7 +125,3 @@ void AnimationClip::OnDestroy() {
 	animationTimeline.clear();
 
 }
-
-float AnimationClip::GetAnimationLength() const { return animationLength; }
-
-bool AnimationClip::IsPlaying() const { return isPlaying; }

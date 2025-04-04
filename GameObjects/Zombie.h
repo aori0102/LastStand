@@ -76,9 +76,10 @@ private:
 
 public:
 
-	Zombie(ZombieIndex initZombieIndex);
+	Zombie();
+	~Zombie();
+	void SetIndex(ZombieIndex initZombieIndex);
 	void Update() override;
-	void OnDestroy() override;
 	void OnCollisionEnter(BoxCollider* other) override;
 	float GetExp() const;
 

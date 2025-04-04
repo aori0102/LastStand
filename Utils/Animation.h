@@ -94,16 +94,19 @@ public:
 	/// ----------------------------------
 	
 private:
-
-	AnimationClip(Sprite* initAnimationSpriteSheet, Layer initLayer);
 	void Play();
 	void Stop();
 	void EndAndReset();
 	void AddAnimationFrame(AnimationFrame* animationFrame);
 	void RenderCurrent(Vector2 position, float angle = 0.0f);
+	void SetSprite(Sprite* initAnimationSpriteSheet);
 	void Update() override;
-	void OnDestroy() override;
 	bool IsPlaying() const;
 	float GetAnimationLength() const;
+
+public:
+
+	AnimationClip();
+	~AnimationClip();
 
 };

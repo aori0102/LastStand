@@ -19,13 +19,6 @@ void AnimationController::OnComponentDestroyed() {
 
 	for (auto it_node = animationNodeMap.begin(); it_node != animationNodeMap.end(); it_node++) {
 
-		for (auto it_transition = it_node->second->transitionList.begin(); it_transition != it_node->second->transitionList.end(); it_transition++) {
-
-			delete (*it_transition);
-			*it_transition = nullptr;
-
-		}
-
 		delete it_node->second;
 		it_node->second = nullptr;
 

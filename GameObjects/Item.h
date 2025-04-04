@@ -32,8 +32,13 @@ protected:
 	/// METHODS
 	/// ----------------------------------
 
+protected:
+
+	void SetIndex(ItemIndex initItemIndex);
+
 public:
 
+	Item();
 	Item(ItemIndex initItemIndex, int amount = 1);
 	int GetCurrentStack() const;
 	bool IsSufficient(int amount) const;

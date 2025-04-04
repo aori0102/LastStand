@@ -58,10 +58,10 @@ FirearmAttributeUIGroup::FirearmAttributeUIGroup() {
 	for (auto it = ATTRIBUTE_LABEL_MAP.begin(); it != ATTRIBUTE_LABEL_MAP.end(); it++) {
 
 		SingleAttributeGroup* singleAttributeGroup = new SingleAttributeGroup;
-		singleAttributeGroup->format = new GameObject(it->second + " Attribute format", Layer::Menu);
+		singleAttributeGroup->format = GameObject::Instantiate(it->second + " Attribute format", Layer::Menu);
 		singleAttributeGroup->format->transform->scale = SINGLE_ATTRIBUTE_SCALE;
 
-		singleAttributeGroup->label = new GameObject(it->second + " Attribute label", Layer::Menu);
+		singleAttributeGroup->label = GameObject::Instantiate(it->second + " Attribute label", Layer::Menu);
 		Text* label_text = singleAttributeGroup->label->AddComponent<Text>();
 		label_text->showOnScreen = true;
 		label_text->LoadText(it->second, Color::WHITE, ATTRIBUTE_FONT_SIZE);
@@ -72,7 +72,7 @@ FirearmAttributeUIGroup::FirearmAttributeUIGroup() {
 				label_text->Render();
 			};
 
-		singleAttributeGroup->amount = new GameObject(it->second + " Attribute amount", Layer::Menu);
+		singleAttributeGroup->amount = GameObject::Instantiate(it->second + " Attribute amount", Layer::Menu);
 		Text* amount_text = singleAttributeGroup->amount->AddComponent<Text>();
 		amount_text->LoadText(std::to_string(0), Color::WHITE, ATTRIBUTE_FONT_SIZE);
 		amount_text->showOnScreen = true;

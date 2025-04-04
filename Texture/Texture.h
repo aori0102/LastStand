@@ -1,11 +1,21 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <Utils.h>
 #include <functional>
 
 #include <GameComponent.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <Utils.h>
+
+class GameObject;
+class Image;
+enum class MediaFont;
 
 struct ButtonUIGroup {
 
@@ -23,36 +33,48 @@ enum class ImageFill {
 
 };
 
-enum class MediaFont;
-class GameObject;
-class Image;
-
 class RenderComponent {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 public:
 
 	bool showOnScreen;
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
+
+	RenderComponent() : showOnScreen(true) {}
 	virtual void Render() = 0;
 
 };
 
 class Texture {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 protected:
 
 	float opacity;
-
 	SDL_Texture* texture;
-
 	Vector2 textureDimension;
 
-	Texture();
-
-	void FreeTexture();
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 public:
 
+	Texture();
+	virtual ~Texture();
+	void FreeTexture();
 	void SetOpacity(float amount);
 	SDL_Texture* GetTexture();
 	Vector2 GetTextureDimension() const;
@@ -61,6 +83,10 @@ public:
 
 class Sprite : public Texture {
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
 public:
 
 	bool LoadImage(std::string path);
@@ -68,6 +94,10 @@ public:
 };
 
 class Image : public GameComponent, public RenderComponent {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -85,8 +115,13 @@ public:
 
 	ImageFill imageFill;
 
-	Image(GameObject* initOwner);
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
+public:
+
+	Image(GameObject* initOwner);
 	void LinkSprite(Sprite* sprite, bool stretchWithTransform);
 	void Render();
 
@@ -94,24 +129,33 @@ public:
 
 class Text : public GameComponent, public Texture, public RenderComponent {
 
-private:
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 public:
 
+	int wrapLength;
 	MediaFont mediaFont;
 
-	int wrapLength;
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+public:
 
 	Text(GameObject* initOwner);
 	~Text();
-
 	bool LoadText(std::string text, Color color, int fontSize);
-
 	void Render() override;
 
 };
 
 class Button : public GameComponent, public RenderComponent {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -119,20 +163,22 @@ private:
 
 public:
 
-	Color backgroundColor;
-
-	Button(GameObject* initOwner);
-
-	void Render() override;
-	Bound GetBound();
-
 	std::function<bool()> OnClick;
 	std::function<void()> OnMouseEnter;
 	std::function<void()> OnMouseLeave;
+	Color backgroundColor;
 
-	bool IsActive() const;
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
+public:
+
+	Button(GameObject* initOwner);
+	void Render() override;
 	void Disable();
 	void Enable();
+	bool IsActive() const;
+	Bound GetBound();
 
 };

@@ -81,10 +81,12 @@ private:
 	Layer layer;
 
 	static int currentID;
-
 	// The set that stores all game object requested to be deleted
 	// by the user
 	static std::unordered_set<GameObject*> deletionSet;
+	static std::unordered_set<GameObject*> gameObjectSet;
+
+	friend class GameManager;
 
 public:
 
@@ -96,15 +98,21 @@ public:
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	static void CleanUpDeleted();
+	static void UpdateAll();
+	static void DropNuke();
+
 protected:
 
 	void SetLayer(Layer newLayer);
 
+	static void UpdateObjectToDatabase(GameObject* obj);
+
 public:
 
-	GameObject();
-	GameObject(std::string initName);
-	GameObject(std::string initName, Layer initLayer);
+	GameObject(std::string initName = "Game Object", Layer initLayer = Layer::Default);
 	int ID() const;
 	void Enable();
 	void Disable();
@@ -114,7 +122,6 @@ public:
 
 	virtual ~GameObject();
 	virtual void Update();
-	virtual void OnDestroy();
 	virtual void OnCollisionEnter(BoxCollider* other);
 	virtual void OnCollisionExit(BoxCollider* other);
 
@@ -125,10 +132,10 @@ public:
 	template<class T> T* GetComponent();
 	template<class T> T* As();
 
-	static void CleanUpCache();
 	static void Destroy(GameObject* gameObject);
 	static int GetNextID();
 	static bool CompareByLayer(const GameObject* a, const GameObject* b);
+	template <class T = GameObject> static T* Instantiate(std::string initName = "Game Object", Layer initLayer = Layer::Default);
 
 };
 #include "GameObject.inl"

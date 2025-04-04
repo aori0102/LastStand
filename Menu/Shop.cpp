@@ -164,7 +164,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- BACKGROUND ---
 	/// >>>
-	GameObject* shopBackground = new GameObject("Shop Background", Layer::Menu);
+	GameObject* shopBackground = GameObject::Instantiate("Shop Background", Layer::Menu);
 	Image* shopBackground_image = shopBackground->AddComponent<Image>();
 	shopBackground_image->showOnScreen = true;
 	shopBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_Background), true);
@@ -180,7 +180,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM NAVIGATION ---
 	/// >>>
-	GameObject* navigationFirearm = new GameObject("Navigation Firearm", Layer::Menu);
+	GameObject* navigationFirearm = GameObject::Instantiate("Navigation Firearm", Layer::Menu);
 	Image* navigationFirearm_image = navigationFirearm->AddComponent<Image>();
 	navigationFirearm_image->showOnScreen = true;
 	navigationFirearm_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
@@ -202,7 +202,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM NAVIGATION LABEL ---
 	/// >>>
-	GameObject* navigationFirearmLabel = new GameObject("Navigation Firearm Label", Layer::Menu);
+	GameObject* navigationFirearmLabel = GameObject::Instantiate("Navigation Firearm Label", Layer::Menu);
 	Text* navigationFirearmLabel_text = navigationFirearmLabel->AddComponent<Text>();
 	navigationFirearmLabel_text->LoadText(
 		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Firearm_Label),
@@ -219,7 +219,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- SKILL NAVIGATION ---
 	/// >>>
-	GameObject* navigationSkill = new GameObject("Navigation Melee", Layer::Menu);
+	GameObject* navigationSkill = GameObject::Instantiate("Navigation Melee", Layer::Menu);
 	Image* navigationSkill_image = navigationSkill->AddComponent<Image>();
 	navigationSkill_image->showOnScreen = true;
 	navigationSkill_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
@@ -241,7 +241,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- SKILL NAVIGATION LABEL ---
 	/// >>>
-	GameObject* navigationSkillLabel = new GameObject("Navigation Melee Label", Layer::Menu);
+	GameObject* navigationSkillLabel = GameObject::Instantiate("Navigation Melee Label", Layer::Menu);
 	Text* navigationSkillLabel_text = navigationSkillLabel->AddComponent<Text>();
 	navigationSkillLabel_text->LoadText(
 		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Skill_Label),
@@ -258,7 +258,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- UTILITY NAVIGATION ---
 	/// >>>
-	GameObject* navigationUtility = new GameObject("Navigation Utility", Layer::Menu);
+	GameObject* navigationUtility = GameObject::Instantiate("Navigation Utility", Layer::Menu);
 	Image* navigationUtility_image = navigationUtility->AddComponent<Image>();
 	navigationUtility_image->showOnScreen = true;
 	navigationUtility_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_NavigationButtonUnselected), true);
@@ -280,7 +280,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- UTILITY NAVIGATION LABEL ---
 	/// >>>
-	GameObject* navigationUtilityLabel = new GameObject("Navigation Utility Label", Layer::Menu);
+	GameObject* navigationUtilityLabel = GameObject::Instantiate("Navigation Utility Label", Layer::Menu);
 	Text* navigationUtilityLabel_text = navigationUtilityLabel->AddComponent<Text>();
 	navigationUtilityLabel_text->LoadText(
 		UI_LABEL_MAP.at(UIElementIndex::Shop_Navigation_Utility_Label),
@@ -297,7 +297,8 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- DAMAGE UPGRADE ---
 	/// >>>
-	FirearmUpgradeUIGroup* upgradeDamageUIGroup = new FirearmUpgradeUIGroup("Damage", FirearmAttributeIndex::Damage);
+	FirearmUpgradeUIGroup* upgradeDamageUIGroup = GameObject::Instantiate<FirearmUpgradeUIGroup>("Damage Upgrade UI Group", Layer::Menu);
+	upgradeDamageUIGroup->SetAttribute(FirearmAttributeIndex::Damage);
 	upgradeDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
@@ -309,7 +310,8 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- CRITICAL DAMAGE UPGRADE ---
 	/// >>>
-	FirearmUpgradeUIGroup* upgradeCriticalDamageUIGroup = new FirearmUpgradeUIGroup("Critical Damage", FirearmAttributeIndex::CriticalDamage);
+	FirearmUpgradeUIGroup* upgradeCriticalDamageUIGroup = GameObject::Instantiate<FirearmUpgradeUIGroup>("Critical Damage Upgrade UI Group", Layer::Menu);
+	upgradeCriticalDamageUIGroup->SetAttribute(FirearmAttributeIndex::CriticalDamage);
 	upgradeCriticalDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
@@ -321,7 +323,8 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIRERATE UPGRADE ---
 	/// >>>
-	FirearmUpgradeUIGroup* upgradeFirerateUIGroup = new FirearmUpgradeUIGroup("Firerate", FirearmAttributeIndex::Firerate);
+	FirearmUpgradeUIGroup* upgradeFirerateUIGroup = GameObject::Instantiate<FirearmUpgradeUIGroup>("Firerate Upgrade UI Group", Layer::Menu);
+	upgradeFirerateUIGroup->SetAttribute(FirearmAttributeIndex::Firerate);
 	upgradeFirerateUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
@@ -333,7 +336,8 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- MAGAZINE CAPACITY UPGRADE ---
 	/// >>>
-	FirearmUpgradeUIGroup* upgradeMagazineCapacityUIGroup = new FirearmUpgradeUIGroup("Magazine capacity", FirearmAttributeIndex::MagazineCapacity);
+	FirearmUpgradeUIGroup* upgradeMagazineCapacityUIGroup = GameObject::Instantiate<FirearmUpgradeUIGroup>("Magazine capacity Upgrade UI Group", Layer::Menu);
+	upgradeMagazineCapacityUIGroup->SetAttribute(FirearmAttributeIndex::MagazineCapacity);
 	upgradeMagazineCapacityUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
@@ -345,7 +349,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM VIEWPORT ---
 	/// >>>
-	GameObject* firearmViewport = new GameObject("Firearm Viewport", Layer::Menu);
+	GameObject* firearmViewport = GameObject::Instantiate("Firearm Viewport", Layer::Menu);
 	Image* firearmViewport_image = firearmViewport->AddComponent<Image>();
 	firearmViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmViewport), true);
 	firearmViewport_image->showOnScreen = true;
@@ -367,7 +371,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM VIEWPORT VISUAL ---
 	/// >>>
-	GameObject* firearmViewportVisual = new GameObject("Firearm Viewport Visual", Layer::Menu);
+	GameObject* firearmViewportVisual = GameObject::Instantiate("Firearm Viewport Visual", Layer::Menu);
 	Image* firearmViewportVisual_image = firearmViewportVisual->AddComponent<Image>();
 	firearmViewportVisual_image->showOnScreen = true;
 	firearmViewportVisual_image->transform->position = firearmViewport_image->transform->position;
@@ -379,7 +383,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM LABEL ---
 	/// >>>
-	GameObject* firearmLabel = new GameObject("Firearm Label", Layer::Menu);
+	GameObject* firearmLabel = GameObject::Instantiate("Firearm Label", Layer::Menu);
 	Text* firearmLabel_text = firearmLabel->AddComponent<Text>();
 	firearmLabel_text->LoadText("<Gun Label>", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Firearm_Main_GunLabel));
 	firearmLabel_text->showOnScreen = true;
@@ -395,7 +399,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM SELECTION GRID ---
 	/// >>>
-	FirearmSelectionUI* firearmSelectionUI = new FirearmSelectionUI;
+	FirearmSelectionUI* firearmSelectionUI = GameObject::Instantiate<FirearmSelectionUI>();
 	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_SelectionGrid));
 	std::vector<Firearm*> firearmList = Player::Instance()->GetFirearmList();
 	for (Firearm* firearm : firearmList)
@@ -405,7 +409,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ATTRIBUTE FRAME ---
 	/// >>>
-	GameObject* firearmAttributeFrame = new GameObject("Attribute frame", Layer::Menu);
+	GameObject* firearmAttributeFrame = GameObject::Instantiate("Attribute frame", Layer::Menu);
 	Image* firearmAttributeFrame_image = firearmAttributeFrame->AddComponent<Image>();
 	firearmAttributeFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmAttributeFrame), true);
 	firearmAttributeFrame_image->showOnScreen = true;
@@ -421,14 +425,14 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ATTRIBUTE CONTENT --- 
 	/// >>>
-	FirearmAttributeUIGroup* attributeUIGroup = new FirearmAttributeUIGroup;
+	FirearmAttributeUIGroup* attributeUIGroup = GameObject::Instantiate<FirearmAttributeUIGroup>();
 	attributeUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Content));
 	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Content] = attributeUIGroup;
 
 	/// >>>
 	/// --- UTILITY INFO BOARD ---
 	/// >>>
-	GameObject* utilityInfoBoard = new GameObject("Utility game object", Layer::Menu);
+	GameObject* utilityInfoBoard = GameObject::Instantiate("Utility game object", Layer::Menu);
 	Image* utilityInfoBoard_image = utilityInfoBoard->AddComponent<Image>();
 	utilityInfoBoard_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityInfoBoard), true);
 	utilityInfoBoard_image->showOnScreen = true;
@@ -444,7 +448,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- UTILITY ITEM VIEWPORT ---
 	/// >>>
-	GameObject* utilityItemViewport = new GameObject("Utility viewport", Layer::Menu);
+	GameObject* utilityItemViewport = GameObject::Instantiate("Utility viewport", Layer::Menu);
 	Image* utilityItemViewport_image = utilityItemViewport->AddComponent<Image>();
 	utilityItemViewport_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemViewport), true);
 	utilityItemViewport_image->showOnScreen = true;
@@ -460,7 +464,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- UTILITY ITEM STACK LABEL ---
 	/// >>>
-	GameObject* utilityItemStackLabel = new GameObject("Utility Item Stack Label", Layer::Menu);
+	GameObject* utilityItemStackLabel = GameObject::Instantiate("Utility Item Stack Label", Layer::Menu);
 	Text* utilityItemStackLabel_text = utilityItemStackLabel->AddComponent<Text>();
 	utilityItemStackLabel_text->LoadText("", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemStackLabel));
 	utilityItemStackLabel_text->showOnScreen = true;
@@ -475,7 +479,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- UTILITY BUY BUTTON ---
 	/// >>>
-	GameObject* utilityBuyButton = new GameObject("Utility buy button", Layer::Menu);
+	GameObject* utilityBuyButton = GameObject::Instantiate("Utility buy button", Layer::Menu);
 	Image* utilityBuyButton_image = utilityBuyButton->AddComponent<Image>();
 	utilityBuyButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityBuyButton), true);
 	utilityBuyButton_image->showOnScreen = true;
@@ -498,7 +502,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ITEM SELECTION GRID ---
 	/// >>>
-	ItemSelectionUI* itemSelectionUI = new ItemSelectionUI;
+	ItemSelectionUI* itemSelectionUI = GameObject::Instantiate<ItemSelectionUI>();
 	itemSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemSelectionGrid));
 	itemSelectionUI->AddItem(ItemIndex::MedKit);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_Slug);
@@ -509,7 +513,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- MONEY ICON ---
 	/// >>>
-	GameObject* utilityMoneyIcon = new GameObject("Utility money icon", Layer::Menu);
+	GameObject* utilityMoneyIcon = GameObject::Instantiate("Utility money icon", Layer::Menu);
 	Image* utilityMoneyIcon_image = utilityMoneyIcon->AddComponent<Image>();
 	utilityMoneyIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
 	utilityMoneyIcon_image->showOnScreen = true;
@@ -526,7 +530,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- MONEY LABEL ---
 	/// >>>
-	GameObject* utilityMoneyLabel = new GameObject("Utility money label", Layer::Menu);
+	GameObject* utilityMoneyLabel = GameObject::Instantiate("Utility money label", Layer::Menu);
 	Text* utilityMoneyLabel_text = utilityMoneyLabel->AddComponent<Text>();
 	utilityMoneyLabel_text->LoadText("12,000", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_MoneyLabel));
 	utilityMoneyLabel_text->showOnScreen = true;
@@ -542,7 +546,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ITEM VISUAL ---
 	/// >>>
-	GameObject* utilityItemVisual = new GameObject("Utility money icon", Layer::Menu);
+	GameObject* utilityItemVisual = GameObject::Instantiate("Utility money icon", Layer::Menu);
 	Image* utilityItemVisual_image = utilityItemVisual->AddComponent<Image>();
 	utilityItemVisual_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_MoneyIcon), true);
 	utilityItemVisual_image->showOnScreen = true;
@@ -556,7 +560,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ITEM LABEL ---
 	/// >>>
-	GameObject* utilityItemLabel = new GameObject("Utility item label", Layer::Menu);
+	GameObject* utilityItemLabel = GameObject::Instantiate("Utility item label", Layer::Menu);
 	Text* utilityItemLabel_text = utilityItemLabel->AddComponent<Text>();
 	utilityItemLabel_text->LoadText("<Item Name>", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Utility_ItemLabel));
 	utilityItemLabel_text->showOnScreen = true;
@@ -572,12 +576,12 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- SKILL INFO BOARD ---
 	/// >>>
-	uiElementMap[UIElementIndex::Skill_InfoBoard] = new SkillInfoUI;
+	uiElementMap[UIElementIndex::Skill_InfoBoard] = GameObject::Instantiate<SkillInfoUI>();
 
 	/// >>>
 	/// --- SKILL LIST ---
 	/// >>>
-	SkillList* skillList = new SkillList;
+	SkillList* skillList = GameObject::Instantiate<SkillList>();
 	skillList->AddSkill(SkillListIndex::First, new SkillNode{
 		.skillPoint = 1,
 		.value = 120.0f,
@@ -641,7 +645,7 @@ void Shop::InitializeUI() {
 	/// --- SKILL POINT ICON ---
 	/// >>>
 
-	GameObject* skillPointIcon = new GameObject("Skill Point Icon", Layer::Menu);
+	GameObject* skillPointIcon = GameObject::Instantiate("Skill Point Icon", Layer::Menu);
 	Image* skillPointIcon_image = skillPointIcon->AddComponent<Image>();
 	skillPointIcon_image->showOnScreen = true;
 	skillPointIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Icon_SkillPointIcon), true);
@@ -657,7 +661,7 @@ void Shop::InitializeUI() {
 	/// --- SKILL POINT LABEL ---
 	/// >>>
 
-	GameObject* skillPointLabel = new GameObject("Skill Point Label", Layer::Menu);
+	GameObject* skillPointLabel = GameObject::Instantiate("Skill Point Label", Layer::Menu);
 	Text* skillPointLabel_text = skillPointLabel->AddComponent<Text>();
 	skillPointLabel_text->showOnScreen = true;
 	skillPointLabel_text->LoadText("0", Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Skill_PointLabel));

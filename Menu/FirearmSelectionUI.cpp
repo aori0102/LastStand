@@ -79,7 +79,7 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 	lastNode->nextSlot = nullptr;
 	lastNode->firearm = newFirearm;
 
-	lastNode->frame = new GameObject("", Layer::Menu);
+	lastNode->frame = GameObject::Instantiate("", Layer::Menu);
 	Image* frame_image = lastNode->frame->AddComponent<Image>();
 	frame_image->showOnScreen = true;
 	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);
@@ -103,7 +103,7 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 			frame_image->Render();
 		};
 
-	lastNode->visual = new GameObject("", Layer::Menu);
+	lastNode->visual = GameObject::Instantiate("Selection Node Visual", Layer::Menu);
 	Image* visual_image = lastNode->visual->AddComponent<Image>();
 	ItemManager::Instance()->LinkItemIcon(newFirearm->GetIndex(), visual_image);
 	visual_image->showOnScreen = true;
@@ -131,6 +131,8 @@ void FirearmSelectionUI::RemoveFirearm(Firearm* removingFirearm) {
 			else
 				prevNode->nextSlot = tempNode->nextSlot;
 
+			GameObject::Destroy(tempNode->frame);
+			GameObject::Destroy(tempNode->visual);
 			delete tempNode;
 
 			UpdateNodeVisual();

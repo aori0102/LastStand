@@ -75,7 +75,6 @@ private:
 	float lastReloadTick;
 	float lastShootTick;
 	std::string firearmName;
-	ReloadType reloadType;
 
 	// UI
 	GameObject* ammoIcon;
@@ -87,6 +86,7 @@ private:
 protected:
 
 	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
+	ReloadType reloadType;
 
 	/// ----------------------------------
 	/// METHODS
@@ -105,18 +105,20 @@ protected:
 
 public:
 
-	Firearm(ItemIndex initItemIndex);
+	Firearm();
+	virtual ~Firearm();
 	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
 	void Reload();
 	void UpdateReserveLabel();
 	void Equip() override;
 	void Dequip() override;
 	void Update() override;
-	void OnDestroy() override;
 	bool TryAddToStack(int amount = 1) override;
 	bool TryRemoveFromStack(int amount = 1) override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
 	std::string GetName() const;
+
+	virtual void SetFirearmItemID(ItemIndex initItemIndex) = 0;
 
 };
 
@@ -134,7 +136,7 @@ private:
 
 public:
 
-	Pistol(ItemIndex initItemIndex);
+	void SetFirearmItemID(ItemIndex initItemIndex) override;
 	bool TryUse(Player* player) override;
 
 };
@@ -156,7 +158,7 @@ private:
 
 public:
 
-	Shotgun(ItemIndex initItemIndex);
+	void SetFirearmItemID(ItemIndex initItemIndex) override;
 	bool TryUse(Player* player) override;
 
 };
@@ -175,7 +177,7 @@ private:
 
 public:
 
-	Rifle(ItemIndex initItemIndex);
+	void SetFirearmItemID(ItemIndex initItemIndex) override;
 	bool TryUse(Player* player) override;
 
 };

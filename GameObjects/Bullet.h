@@ -49,9 +49,10 @@ private:
 
 public:
 
-	Bullet(Vector2 initPosition, Vector2 initDirection, float initDamage, bool isCrit);
+	Bullet();
+	~Bullet();
 	void Update() override;
+	void SetUpBullet(Vector2 initPosition, Vector2 initDirection, float damage, bool isCrit);
 	void OnCollisionEnter(BoxCollider* collider) override;
-	void OnDestroy() override;
 
 };

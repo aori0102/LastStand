@@ -44,8 +44,16 @@ RenderManager::~RenderManager() {
 
 void RenderManager::RemoveRenderObject(GameObject* gameObject) {
 
-	if (renderObjectSet.contains(gameObject))
-		renderObjectSet.erase(gameObject);
+	for (auto it = renderObjectSet.begin(); it != renderObjectSet.end(); it++) {
+
+		if (*it == gameObject) {
+
+			renderObjectSet.erase(it);
+			return;
+
+		}
+
+	}
 
 }
 
@@ -53,7 +61,7 @@ void RenderManager::RenderAll() {
 
 	std::erase_if(renderObjectSet, [](GameObject* obj) { return obj == nullptr; });
 	for (auto obj : renderObjectSet) {
-
+		
 		if (obj->IsActive())
 			obj->Render();
 

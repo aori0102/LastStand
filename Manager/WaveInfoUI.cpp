@@ -24,7 +24,7 @@ WaveInfoUI* WaveInfoUI::instance = nullptr;
 void WaveInfoUI::InitializeUI() {
 
 	// --- PROGRESS LABEL ---
-	GameObject* progressLabel = new GameObject("Progress Label", Layer::GUI);
+	GameObject* progressLabel = GameObject::Instantiate("Progress Label", Layer::GUI);
 	Text* progressLabel_text = progressLabel->AddComponent<Text>();
 	progressLabel_text->LoadText(
 		UI_TEXT_MAP.at(WaveInfoIndex::ProgressLabel),
@@ -44,7 +44,7 @@ void WaveInfoUI::InitializeUI() {
 	uiElementMap[WaveInfoIndex::ProgressLabel] = progressLabel;
 
 	// --- PROGRESS BAR BACKGROUND
-	GameObject* progressBarBackground = new GameObject("Progress Bar Background", Layer::GUI);
+	GameObject* progressBarBackground = GameObject::Instantiate("Progress Bar Background", Layer::GUI);
 	Image* progressBarBackground_image = progressBarBackground->AddComponent<Image>();
 	progressBarBackground_image->LinkSprite(
 		MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBarBackground), true
@@ -62,7 +62,7 @@ void WaveInfoUI::InitializeUI() {
 	uiElementMap[WaveInfoIndex::ProgressBarBackground] = progressBarBackground;
 
 	// --- PROGRESS BAR
-	GameObject* progressBar = new GameObject("Progress Bar", Layer::GUI);
+	GameObject* progressBar = GameObject::Instantiate("Progress Bar", Layer::GUI);
 	Image* progressBar_image = progressBar->AddComponent<Image>();
 	progressBar_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_ProgressBar), true);
 	progressBar_image->imageFill = ImageFill::Horizontal;
@@ -80,7 +80,7 @@ void WaveInfoUI::InitializeUI() {
 	uiElementMap[WaveInfoIndex::ProgressBar] = progressBar;
 
 	// --- PROGRESS ---
-	GameObject* progressBarLabel = new GameObject("Progress Bar Label", Layer::GUI);
+	GameObject* progressBarLabel = GameObject::Instantiate("Progress Bar Label", Layer::GUI);
 	Text* progressBarLabel_text = progressLabel->AddComponent<Text>();
 	progressBarLabel_text->LoadText(
 		std::to_string(previousProgress) + UI_TEXT_MAP.at(WaveInfoIndex::ProgressBarLabel),
@@ -109,7 +109,7 @@ void WaveInfoUI::InitializeUI() {
 	uiElementMap[WaveInfoIndex::ProgressBarLabel] = progressLabel;
 
 	// --- WAVE ---
-	GameObject* waveLabel = new GameObject("Wave Label", Layer::GUI);
+	GameObject* waveLabel = GameObject::Instantiate("Wave Label", Layer::GUI);
 	Text* waveLabel_text = waveLabel->AddComponent<Text>();
 	waveLabel_text->LoadText(
 		UI_TEXT_MAP.at(WaveInfoIndex::WaveLabel) + std::to_string(previousWave),
@@ -124,7 +124,7 @@ void WaveInfoUI::InitializeUI() {
 			previousWave = currentWave;
 			waveLabel_text->LoadText(
 				UI_TEXT_MAP.at(WaveInfoIndex::WaveLabel) + std::to_string(previousWave),
-				Color::WHITE, 
+				Color::WHITE,
 				UI_TEXT_SIZE_MAP.at(WaveInfoIndex::WaveLabel)
 			);
 		}
@@ -133,7 +133,7 @@ void WaveInfoUI::InitializeUI() {
 	uiElementMap[WaveInfoIndex::WaveLabel] = waveLabel;
 
 	// --- NEXT WAVE BUTTON ---
-	GameObject* nextWaveButton = new GameObject("Next Wave Button", Layer::GUI);
+	GameObject* nextWaveButton = GameObject::Instantiate("Next Wave Button", Layer::GUI);
 	Image* nextWave_image = nextWaveButton->AddComponent<Image>();
 	nextWave_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::WaveInfo_NextWaveButton), true);
 	nextWave_image->showOnScreen = true;
@@ -154,7 +154,7 @@ void WaveInfoUI::InitializeUI() {
 	uiElementMap[WaveInfoIndex::NextWaveButton] = nextWaveButton;
 
 	// --- NEXT WAVE LABEL ---
-	GameObject* nextWaveLabel = new GameObject("Next Wave Label", Layer::GUI);
+	GameObject* nextWaveLabel = GameObject::Instantiate("Next Wave Label", Layer::GUI);
 	Text* nextWaveLabel_text = nextWaveLabel->AddComponent<Text>();
 	nextWaveLabel_text->LoadText(
 		UI_TEXT_MAP.at(WaveInfoIndex::NextWaveLabel), Color::WHITE, UI_TEXT_SIZE_MAP.at(WaveInfoIndex::NextWaveLabel)

@@ -10,27 +10,6 @@
 const float SkillList::SKILL_NODE_OFFSET = 87.0f;
 const float SkillList::SKILL_LIST_OFFSET = 104.0f;
 
-SkillList::SkillList() {
-
-	headNodeMap = {
-		{ SkillListIndex::First, nullptr },
-		{ SkillListIndex::Second, nullptr },
-		{ SkillListIndex::Third, nullptr },
-	};
-	tailNodeMap = {
-		{ SkillListIndex::First, nullptr },
-		{ SkillListIndex::Second, nullptr },
-		{ SkillListIndex::Third, nullptr },
-	};
-	currentNodeMap = {
-		{ SkillListIndex::First, nullptr },
-		{ SkillListIndex::Second, nullptr },
-		{ SkillListIndex::Third, nullptr },
-	};
-	selectedNode = nullptr;
-
-}
-
 int SkillList::GetCurrentSkillCost() const { return selectedNode ? selectedNode->skillPoint : INT_MAX; }
 
 void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
@@ -42,7 +21,7 @@ void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
 	skillNode->acquired = false;
 	skillNode->available = false;
 
-	skillNodeUI->skillNodeBackground = new GameObject("Skill Node Background", Layer::Menu);
+	skillNodeUI->skillNodeBackground = GameObject::Instantiate("Skill Node Background", Layer::Menu);
 	Image* skillNodeBackground_image = skillNodeUI->skillNodeBackground->AddComponent<Image>();
 	skillNodeBackground_image->showOnScreen = true;
 	skillNodeBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_SkillNode), true);
@@ -60,7 +39,7 @@ void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
 			skillNodeBackground_image->Render();
 		};
 
-	skillNodeUI->skillNodeVisual = new GameObject("Skill Node Visual", Layer::Menu);
+	skillNodeUI->skillNodeVisual = GameObject::Instantiate("Skill Node Visual", Layer::Menu);
 	Image* skillNodeVisual_image = skillNodeUI->skillNodeVisual->AddComponent<Image>();
 	skillNodeVisual_image->showOnScreen = true;
 	skillNodeVisual_image->transform->position = skillNodeUI->skillNodeBackground->transform->position;
@@ -82,7 +61,7 @@ void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
 
 	// Add connection to the previous node
 	SkillNode* tailNode = tailNodeMap.at(skillListIndex);
-	tailNode->skillNodeUI->nodeConnector = new GameObject("Node Connector", Layer::Menu);
+	tailNode->skillNodeUI->nodeConnector = GameObject::Instantiate("Node Connector", Layer::Menu);
 	Image* nodeConnector_image = tailNode->skillNodeUI->nodeConnector->AddComponent<Image>();
 	nodeConnector_image->showOnScreen = true;
 	nodeConnector_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_SkillConnector), true);
@@ -178,5 +157,26 @@ SkillNode* SkillList::UpgradeSelected() {
 		selectedNode->next->available = true;
 
 	return selectedNode;
+
+}
+
+SkillList::SkillList() {
+
+	headNodeMap = {
+		{ SkillListIndex::First, nullptr },
+		{ SkillListIndex::Second, nullptr },
+		{ SkillListIndex::Third, nullptr },
+	};
+	tailNodeMap = {
+		{ SkillListIndex::First, nullptr },
+		{ SkillListIndex::Second, nullptr },
+		{ SkillListIndex::Third, nullptr },
+	};
+	currentNodeMap = {
+		{ SkillListIndex::First, nullptr },
+		{ SkillListIndex::Second, nullptr },
+		{ SkillListIndex::Third, nullptr },
+	};
+	selectedNode = nullptr;
 
 }

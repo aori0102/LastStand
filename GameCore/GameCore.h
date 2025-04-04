@@ -14,18 +14,10 @@
 #include <SDL.h>
 #include <Utils.h>
 
-class AnimationManager;
-class AudioManager;
 class Color;
 class GameObject;
 class GameManager;
-class ItemManager;
-class MediaManager;
-class PhysicsManager;
-class RenderManager;
 class Texture;
-class UIEventManager;
-class WaveManager;
 
 enum class UILayer {
 
@@ -80,19 +72,10 @@ private:
 	static std::string gameName;
 	static std::unordered_map<SDL_Keycode, ActionState> keyStateDictionary;
 	static std::unordered_map<MouseButton, ActionState> mouseButtonStateDictionary;
-	static std::unordered_set<GameObject*> gameObjectSet;
 	static Vector2 cameraPosition;
 	static Vector2 windowResolution;
-	static AnimationManager* animationManager;
-	static AudioManager* audioManager;
 	static GameManager* gameManager;
 	static GameObject* cameraFocusObject;
-	static ItemManager* itemManager;
-	static MediaManager* mediaManager;
-	static PhysicsManager* physicsManager;
-	static RenderManager* renderManager;
-	static UIEventManager* uiEventManager;
-	static WaveManager* waveManager;
 	static SDL_Event* gameEvent;
 	static SDL_Renderer* renderer;
 	static SDL_Window* window;
@@ -121,8 +104,6 @@ public:
 	static void RenderCopy(Texture* texture, Vector2 position, Vector2 scale, bool onScreen, Layer layer, SDL_Rect* clip = nullptr, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	static void Loop();
 	static void Close();
-	static void RegisterGameObject(GameObject* gameObject);
-	static void UnregisterGameObject(GameObject* gameObject);
 	static void LetCameraFocus(GameObject* gameObject);
 	static void SetCameraZoom(float zoom);
 	static void ClearTexture(SDL_Texture* texture);

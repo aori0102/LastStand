@@ -23,6 +23,8 @@ AnimationNode::~AnimationNode() {
 	for (auto it = transitionList.begin(); it != transitionList.end(); it++)
 		delete (*it);
 
+	animationClip = nullptr;
+
 	transitionList.clear();
 
 }

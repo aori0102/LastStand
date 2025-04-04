@@ -108,6 +108,19 @@ void ItemManager::LinkItemIcon(ItemIndex itemIndex, Image* out) {
 
 }
 
+void ItemManager::NukeItem(Item* item) {
+
+	if (item->IsType<Pistol>())
+		GameObject::Destroy(item->ToType<Pistol>());
+	else if (item->IsType<Rifle>())
+		GameObject::Destroy(item->ToType<Rifle>());
+	else if (item->IsType<Shotgun>())
+		GameObject::Destroy(item->ToType<Shotgun>());
+	else
+		delete item;
+
+}
+
 int ItemManager::GetItemPrice(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).price; }
 
 int ItemManager::GetItemShopStack(ItemIndex itemIndex) { return itemInfoMap.at(itemIndex).shopStack; }
@@ -118,17 +131,32 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	switch (itemIndex) {
 
-	case ItemIndex::Pistol_M1911:
+	case ItemIndex::Pistol_M1911: {
 
-		return new Pistol(itemIndex);
+		Pistol* pistol = GameObject::Instantiate<Pistol>("Pistol");
+		pistol->SetFirearmItemID(itemIndex);
 
-	case ItemIndex::Shotgun_Beretta1301:
+		return pistol;
 
-		return new Shotgun(itemIndex);
+	}
 
-	case ItemIndex::Rifle_M4:
+	case ItemIndex::Shotgun_Beretta1301: {
 
-		return new Rifle(itemIndex);
+		Shotgun* shotgun = GameObject::Instantiate<Shotgun>("Shotgun");
+		shotgun->SetFirearmItemID(itemIndex);
+
+		return shotgun;
+
+	}
+
+	case ItemIndex::Rifle_M4: {
+
+		Rifle* rifle = GameObject::Instantiate<Rifle>("Rifle");
+		rifle->SetFirearmItemID(itemIndex);
+
+		return rifle;
+
+	}
 
 	case ItemIndex::MedKit: {
 

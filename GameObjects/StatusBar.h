@@ -116,8 +116,8 @@ private:
 public:
 
 	StatusBar();
+	~StatusBar();
 	void Update() override;
-	void OnDestroy() override;
 	
 	static StatusBar* Instance();
 

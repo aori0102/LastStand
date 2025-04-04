@@ -6,7 +6,6 @@
 
 #include <Firearm.h>
 
-#include <AudioManager.h>
 #include <Ammunition.h>
 #include <GameCore.h>
 #include <ItemManager.h>
@@ -61,7 +60,7 @@ const std::unordered_map<ItemIndex, FirearmInfo> Firearm::BASE_FIREARM_INFO_MAP 
 			{ FirearmAttributeIndex::MagazineCapacity, 42 },
 			{ FirearmAttributeIndex::ReloadTime, 4.3f },
 		},
-		.ammunitionID = AmmunitionID::Nine_Mil,
+		.ammunitionID = AmmunitionID::Five_Five_Six,
 		.reloadType = ReloadType::Magazine,
 	} },
 };
@@ -130,8 +129,6 @@ bool Firearm::TryShoot() {
 
 	if (currentAmmo > 0 && GameCore::Time() >= lastShootTick + 60.0f / attributeMap.at(FirearmAttributeIndex::Firerate)) {
 
-		AudioManager::Instance()->PlayOneShot(MediaSFX::GunShot);
-
 		lastShootTick = GameCore::Time();
 		currentAmmo--;
 		currentAmmoLabel->GetComponent<Text>()->LoadText(std::to_string(currentAmmo), Color::WHITE, CURRENT_AMMO_LABEL_SIZE);
@@ -168,23 +165,19 @@ void Firearm::HideUI() {
 
 }
 
-Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
-
-	auto it_baseFirearmInfo = BASE_FIREARM_INFO_MAP.find(initItemIndex);
-	if (it_baseFirearmInfo == BASE_FIREARM_INFO_MAP.end())
-		throw std::exception("Firearm: FIrearm data does not exist");
+Firearm::Firearm() {
 
 	lastReloadTick = 0.0f;
 	lastShootTick = 0.0f;
 	isReloading = false;
 	stopReload = false;
 
-	reloadType = (it_baseFirearmInfo->second).reloadType;
-	attributeMap = (it_baseFirearmInfo->second).attributeMap;
+	reloadType = ReloadType::Magazine;
+	attributeMap = {};
 
 	currentAmmo = 0;
 
-	ammoFrame = new GameObject("Ammo Frame", Layer::GUI);
+	ammoFrame = GameObject::Instantiate("Ammo Frame", Layer::GUI);
 	Image* ammoFrame_image = ammoFrame->AddComponent<Image>();
 	ammoFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoFrame), true);
 	ammoFrame_image->showOnScreen = true;
@@ -193,7 +186,7 @@ Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
 		ammoFrame_image->Render();
 		};
 
-	ammoIcon = new GameObject("Ammo Icon", Layer::GUI);
+	ammoIcon = GameObject::Instantiate("Ammo Icon", Layer::GUI);
 	Image* ammoIcon_image = ammoIcon->AddComponent<Image>();
 	ammoIcon_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Firearm_AmmoIcon), true);
 	ammoIcon_image->showOnScreen = true;
@@ -202,7 +195,7 @@ Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
 		ammoIcon_image->Render();
 		};
 
-	currentAmmoLabel = new GameObject("Current Ammo Label", Layer::GUI);
+	currentAmmoLabel = GameObject::Instantiate("Current Ammo Label", Layer::GUI);
 	Text* currentAmmoLabel_text = currentAmmoLabel->AddComponent<Text>();
 	currentAmmoLabel_text->showOnScreen = true;
 	currentAmmoLabel_text->LoadText(std::to_string(currentAmmo), Color::WHITE, CURRENT_AMMO_LABEL_SIZE);
@@ -211,7 +204,7 @@ Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
 		currentAmmoLabel_text->Render();
 		};
 
-	reserveAmmoLabel = new GameObject("Reserve Ammo Label", Layer::GUI);
+	reserveAmmoLabel = GameObject::Instantiate("Reserve Ammo Label", Layer::GUI);
 	Text* reserveAmmoLabel_text = reserveAmmoLabel->AddComponent<Text>();
 	reserveAmmoLabel_text->showOnScreen = true;
 	UpdateReserveLabel();
@@ -221,7 +214,7 @@ Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
 
 	HideUI();
 
-	reloadLabel = new GameObject("", Layer::GUI);
+	reloadLabel = GameObject::Instantiate("Reload Label", Layer::GUI);
 	Text* reloadLabel_text = reloadLabel->AddComponent<Text>();
 	reloadLabel_text->showOnScreen = true;
 	reloadLabel_text->LoadText("Reloading...", Color::WHITE, 24);
@@ -230,6 +223,27 @@ Firearm::Firearm(ItemIndex initItemIndex) : Item(initItemIndex) {
 		if (isReloading)
 			reloadLabel_text->Render();
 		};
+
+}
+
+Firearm::~Firearm() {
+
+	GameObject::Destroy(ammoIcon);
+	ammoIcon = nullptr;
+
+	GameObject::Destroy(ammoFrame);
+	ammoFrame = nullptr;
+
+	GameObject::Destroy(currentAmmoLabel);
+	currentAmmoLabel = nullptr;
+
+	GameObject::Destroy(reserveAmmoLabel);
+	reserveAmmoLabel = nullptr;
+
+	GameObject::Destroy(reloadLabel);
+	reloadLabel = nullptr;
+
+	attributeMap.clear();
 
 }
 
@@ -253,6 +267,10 @@ void Firearm::Reload() {
 }
 
 void Firearm::UpdateReserveLabel() {
+
+	if (GetIndex() == ItemIndex::None)
+		// The index is not yet updated
+		return;
 
 	reserveAmmoLabel->GetComponent<Text>()->LoadText(
 		std::to_string(Player::Instance()->GetAmmoCount(BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionID)),
@@ -285,27 +303,6 @@ void Firearm::Dequip() {
 void Firearm::Update() {
 
 	HandleReloading();
-
-}
-
-void Firearm::OnDestroy() {
-
-	GameObject::Destroy(ammoIcon);
-	ammoIcon = nullptr;
-
-	GameObject::Destroy(ammoFrame);
-	ammoFrame = nullptr;
-
-	GameObject::Destroy(currentAmmoLabel);
-	currentAmmoLabel = nullptr;
-
-	GameObject::Destroy(reserveAmmoLabel);
-	reserveAmmoLabel = nullptr;
-
-	GameObject::Destroy(reloadLabel);
-	reloadLabel = nullptr;
-
-	attributeMap.clear();
 
 }
 

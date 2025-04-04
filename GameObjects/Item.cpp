@@ -6,11 +6,29 @@
 
 #include <Item.h>
 
+#include <ItemManager.h>
 #include <MediaManager.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
+
+void Item::SetIndex(ItemIndex initItemIndex) {
+
+	itemIndex = initItemIndex;
+
+}
+
+Item::Item() {
+
+	itemIndex = ItemIndex::None;
+
+	currentStack = 1;
+	useCooldown = 0.0f;
+	stackable = false;
+	usable = true;
+
+}
 
 Item::Item(ItemIndex initItemIndex, int amount) {
 

@@ -1,10 +1,17 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Texture.h>
+
 #include <GameCore.h>
 #include <MediaManager.h>
 
-// Font data -- TODO: Refactor, make it clean
-const std::string FONT_PATH = "./Asset/Font.ttf";
-const int FONT_SIZE = 16;
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 Text::Text(GameObject* initOwner) : GameComponent(initOwner) {
 

@@ -65,9 +65,9 @@ const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP =
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Zombie::Zombie(ZombieIndex initZombieIndex) : GameObject("Zombie", Layer::Zombie) {
+Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 
-	zombieIndex = initZombieIndex;
+	zombieIndex = ZombieIndex::Normal;
 
 	// Attribute
 	zombieAttribute = new ZombieAttribute{
@@ -116,7 +116,7 @@ Zombie::Zombie(ZombieIndex initZombieIndex) : GameObject("Zombie", Layer::Zombie
 
 	// Fields
 
-	healthBar = new GameObject();
+	healthBar = GameObject::Instantiate("Health Bar", Layer::Zombie);
 	Image* healthBar_image = healthBar->AddComponent<Image>();
 	healthBar_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_HealthBar), true);
 	healthBar_image->imageFill = ImageFill::Horizontal;
@@ -139,6 +139,31 @@ Zombie::Zombie(ZombieIndex initZombieIndex) : GameObject("Zombie", Layer::Zombie
 
 }
 
+Zombie::~Zombie() {
+
+	GameManager::Instance()->ReportDead(this);
+
+	GameObject::Destroy(healthBar);
+	healthBar = nullptr;
+
+	delete zombieAttribute;
+	zombieAttribute = nullptr;
+
+}
+
+void Zombie::SetIndex(ZombieIndex initZombieIndex) {
+
+	zombieIndex = initZombieIndex;
+
+	zombieAttribute->movementSpeed = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed;
+	zombieAttribute->health = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health;
+	zombieAttribute->damage = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage;
+	zombieAttribute->exp = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp;
+
+	GetComponent<Image>()->clip = ZOMBIE_SPRITE_CLIP_MAP.at(zombieIndex);
+
+}
+
 void Zombie::Update() {
 
 
@@ -151,18 +176,6 @@ void Zombie::Update() {
 
 	// Calculate rotation
 	GetComponent<Image>()->angle = Math::RadToDeg(forward.Angle());
-
-}
-
-void Zombie::OnDestroy() {
-
-	GameManager::Instance()->ReportDead(this);
-
-	Destroy(healthBar);
-	healthBar = nullptr;
-
-	delete zombieAttribute;
-	zombieAttribute = nullptr;
 
 }
 

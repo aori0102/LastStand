@@ -1,6 +1,17 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Texture.h>
-#include <UIEventManager.h>
+
 #include <GameCore.h>
+#include <UIEventManager.h>
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 
@@ -23,18 +34,6 @@ void Button::Render() {
 
 }
 
-Bound Button::GetBound() {
-
-	Transform* transform = GetComponent<Transform>();
-
-	Bound bound;
-	bound.center = transform->position;
-	bound.extents = transform->scale / 2.0f;
-
-	return bound;
-
-}
-
 void Button::Disable() {
 
 	isActive = false;
@@ -48,3 +47,15 @@ void Button::Enable() {
 }
 
 bool Button::IsActive() const { return isActive; }
+
+Bound Button::GetBound() {
+
+	Transform* transform = GetComponent<Transform>();
+
+	Bound bound;
+	bound.center = transform->position;
+	bound.extents = transform->scale / 2.0f;
+
+	return bound;
+
+}

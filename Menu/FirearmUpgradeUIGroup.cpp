@@ -38,10 +38,9 @@ void FirearmUpgradeUIGroup::UpdateDescription() {
 
 }
 
-FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(std::string upgradeName, FirearmAttributeIndex initFirearmAttributeIndex) 
-	: GameObject(upgradeName + " Upgrade", Layer::Menu) {
+FirearmUpgradeUIGroup::FirearmUpgradeUIGroup() {
 
-	firearmAttributeIndex = initFirearmAttributeIndex;
+	firearmAttributeIndex = FirearmAttributeIndex::Damage;
 
 	upgradeAmount = 0.0f;
 	descriptionDecimalPlace = 0;
@@ -64,19 +63,19 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(std::string upgradeName, FirearmAtt
 		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmUpgradeSlot), true);
 		};
 
-	upgradeLabel = new GameObject(upgradeName + " Upgrade Label", Layer::Menu);
+	upgradeLabel = GameObject::Instantiate("Upgrade Label", Layer::Menu);
 	Text* upgradeLabel_text = upgradeLabel->AddComponent<Text>();
 	upgradeLabel_text->LoadText("Upgrade label", Color::WHITE, UPGRADE_LABEL_SIZE);
 	upgradeLabel_text->showOnScreen = true;
 	upgradeLabel_text->transform->position = transform->position + Vector2::up * UPGRADE_LABEL_OFFSET_Y;
 
-	upgradeDescription = new GameObject(upgradeName + " Upgrade Description", Layer::Menu);
+	upgradeDescription = GameObject::Instantiate("Upgrade Description", Layer::Menu);
 	Text* upgradeDescription_text = upgradeDescription->AddComponent<Text>();
 	upgradeDescription_text->LoadText("Upgrade description", Color::WHITE, UPGRADE_DESCRIPTION_SIZE);
 	upgradeDescription_text->showOnScreen = true;
 	upgradeDescription_text->transform->position = transform->position;
 
-	upgradeCost = new GameObject(upgradeName + " Upgrade Cost", Layer::Menu);
+	upgradeCost = GameObject::Instantiate("Upgrade Cost", Layer::Menu);
 	Text* upgradeCost_text = upgradeCost->AddComponent<Text>();
 	upgradeCost_text->LoadText(COST_PREFIX, Color::WHITE, UPGADE_COST_SIZE);
 	upgradeCost_text->showOnScreen = true;
@@ -88,6 +87,12 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup(std::string upgradeName, FirearmAtt
 		upgradeDescription_text->Render();
 		upgradeCost_text->Render();
 		};
+
+}
+
+void FirearmUpgradeUIGroup::SetAttribute(FirearmAttributeIndex initFirearmAttributeIndex) {
+
+	firearmAttributeIndex = initFirearmAttributeIndex;
 
 }
 
