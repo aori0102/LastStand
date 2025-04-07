@@ -13,6 +13,7 @@
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS

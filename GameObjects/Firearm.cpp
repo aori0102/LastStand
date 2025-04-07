@@ -12,6 +12,7 @@
 #include <MediaManager.h>
 #include <Player.h>
 #include <Texture.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// STATIC FIELDS

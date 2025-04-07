@@ -9,10 +9,14 @@
 #include <iomanip>
 #include <sstream>
 
+#include <BoxCollider.h>
 #include <GameCore.h>
+#include <Humanoid.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <RigidBody.h>
 #include <Texture.h>
+#include <Transform.h>
 #include <Utils.h>
 #include <Zombie.h>
 

@@ -27,22 +27,26 @@ class InventoryUI : public GameObject {
 
 private:
 
-	static const int MAX_COLUMN;
-	static const int MAX_ROW;
-	static const int ITEM_COUNT_FONT_SIZE;
-	static const int INVENTORY_TITLE_FONT_SIZE;
-	static const float INVENTORY_TITLE_OFFSET;
-	static const float INVENTORY_SLOT_OFFSET;
-	static const float HOTBAR_SLOT_OFFSET;
-	static const std::string INVENTORY_TITLE;
-	static const Vector2 FIRST_INVENTORY_SLOT_POSITION;
-	static const Vector2 FIRST_HOTBAR_SLOT_POSITION;
+	const int MAX_COLUMN = 5;
+	const int MAX_ROW = 2;
+	const int ITEM_COUNT_FONT_SIZE = 10;
+	const int INVENTORY_TITLE_FONT_SIZE = 30;
+	const float INVENTORY_TITLE_OFFSET = -8.0f;
+	const float INVENTORY_SLOT_OFFSET = 93.0f;
+	const float HOTBAR_SLOT_OFFSET = 90.0f;
+	const std::string INVENTORY_TITLE = "Inventory";
+	const Vector2 FIRST_INVENTORY_SLOT_POSITION = Vector2(416.0f, 285.0f);
+	const Vector2 FIRST_HOTBAR_SLOT_POSITION = Vector2(425.0f, 527.0f);
+
+private:
 
 	std::vector<std::vector<SlotUI*>> storageGrid;
 	std::unordered_map<HotBarSlotIndex, SlotUI*> hotbarSlotMap;
 	GameObject* background;
 	GameObject* title;
 	SlotUI* selectedSlotUI;
+
+	static InventoryUI* instance;
 
 private:
 
@@ -54,8 +58,11 @@ private:
 public:
 
 	InventoryUI();
+	~InventoryUI();
 	void SelectSlot(SlotUI* slotUI);
 	void UpdateInventorySlot(ItemIndex itemIndex, int amount);
 	void UpdateHotBarSlot(ItemIndex itemIndex, int amount, HotBarSlotIndex hotBarSlotIndex);
+
+	static InventoryUI* Instance();
 
 };

@@ -6,10 +6,12 @@
 
 #pragma once
 
-class GameObject;
-class Transform;
+#include <GameComponent.h>
+#include <Utils.h>
 
-class GameComponent {
+class GameObject;
+
+class RigidBody : public GameComponent {
 
 	/// ----------------------------------
 	/// FIELDS
@@ -17,34 +19,25 @@ class GameComponent {
 
 private:
 
-	GameObject* owner;
-
-	friend class GameObject;
-	friend class GameCore;
+	float lastUpdateTick;
+	Vector2 initialForce;
 
 public:
 
-	Transform* transform;
+	float drag;
+	float mass;
+	Vector2 momentum;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-protected:
-
-	GameComponent(GameObject* initOwner);
-
-	virtual void OnComponentDestroyed();
-	virtual void OnComponentUpdate();
-
 public:
 
-	GameObject* Owner();
-
-	template<class T> bool TryGetComponent();
-	template<class T> bool TryGetComponent(T*& out);
-	template<class T> T* GetComponent();
-	template<class T> T* AddComponent();
+	RigidBody(GameObject* initOwner);
+	void AddForce(Vector2 force);
+	void Update();
+	void OnComponentDestroyed() override;
+	Vector2 GetAcceleration();
 
 };
-#include "GameComponent.inl"

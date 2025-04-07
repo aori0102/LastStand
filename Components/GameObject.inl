@@ -4,9 +4,12 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
+#include <GameObject.h>
 
 #include <type_traits>
+
+#include <BoxCollider.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -84,6 +87,8 @@ template <class T>
 T* GameObject::Instantiate(std::string initName, Layer initLayer) {
 
 	static_assert(std::is_base_of<GameObject, T>::value, "T must inherit from GameObject!");
+
+	std::cout << "Intantiating game object " << initName << std::endl;
 
 	GameObject* object = new T;
 	object->name = initName;

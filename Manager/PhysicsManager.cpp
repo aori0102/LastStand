@@ -6,8 +6,9 @@
 
 #include <PhysicsManager.h>
 
-#include <GameComponent.h>
+#include <BoxCollider.h>
 #include <GameCore.h>
+#include <RigidBody.h>
 #include <Utils.h>
 
 /// ----------------------------------

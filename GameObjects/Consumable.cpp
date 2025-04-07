@@ -7,6 +7,7 @@
 #include <Consumable.h>
 
 #include <GameComponent.h>
+#include <Humanoid.h>
 #include <Player.h>
 
 /// ----------------------------------

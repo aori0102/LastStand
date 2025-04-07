@@ -8,10 +8,14 @@
 
 #include <GameComponent.h>
 #include <GameCore.h>
+#include <Inventory.h>
 #include <Item.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Texture.h>
+#include <Transform.h>
+
+HotBarUI* HotBarUI::instance = nullptr;
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -76,6 +80,11 @@ void HotBarUI::Update() {
 
 HotBarUI::HotBarUI() {
 
+	if (instance)
+		throw std::exception("Hot Bar UI can only have one instance!");
+
+	instance = this;
+
 	slotSelected = false;
 
 	Vector2 slotPosition = HOTBAR_POSITION;
@@ -90,16 +99,18 @@ HotBarUI::HotBarUI() {
 		hotBarSlotFrame_image->showOnScreen = true;
 		hotBarSlotFrame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::HotBar_Slot), true);
 		hotBarSlotFrame_image->transform->position = Math::SDLToC00(slotPosition, hotBarSlotFrame_image->transform->scale);
-		hotBarSlot->frame->Render = [hotBarSlotFrame_image]() {
-			hotBarSlotFrame_image->Render();
+		hotBarSlot->frame->Render = [this, hotBarSlotFrame_image]() {
+			if (IsActive())
+				hotBarSlotFrame_image->Render();
 			};
 
 		hotBarSlot->visual = GameObject::Instantiate("Hot bar slot visual", Layer::GUI);
 		Image* hotBarSlotVisual_image = hotBarSlot->visual->AddComponent<Image>();
 		hotBarSlotVisual_image->showOnScreen = true;
 		hotBarSlotVisual_image->transform->position = hotBarSlotFrame_image->transform->position;
-		hotBarSlot->visual->Render = [hotBarSlotVisual_image]() {
-			hotBarSlotVisual_image->Render();
+		hotBarSlot->visual->Render = [this, hotBarSlotVisual_image]() {
+			if (IsActive())
+				hotBarSlotVisual_image->Render();
 			};
 
 		hotBarSlot->label = GameObject::Instantiate("Hot bar slot visual", Layer::GUI);
@@ -109,8 +120,9 @@ HotBarUI::HotBarUI() {
 		Align::Bottom(hotBarSlotLabel_text->transform, hotBarSlot->frame->transform);
 		Align::MiddleHorizontally(hotBarSlotLabel_text->transform, hotBarSlot->frame->transform);
 		hotBarSlotLabel_text->transform->position.y += LABEL_OFFSET;
-		hotBarSlot->label->Render = [hotBarSlotLabel_text]() {
-			hotBarSlotLabel_text->Render();
+		hotBarSlot->label->Render = [this, hotBarSlotLabel_text]() {
+			if (IsActive())
+				hotBarSlotLabel_text->Render();
 			};
 
 		hotbarSlotMap[static_cast<HotBarSlotIndex>(i)] = hotBarSlot;
@@ -125,8 +137,9 @@ HotBarUI::HotBarUI() {
 	Image* hotbarSelection_image = hotbarSelection->AddComponent<Image>();
 	hotbarSelection_image->showOnScreen = true;
 	hotbarSelection_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::HotBar_Selection), true);
-	hotbarSelection->Render = [hotbarSelection_image]() {
-		hotbarSelection_image->Render();
+	hotbarSelection->Render = [this, hotbarSelection_image]() {
+		if (IsActive())
+			hotbarSelection_image->Render();
 		};
 	hotbarSelection->Disable();
 
@@ -149,5 +162,9 @@ HotBarUI::~HotBarUI() {
 
 	GameObject::Destroy(hotbarSelection);
 	hotbarSelection = nullptr;
+	
+	instance = nullptr;
 
 }
+
+HotBarUI* HotBarUI::Instance() { return instance; }

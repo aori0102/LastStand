@@ -7,6 +7,7 @@
 #include <GameCore.h>
 
 #include <iostream>
+#include <sstream>
 
 #include <AnimationManager.h>
 #include <AudioManager.h>
@@ -22,6 +23,7 @@
 #include <SDL_ttf.h>
 #include <Texture.h>
 #include <UIEventManager.h>
+#include <Version.h>
 #include <WaveManager.h>
 
 /// ----------------------------------
@@ -242,6 +244,10 @@ void GameCore::FlushManager() {
 }
 
 bool GameCore::InitializeProgram() {
+
+	std::cout << "----------------------------------" << std::endl << std::endl;;
+	std::cout << "[Core] Launching Last Stand " << GetVersionString() << std::endl << std::endl;
+	std::cout << "----------------------------------" << std::endl << std::endl;
 
 	try {
 
@@ -587,6 +593,14 @@ bool GameCore::Initialize() {
 float GameCore::Time() { return time; }
 
 float GameCore::DeltaTime() { return deltaTime; }
+
+std::string GameCore::GetVersionString() {
+
+	std::stringstream ss;
+	ss << "v" << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH;
+	return ss.str();
+
+}
 
 ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
 

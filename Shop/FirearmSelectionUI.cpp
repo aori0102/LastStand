@@ -5,6 +5,7 @@
 #include <MediaManager.h>
 #include <Shop.h>
 #include <Texture.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// STATIC FIELDS

@@ -4,6 +4,7 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
+#include <GameObject.h>
 #include <GameComponent.h>
 
 #include <set>
@@ -11,6 +12,7 @@
 
 #include <GameCore.h>
 #include <GameManager.h>
+#include <Inventory.h>
 #include <RenderManager.h>
 
 /// ----------------------------------
@@ -40,13 +42,16 @@ void GameObject::CleanUpDeleted() {
 
 	}
 
-	deletionSet.clear();
+	toBeDeleted.clear();
 
 }
 
 void GameObject::UpdateAll() {
 
 	for (auto gameObject : gameObjectSet) {
+
+		if (!gameObject->IsActive())
+			continue;
 
 		//std::cout << "Updating " << gameObject->name << " (" << gameObject << ")\n";
 
@@ -61,13 +66,32 @@ void GameObject::UpdateAll() {
 
 void GameObject::DropNuke() {
 
+	std::cout << "[Janitor] Cleaning game objects..." << std::endl;
+
 	for (auto obj : gameObjectSet) {
 
 		Destroy(obj);
 
 	}
-	
-	CleanUpDeleted();
+
+	std::cout << "[Janitor] Total trash: " << gameObjectSet.size() << std::endl;
+
+	for (auto gameObject : deletionSet) {
+
+		gameObjectSet.erase(gameObject);
+		RenderManager::Instance()->RemoveRenderObject(gameObject);
+
+		delete gameObject;
+		gameObject = nullptr;
+
+		std::cout << "[Janitor] Progress: " << gameObjectSet.size() << " left." << std::endl;
+
+	}
+
+	std::cout << "[Janitor] All done!" << std::endl;
+	std::cout << "GameObjectSet has " << gameObjectSet.size() << " item(s) left." << std::endl;
+
+	deletionSet.clear();
 
 }
 
@@ -76,6 +100,12 @@ void GameObject::SetLayer(Layer newLayer) {
 	layer = newLayer;
 
 	RenderManager::Instance()->UpdateRenderObject(this);
+
+}
+
+void GameObject::DebugInfo() const {
+
+	std::cout << name << " [" << this << "]" << std::endl;
 
 }
 
@@ -96,6 +126,10 @@ GameObject::GameObject(std::string initName, Layer initLayer) {
 	name = initName;
 	if (!Render)
 		Render = []() {};
+	if (!OnEnabled)
+		OnEnabled = []() {};
+	if (!OnDisabled)
+		OnDisabled = []() {};
 	transform = AddComponent<Transform>();
 
 }
@@ -105,12 +139,14 @@ int GameObject::ID() const { return id; }
 void GameObject::Enable() {
 
 	enabled = true;
+	OnEnabled();
 
 }
 
 void GameObject::Disable() {
 
-	enabled = false;
+	enabled = false; 
+	OnDisabled();
 
 }
 
@@ -127,35 +163,14 @@ Layer GameObject::GetLayer() const { return layer; }
 
 GameObject::~GameObject() {
 
-	std::cout << "Destructing " << name << " (" << this << ")\n";
-
 	// Clean up components
 	auto it = componentMap.begin();
 	while (it != componentMap.end()) {
 
-		if (dynamic_cast<Transform*>(it->second))
-			std::cout << "Deleting Transform\n";
-		else if (dynamic_cast<BoxCollider*>(it->second))
-			std::cout << "Deleting BoxCollider\n";
-		else if (dynamic_cast<Humanoid*>(it->second))
-			std::cout << "Deleting Humanoid\n";
-		else if (dynamic_cast<Inventory*>(it->second))
-			std::cout << "Deleting Inventory\n";
-		else if (dynamic_cast<AnimationController*>(it->second))
-			std::cout << "Deleting AnimationController\n";
-		else if (dynamic_cast<RigidBody*>(it->second))
-			std::cout << "Deleting RigidBody\n";
-
-		std::cout << "OnComponentDestroyed\n";
-
 		(it->second)->OnComponentDestroyed();
-
-		std::cout << "Deleting\n";
 
 		delete it->second;
 		it->second = nullptr;
-
-		std::cout << "Incrementing\n";
 
 		it++;
 

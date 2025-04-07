@@ -8,7 +8,7 @@ cmake_policy(SET CMP0079 NEW)
 set(CMAKE_CXX_STANDARD 20)
 
 # Set project name and version
-project(LastStand VERSION 0.1)
+project(LastStand VERSION 0.1.36)
 
 # Link directories
 add_subdirectory(Lib)
@@ -17,6 +17,7 @@ add_subdirectory(GameCore)
 add_subdirectory(Texture)
 add_subdirectory(Components)
 add_subdirectory(Manager)
+add_subdirectory(Shop)
 add_subdirectory(Menu)
 add_subdirectory(GameObjects)
 
@@ -78,3 +79,12 @@ function(copy_assets)
 endfunction()
 
 copy_assets()
+
+configure_file(
+    "${CMAKE_SOURCE_DIR}/Version.h.in"
+    "${CMAKE_SOURCE_DIR}/Utils/Version.h"
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    "${CMAKE_SOURCE_DIR}"
+)

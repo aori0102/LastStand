@@ -4,7 +4,7 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
+#include <AnimationController.h>
 
 #include <algorithm>
 
@@ -24,12 +24,10 @@ void AnimationController::OnComponentDestroyed() {
 
 	}
 
+
 	animationNodeMap.clear();
 
-	delete defaultAnimationNode;
 	defaultAnimationNode = nullptr;
-
-	delete currentAnimationNode;
 	currentAnimationNode = nullptr;
 
 }

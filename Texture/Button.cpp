@@ -7,6 +7,7 @@
 #include <Texture.h>
 
 #include <GameCore.h>
+#include <Transform.h>
 #include <UIEventManager.h>
 
 /// ----------------------------------

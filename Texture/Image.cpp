@@ -8,6 +8,7 @@
 
 #include <GameCore.h>
 #include <SDL_image.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS

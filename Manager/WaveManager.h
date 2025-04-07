@@ -9,9 +9,9 @@
 #include <string>
 #include <unordered_map>
 
+#include <GameObject.h>
 #include <Utils.h>
 
-class GameObject;
 class WaveInfoUI;
 
 class WaveManager {
@@ -35,6 +35,7 @@ private:
 private:
 
 	bool waveInProgress;
+	bool isActive;
 	int currentWave;
 	int totalZombie;
 	int zombieLeft;
@@ -57,6 +58,8 @@ public:
 	~WaveManager();
 	void InitiateWave();
 	void Update();
+	void Disable();
+	void Enable();
 	void RemoveZombie();
 	bool WaveInProgress() const;
 	int GetCurrentWave() const;
@@ -69,7 +72,7 @@ public:
 
 };
 
-class WaveInfoUI {
+class WaveInfoUI : public GameObject {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS

@@ -111,6 +111,7 @@ public:
 	static bool Initialize();
 	static float Time();
 	static float DeltaTime();
+	static std::string GetVersionString();
 	static ActionState GetKeyState(SDL_Keycode keycode);
 	static ActionState GetMouseState(MouseButton mouseButton);
 	static Vector2 WindowResolution();

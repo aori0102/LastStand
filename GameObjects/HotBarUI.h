@@ -46,21 +46,20 @@ private:
 	Vector2 targetSelectionPosition;
 	GameObject* hotbarSelection;
 
-	friend class Inventory;
+	static HotBarUI* instance;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-private:
-
-	void SwitchSlot(HotBarSlotIndex slotIndex);
-	void UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
-	void Update() override;
-
 public:
 
 	HotBarUI();
 	~HotBarUI();
+	void SwitchSlot(HotBarSlotIndex slotIndex);
+	void UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
+	void Update() override;
+
+	static HotBarUI* Instance();
 
 };

@@ -70,7 +70,6 @@ public:
 	ItemManager();
 	~ItemManager();
 	void LinkItemIcon(ItemIndex itemIndex, Image* out);
-	void NukeItem(Item* item);
 	int GetItemPrice(ItemIndex itemIndex);
 	int GetItemShopStack(ItemIndex itemIndex);
 	std::string GetItemName(ItemIndex itemIndex);

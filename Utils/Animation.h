@@ -10,10 +10,12 @@
 #include <string>
 #include <vector>
 
-#include <GameComponent.h>
+#include <GameObject.h>
 #include <SDL.h>
+#include <Utils.h>
 
 class AnimationClip;
+class AnimationNode;
 class Image;
 class Sprite;
 

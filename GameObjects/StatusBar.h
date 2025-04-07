@@ -117,7 +117,6 @@ public:
 
 	StatusBar();
 	~StatusBar();
-	void Update() override;
 	
 	static StatusBar* Instance();
 

@@ -6,10 +6,14 @@
 
 #pragma once
 
-class GameObject;
-class Transform;
+#include <set>
 
-class GameComponent {
+#include <GameComponent.h>
+#include <Utils.h>
+
+enum class Layer;
+
+class BoxCollider : public GameComponent {
 
 	/// ----------------------------------
 	/// FIELDS
@@ -17,34 +21,26 @@ class GameComponent {
 
 private:
 
-	GameObject* owner;
-
-	friend class GameObject;
-	friend class GameCore;
+	bool enabled;
 
 public:
 
-	Transform* transform;
+	std::set<Layer> ignoreLayerSet;
+	Vector2 localPosition;	// The position relative to the game object's transform
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-protected:
-
-	GameComponent(GameObject* initOwner);
-
-	virtual void OnComponentDestroyed();
-	virtual void OnComponentUpdate();
-
 public:
 
-	GameObject* Owner();
-
-	template<class T> bool TryGetComponent();
-	template<class T> bool TryGetComponent(T*& out);
-	template<class T> T* GetComponent();
-	template<class T> T* AddComponent();
+	BoxCollider(GameObject* initOwner);
+	BoxCollider(GameObject* initOwner, Layer initLayer);
+	void Debug();
+	void Enable();
+	void Disable();
+	void OnComponentDestroyed() override;
+	bool IsActive() const;
+	Bound GetBound();
 
 };
-#include "GameComponent.inl"

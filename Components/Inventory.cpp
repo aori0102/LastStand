@@ -4,7 +4,7 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
+#include <Inventory.h>
 
 #include <exception>
 
@@ -21,19 +21,10 @@
 /// ----------------------------------
 
 void Inventory::OnComponentDestroyed() {
-
-	GameObject::Destroy(hotBarUI);
-	hotBarUI = nullptr;
-
-	GameObject::Destroy(inventoryUI);
-	inventoryUI = nullptr;
 	
-	for (auto it = storage.begin(); it != storage.end(); it++) {
+	for (auto it = storage.begin(); it != storage.end(); it++) {;
 
-		std::cout << it->second << std::endl;
-		std::cout << it->second->item << std::endl;
-
-		ItemManager::Instance()->NukeItem((it->second)->item);
+		GameObject::Destroy((it->second)->item);
 
 		delete (it->second);
 
@@ -58,9 +49,6 @@ Inventory::Inventory(GameObject* initOwner) : GameComponent(initOwner) {
 		{ HotBarSlotIndex::Fifth, ItemIndex::None },
 	};
 	currentSlotIndex = HotBarSlotIndex::None;
-	hotBarUI = GameObject::Instantiate<HotBarUI>();
-	inventoryUI = GameObject::Instantiate<InventoryUI>();
-	inventoryUI->Disable();
 
 }
 
@@ -81,8 +69,8 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 				// A slot is available for the brand new item
 				storage.at(itemIndex)->slot = it_hotbar->first;
 				it_hotbar->second = itemIndex;
-				hotBarUI->UpdateSlot(it_hotbar->first, itemIndex, amount);
-				inventoryUI->UpdateHotBarSlot(itemIndex, amount, it_hotbar->first);
+				HotBarUI::Instance()-> UpdateSlot(it_hotbar->first, itemIndex, amount);
+				InventoryUI::Instance()->UpdateHotBarSlot(itemIndex, amount, it_hotbar->first);
 				return;
 
 			}
@@ -90,7 +78,7 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 		}
 
 		// No hotbar slot is available
-		inventoryUI->UpdateInventorySlot(itemIndex, amount);
+		InventoryUI::Instance()->UpdateInventorySlot(itemIndex, amount);
 
 	} else {
 		// Item found in inventory
@@ -98,13 +86,13 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 		if ((it_storage->second)->slot != HotBarSlotIndex::None && (it_storage->second)->item->TryAddToStack(amount)) {
 			// Item is present in hotbar
 
-			hotBarUI->UpdateSlot((it_storage->second)->slot, itemIndex, (it_storage->second)->item->GetCurrentStack());
-			inventoryUI->UpdateHotBarSlot(itemIndex, (it_storage->second)->item->GetCurrentStack(), (it_storage->second)->slot);
+			HotBarUI::Instance()->UpdateSlot((it_storage->second)->slot, itemIndex, (it_storage->second)->item->GetCurrentStack());
+			InventoryUI::Instance()->UpdateHotBarSlot(itemIndex, (it_storage->second)->item->GetCurrentStack(), (it_storage->second)->slot);
 
 		} else {
 			// Item is not present in hotbar. Just add to internal storage
 
-			inventoryUI->UpdateInventorySlot(itemIndex, (it_storage->second)->item->GetCurrentStack());
+			InventoryUI::Instance()->UpdateInventorySlot(itemIndex, (it_storage->second)->item->GetCurrentStack());
 
 		}
 
@@ -129,13 +117,13 @@ void Inventory::SelectSlot(HotBarSlotIndex slotIndex) {
 	if (currentItem)
 		currentItem->Equip();
 
-	hotBarUI->SwitchSlot(currentSlotIndex);
+	HotBarUI::Instance()->SwitchSlot(currentSlotIndex);
 
 }
 
 void Inventory::ToggleInventory() {
 
-	inventoryUI->IsActive() ? inventoryUI->Disable() : inventoryUI->Enable();
+	InventoryUI::Instance()->IsActive() ? InventoryUI::Instance()->Disable() : InventoryUI::Instance()->Enable();
 
 }
 
@@ -157,7 +145,7 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 
 	if (itemIndex == ItemIndex::None) {
 
-		hotBarUI->UpdateSlot(hotBarSlotIndex, itemIndex, 0);
+		HotBarUI::Instance()->UpdateSlot(hotBarSlotIndex, itemIndex, 0);
 		it_hotBar->second = itemIndex;
 		return;
 
@@ -170,7 +158,7 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 
 	(it_storage->second)->slot = hotBarSlotIndex;
 	it_hotBar->second = itemIndex;
-	hotBarUI->UpdateSlot(hotBarSlotIndex, itemIndex, (it_storage->second)->item->GetCurrentStack());
+	HotBarUI::Instance()->UpdateSlot(hotBarSlotIndex, itemIndex, (it_storage->second)->item->GetCurrentStack());
 
 }
 
@@ -198,7 +186,7 @@ bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 		// There is enough item
 		// Update item in hotbar if present
 		if ((it_storage->second)->slot != HotBarSlotIndex::None)
-			hotBarUI->UpdateSlot((it_storage->second)->slot, itemIndex, (it_storage->second)->item->GetCurrentStack());
+			HotBarUI::Instance()->UpdateSlot((it_storage->second)->slot, itemIndex, (it_storage->second)->item->GetCurrentStack());
 
 	} else
 		// Not enough item, cannot remove
@@ -209,14 +197,14 @@ bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 		// Remove item from hotbar if present
 		if ((it_storage->second)->slot != HotBarSlotIndex::None) {
 
-			hotBarUI->UpdateSlot((it_storage->second)->slot, ItemIndex::None);
+			HotBarUI::Instance()->UpdateSlot((it_storage->second)->slot, ItemIndex::None);
 			hotBar.at((it_storage->second)->slot) = ItemIndex::None;
 
-			inventoryUI->UpdateHotBarSlot(ItemIndex::None, 0, (it_storage->second)->slot);
+			InventoryUI::Instance()->UpdateHotBarSlot(ItemIndex::None, 0, (it_storage->second)->slot);
 
 		} else
 			// The item is only in the internal storage
-			inventoryUI->UpdateInventorySlot(itemIndex, 0);
+			InventoryUI::Instance()->UpdateInventorySlot(itemIndex, 0);
 
 		delete it_storage->second;
 		storage.erase(it_storage);

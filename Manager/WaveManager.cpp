@@ -31,7 +31,9 @@ WaveManager::WaveManager() {
 	if (instance)
 		throw std::exception("Wave handler should only have one instance!");
 
-	waveInfoUI= new WaveInfoUI;
+	waveInfoUI = GameObject::Instantiate<WaveInfoUI>("Wave Info UI", Layer::GUI);
+
+	isActive = true;
 
 	waveInProgress = false;
 	currentWave = 0;
@@ -49,7 +51,7 @@ WaveManager::WaveManager() {
 
 WaveManager::~WaveManager() {
 
-	delete waveInfoUI;
+	GameObject::Destroy(waveInfoUI);
 	waveInfoUI = nullptr;
 
 	instance = nullptr;
@@ -77,6 +79,9 @@ void WaveManager::InitiateWave() {
 
 void WaveManager::Update() {
 
+	if (!isActive)
+		return;
+
 	if (waveInProgress && zombieToSpawn > 0 && GameCore::Time() >= lastSpawnTick + SPAWN_DELAY) {
 
 		int spawnAmount = Random::Int(std::min(zombieToSpawn, MIN_HORDE), std::min(zombieToSpawn, MAX_HORDE));
@@ -89,6 +94,20 @@ void WaveManager::Update() {
 			Random::Int(0, 10) & 1 ? ZombieIndex::Normal : ZombieIndex::Lurker);
 
 	}
+
+}
+
+void WaveManager::Enable() {
+
+	isActive = true;
+	waveInfoUI->Enable();
+
+}
+
+void WaveManager::Disable() {
+
+	isActive = false;
+	waveInfoUI->Disable();
 
 }
 

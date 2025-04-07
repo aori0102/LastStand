@@ -6,10 +6,10 @@
 
 #include <WaveManager.h>
 
-#include <GameComponent.h>
 #include <GameCore.h>
 #include <MediaManager.h>
 #include <Texture.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// STATIC FIELDS
@@ -36,7 +36,9 @@ void WaveInfoUI::InitializeUI() {
 		UI_POSITION_MAP.at(WaveInfoIndex::ProgressLabel), progressLabel_text->transform->scale
 	);
 	progressLabel_text->transform->position.x = 0.0f;
-	progressLabel->Render = [progressLabel_text]() {
+	progressLabel->Render = [this, progressLabel_text]() {
+		if (!IsActive())
+			return;
 		if (!WaveManager::Instance()->WaveInProgress())
 			return;
 		progressLabel_text->Render();
@@ -54,7 +56,9 @@ void WaveInfoUI::InitializeUI() {
 		UI_POSITION_MAP.at(WaveInfoIndex::ProgressBarBackground), progressBarBackground_image->transform->scale
 	);
 	progressBarBackground_image->transform->position.x = 0.0f;
-	progressBarBackground->Render = [progressBarBackground_image]() {
+	progressBarBackground->Render = [this, progressBarBackground_image]() {
+		if (!IsActive())
+			return;
 		if (!WaveManager::Instance()->WaveInProgress())
 			return;
 		progressBarBackground_image->Render();
@@ -71,7 +75,9 @@ void WaveInfoUI::InitializeUI() {
 		UI_POSITION_MAP.at(WaveInfoIndex::ProgressBar), progressBar_image->transform->scale
 	);
 	progressBar_image->transform->position.x = 0.0f;
-	progressBar->Render = [progressBar_image]() {
+	progressBar->Render = [this, progressBar_image]() {
+		if (!IsActive())
+			return;
 		if (!WaveManager::Instance()->WaveInProgress())
 			return;
 		progressBar_image->fillAmount = WaveManager::Instance()->GetCurrentProgress();
@@ -93,6 +99,8 @@ void WaveInfoUI::InitializeUI() {
 	);
 	progressBarLabel_text->transform->position.x = 0.0f;
 	progressLabel->Render = [this, progressBarLabel_text]() {
+		if (!IsActive())
+			return;
 		if (!WaveManager::Instance()->WaveInProgress())
 			return;
 		int progress = WaveManager::Instance()->GetCurrentProgress() * 100.0f;
@@ -119,6 +127,8 @@ void WaveInfoUI::InitializeUI() {
 	waveLabel_text->showOnScreen = true;
 	waveLabel_text->transform->position = (GameCore::WindowResolution() - waveLabel_text->transform->scale) / 2.0f;
 	waveLabel->Render = [this, waveLabel_text]() {
+		if (!IsActive())
+			return;
 		int currentWave = WaveManager::Instance()->GetCurrentWave();
 		if (currentWave != previousWave) {
 			previousWave = currentWave;
@@ -146,7 +156,9 @@ void WaveInfoUI::InitializeUI() {
 	nextWave_button->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(WaveInfoIndex::NextWaveButton), nextWave_button->transform->scale
 	);
-	nextWaveButton->Render = [nextWave_image]() {
+	nextWaveButton->Render = [this, nextWave_image]() {
+		if (!IsActive())
+			return;
 		if (WaveManager::Instance()->WaveInProgress())
 			return;
 		nextWave_image->Render();
@@ -161,7 +173,9 @@ void WaveInfoUI::InitializeUI() {
 	);
 	nextWaveLabel_text->showOnScreen = true;
 	nextWaveLabel_text->transform->position = nextWave_button->transform->position;
-	nextWaveLabel->Render = [nextWaveLabel_text]() {
+	nextWaveLabel->Render = [this, nextWaveLabel_text]() {
+		if (!IsActive())
+			return;
 		if (WaveManager::Instance()->WaveInProgress())
 			return;
 		nextWaveLabel_text->Render();

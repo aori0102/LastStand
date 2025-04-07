@@ -11,6 +11,7 @@
 #include <MediaManager.h>
 #include <PlayerStatistic.h>
 #include <Texture.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// STATIC FIELDS
@@ -33,8 +34,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Frame),
 		frame->transform->scale
 	);
-	frame->Render = [frame_image]() {
-		frame_image->Render();
+	frame->Render = [this, frame_image]() {
+		if (IsActive())
+			frame_image->Render();
 		};
 	uiElementMap[UIElementIndex::Frame] = frame;
 
@@ -47,8 +49,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::LevelFrame),
 		levelFrame->transform->scale
 	);
-	levelFrame->Render = [levelFrame_image]() {
-		levelFrame_image->Render();
+	levelFrame->Render = [this, levelFrame_image]() {
+		if (IsActive())
+			levelFrame_image->Render();
 		};
 	uiElementMap[UIElementIndex::LevelFrame] = levelFrame;
 
@@ -61,8 +64,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::HealthBarBackground),
 		healthBarBackground->transform->scale
 	);
-	healthBarBackground->Render = [healthBarBackground_image]() {
-		healthBarBackground_image->Render();
+	healthBarBackground->Render = [this, healthBarBackground_image]() {
+		if (IsActive())
+			healthBarBackground_image->Render();
 		};
 	uiElementMap[UIElementIndex::HealthBarBackground] = healthBarBackground;
 
@@ -75,8 +79,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::StaminaBarBackground),
 		staminaBarBackground->transform->scale
 	);
-	staminaBarBackground->Render = [staminaBarBackground_image]() {
-		staminaBarBackground_image->Render();
+	staminaBarBackground->Render = [this, staminaBarBackground_image]() {
+		if (IsActive())
+			staminaBarBackground_image->Render();
 		};
 	uiElementMap[UIElementIndex::StaminaBarBackground] = staminaBarBackground;
 
@@ -91,6 +96,8 @@ void StatusBar::InitializeUI() {
 		healthBar->transform->scale
 	);
 	healthBar->Render = [this, healthBar_image]() {
+		if (!IsActive())
+			return;
 		healthBar_image->fillAmount = PlayerStatistic::Instance()->GetHealth() / PlayerStatistic::Instance()->GetMaxHealth();
 		healthBar_image->Render();
 		};
@@ -107,6 +114,8 @@ void StatusBar::InitializeUI() {
 		staminaBar->transform->scale
 	);
 	staminaBar->Render = [this, staminaBar_image]() {
+		if (!IsActive())
+			return;
 		staminaBar_image->fillAmount = PlayerStatistic::Instance()->GetStamina() / PlayerStatistic::Instance()->GetMaxStamina();
 		staminaBar_image->Render();
 		};
@@ -121,8 +130,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::HealthSymbol),
 		healthSymbol->transform->scale
 	);
-	healthSymbol->Render = [healthSymbol_image]() {
-		healthSymbol_image->Render();
+	healthSymbol->Render = [this, healthSymbol_image]() {
+		if (IsActive())
+			healthSymbol_image->Render();
 		};
 	uiElementMap[UIElementIndex::HealthSymbol] = healthSymbol;
 
@@ -135,8 +145,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::StaminaSymbol),
 		staminaSymbol->transform->scale
 	);
-	staminaSymbol->Render = [staminaSymbol_image]() {
-		staminaSymbol_image->Render();
+	staminaSymbol->Render = [this, staminaSymbol_image]() {
+		if (IsActive())
+			staminaSymbol_image->Render();
 		};
 	uiElementMap[UIElementIndex::StaminaSymbol] = staminaSymbol;
 
@@ -151,6 +162,8 @@ void StatusBar::InitializeUI() {
 	);
 	expLabel_text->transform->position.x = uiElementMap.at(UIElementIndex::LevelFrame)->transform->position.x;
 	expLabel->Render = [this, expLabel_text]() {
+		if (!IsActive())
+			return;
 		int exp = PlayerStatistic::Instance()->GetEXP();
 		int expNeeded = PlayerStatistic::Instance()->GetEXPNeeded();
 		if (exp != previousPlayerEXP || expNeeded != previousPlayerEXPNeeded) {
@@ -169,6 +182,8 @@ void StatusBar::InitializeUI() {
 	levelLabel_text->showOnScreen = true;
 	levelLabel_text->transform->position = uiElementMap.at(UIElementIndex::LevelFrame)->transform->position;
 	levelLabel->Render = [this, levelLabel_text]() {
+		if (!IsActive())
+			return;
 		int playerLevel = PlayerStatistic::Instance()->GetLevel();
 		if (playerLevel != previousPlayerLevel) {
 			levelLabel_text->LoadText(std::to_string(playerLevel), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::LevelLabel));
@@ -185,6 +200,8 @@ void StatusBar::InitializeUI() {
 	healthLabel_text->showOnScreen = true;
 	healthLabel_text->transform->position = uiElementMap.at(UIElementIndex::HealthBar)->transform->position;
 	healthLabel->Render = [this, healthLabel_text]() {
+		if (!IsActive())
+			return;
 		int playerHealth = PlayerStatistic::Instance()->GetHealth();
 		int playerMaxHealth = PlayerStatistic::Instance()->GetMaxHealth();
 		if (playerHealth != previousPlayerLevel || playerMaxHealth != previousPlayerMaxHealth) {
@@ -203,6 +220,8 @@ void StatusBar::InitializeUI() {
 	staminaLabel_text->showOnScreen = true;
 	staminaLabel_text->transform->position = uiElementMap.at(UIElementIndex::StaminaBar)->transform->position;
 	staminaLabel->Render = [this, staminaLabel_text]() {
+		if (!IsActive())
+			return;
 		int playerStamina = PlayerStatistic::Instance()->GetStamina();
 		int playerMaxStamina = PlayerStatistic::Instance()->GetMaxStamina();
 		if (playerStamina != previousPlayerLevel || playerMaxStamina != previousPlayerMaxStamina) {
@@ -223,8 +242,9 @@ void StatusBar::InitializeUI() {
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::MoneyIcon),
 		moneyIcon_image->transform->scale
 	);
-	moneyIcon->Render = [moneyIcon_image]() {
-		moneyIcon_image->Render();
+	moneyIcon->Render = [this, moneyIcon_image]() {
+		if (IsActive())
+			moneyIcon_image->Render();
 		};
 	uiElementMap[UIElementIndex::MoneyIcon] = moneyIcon;
 
@@ -235,6 +255,8 @@ void StatusBar::InitializeUI() {
 	moneyLabel_text->showOnScreen = true;
 	moneyLabel_text->transform->position = Math::SDLToC00(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::MoneyLabel), moneyLabel_text->transform->scale);
 	moneyLabel->Render = [this, moneyLabel_text]() {
+		if (!IsActive())
+			return;
 		if (PlayerStatistic::Instance()->GetMoney() != previousPlayerMoney) {
 			previousPlayerMoney = PlayerStatistic::Instance()->GetMoney();
 			moneyLabel_text->LoadText(std::to_string(previousPlayerMoney), Color::WHITE, UI_LABEL_FONT_SIZE_MAP.at(UIElementIndex::MoneyLabel));
@@ -274,12 +296,6 @@ StatusBar::~StatusBar() {
 	uiElementMap.clear();
 
 	instance = nullptr;
-
-}
-
-void StatusBar::Update() {
-
-
 
 }
 

@@ -6,12 +6,13 @@
 
 #include <FirearmAttributeUIGroup.h>
 
-#include <Firearm.h>
-#include <Texture.h>
-
 #include <exception>
 #include <iomanip>
 #include <sstream>
+
+#include <Firearm.h>
+#include <Texture.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// STATIC FIELDS

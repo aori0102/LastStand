@@ -4,10 +4,11 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
+#include <BoxCollider.h>
 
 #include <GameCore.h>
 #include <PhysicsManager.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS

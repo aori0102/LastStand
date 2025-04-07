@@ -202,14 +202,14 @@ private:
 
 private:
 
-	static Shop* instance;
-
 	bool showShop;
 	std::unordered_map<FirearmAttributeIndex, FirearmUpgrade*> firearmUpgradeMap;
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 	Firearm* currentFirearm;
 	ItemIndex currentItemIndex;
 	ShopMenuIndex currentMenuIndex;
+
+	static Shop* instance;
 
 	/// ----------------------------------
 	/// METHODS
@@ -232,7 +232,6 @@ public:
 
 	Shop();
 
-	void Update() override;
 	void BuyUpgrade(FirearmAttributeIndex attribute);
 	void SelectFirearm(Firearm* firearm);
 	void SelectItem(ItemIndex itemIndex);
@@ -240,6 +239,7 @@ public:
 	void SelectSkillNode(SkillNode* skillNode);
 	void BuySkillNode();
 	void UpdateSkillPoint(int amount);
+	void Toggle();
 
 	ItemIndex GetSelectedItem() const;
 

@@ -6,10 +6,13 @@
 
 #pragma once
 
-class GameObject;
-class Transform;
+#include <functional>
 
-class GameComponent {
+#include <GameComponent.h>
+
+class GameObject;
+
+class Humanoid : public GameComponent {
 
 	/// ----------------------------------
 	/// FIELDS
@@ -17,34 +20,30 @@ class GameComponent {
 
 private:
 
-	GameObject* owner;
-
-	friend class GameObject;
-	friend class GameCore;
+	float health;
+	float maxHealth;
+	float stamina;
+	float maxStamina;
 
 public:
 
-	Transform* transform;
+	std::function<void()> OnDeath;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-protected:
-
-	GameComponent(GameObject* initOwner);
-
-	virtual void OnComponentDestroyed();
-	virtual void OnComponentUpdate();
-
 public:
 
-	GameObject* Owner();
-
-	template<class T> bool TryGetComponent();
-	template<class T> bool TryGetComponent(T*& out);
-	template<class T> T* GetComponent();
-	template<class T> T* AddComponent();
+	Humanoid(GameObject* initOwner);
+	void SetHealth(float amount);
+	void Damage(float amount);
+	void Heal(float amount);
+	void DrainStamina(float amount);
+	void GainStamina(float amount);
+	float GetHealth() const;
+	float GetMaxHealth() const;
+	float GetStamina() const;
+	float GetMaxStamina() const;
 
 };
-#include "GameComponent.inl"

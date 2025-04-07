@@ -2,21 +2,14 @@
 
 #include <exception>
 
+#include <Inventory.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Player.h>
 #include <Texture.h>
+#include <Transform.h>
 
-const int InventoryUI::MAX_COLUMN = 5;
-const int InventoryUI::MAX_ROW = 2;
-const int InventoryUI::ITEM_COUNT_FONT_SIZE = 10;
-const int InventoryUI::INVENTORY_TITLE_FONT_SIZE = 30;
-const float InventoryUI::INVENTORY_TITLE_OFFSET = -8.0f;
-const float InventoryUI::INVENTORY_SLOT_OFFSET = 93.0f;
-const float InventoryUI::HOTBAR_SLOT_OFFSET = 90.0f;
-const std::string InventoryUI::INVENTORY_TITLE = "Inventory";
-const Vector2 InventoryUI::FIRST_INVENTORY_SLOT_POSITION = Vector2(416.0f, 285.0f);
-const Vector2 InventoryUI::FIRST_HOTBAR_SLOT_POSITION = Vector2(425.0f, 527.0f);
+InventoryUI* InventoryUI::instance = nullptr;
 
 void InventoryUI::InitializeInventorySlots() {
 
@@ -200,6 +193,11 @@ void InventoryUI::UpdateSlot(SlotUI* slotUI) {
 
 InventoryUI::InventoryUI() {
 
+	if (instance)
+		throw std::exception("Inventory UI can only have one instance");
+
+	instance = this;
+
 	background = GameObject::Instantiate("Inventory UI Background", Layer::Menu);
 	Image* background_image = background->AddComponent<Image>();
 	background_image->showOnScreen = true;
@@ -227,6 +225,50 @@ InventoryUI::InventoryUI() {
 	InitializeHotBarSlots();
 
 	selectedSlotUI = nullptr;
+
+}
+
+InventoryUI::~InventoryUI() {
+
+	for (std::vector<SlotUI*> storageRow : storageGrid) {
+
+		for (auto slot : storageRow) {
+
+			GameObject::Destroy(slot->frame);
+			GameObject::Destroy(slot->visual);
+			GameObject::Destroy(slot->itemCountLabel);
+
+			delete slot;
+
+		};
+
+		storageRow.clear();
+
+	}
+
+	storageGrid.clear();
+
+	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
+
+		GameObject::Destroy((it->second)->frame);
+		GameObject::Destroy((it->second)->itemCountLabel);
+		GameObject::Destroy((it->second)->visual);
+
+		delete it->second;
+
+	}
+
+	hotbarSlotMap.clear();
+
+	GameObject::Destroy(background);
+	background = nullptr;
+
+	GameObject::Destroy(title);
+	title = nullptr;
+
+	selectedSlotUI = nullptr;
+
+	instance = nullptr;
 
 }
 
@@ -299,3 +341,5 @@ void InventoryUI::UpdateHotBarSlot(ItemIndex itemIndex, int amount, HotBarSlotIn
 	UpdateSlot(hotbarSlotMap.at(hotBarSlotIndex));
 
 }
+
+InventoryUI* InventoryUI::Instance() { return instance; }

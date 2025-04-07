@@ -4,7 +4,7 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <GameComponent.h>
+#include <RigidBody.h>
 
 #include <GameCore.h>
 #include <PhysicsManager.h>

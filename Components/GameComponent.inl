@@ -6,6 +6,8 @@
 
 #include <GameComponent.h>
 
+#include <GameObject.h>
+
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------

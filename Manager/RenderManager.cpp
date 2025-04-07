@@ -61,7 +61,7 @@ void RenderManager::RenderAll() {
 
 	std::erase_if(renderObjectSet, [](GameObject* obj) { return obj == nullptr; });
 	for (auto obj : renderObjectSet) {
-		
+
 		if (obj->IsActive())
 			obj->Render();
 

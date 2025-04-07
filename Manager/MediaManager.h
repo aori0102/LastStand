@@ -70,6 +70,8 @@ enum class MediaUI {
 	Inventory_HotBarSlot_Selected,
 	Inventory_Slot,
 	Inventory_Slot_Selected,
+	Menu_Title,
+	Menu_Button,
 
 };
 
@@ -154,6 +156,8 @@ private:
 		{ MediaUI::Inventory_Background, "Inventory\\Background" },
 		{ MediaUI::Inventory_HotBarSlot, "Inventory\\HotBarSlot" },
 		{ MediaUI::Inventory_HotBarSlot_Selected, "Inventory\\HotBarSlotSelected" },
+		{ MediaUI::Menu_Button, "Menu\\Button" },
+		{ MediaUI::Menu_Title, "Menu\\Title" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },

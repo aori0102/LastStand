@@ -32,6 +32,7 @@ target_include_directories(MANAGER PUBLIC
     ${CMAKE_SOURCE_DIR}/TEXTURE
     ${CMAKE_SOURCE_DIR}/GAME_CORE
     ${CMAKE_SOURCE_DIR}/GAME_OBJECTS
+    ${CMAKE_SOURCE_DIR}/SHOP
     ${CMAKE_SOURCE_DIR}/MENU
 )
 
@@ -46,5 +47,6 @@ target_link_libraries(MANAGER PUBLIC
     TEXTURE
     GAME_CORE
     GAME_OBJECTS
+    SHOP
     MENU
 )

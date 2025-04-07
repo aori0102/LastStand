@@ -9,18 +9,27 @@
 #include <functional>
 
 #include <Ammunition.h>
+#include <AnimationController.h>
 #include <AnimationManager.h>
 #include <Animation.h>
+#include <BoxCollider.h>
 #include <Bullet.h>
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <HotBarUI.h>
+#include <Humanoid.h>
+#include <Inventory.h>
+#include <InventoryUI.h>
 #include <Item.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <PhysicsManager.h>
+#include <RigidBody.h>
+#include <Shop.h>
 #include <Texture.h>
+#include <Transform.h>
 #include <Utils.h>
 
 /// ----------------------------------
@@ -105,6 +114,10 @@ void Player::HandleActions() {
 		isSprinting = true;
 	else if (GameCore::GetKeyState(SDLK_LSHIFT).canceled)
 		isSprinting = false;
+
+	// Shop
+	if (GameCore::GetKeyState(SDLK_TAB).started)
+		Shop::Instance()->Toggle();
 
 }
 
@@ -327,6 +340,10 @@ void Player::InitializeData() {
 	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
 	playerSprite->showOnScreen = false;
 
+	hotBarUI = GameObject::Instantiate<HotBarUI>("Hot Bar UI", Layer::GUI);
+	inventoryUI = GameObject::Instantiate<InventoryUI>("Inventory UI", Layer::Menu);
+	inventoryUI->Disable();
+
 	Inventory* inventory = AddComponent<Inventory>();
 	inventory->AddItem(ItemIndex::Rifle_M4);
 	inventory->AddItem(ItemIndex::Pistol_M1911);
@@ -374,8 +391,6 @@ void Player::InitializeData() {
 
 Player::Player() : GameObject("Player", Layer::Player) {
 
-	std::cout << "Player created with address " << this << std::endl;
-
 	if (instance)
 		throw std::exception("This is a singleplayer game!");
 
@@ -385,9 +400,25 @@ Player::Player() : GameObject("Player", Layer::Player) {
 
 	InitializeAnimation();
 
+	OnEnabled = [this]() {
+		hotBarUI->Enable();
+		inventoryUI->Enable();
+		};
+
+	OnDisabled = [this]() {
+		hotBarUI->Disable();
+		inventoryUI->Disable();
+		};
+
 }
 
 Player::~Player() {
+
+	GameObject::Destroy(hotBarUI);
+	hotBarUI = nullptr;
+
+	GameObject::Destroy(inventoryUI);
+	inventoryUI = nullptr;
 
 	playerAttributeMap.clear();
 

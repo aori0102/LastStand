@@ -6,7 +6,7 @@
 
 #include <Utils.h>
 
-#include <GameComponent.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// METHODS

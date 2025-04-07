@@ -798,18 +798,6 @@ Shop::Shop() {
 
 }
 
-void Shop::Update() {
-
-	if (GameCore::GetKeyState(SDLK_TAB).started) {
-
-		showShop = !showShop;
-
-		showShop ? Show() : Hide();
-
-	}
-
-}
-
 void Shop::BuyUpgrade(FirearmAttributeIndex attribute) {
 
 	if (!currentFirearm)
@@ -916,6 +904,14 @@ void Shop::UpdateSkillPoint(int amount) {
 	skillPointLabel->transform->position = Math::SDLToC00(
 		UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_PointLabel), skillPointLabel->transform->scale
 	);
+
+}
+
+void Shop::Toggle() {
+
+	showShop = !showShop;
+
+	showShop ? Show() : Hide();
 
 }
 

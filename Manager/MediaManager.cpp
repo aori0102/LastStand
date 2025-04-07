@@ -132,12 +132,12 @@ MediaManager::~MediaManager() {
 	objectSpriteMap.clear();
 
 	for (auto it_font = fontMap.begin(); it_font != fontMap.end(); it_font++)
-		delete (it_font->second);
+		TTF_CloseFont(it_font->second);
 
 	fontMap.clear();
 
 	for (auto it_sfx = sfxMap.begin(); it_sfx != sfxMap.end(); it_sfx++)
-		delete (it_sfx->second);
+		Mix_FreeChunk(it_sfx->second);
 
 	sfxMap.clear();
 

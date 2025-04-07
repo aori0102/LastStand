@@ -43,7 +43,7 @@ struct FirearmInfo {
 
 };
 
-class Firearm : public GameObject, public Item {
+class Firearm : public Item {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS
@@ -55,7 +55,7 @@ private:
 	static const int RESERVE_AMMO_LABEL_SIZE;
 	static const float RESERVE_AMMO_LABEL_OFFSET;
 	static const Vector2 AMMO_FRAME_POSTIION;
-	static const Vector2 AMMO_ICON_POSTIION;
+	static const Vector2 AMMO_ICON_POSTIION; 
 
 public:
 

@@ -12,10 +12,12 @@
 
 #include <GameComponent.h>
 #include <Utils.h>
+
 class AudioManager;
 class AnimationManager;
 class ItemManager;
 class MediaManager;
+class Menu;
 class PhysicsManager;
 class Player;
 class PlayerStatistic;
@@ -26,6 +28,13 @@ class UIEventManager;
 class WaveManager;
 class Zombie;
 enum class ZombieIndex;
+
+enum class SceneIndex {
+
+	MainMenu,
+	Game,
+
+};
 
 class GameManager {
 
@@ -54,10 +63,12 @@ private:
 
 private:
 
+	SceneIndex currentScene;
 	AudioManager* audioManager;
 	AnimationManager* animationManager;
 	PhysicsManager* physicsManager;
 	MediaManager* mediaManager;
+	Menu* menu;
 	UIEventManager* uiEventManager;
 	RenderManager* renderManager;
 	ItemManager* itemManager;
@@ -78,15 +89,21 @@ private:
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void InitializeObject();
+	void EnableSceneObject();
+	void DisableSceneObject();
+
 public:
 
 	GameManager();
 	~GameManager();
-	void InitializeObject();
 	void ReportDead(GameObject* gameObject);
 	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void Update();
-
+	void SwitchScene(SceneIndex targetScene);
+	
 	static GameManager* Instance();
 
 };

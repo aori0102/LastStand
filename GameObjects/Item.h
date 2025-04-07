@@ -8,10 +8,12 @@
 
 #include <functional>
 
-class Player;
+#include <GameComponent.h>
 
+class Player;
 enum class ItemIndex;
-class Item {
+
+class Item : public GameObject {
 
 	/// ----------------------------------
 	/// FIELDS

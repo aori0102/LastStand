@@ -8,6 +8,7 @@
 
 #include <GameCore.h>
 #include <MediaManager.h>
+#include <Transform.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -53,7 +54,7 @@ bool Text::LoadText(std::string text, Color color, int fontSize) {
 	}
 
 	textureDimension = Vector2(loadedSurface->w, loadedSurface->h);
-	Owner()->GetComponent<Transform>()->scale = textureDimension;
+	transform->scale = textureDimension;
 
 	// Clean up
 	SDL_FreeSurface(loadedSurface);

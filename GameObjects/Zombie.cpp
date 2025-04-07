@@ -9,9 +9,12 @@
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <Humanoid.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <RigidBody.h>
 #include <Texture.h>
+#include <Transform.h>
 #include <WaveManager.h>
 
 /// ----------------------------------

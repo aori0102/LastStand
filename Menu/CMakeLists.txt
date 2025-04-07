@@ -3,14 +3,7 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
-    "FirearmAttributeUIGroup.cpp"
-    "FirearmSelectionUI.cpp"
-    "FirearmUpgrade.cpp"
-    "FirearmUpgradeUIGroup.cpp"
-    "ItemSelectionUI.cpp"
-    "Shop.cpp"
-    "SkillInfoUI.cpp"
-    "SkillList.cpp"
+    "Menu.cpp"
 )
 
 # Add this directory as a static library
@@ -28,10 +21,6 @@ target_include_directories(MENU PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 target_include_directories(MENU PUBLIC   
     ${CMAKE_SOURCE_DIR}/UTILS
-    ${CMAKE_SOURCE_DIR}/COMPONENTS
-    ${CMAKE_SOURCE_DIR}/GAME_OBJECTS
-    ${CMAKE_SOURCE_DIR}/MANAGER
-    ${CMAKE_SOURCE_DIR}/GAME_CORE
 )
 
 # Link libraries for this subdirectory use
@@ -43,8 +32,4 @@ target_link_libraries(MENU PRIVATE
 )
 target_link_libraries(MENU PUBLIC
     UTILS
-    COMPONENTS
-    GAME_OBJECTS
-    MANAGER
-    GAME_CORE
 )

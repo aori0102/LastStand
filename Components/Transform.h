@@ -6,45 +6,29 @@
 
 #pragma once
 
-class GameObject;
-class Transform;
+#include <GameComponent.h>
+#include <Utils.h>
 
-class GameComponent {
+class GameObject;
+
+class Transform : public GameComponent {
 
 	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
 
-private:
-
-	GameObject* owner;
-
-	friend class GameObject;
-	friend class GameCore;
-
 public:
 
-	Transform* transform;
+	Vector2 position;
+	Vector2 scale;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-protected:
-
-	GameComponent(GameObject* initOwner);
-
-	virtual void OnComponentDestroyed();
-	virtual void OnComponentUpdate();
-
 public:
 
-	GameObject* Owner();
-
-	template<class T> bool TryGetComponent();
-	template<class T> bool TryGetComponent(T*& out);
-	template<class T> T* GetComponent();
-	template<class T> T* AddComponent();
+	Transform(GameObject* initOwner);
+	void Translate(Vector2 movementVector, bool tryNavigate = true);
 
 };
-#include "GameComponent.inl"

@@ -12,6 +12,8 @@
 #include <RenderManager.h>
 
 class Firearm;
+class HotBarUI;
+class InventoryUI;
 enum class ItemIndex;
 enum class AmmunitionID;
 
@@ -57,6 +59,9 @@ private:
 	std::unordered_map<PlayerAttribute, float> playerAttributeMap;
 	ItemIndex itemIndex;
 	Vector2 forward;
+	HotBarUI* hotBarUI;
+	InventoryUI* inventoryUI;
+
 
 	static Player* instance;
 

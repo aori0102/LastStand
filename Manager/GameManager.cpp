@@ -15,6 +15,7 @@
 #include <GameCore.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
+#include <Menu.h>
 #include <PhysicsManager.h>
 #include <Player.h>
 #include <PlayerStatistic.h>
@@ -36,12 +37,124 @@ GameManager* GameManager::instance = nullptr;
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+void GameManager::InitializeObject() {
+
+	menu = GameObject::Instantiate<Menu>("Game Menu");
+
+	northBorder = GameObject::Instantiate("North border");
+	Transform* northBorder_transform = northBorder->GetComponent<Transform>();
+	northBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
+	northBorder_transform->position = Vector2(0.0f, -MAP_SIZE.y / 2.0f);
+	northBorder->AddComponent<BoxCollider>();
+	northBorder->Disable();
+
+	southBorder = GameObject::Instantiate("South border");
+	Transform* southBorder_transform = southBorder->GetComponent<Transform>();
+	southBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
+	southBorder_transform->position = Vector2(0.0f, MAP_SIZE.y / 2.0f);
+	southBorder->AddComponent<BoxCollider>();
+	southBorder->Disable();
+
+	westBorder = GameObject::Instantiate("West border");
+	Transform* westBorder_transform = westBorder->GetComponent<Transform>();
+	westBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
+	westBorder_transform->position = Vector2(-MAP_SIZE.x / 2.0f, 0.0f);
+	westBorder->AddComponent<BoxCollider>();
+	westBorder->Disable();
+
+	eastBorder = GameObject::Instantiate("East border");
+	Transform* eastBorder_transform = eastBorder->GetComponent<Transform>();
+	eastBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
+	eastBorder_transform->position = Vector2(MAP_SIZE.x / 2.0f, 0.0f);
+	eastBorder->AddComponent<BoxCollider>();
+	eastBorder->Disable();
+
+	// Map background
+	background = GameObject::Instantiate("Background", Layer::Background);
+	Image* background_image = background->AddComponent<Image>();
+	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background), true);
+	background_image->showOnScreen = false;
+	background->GetComponent<Transform>()->position = Vector2::zero;
+	background->Render = [background_image]() {
+		background_image->Render();
+		};
+	background->Disable();
+
+	// Player
+	player = GameObject::Instantiate<Player>("Player", Layer::Player);
+	player->Disable();
+	GameCore::LetCameraFocus(Player::Instance());
+	playerStatistic = new PlayerStatistic;
+	statusBar = GameObject::Instantiate<StatusBar>("Status Bar", Layer::GUI);
+	statusBar->Disable();
+	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
+
+}
+
+void GameManager::EnableSceneObject() {
+
+	switch (currentScene) {
+
+	case SceneIndex::Game:
+
+		waveManager->Enable();
+
+		player->Enable();
+		statusBar->Enable();
+		background->Enable();
+		northBorder->Enable();
+		southBorder->Enable();
+		westBorder->Enable();
+		eastBorder->Enable();
+
+		break;
+
+	case SceneIndex::MainMenu:
+
+		menu->Enable();
+
+		break;
+
+	}
+
+}
+
+void GameManager::DisableSceneObject() {
+
+	switch (currentScene) {
+
+	case SceneIndex::Game:
+
+		waveManager->Disable();
+
+		player->Disable();
+		statusBar->Disable();
+		background->Disable();
+		northBorder->Disable();
+		southBorder->Disable();
+		westBorder->Disable();
+		eastBorder->Disable();
+
+		break;
+
+	case SceneIndex::MainMenu:
+		
+		menu->Disable();
+
+		break;
+
+	}
+
+}
+
 GameManager::GameManager() {
 
 	if (instance)
 		throw std::exception("Only one GameManager is allowed");
 
 	instance = this;
+
+	currentScene = SceneIndex::MainMenu;
 
 	std::cout << "Initializing UIEventManager..." << std::endl;
 	uiEventManager = new UIEventManager;
@@ -66,6 +179,7 @@ GameManager::GameManager() {
 
 	std::cout << "Initializing WaveManager..." << std::endl;
 	waveManager = new WaveManager;
+	waveManager->Disable();
 
 	InitializeObject();
 
@@ -86,52 +200,31 @@ GameManager::~GameManager() {
 	statusBar = nullptr;
 	shop = nullptr;
 
+	delete uiEventManager;
+	uiEventManager = nullptr;
+
+	delete mediaManager;
+	mediaManager = nullptr;
+
+	delete audioManager;
+	audioManager = nullptr;
+
+	delete renderManager;
+	renderManager = nullptr;
+
+	delete physicsManager;
+	physicsManager = nullptr;
+
+	delete animationManager;
+	animationManager = nullptr;
+
+	delete itemManager;
+	itemManager = nullptr;
+
+	delete waveManager;
+	waveManager = nullptr;
+
 	instance = nullptr;
-
-}
-
-void GameManager::InitializeObject() {
-
-	northBorder = GameObject::Instantiate("North border");
-	Transform* northBorder_transform = northBorder->GetComponent<Transform>();
-	northBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
-	northBorder_transform->position = Vector2(0.0f, -MAP_SIZE.y / 2.0f);
-	northBorder->AddComponent<BoxCollider>();
-
-	southBorder = GameObject::Instantiate("South border");
-	Transform* southBorder_transform = southBorder->GetComponent<Transform>();
-	southBorder_transform->scale = Vector2(MAP_SIZE.x, 1.0f);
-	southBorder_transform->position = Vector2(0.0f, MAP_SIZE.y / 2.0f);
-	southBorder->AddComponent<BoxCollider>();
-
-	westBorder = GameObject::Instantiate("West border");
-	Transform* westBorder_transform = westBorder->GetComponent<Transform>();
-	westBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
-	westBorder_transform->position = Vector2(-MAP_SIZE.x / 2.0f, 0.0f);
-	westBorder->AddComponent<BoxCollider>();
-
-	eastBorder = GameObject::Instantiate("East border");
-	Transform* eastBorder_transform = eastBorder->GetComponent<Transform>();
-	eastBorder_transform->scale = Vector2(1.0f, MAP_SIZE.y);
-	eastBorder_transform->position = Vector2(MAP_SIZE.x / 2.0f, 0.0f);
-	eastBorder->AddComponent<BoxCollider>();
-
-	// Map background
-	background = GameObject::Instantiate("Background", Layer::Background);
-	Image* background_image = background->AddComponent<Image>();
-	background_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_Background), true);
-	background_image->showOnScreen = false;
-	background->GetComponent<Transform>()->position = Vector2::zero;
-	background->Render = [background_image]() {
-		background_image->Render();
-		};
-
-	// Player
-	player = GameObject::Instantiate<Player>("Player", Layer::Player);
-	GameCore::LetCameraFocus(Player::Instance());
-	playerStatistic = new PlayerStatistic;
-	statusBar = GameObject::Instantiate<StatusBar>("Status Bar", Layer::GUI);
-	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
 
 }
 
@@ -177,6 +270,19 @@ void GameManager::Update() {
 	GameObject::UpdateAll();
 
 	WaveManager::Instance()->Update();
+
+}
+
+void GameManager::SwitchScene(SceneIndex targetScene) {
+
+	if (currentScene == targetScene)
+		return;
+
+	DisableSceneObject();
+
+	currentScene = targetScene;
+
+	EnableSceneObject();
 
 }
 

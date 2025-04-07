@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include <GameComponent.h>
+#include <Humanoid.h>
 #include <Player.h>
 #include <Shop.h>
 #include <WaveManager.h>
