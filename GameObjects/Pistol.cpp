@@ -44,9 +44,10 @@ void Pistol::SetFirearmItemID(ItemIndex initItemIndex) {
 
 bool Pistol::TryUse(Player* player) {
 	
-	if (!TryShoot())
+	if (!CanShoot())
 		return false;
 
+	OnShoot();
 	float damage = attributeMap.at(FirearmAttributeIndex::Damage);
 	bool isCrit = IsCrit();
 	if (isCrit)

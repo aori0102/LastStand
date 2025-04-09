@@ -60,3 +60,5 @@ bool Item::IsUsable() const { return usable; }
 bool Item::IsStackable() const { return stackable; }
 
 ItemIndex Item::GetIndex() const { return itemIndex; }
+
+bool Item::ItemRanOut() { return currentStack == 0; }

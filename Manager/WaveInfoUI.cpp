@@ -149,7 +149,9 @@ void WaveInfoUI::InitializeUI() {
 	nextWave_image->showOnScreen = true;
 	Button* nextWave_button = nextWaveButton->AddComponent<Button>();
 	nextWave_button->backgroundColor = Color::TRANSPARENT;
-	nextWave_button->OnClick = []() {
+	nextWave_button->OnClick = [this]() {
+		if (!IsActive())
+			return false;
 		WaveManager::Instance()->InitiateWave();
 		return true;
 		};

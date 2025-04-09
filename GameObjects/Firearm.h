@@ -69,7 +69,7 @@ private:
 	// Logic handling
 	bool isReloading;
 	bool stopReload;
-	int previousReverseAmmo;
+	int previousCurrentAmmo;
 	float lastReloadTick;
 	float lastShootTick;
 	std::string firearmName;
@@ -98,8 +98,8 @@ protected:
 
 	void ShowUI();
 	void HideUI();
-	void SetStack(int amount);
-	bool TryShoot();
+	void OnShoot();
+	bool CanShoot();
 	bool IsCrit();
 
 public:
@@ -115,6 +115,7 @@ public:
 	void Update() override;
 	bool TryAddToStack(int amount = 1) override;
 	bool TryRemoveFromStack(int amount = 1) override;
+	bool ItemRanOut() override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
 	ItemIndex GetAmmoItemIndex();
 	std::string GetName() const;

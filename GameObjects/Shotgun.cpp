@@ -50,9 +50,10 @@ void Shotgun::SetFirearmItemID(ItemIndex initItemIndex) {
 
 bool Shotgun::TryUse(Player* player) {
 
-	if (!TryShoot())
+	if (!CanShoot())
 		return false;
 
+	OnShoot();
 	float baseDamage = attributeMap.at(FirearmAttributeIndex::Damage);;
 	float damage;
 	bool isCrit;

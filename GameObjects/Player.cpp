@@ -93,11 +93,11 @@ void Player::HandleActions() {
 	usingItem = usingItem && inventory->TryUseCurrent();
 
 	// Toggle inventory UI
-	if (GameCore::GetKeyState(SDLK_i).started)
+	if (GameCore::GetActionState(ActionIndex::ToggleInventory).started)
 		inventory->ToggleInventory();
 
 	// Reload firearm
-	if (GameCore::GetKeyState(SDLK_r).started) {
+	if (GameCore::GetActionState(ActionIndex::Reload).started) {
 
 		Item* currentItem = inventory->GetCurrentItem();
 		Firearm* currentFirearm = nullptr;
@@ -110,13 +110,13 @@ void Player::HandleActions() {
 	}
 
 	// Sprint
-	if (GameCore::GetKeyState(SDLK_LSHIFT).started)
+	if (GameCore::GetActionState(ActionIndex::Sprint).started)
 		isSprinting = true;
-	else if (GameCore::GetKeyState(SDLK_LSHIFT).canceled)
+	else if (GameCore::GetActionState(ActionIndex::Sprint).canceled)
 		isSprinting = false;
 
 	// Shop
-	if (GameCore::GetKeyState(SDLK_TAB).started)
+	if (GameCore::GetActionState(ActionIndex::ToggleShop).started)
 		Shop::Instance()->Toggle();
 
 }
@@ -135,16 +135,16 @@ void Player::HandleMovement() {
 	// Input
 	Vector2 input(0.0f, 0.0f);
 
-	if (GameCore::GetKeyState(SDLK_w).performed)
+	if (GameCore::GetActionState(ActionIndex::MoveUp).performed)
 		input += Vector2::up;
 
-	if (GameCore::GetKeyState(SDLK_a).performed)
+	if (GameCore::GetActionState(ActionIndex::MoveLeft).performed)
 		input += Vector2::left;
 
-	if (GameCore::GetKeyState(SDLK_s).performed)
+	if (GameCore::GetActionState(ActionIndex::MoveDown).performed)
 		input += Vector2::down;
 
-	if (GameCore::GetKeyState(SDLK_d).performed)
+	if (GameCore::GetActionState(ActionIndex::MoveRight).performed)
 		input += Vector2::right;
 
 	isMoving = (input != Vector2::zero);
@@ -342,7 +342,6 @@ void Player::InitializeData() {
 
 	hotBarUI = GameObject::Instantiate<HotBarUI>("Hot Bar UI", Layer::GUI);
 	inventoryUI = GameObject::Instantiate<InventoryUI>("Inventory UI", Layer::Menu);
-	inventoryUI->Disable();
 
 	AddComponent<Inventory>()->LoadInventory();
 

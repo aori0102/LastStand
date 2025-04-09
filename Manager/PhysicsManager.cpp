@@ -147,8 +147,8 @@ bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitI
 		// where a collision can happen
 		float minX = otherBound.Left() - thisBound.extents.x;
 		float maxX = otherBound.Right() + thisBound.extents.x;
-		float minY = otherBound.Top() - thisBound.extents.y;
-		float maxY = otherBound.Bottom() + thisBound.extents.y;
+		float minY = otherBound.Bottom() - thisBound.extents.y;
+		float maxY = otherBound.Top() + thisBound.extents.y;
 
 		// Variable for collision calculation
 		Vector2 contactPoint;
@@ -181,7 +181,7 @@ bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitI
 			onCollisionBound.extents = thisBound.extents;
 
 			// Validate collision (Final)
-			if (onCollisionBound.Top() <= otherBound.Bottom() && onCollisionBound.Bottom() >= otherBound.Top()) {
+			if (onCollisionBound.Bottom() <= otherBound.Top() && onCollisionBound.Top() >= otherBound.Bottom()) {
 
 				distance = (contactPoint - start).Magnitude();
 
@@ -232,7 +232,7 @@ bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitI
 			onCollisionBound.extents = thisBound.extents;
 
 			// Validate collision (Final)
-			if (onCollisionBound.Top() <= otherBound.Bottom() && onCollisionBound.Bottom() >= otherBound.Top()) {
+			if (onCollisionBound.Bottom() <= otherBound.Top() && onCollisionBound.Top() >= otherBound.Bottom()) {
 
 				distance = (contactPoint - start).Magnitude();
 
@@ -438,9 +438,9 @@ bool PhysicsManager::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, 
 
 	// Define parameters
 	float minX = bound.Left();
-	float minY = bound.Top();
+	float minY = bound.Bottom();
 	float maxX = bound.Right();
-	float maxY = bound.Bottom();
+	float maxY = bound.Top();
 	float t0 = 0.0f, t1 = 1.0f;
 	float dx = (end - start).x;
 	float dy = (end - start).y;

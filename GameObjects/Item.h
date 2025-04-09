@@ -56,6 +56,7 @@ public:
 	virtual bool TryUse(Player* player) = 0;
 	virtual bool TryAddToStack(int amount = 1) = 0;
 	virtual bool TryRemoveFromStack(int amount = 1) = 0;
+	virtual bool ItemRanOut();
 	
 	template <class T> bool IsType();
 	template <class T> T* ToType();

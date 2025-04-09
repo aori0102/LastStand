@@ -3,7 +3,10 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
+    "KeyBindSingleUIGroup.cpp"
+    "KeyBindUIGroup.cpp"
     "Menu.cpp"
+    "SliderUIGroup.cpp"
 )
 
 # Add this directory as a static library

@@ -35,6 +35,19 @@ enum class MouseButton {
 
 };
 
+enum class ActionIndex {
+
+	MoveUp,
+	MoveDown,
+	MoveLeft,
+	MoveRight,
+	Sprint,
+	Reload,
+	ToggleInventory,
+	ToggleShop,
+
+};
+
 struct ActionState {
 	bool started = false;
 	bool performed = false;
@@ -65,15 +78,21 @@ private:
 	
 	static bool quit;
 	static bool selectedUI;
+	static bool isAnyKeyPressed;
 	static float time;
 	static float deltaTime;
 	static float currentCameraZoom;
 	static float targetCameraZoom;
+	static float musicVolume;
+	static float sfxVolume;
+	static float masterVolume;
 	static std::string gameName;
 	static std::unordered_map<SDL_Keycode, ActionState> keyStateDictionary;
 	static std::unordered_map<MouseButton, ActionState> mouseButtonStateDictionary;
+	static std::unordered_map<ActionIndex, SDL_Keycode> keyMappingDictionary;
 	static Vector2 cameraPosition;
 	static Vector2 windowResolution;
+	static SDL_Keycode lastKeyPressed;
 	static GameManager* gameManager;
 	static GameObject* cameraFocusObject;
 	static SDL_Event* gameEvent;
@@ -107,17 +126,25 @@ public:
 	static void LetCameraFocus(GameObject* gameObject);
 	static void SetCameraZoom(float zoom);
 	static void ClearTexture(SDL_Texture* texture);
+	static void SetMusicVolume(float amount);
+	static void SetSFXVolume(float amount);
+	static void SetMasterVolume(float amount);
+	static void SetActionKeyBind(ActionIndex actionIndex, SDL_Keycode keycode);
 	static bool SelectedUI();
 	static bool Initialize();
+	static bool IsAnyKeyPressed();
 	static float Time();
 	static float DeltaTime();
 	static std::string GetVersionString();
 	static std::string GetAppDataPath();
+	static std::string GetLastKeyInString();
 	static ActionState GetKeyState(SDL_Keycode keycode);
 	static ActionState GetMouseState(MouseButton mouseButton);
+	static ActionState GetActionState(ActionIndex actionIndex);
 	static Vector2 WindowResolution();
 	static Vector2 GetMouseInput();
 	static Vector2 ScreenToWorldPosition(Vector2 screenPosition);
+	static SDL_Keycode GetLastKey();
 	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 	static SDL_Texture* CreateTexture(Vector2 size);
 

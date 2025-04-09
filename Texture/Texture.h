@@ -160,17 +160,28 @@ class Button : public GameComponent, public RenderComponent {
 private:
 
 	bool isActive;
+	bool isHovered;
+	bool isHeld;
+
+	friend class UIEventManager;
 
 public:
 
 	std::function<bool()> OnClick;
 	std::function<void()> OnMouseEnter;
 	std::function<void()> OnMouseLeave;
+	std::function<void()> OnMouseBeginHold;
+	std::function<void()> OnMouseHolding;
+	std::function<void()> OnMouseRelease;
 	Color backgroundColor;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
+
+private:
+
+	void ResetState();
 
 public:
 
@@ -179,6 +190,7 @@ public:
 	void Disable();
 	void Enable();
 	bool IsActive() const;
+	void OnComponentDestroyed() override;
 	Bound GetBound();
 
 };

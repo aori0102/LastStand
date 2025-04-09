@@ -5,13 +5,12 @@
 class Firearm;
 class Ammunition;
 class Consumable;
+
 template <class T> 
 bool ItemManager::IsIndexOfType(ItemIndex itemIndex) {
 
 	if (itemIndex == ItemIndex::None)
 		return false;
-
-	static_assert(std::is_base_of<Item, T>::value, "T must inherit from Item");
 
 	if (std::is_same<T, Firearm>::value) {
 

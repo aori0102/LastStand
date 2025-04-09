@@ -333,11 +333,8 @@ void InventoryUI::UpdateHotBarSlot(ItemIndex itemIndex, int amount, HotBarSlotIn
 
 	if (hotBarSlotIndex == HotBarSlotIndex::None)
 		return;
-	
-	if (amount > 0)
-		hotbarSlotMap.at(hotBarSlotIndex)->itemIndex = itemIndex;
-	else
-		hotbarSlotMap.at(hotBarSlotIndex)->itemIndex = ItemIndex::None;
+
+	hotbarSlotMap.at(hotBarSlotIndex)->itemIndex = itemIndex;
 
 	UpdateSlot(hotbarSlotMap.at(hotBarSlotIndex));
 

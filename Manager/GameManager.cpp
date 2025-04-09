@@ -200,6 +200,7 @@ GameManager::~GameManager() {
 	westBorder = nullptr;
 	eastBorder = nullptr;
 	player = nullptr;
+	delete playerStatistic;
 	playerStatistic = nullptr;
 	statusBar = nullptr;
 	shop = nullptr;

@@ -89,11 +89,9 @@ void Firearm::HideUI() {
 
 }
 
-void Firearm::SetStack(int amount) {
+void Firearm::OnShoot() {
 
-	currentStack = amount;
-
-	Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), amount);
+	lastShootTick = GameCore::Time();
 
 }
 
@@ -114,7 +112,7 @@ void Firearm::HandleReloading() {
 
 			}
 
-			SetStack(currentStack + 1);
+			TryAddToStack();
 
 			if (currentStack == magazineCapacity || stopReload) {
 
@@ -135,18 +133,18 @@ void Firearm::HandleReloading() {
 			if (!Player::Instance()->TryConsumeAmmo(BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionItemIndex, toReload))
 				throw std::exception("Reload failure! Not enough ammo. Unexpected case");
 
-			SetStack(currentStack + toReload);
+			TryAddToStack(toReload);
 
 		}
 
-		UpdateCurrentLabel();
 		UpdateReserveLabel();
+		Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), GetCurrentStack());
 
 	}
 
 }
 
-bool Firearm::TryShoot() {
+bool Firearm::CanShoot() {
 
 	if (isReloading) {
 
@@ -155,16 +153,7 @@ bool Firearm::TryShoot() {
 
 	}
 
-	if (currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / attributeMap.at(FirearmAttributeIndex::Firerate)) {
-
-		lastShootTick = GameCore::Time();
-		SetStack(currentStack - 1);
-		UpdateCurrentLabel();
-		return true;
-
-	}
-
-	return false;
+	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / attributeMap.at(FirearmAttributeIndex::Firerate);
 
 }
 
@@ -181,6 +170,7 @@ Firearm::Firearm() {
 	lastShootTick = 0.0f;
 	isReloading = false;
 	stopReload = false;
+	previousCurrentAmmo = 0;
 
 	reloadType = ReloadType::Magazine;
 	attributeMap = {};
@@ -304,7 +294,6 @@ void Firearm::UpdateCurrentLabel() {
 
 void Firearm::Equip() {
 
-	UpdateCurrentLabel();
 	UpdateReserveLabel();
 
 	ShowUI();
@@ -321,13 +310,37 @@ void Firearm::Dequip() {
 
 void Firearm::Update() {
 
+	if (currentStack != previousCurrentAmmo) {
+
+		previousCurrentAmmo = currentStack;
+		UpdateCurrentLabel();
+
+	}
+
 	HandleReloading();
 
 }
 
-bool Firearm::TryAddToStack(int amount) { return false; }
+bool Firearm::TryAddToStack(int amount) {
 
-bool Firearm::TryRemoveFromStack(int amount) { return false; }
+	currentStack += amount;
+	Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), amount);
+	return true;
+
+}
+
+bool Firearm::TryRemoveFromStack(int amount) {
+
+	if (currentStack < amount)
+		return false;
+
+	currentStack -= amount;
+	Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), amount);
+	return true;
+
+}
+
+bool Firearm::ItemRanOut() { return false; }
 
 float Firearm::GetAttribute(FirearmAttributeIndex attributeIndex) {
 

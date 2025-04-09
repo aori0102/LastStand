@@ -12,7 +12,7 @@
 
 float Bound::Top() {
 
-	return (center - extents).y;
+	return (center + extents).y;
 
 }
 
@@ -24,7 +24,7 @@ float Bound::Left() {
 
 float Bound::Bottom() {
 
-	return (center + extents).y;
+	return (center - extents).y;
 
 }
 

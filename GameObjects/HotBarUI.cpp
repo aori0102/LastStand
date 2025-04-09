@@ -53,15 +53,10 @@ void HotBarUI::UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int am
 
 	hotbarSlotMap.at(slotIndex)->visual->Enable();
 
-	if (amount != 1) {
-
-		hotbarSlotMap.at(slotIndex)->label->Enable();
-		hotbarSlotMap.at(slotIndex)->label->GetComponent<Text>()->LoadText(
-			std::to_string(amount), Color::WHITE, LABEL_FONT_SIZE
-		);
-
-	} else
-		hotbarSlotMap.at(slotIndex)->label->Disable();
+	hotbarSlotMap.at(slotIndex)->label->Enable();
+	hotbarSlotMap.at(slotIndex)->label->GetComponent<Text>()->LoadText(
+		std::to_string(amount), Color::WHITE, LABEL_FONT_SIZE
+	);
 
 	ItemManager::Instance()->LinkItemIcon(itemIndex, hotbarSlotMap.at(slotIndex)->visual->GetComponent<Image>());
 
@@ -162,7 +157,7 @@ HotBarUI::~HotBarUI() {
 
 	GameObject::Destroy(hotbarSelection);
 	hotbarSelection = nullptr;
-	
+
 	instance = nullptr;
 
 }

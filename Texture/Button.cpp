@@ -14,16 +14,28 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+void Button::ResetState() {
+
+	isHeld = false;
+	isHovered = false;
+
+}
+
 Button::Button(GameObject* initOwner) : GameComponent(initOwner) {
 
 	backgroundColor = Color::WHITE;
 	isActive = true;
+	isHovered = false;
+	isHeld = false;
 
 	UIEventManager::Instance()->RegisterButton(this);
 
 	OnClick = []() { return false; };
 	OnMouseEnter = []() {};
 	OnMouseLeave = []() {};
+	OnMouseHolding = []() {};
+	OnMouseBeginHold = []() {};
+	OnMouseRelease = []() {};
 
 }
 
@@ -47,11 +59,15 @@ void Button::Enable() {
 
 }
 
+void Button::OnComponentDestroyed() {
+
+	UIEventManager::Instance()->UnregisterButton(this);
+
+}
+
 bool Button::IsActive() const { return isActive; }
 
 Bound Button::GetBound() {
-
-	Transform* transform = GetComponent<Transform>();
 
 	Bound bound;
 	bound.center = transform->position;

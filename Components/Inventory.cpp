@@ -175,8 +175,26 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 
 void Inventory::SaveInventory() {
 
+	PlayerSaveData* playerSaveData = DataManager::Instance()->playerSaveData;
+
+	// Save items in inventory to data
 	for (auto it = storage.begin(); it != storage.end(); it++)
-		DataManager::Instance()->playerSaveData->storage[it->first] = (it->second)->stack;
+		playerSaveData->storage[it->first] = (it->second)->stack;
+
+	// Validate data, remove if the item does not exist
+	for (auto it = playerSaveData->storage.begin(); it != playerSaveData->storage.end();) {
+
+		if (storage.contains(it->first)) {
+
+			it++;
+			continue;
+
+		}
+
+		// The item no longer belongs in the inventory
+		it = playerSaveData->storage.erase(it);
+
+	}
 
 }
 
@@ -240,7 +258,7 @@ bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 		// Not enough item, cannot remove
 		return false;
 
-	if ((it_storage->second)->item->GetCurrentStack() == 0) {
+	if ((it_storage->second)->item->ItemRanOut()) {
 		// The item is used up (count reaches zero)
 		// Remove item from hotbar if present
 		if ((it_storage->second)->slot != HotBarSlotIndex::None) {

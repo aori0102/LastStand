@@ -31,6 +31,7 @@ public:
 	UIEventManager();
 	~UIEventManager();
 	void RegisterButton(Button* button);
+	void UnregisterButton(Button* button);
 	bool Update();	// Return whether a UI is clicked
 
 	static UIEventManager* Instance();

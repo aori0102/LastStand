@@ -46,40 +46,80 @@ void UIEventManager::RegisterButton(Button* button) {
 
 }
 
+void UIEventManager::UnregisterButton(Button* button) {
+
+	buttonSet.erase(button);
+
+}
+
 bool UIEventManager::Update() {
 
 	Vector2 mousePosition = Math::SDLToC00(GameCore::GetMouseInput(), Vector2::zero);
+	bool buttonInteracted = false;
 
-	for (auto it = buttonSet.begin(); it != buttonSet.end(); it++) {
+	for (auto button : buttonSet) {
 
-		if (!(*it)->IsActive() || !(*it)->Owner()->IsActive())
+		if (!button)
 			continue;
 
-		Bound bound = (*it)->GetBound();
+		if (!button->isActive || !button->Owner()->IsActive()) {
+
+			button->ResetState();
+			continue;
+
+		}
+
+		Bound bound = button->GetBound();
 
 		if (mousePosition.x > bound.Right() ||
 			mousePosition.x < bound.Left() ||
-			mousePosition.y > bound.Bottom() ||
-			mousePosition.y < bound.Top()) {
+			mousePosition.y > bound.Top() ||
+			mousePosition.y < bound.Bottom()) {
 
-			(*it)->OnMouseLeave();
+			// Mouse is out of button's bound
+
+			if (button->isHovered) {
+
+				button->OnMouseLeave();
+				button->OnMouseRelease();
+				button->ResetState();
+
+			}
 
 			continue;
 
 		}
 
-		if (GameCore::GetMouseState(MouseButton::Left).started) {
+		// The mouse is in the button's area
+		if (!button->isHovered) {
 
-			if ((*it)->OnClick())
-				return true;
+			button->OnMouseEnter();
+			button->isHovered = true;
 
 		}
 
-		(*it)->OnMouseEnter();
+		if (GameCore::GetMouseState(MouseButton::Left).started && !button->isHeld) {
+
+			button->OnMouseBeginHold();
+			button->isHeld = true;
+			buttonInteracted = true;
+
+		} else if (GameCore::GetMouseState(MouseButton::Left).performed) {
+
+			button->OnMouseHolding();
+			buttonInteracted = true;
+
+		} else if (GameCore::GetMouseState(MouseButton::Left).canceled && button->isHeld) {
+
+			buttonInteracted = button->OnClick();
+			button->OnMouseRelease();
+			button->isHeld = false;
+
+		}
 
 	}
 
-	return false;
+	return buttonInteracted;
 
 }
 

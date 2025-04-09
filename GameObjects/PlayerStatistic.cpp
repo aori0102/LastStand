@@ -42,6 +42,8 @@ PlayerStatistic::PlayerStatistic() {
 
 PlayerStatistic::~PlayerStatistic() {
 
+	SaveData();
+
 	instance = nullptr;
 
 }

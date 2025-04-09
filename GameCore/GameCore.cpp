@@ -40,19 +40,35 @@ const float GameCore::CAMERA_ROTATIONAL_DISTORTION_FREQUENCY = 0.2f;
 
 bool GameCore::quit = false;
 bool GameCore::selectedUI = false;
+bool GameCore::isAnyKeyPressed = false;
 
 float GameCore::time = 0.0f;
 float GameCore::deltaTime = 0.0f;
 float GameCore::currentCameraZoom = 1.0f;
 float GameCore::targetCameraZoom = 1.0f;
+float GameCore::sfxVolume = 1.0f;
+float GameCore::masterVolume = 1.0f;
+float GameCore::musicVolume = 1.0f;
 
 std::string GameCore::gameName = "Last Stand";
 
 std::unordered_map<SDL_Keycode, ActionState> GameCore::keyStateDictionary = {};
 std::unordered_map<MouseButton, ActionState> GameCore::mouseButtonStateDictionary = {};
+std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {
+	{ ActionIndex::MoveUp, SDLK_w },
+	{ ActionIndex::MoveDown, SDLK_s },
+	{ ActionIndex::MoveLeft, SDLK_a },
+	{ ActionIndex::MoveRight, SDLK_d },
+	{ ActionIndex::Reload, SDLK_r },
+	{ ActionIndex::Sprint, SDLK_LSHIFT },
+	{ ActionIndex::ToggleInventory, SDLK_i },
+	{ ActionIndex::ToggleShop, SDLK_TAB },
+};
 
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
+
+SDL_Keycode GameCore::lastKeyPressed = SDLK_0;
 
 SDL_Event* GameCore::gameEvent = nullptr;
 SDL_Renderer* GameCore::renderer = nullptr;
@@ -97,6 +113,8 @@ void GameCore::UpdateEvent() {
 
 	}
 
+	isAnyKeyPressed = false;
+
 }
 
 void GameCore::HandleEvent() {
@@ -117,6 +135,9 @@ void GameCore::HandleEvent() {
 			keyState->canceled = false;
 			keyState->performed = false;
 			keyState->started = true;
+
+			isAnyKeyPressed = true;
+			lastKeyPressed = keycode;
 
 		}
 		break;
@@ -386,9 +407,9 @@ ActionState* GameCore::FindKeyState(SDL_Keycode keycode) {
 	auto it = keyStateDictionary.find(keycode);
 
 	if (it == keyStateDictionary.end())
-		return nullptr;
+		keyStateDictionary[keycode] = ActionState();
 
-	return &keyStateDictionary[keycode];
+	return &keyStateDictionary.at(keycode);
 
 }
 
@@ -580,6 +601,34 @@ void GameCore::ClearTexture(SDL_Texture* texture) {
 
 }
 
+void GameCore::SetMusicVolume(float amount) {
+
+	musicVolume = Math::Clamp(amount, 0.0f, 1.0f);
+	Mix_VolumeMusic(MIX_MAX_VOLUME * amount * masterVolume);
+
+}
+
+void GameCore::SetSFXVolume(float amount) {
+
+	sfxVolume = Math::Clamp(amount, 0.0f, 1.0f);
+	Mix_Volume(-1, MIX_MAX_VOLUME * amount * masterVolume);
+
+}
+
+void GameCore::SetMasterVolume(float amount) {
+
+	masterVolume = Math::Clamp(amount, 0.0f, 1.0f);
+	Mix_VolumeMusic(MIX_MAX_VOLUME * amount * masterVolume);
+	Mix_Volume(-1, MIX_MAX_VOLUME * amount * masterVolume);
+
+}
+
+void GameCore::SetActionKeyBind(ActionIndex actionIndex, SDL_Keycode keycode) {
+
+	keyMappingDictionary[actionIndex] = keycode;
+
+}
+
 bool GameCore::SelectedUI() { return selectedUI; }
 
 bool GameCore::Initialize() {
@@ -589,6 +638,8 @@ bool GameCore::Initialize() {
 		InitializeSystem();
 
 }
+
+bool GameCore::IsAnyKeyPressed() { return isAnyKeyPressed; }
 
 float GameCore::Time() { return time; }
 
@@ -613,21 +664,16 @@ std::string GameCore::GetAppDataPath() {
 
 }
 
+std::string GameCore::GetLastKeyInString() {
+
+	return SDL_GetKeyName(lastKeyPressed);
+
+}
+
 ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
 
 	// Find the key
-	ActionState* keyState = FindKeyState(keycode);
-
-	// Create a key state if not already
-	if (!keyState) {
-
-		keyState = new ActionState;
-		keyStateDictionary[keycode] = *keyState;
-		delete keyState;
-
-	}
-
-	return keyStateDictionary[keycode];
+	return *FindKeyState(keycode);
 
 }
 
@@ -646,6 +692,12 @@ ActionState GameCore::GetMouseState(MouseButton mouseButton) {
 	}
 
 	return mouseButtonStateDictionary[mouseButton];
+
+}
+
+ActionState GameCore::GetActionState(ActionIndex actionIndex) {
+
+	return GetKeyState(keyMappingDictionary.at(actionIndex));
 
 }
 
@@ -669,6 +721,8 @@ Vector2 GameCore::ScreenToWorldPosition(Vector2 screenPosition) {
 	) + cameraPosition;
 
 }
+
+SDL_Keycode GameCore::GetLastKey() { return lastKeyPressed; }
 
 SDL_Texture* GameCore::CreateTexture(SDL_Surface* loadedSurface) {
 

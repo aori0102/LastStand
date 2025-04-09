@@ -72,6 +72,12 @@ enum class MediaUI {
 	Inventory_Slot_Selected,
 	Menu_Title,
 	Menu_Button,
+	MenuSetting_KeyBindingFrame,
+	MenuSetting_KeyBindingFrameSelected,
+	MenuSetting_ReturnButton,
+	MenuSetting_Slider,
+	MenuSetting_SliderButton,
+	MenuSetting_SliderButtonSelected,
 
 };
 
@@ -158,6 +164,12 @@ private:
 		{ MediaUI::Inventory_HotBarSlot_Selected, "Inventory\\HotBarSlotSelected" },
 		{ MediaUI::Menu_Button, "Menu\\Button" },
 		{ MediaUI::Menu_Title, "Menu\\Title" },
+		{ MediaUI::MenuSetting_KeyBindingFrame, "MenuSetting\\KeyBindingFrame" },
+		{ MediaUI::MenuSetting_KeyBindingFrameSelected, "MenuSetting\\KeyBindingFrameSelected" },
+		{ MediaUI::MenuSetting_ReturnButton, "MenuSetting\\ReturnButton" },
+		{ MediaUI::MenuSetting_Slider, "MenuSetting\\Slider" },
+		{ MediaUI::MenuSetting_SliderButton, "MenuSetting\\SliderButton" },
+		{ MediaUI::MenuSetting_SliderButtonSelected, "MenuSetting\\SliderButtonSelected" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
