@@ -107,7 +107,7 @@ Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 	Humanoid* humanoid = AddComponent<Humanoid>();
 	humanoid->SetHealth(zombieAttribute->health);
 	humanoid->OnDeath = [this]() {
-		GameObject::Destroy(this);
+		GameManager::Instance()->ReportDead(this);
 		};
 
 	Image* image = AddComponent<Image>();
@@ -143,8 +143,6 @@ Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 }
 
 Zombie::~Zombie() {
-
-	GameManager::Instance()->ReportDead(this);
 
 	GameObject::Destroy(healthBar);
 	healthBar = nullptr;

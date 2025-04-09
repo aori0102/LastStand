@@ -22,11 +22,11 @@ class WaveManager {
 
 private:
 
-	const int BASE_SPAWN = 15;
-	const float SPAWN_MULTIPLIER = 1.7f;
-	const float SPAWN_DELAY = 1.0f;
-	const int MIN_HORDE = 4;
-	const int MAX_HORDE = 8;
+	const int BASE_SPAWN = 7;
+	const float SPAWN_MULTIPLIER = 1.26f;
+	const float SPAWN_DELAY = 4.39f;
+	const int MIN_HORDE = 2;
+	const int MAX_HORDE = 7;
 
 	/// ----------------------------------
 	/// FIELDS

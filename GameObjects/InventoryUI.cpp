@@ -21,7 +21,8 @@ void InventoryUI::InitializeInventorySlots() {
 
 		for (int j = 0; j < MAX_COLUMN; j++) {
 
-			// Instantiate slot
+			// 
+			// slot
 			SlotUI* slotUI = new SlotUI;
 
 			slotUI->isHotBar = false;

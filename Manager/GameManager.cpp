@@ -11,6 +11,7 @@
 
 #include <AnimationManager.h>
 #include <AudioManager.h>
+#include <DataManager.h>
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <ItemManager.h>
@@ -138,7 +139,7 @@ void GameManager::DisableSceneObject() {
 		break;
 
 	case SceneIndex::MainMenu:
-		
+
 		menu->Disable();
 
 		break;
@@ -155,6 +156,9 @@ GameManager::GameManager() {
 	instance = this;
 
 	currentScene = SceneIndex::MainMenu;
+
+	std::cout << "Initializing DataManager..." << std::endl;
+	dataManager = new DataManager;
 
 	std::cout << "Initializing UIEventManager..." << std::endl;
 	uiEventManager = new UIEventManager;
@@ -200,6 +204,9 @@ GameManager::~GameManager() {
 	statusBar = nullptr;
 	shop = nullptr;
 
+	delete dataManager;
+	dataManager = nullptr;
+
 	delete uiEventManager;
 	uiEventManager = nullptr;
 
@@ -242,6 +249,8 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 		WaveManager::Instance()->RemoveZombie();
 
+		GameObject::Destroy(gameObject);
+
 	}
 
 }
@@ -253,7 +262,7 @@ void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 
 	for (int i = 0; i < amount; i++) {
 
-		Zombie* zombie = GameObject::Instantiate<Zombie>();
+		Zombie* zombie = GameObject::Instantiate<Zombie>("Zombie", Layer::Zombie);
 		zombie->SetIndex(zombieIndex);
 		zombie->transform->position = spawnPositionList[i];
 

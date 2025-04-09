@@ -15,7 +15,6 @@ class Firearm;
 class HotBarUI;
 class InventoryUI;
 enum class ItemIndex;
-enum class AmmunitionID;
 
 enum class PlayerAttribute {
 	ReloadSpeed,
@@ -92,9 +91,9 @@ public:
 	void GiveItem(ItemIndex itemIndex, int amount = 1);
 	void SetAttribute(PlayerAttribute playerAttribute, float value);
 	void Update() override;
-	int GetAmmoCount(AmmunitionID);
+	int GetAmmoCount(ItemIndex ammoItemIndex);
 	float GetAttribute(PlayerAttribute playerAttribute);
-	bool TryConsumeAmmo(AmmunitionID ammunitionID, int amount = 1);
+	bool TryConsumeAmmo(ItemIndex ammoItemIndex, int amount = 1);
 	Vector2 GetAimingDirection();
 	std::vector<Firearm*> GetFirearmList();
 

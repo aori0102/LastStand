@@ -29,7 +29,7 @@ private:
 
 public:
 
-	Consumable(ItemIndex initItemIndex, int amount = 1);
+	Consumable();
 	void Equip() override;
 	void Dequip() override;
 	bool TryUse(Player* player) override; 

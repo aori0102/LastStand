@@ -10,8 +10,10 @@
 #include <exception>
 #include <string>
 
+#include <DataManager.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <PlayerStatistic.h>
 #include <MediaManager.h>
 #include <Texture.h>
 #include <Zombie.h>
@@ -36,7 +38,7 @@ WaveManager::WaveManager() {
 	isActive = true;
 
 	waveInProgress = false;
-	currentWave = 0;
+	currentWave = DataManager::Instance()->playerSaveData->wave;
 	totalZombie = 0;
 	zombieLeft = 0;
 	zombieToSpawn = 0;
@@ -90,7 +92,7 @@ void WaveManager::Update() {
 
 		lastSpawnTick = GameCore::Time();
 
-		GameManager::Instance()->SpawnZombie(spawnAmount, 
+		GameManager::Instance()->SpawnZombie(spawnAmount,
 			Random::Int(0, 10) & 1 ? ZombieIndex::Normal : ZombieIndex::Lurker);
 
 	}
@@ -118,8 +120,14 @@ void WaveManager::RemoveZombie() {
 
 	currentProgress = zombieKilled * 1.0f / totalZombie;
 
-	if (zombieLeft == 0 && zombieToSpawn == 0)
+	if (zombieLeft == 0 && zombieToSpawn == 0) {
+
 		waveInProgress = false;
+
+		PlayerStatistic::Instance()->SaveData();
+		DataManager::Instance()->playerSaveData->wave = currentWave;
+
+	}
 
 }
 

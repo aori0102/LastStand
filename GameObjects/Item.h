@@ -25,6 +25,8 @@ private:
 
 protected:
 
+	friend class ItemManager;
+
 	int currentStack;
 	float useCooldown;
 	bool stackable;
@@ -37,6 +39,7 @@ protected:
 protected:
 
 	void SetIndex(ItemIndex initItemIndex);
+	void SetAmount(int amount);
 
 public:
 

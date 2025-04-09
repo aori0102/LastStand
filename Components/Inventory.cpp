@@ -9,6 +9,7 @@
 #include <exception>
 
 #include <Consumable.h>
+#include <DataManager.h>
 #include <Firearm.h>
 #include <HotBarUI.h>
 #include <InventoryUI.h>
@@ -16,13 +17,20 @@
 #include <ItemManager.h>
 #include <Player.h>
 
+const std::unordered_map<ItemIndex, int> Inventory::STARTER_KIT = {
+	{ ItemIndex::Pistol_M1911, 10 },
+	{ ItemIndex::Ammo_9mm, 80 },
+};
+
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
 void Inventory::OnComponentDestroyed() {
-	
-	for (auto it = storage.begin(); it != storage.end(); it++) {;
+
+	SaveInventory();
+
+	for (auto it = storage.begin(); it != storage.end(); it++) {
 
 		GameObject::Destroy((it->second)->item);
 
@@ -59,6 +67,7 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 		// Item not found in inventory
 
 		storage[itemIndex] = new ItemState{
+			.stack = amount,
 			.item = ItemManager::Instance()->CreateItem(itemIndex, amount),
 			.slot = HotBarSlotIndex::None,
 		};
@@ -69,7 +78,7 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 				// A slot is available for the brand new item
 				storage.at(itemIndex)->slot = it_hotbar->first;
 				it_hotbar->second = itemIndex;
-				HotBarUI::Instance()-> UpdateSlot(it_hotbar->first, itemIndex, amount);
+				HotBarUI::Instance()->UpdateSlot(it_hotbar->first, itemIndex, amount);
 				InventoryUI::Instance()->UpdateHotBarSlot(itemIndex, amount, it_hotbar->first);
 				return;
 
@@ -80,10 +89,12 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 		// No hotbar slot is available
 		InventoryUI::Instance()->UpdateInventorySlot(itemIndex, amount);
 
-	} else {
+	} else if ((it_storage->second)->item->TryAddToStack(amount)) {
 		// Item found in inventory
 
-		if ((it_storage->second)->slot != HotBarSlotIndex::None && (it_storage->second)->item->TryAddToStack(amount)) {
+		(it_storage->second)->stack = (it_storage->second)->item->GetCurrentStack();
+
+		if ((it_storage->second)->slot != HotBarSlotIndex::None) {
 			// Item is present in hotbar
 
 			HotBarUI::Instance()->UpdateSlot((it_storage->second)->slot, itemIndex, (it_storage->second)->item->GetCurrentStack());
@@ -162,6 +173,41 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 
 }
 
+void Inventory::SaveInventory() {
+
+	for (auto it = storage.begin(); it != storage.end(); it++)
+		DataManager::Instance()->playerSaveData->storage[it->first] = (it->second)->stack;
+
+}
+
+void Inventory::LoadInventory() {
+
+	if (DataManager::Instance()->playerSaveData->newSave) {
+
+		for (auto it = STARTER_KIT.begin(); it != STARTER_KIT.end(); it++)
+			AddItem(it->first, it->second);
+
+	} else {
+
+		std::unordered_map<ItemIndex, int> savedStorage = DataManager::Instance()->playerSaveData->storage;
+
+		for (auto it = savedStorage.begin(); it != savedStorage.end(); it++)
+			AddItem(it->first, it->second);
+
+		savedStorage.clear();
+
+	}
+
+}
+
+void Inventory::UpdateStack(ItemIndex itemIndex, int amount) {
+
+	auto it = storage.find(itemIndex);
+	if (it != storage.end())
+		(it->second)->stack = amount;
+
+}
+
 bool Inventory::IsSufficient(ItemIndex itemIndex, int amount) {
 
 	for (auto it = storage.begin(); it != storage.end(); it++) {
@@ -184,6 +230,8 @@ bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 
 	if ((it_storage->second)->item->IsSufficient(amount) && (it_storage->second)->item->TryRemoveFromStack(amount)) {
 		// There is enough item
+		(it_storage->second)->stack = (it_storage->second)->item->GetCurrentStack();
+
 		// Update item in hotbar if present
 		if ((it_storage->second)->slot != HotBarSlotIndex::None)
 			HotBarUI::Instance()->UpdateSlot((it_storage->second)->slot, itemIndex, (it_storage->second)->item->GetCurrentStack());

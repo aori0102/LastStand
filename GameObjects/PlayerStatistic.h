@@ -43,6 +43,7 @@ public:
 	~PlayerStatistic();
 	void AddEXP(int amount);
 	void AddMoney(int amount);
+	void SaveData();
 	bool TrySpendMoney(int amount);
 	bool TryConsumeSkillPoint(int amount);
 	int GetLevel() const;

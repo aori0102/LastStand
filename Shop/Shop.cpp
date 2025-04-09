@@ -399,7 +399,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM SELECTION GRID ---
 	/// >>>
-	FirearmSelectionUI* firearmSelectionUI = GameObject::Instantiate<FirearmSelectionUI>();
+	FirearmSelectionUI* firearmSelectionUI = GameObject::Instantiate<FirearmSelectionUI>("Firearm Selection UI",Layer::Menu);
 	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_SelectionGrid));
 	std::vector<Firearm*> firearmList = Player::Instance()->GetFirearmList();
 	for (Firearm* firearm : firearmList)
@@ -425,7 +425,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ATTRIBUTE CONTENT --- 
 	/// >>>
-	FirearmAttributeUIGroup* attributeUIGroup = GameObject::Instantiate<FirearmAttributeUIGroup>();
+	FirearmAttributeUIGroup* attributeUIGroup = GameObject::Instantiate<FirearmAttributeUIGroup>("Firearm Attribute UI Group", Layer::Menu);
 	attributeUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Attribute_Content));
 	uiElementMap[UIElementIndex::Firearm_Main_Attribute_Content] = attributeUIGroup;
 
@@ -502,7 +502,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ITEM SELECTION GRID ---
 	/// >>>
-	ItemSelectionUI* itemSelectionUI = GameObject::Instantiate<ItemSelectionUI>();
+	ItemSelectionUI* itemSelectionUI = GameObject::Instantiate<ItemSelectionUI>("Item Selection UI",Layer::Menu);
 	itemSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemSelectionGrid));
 	itemSelectionUI->AddItem(ItemIndex::MedKit);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_Slug);
@@ -576,7 +576,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- SKILL INFO BOARD ---
 	/// >>>
-	uiElementMap[UIElementIndex::Skill_InfoBoard] = GameObject::Instantiate<SkillInfoUI>();
+	uiElementMap[UIElementIndex::Skill_InfoBoard] = GameObject::Instantiate<SkillInfoUI>("Skill Info UI",Layer::Menu);
 
 	/// >>>
 	/// --- SKILL LIST ---

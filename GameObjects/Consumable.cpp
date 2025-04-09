@@ -14,7 +14,7 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Consumable::Consumable(ItemIndex initItemIndex, int amount) : Item(initItemIndex, amount) {
+Consumable::Consumable() {
 
 	health = 0.0f;
 	stamina = 0.0f;

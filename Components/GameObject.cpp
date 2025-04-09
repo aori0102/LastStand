@@ -78,6 +78,8 @@ void GameObject::DropNuke() {
 
 	for (auto gameObject : deletionSet) {
 
+		std::cout << "[Janitor] Flushing " << gameObject->name << "..." << std::endl;
+
 		gameObjectSet.erase(gameObject);
 		RenderManager::Instance()->RemoveRenderObject(gameObject);
 

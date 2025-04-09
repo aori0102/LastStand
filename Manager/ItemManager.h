@@ -75,6 +75,9 @@ public:
 	std::string GetItemName(ItemIndex itemIndex);
 	Item* CreateItem(ItemIndex itemIndex, int amount = 1);
 
+	template <class T> bool IsIndexOfType(ItemIndex itemIndex);
+
 	static ItemManager* Instance();
 
 };
+#include <ItemManager.inl>

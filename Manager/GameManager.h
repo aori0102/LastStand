@@ -15,6 +15,7 @@
 
 class AudioManager;
 class AnimationManager;
+class DataManager;
 class ItemManager;
 class MediaManager;
 class Menu;
@@ -66,6 +67,7 @@ private:
 	SceneIndex currentScene;
 	AudioManager* audioManager;
 	AnimationManager* animationManager;
+	DataManager* dataManager;
 	PhysicsManager* physicsManager;
 	MediaManager* mediaManager;
 	Menu* menu;

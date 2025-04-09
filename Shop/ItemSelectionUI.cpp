@@ -91,7 +91,7 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 	lastNode->nextSlot = nullptr;
 	lastNode->itemIndex = newItemIndex;
 
-	lastNode->frame = GameObject::Instantiate("", Layer::Menu);
+	lastNode->frame = GameObject::Instantiate("Item Selection UI Frame", Layer::Menu);
 	Image* frame_image = lastNode->frame->AddComponent<Image>();
 	frame_image->showOnScreen = true;
 	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemBar), true);
@@ -109,7 +109,7 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 			frame_image->Render();
 		};
 
-	lastNode->visual = GameObject::Instantiate("", Layer::Menu);
+	lastNode->visual = GameObject::Instantiate("Item Selection UI Visual", Layer::Menu);
 	Image* visual_image = lastNode->visual->AddComponent<Image>();
 	visual_image->showOnScreen = true;
 	ItemManager::Instance()->LinkItemIcon(newItemIndex, visual_image);

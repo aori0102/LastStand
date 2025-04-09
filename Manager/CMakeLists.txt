@@ -5,6 +5,7 @@
 set(SOURCES
     "AnimationManager.cpp"
     "AudioManager.cpp"
+    "DataManager.cpp"
     "GameManager.cpp"
     "ItemManager.cpp"
     "MediaManager.cpp"

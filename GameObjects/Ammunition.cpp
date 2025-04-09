@@ -14,22 +14,22 @@
 #include <Player.h>
 
 /// ----------------------------------
-/// STATIC FIELDS
-/// ----------------------------------
-
-const std::unordered_map<AmmunitionID, ItemIndex> Ammunition::AMMO_ITEM_INDEX_MAP = {
-	{ AmmunitionID::Slug, ItemIndex::Ammo_Slug },
-	{ AmmunitionID::Nine_Mil, ItemIndex::Ammo_9mm },
-	{ AmmunitionID::Five_Five_Six, ItemIndex::Ammo_556 },
-};
-
-/// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-Ammunition::Ammunition(AmmunitionID initAmmunitionID, int amount) : Item(AMMO_ITEM_INDEX_MAP.at(initAmmunitionID), amount) {
+void Ammunition::SetAmmunitionItemIndex(ItemIndex initItemIndex) {
 
-	ammunitionID = initAmmunitionID;
+	switch (initItemIndex) {
+
+	case ItemIndex::Ammo_Slug:
+	case ItemIndex::Ammo_9mm:
+	case ItemIndex::Ammo_556:
+		break;
+	default:
+		throw std::exception("Invalid ammunition ID");
+	}
+
+	SetIndex(initItemIndex);
 
 }
 
@@ -45,8 +45,9 @@ bool Ammunition::TryAddToStack(int amount) {
 
 	for (auto it = firearmList.begin(); it != firearmList.end(); it++) {
 
-		if (ammunitionID == Firearm::BASE_FIREARM_INFO_MAP.at((*it)->GetIndex()).ammunitionID) {
+		if (GetIndex() == Firearm::BASE_FIREARM_INFO_MAP.at((*it)->GetIndex()).ammunitionItemIndex) {
 
+			// Update reserve ammo of firearm that uses this ammo
 			(*it)->UpdateReserveLabel();
 			break;
 
@@ -70,5 +71,3 @@ bool Ammunition::TryRemoveFromStack(int amount) {
 }
 
 bool Ammunition::TryUse(Player* player) { return false; }
-
-AmmunitionID Ammunition::GetAmmunitionID() const { return ammunitionID; }

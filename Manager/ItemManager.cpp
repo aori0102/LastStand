@@ -122,6 +122,7 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 		Pistol* pistol = GameObject::Instantiate<Pistol>("Pistol");
 		pistol->SetFirearmItemID(itemIndex);
+		pistol->SetAmount(amount);
 
 		return pistol;
 
@@ -131,6 +132,7 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 		Shotgun* shotgun = GameObject::Instantiate<Shotgun>("Shotgun");
 		shotgun->SetFirearmItemID(itemIndex);
+		shotgun->SetAmount(amount);
 
 		return shotgun;
 
@@ -140,6 +142,7 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 		Rifle* rifle = GameObject::Instantiate<Rifle>("Rifle");
 		rifle->SetFirearmItemID(itemIndex);
+		rifle->SetAmount(amount);
 
 		return rifle;
 
@@ -147,9 +150,11 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	case ItemIndex::MedKit: {
 
-		Consumable* medkit = new Consumable(itemIndex, amount);
+		Consumable* medkit = GameObject::Instantiate<Consumable>("Med Kit");
+		medkit->SetIndex(itemIndex);
 		medkit->health = 30.0f;
-		medkit->stackable = 7.0f;
+		medkit->stamina = 7.0f;
+		medkit->SetAmount(amount);
 
 		return medkit;
 
@@ -157,7 +162,9 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	case ItemIndex::Ammo_Slug: {
 
-		Ammunition* ammo = new Ammunition(AmmunitionID::Slug, amount);
+		Ammunition* ammo = GameObject::Instantiate<Ammunition>("Slug");
+		ammo->SetAmmunitionItemIndex(itemIndex);
+		ammo->SetAmount(amount);
 
 		return ammo;
 
@@ -165,7 +172,9 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	case ItemIndex::Ammo_9mm: {
 
-		Ammunition* ammo = new Ammunition(AmmunitionID::Nine_Mil, amount);
+		Ammunition* ammo = GameObject::Instantiate<Ammunition>("9mm Ammo");
+		ammo->SetAmmunitionItemIndex(itemIndex);
+		ammo->SetAmount(amount);
 
 		return ammo;
 
@@ -173,7 +182,9 @@ Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
 	case ItemIndex::Ammo_556: {
 
-		Ammunition* ammo = new Ammunition(AmmunitionID::Five_Five_Six, amount);
+		Ammunition* ammo = GameObject::Instantiate<Ammunition>("5.56 NATO Ammo");
+		ammo->SetAmmunitionItemIndex(itemIndex);
+		ammo->SetAmount(amount);
 
 		return ammo;
 

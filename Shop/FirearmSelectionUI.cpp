@@ -80,7 +80,7 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 	lastNode->nextSlot = nullptr;
 	lastNode->firearm = newFirearm;
 
-	lastNode->frame = GameObject::Instantiate("", Layer::Menu);
+	lastNode->frame = GameObject::Instantiate("Firearm Selection UI Frame", Layer::Menu);
 	Image* frame_image = lastNode->frame->AddComponent<Image>();
 	frame_image->showOnScreen = true;
 	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);

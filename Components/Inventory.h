@@ -32,9 +32,12 @@ class Inventory : public GameComponent {
 private:
 
 	struct ItemState {
+		int stack;
 		Item* item;
 		HotBarSlotIndex slot;
 	};
+
+	static const std::unordered_map<ItemIndex, int> STARTER_KIT;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -61,6 +64,9 @@ public:
 	void SelectSlot(HotBarSlotIndex slotIndex);
 	void ToggleInventory();
 	void LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex itemIndex);
+	void SaveInventory();
+	void LoadInventory();
+	void UpdateStack(ItemIndex itemIndex, int amount);
 	bool IsSufficient(ItemIndex itemIndex, int amount);
 	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	bool TryUseCurrent();

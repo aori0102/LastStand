@@ -344,14 +344,7 @@ void Player::InitializeData() {
 	inventoryUI = GameObject::Instantiate<InventoryUI>("Inventory UI", Layer::Menu);
 	inventoryUI->Disable();
 
-	Inventory* inventory = AddComponent<Inventory>();
-	inventory->AddItem(ItemIndex::Rifle_M4);
-	inventory->AddItem(ItemIndex::Pistol_M1911);
-	inventory->AddItem(ItemIndex::Shotgun_Beretta1301);
-	inventory->AddItem(ItemIndex::MedKit);
-	inventory->AddItem(ItemIndex::Ammo_Slug, 25);
-	inventory->AddItem(ItemIndex::Ammo_9mm, 80);
-	inventory->AddItem(ItemIndex::Ammo_556, 180);
+	AddComponent<Inventory>()->LoadInventory();
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
@@ -493,17 +486,17 @@ void Player::Update() {
 
 }
 
-int Player::GetAmmoCount(AmmunitionID ammunitionID) {
+int Player::GetAmmoCount(ItemIndex ammoItemIndex) {
 
-	return GetComponent<Inventory>()->GetItemCount(Ammunition::AMMO_ITEM_INDEX_MAP.at(ammunitionID));
+	return GetComponent<Inventory>()->GetItemCount(ammoItemIndex);
 
 }
 
 float Player::GetAttribute(PlayerAttribute playerAttribute) { return playerAttributeMap.at(playerAttribute); }
 
-bool Player::TryConsumeAmmo(AmmunitionID ammunitionID, int amount) {
+bool Player::TryConsumeAmmo(ItemIndex ammoItemIndex, int amount) {
 
-	return GetComponent<Inventory>()->TryRemoveItem(Ammunition::AMMO_ITEM_INDEX_MAP.at(ammunitionID), amount);
+	return GetComponent<Inventory>()->TryRemoveItem(ammoItemIndex, amount);
 
 }
 

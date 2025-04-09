@@ -8,6 +8,7 @@
 
 #include <cmath>
 
+#include <DataManager.h>
 #include <GameComponent.h>
 #include <Humanoid.h>
 #include <Player.h>
@@ -31,10 +32,10 @@ PlayerStatistic::PlayerStatistic() {
 
 	instance = this;
 
-	playerMoney = 0;
-	playerSkillPoint = 0;
-	playerLevel = 0;
-	playerEXP = 0;
+	playerMoney = DataManager::Instance()->playerSaveData->money;
+	playerSkillPoint = DataManager::Instance()->playerSaveData->skillPoint;
+	playerLevel = DataManager::Instance()->playerSaveData->level;
+	playerEXP = DataManager::Instance()->playerSaveData->exp;
 	playerEXPNeeded = PLAYER_BASE_EXP;
 
 }
@@ -64,6 +65,17 @@ void PlayerStatistic::AddEXP(int amount) {
 void PlayerStatistic::AddMoney(int amount) {
 
 	playerMoney += amount;
+
+}
+
+void PlayerStatistic::SaveData() {
+
+	PlayerSaveData* playerSaveData = DataManager::Instance()->playerSaveData;
+
+	playerSaveData->money = playerMoney;
+	playerSaveData->exp = playerEXP;
+	playerSaveData->level = playerLevel;
+	playerSaveData->skillPoint = playerSkillPoint;
 
 }
 

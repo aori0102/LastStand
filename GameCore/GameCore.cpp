@@ -602,6 +602,17 @@ std::string GameCore::GetVersionString() {
 
 }
 
+std::string GameCore::GetAppDataPath() {
+
+	const char* appData = std::getenv("APPDATA");
+
+	if (appData)
+		return std::string(appData);
+	else
+		throw std::exception("Cannot locate AppData path");
+
+}
+
 ActionState GameCore::GetKeyState(SDL_Keycode keycode) {
 
 	// Find the key

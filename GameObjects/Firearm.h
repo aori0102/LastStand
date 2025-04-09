@@ -13,7 +13,6 @@
 
 class Player;
 class Sprite;
-enum class AmmunitionID;
 enum class MediaObject;
 
 enum class FirearmAttributeIndex {
@@ -38,7 +37,7 @@ struct FirearmInfo {
 
 	std::string name;
 	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
-	AmmunitionID ammunitionID;
+	ItemIndex ammunitionItemIndex;
 	ReloadType reloadType;
 
 };
@@ -70,7 +69,6 @@ private:
 	// Logic handling
 	bool isReloading;
 	bool stopReload;
-	int currentAmmo;
 	int previousReverseAmmo;
 	float lastReloadTick;
 	float lastShootTick;
@@ -98,10 +96,11 @@ private:
 
 protected:
 
-	bool TryShoot();
-	bool IsCrit();
 	void ShowUI();
 	void HideUI();
+	void SetStack(int amount);
+	bool TryShoot();
+	bool IsCrit();
 
 public:
 
@@ -110,12 +109,14 @@ public:
 	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
 	void Reload();
 	void UpdateReserveLabel();
+	void UpdateCurrentLabel();
 	void Equip() override;
 	void Dequip() override;
 	void Update() override;
 	bool TryAddToStack(int amount = 1) override;
 	bool TryRemoveFromStack(int amount = 1) override;
 	float GetAttribute(FirearmAttributeIndex attributeIndex);
+	ItemIndex GetAmmoItemIndex();
 	std::string GetName() const;
 
 	virtual void SetFirearmItemID(ItemIndex initItemIndex) = 0;
