@@ -11,6 +11,7 @@ set(SOURCES
     "Shop.cpp"
     "SkillInfoUI.cpp"
     "SkillList.cpp"
+    "SkillNode.cpp"
 )
 
 # Add this directory as a static library

@@ -192,8 +192,6 @@ void GameObject::Destroy(GameObject* gameObject) {
 	if (!gameObjectSet.contains(gameObject))
 		return;
 
-	gameObject->Disable();
-
 	deletionSet.insert(gameObject);
 
 }

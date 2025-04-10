@@ -399,7 +399,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- FIREARM SELECTION GRID ---
 	/// >>>
-	FirearmSelectionUI* firearmSelectionUI = GameObject::Instantiate<FirearmSelectionUI>("Firearm Selection UI",Layer::Menu);
+	FirearmSelectionUI* firearmSelectionUI = GameObject::Instantiate<FirearmSelectionUI>("Firearm Selection UI", Layer::Menu);
 	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_SelectionGrid));
 	std::vector<Firearm*> firearmList = Player::Instance()->GetFirearmList();
 	for (Firearm* firearm : firearmList)
@@ -502,12 +502,14 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- ITEM SELECTION GRID ---
 	/// >>>
-	ItemSelectionUI* itemSelectionUI = GameObject::Instantiate<ItemSelectionUI>("Item Selection UI",Layer::Menu);
+	ItemSelectionUI* itemSelectionUI = GameObject::Instantiate<ItemSelectionUI>("Item Selection UI", Layer::Menu);
 	itemSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Utility_ItemSelectionGrid));
 	itemSelectionUI->AddItem(ItemIndex::MedKit);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_Slug);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_9mm);
 	itemSelectionUI->AddItem(ItemIndex::Ammo_556);
+	itemSelectionUI->AddItem(ItemIndex::Rifle_M4);
+	itemSelectionUI->AddItem(ItemIndex::Shotgun_Beretta1301);
 	uiElementMap[UIElementIndex::Utility_ItemSelectionGrid] = itemSelectionUI;
 
 	/// >>>
@@ -576,67 +578,92 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- SKILL INFO BOARD ---
 	/// >>>
-	uiElementMap[UIElementIndex::Skill_InfoBoard] = GameObject::Instantiate<SkillInfoUI>("Skill Info UI",Layer::Menu);
+	uiElementMap[UIElementIndex::Skill_InfoBoard] = GameObject::Instantiate<SkillInfoUI>("Skill Info UI", Layer::Menu);
 
 	/// >>>
 	/// --- SKILL LIST ---
 	/// >>>
 	SkillList* skillList = GameObject::Instantiate<SkillList>();
-	skillList->AddSkill(SkillListIndex::First, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 1,
 		.value = 120.0f,
 		.name = "Health I",
 		.description = "Increase Player Max HP to 120",
 		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_I,
 		});
-	skillList->AddSkill(SkillListIndex::First, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 2,
 		.value = 130.0f,
 		.name = "Health II",
 		.description = "Increase Player Max HP to 130",
 		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_II,
 		});
-	skillList->AddSkill(SkillListIndex::First, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 5,
 		.value = 150.0f,
 		.name = "Health III",
 		.description = "Increase Player Max HP to 150",
 		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_III,
 		});
-	skillList->AddSkill(SkillListIndex::Second, new SkillNode{
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 9,
+		.value = 190.0f,
+		.name = "Health IV",
+		.description = "Increase Player Max HP to 190",
+		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_IV,
+		});
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 1,
 		.value = 2.9f,
 		.name = "Quick Hand",
 		.description = "Increase reload speed by 20%",
 		.playerAttribute = PlayerAttribute::ReloadSpeed,
+		.listIndex = SkillListIndex::Second,
+		.skillVisualIndex = MediaUI::SkillVisual_QuickHand_I,
 		});
-	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 1,
 		.value = 0.35f,
 		.name = "Accuracy I",
 		.description = "Increase accuracy to 35%",
 		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_I,
 		});
-	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 2,
 		.value = 0.4f,
 		.name = "Accuracy II",
 		.description = "Increase accuracy to 40%",
 		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_II,
 		});
-	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 3,
 		.value = 0.45f,
 		.name = "Accuracy III",
 		.description = "Increase accuracy to 45%",
 		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_III,
 		});
-	skillList->AddSkill(SkillListIndex::Third, new SkillNode{
+	skillList->AddSkill(SkillInfo{
 		.skillPoint = 4,
 		.value = 0.5f,
 		.name = "Accuracy IV",
 		.description = "Increase accuracy to 50%",
 		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_IV,
 		});
 	skillList->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_List));
 	uiElementMap[UIElementIndex::Skill_List] = skillList;
@@ -880,18 +907,15 @@ void Shop::BuyItem() {
 
 }
 
-void Shop::SelectSkillNode(SkillNode* skillNode) {
+void Shop::SelectSkillNode(SkillInfo info) {
 
-	uiElementMap.at(UIElementIndex::Skill_InfoBoard)->As<SkillInfoUI>()->UpdateSkillInfo(skillNode);
+	uiElementMap.at(UIElementIndex::Skill_InfoBoard)->As<SkillInfoUI>()->UpdateSkillInfo(info);
 
 }
 
 void Shop::BuySkillNode() {
 
-	SkillList* skillList = uiElementMap.at(UIElementIndex::Skill_List)->As<SkillList>();
-
-	if (PlayerStatistic::Instance()->TryConsumeSkillPoint(skillList->GetCurrentSkillCost()))
-		skillList->UpgradeSelected();
+	uiElementMap.at(UIElementIndex::Skill_List)->As<SkillList>()->UpgradeSelected();
 
 }
 

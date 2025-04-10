@@ -78,6 +78,15 @@ enum class MediaUI {
 	MenuSetting_Slider,
 	MenuSetting_SliderButton,
 	MenuSetting_SliderButtonSelected,
+	SkillVisual_Health_I,
+	SkillVisual_Health_II,
+	SkillVisual_Health_III,
+	SkillVisual_Health_IV,
+	SkillVisual_QuickHand_I,
+	SkillVisual_Accuracy_I,
+	SkillVisual_Accuracy_II,
+	SkillVisual_Accuracy_III,
+	SkillVisual_Accuracy_IV,
 
 };
 
@@ -170,6 +179,15 @@ private:
 		{ MediaUI::MenuSetting_Slider, "MenuSetting\\Slider" },
 		{ MediaUI::MenuSetting_SliderButton, "MenuSetting\\SliderButton" },
 		{ MediaUI::MenuSetting_SliderButtonSelected, "MenuSetting\\SliderButtonSelected" },
+		{ MediaUI::SkillVisual_Health_I, "SkillVisual\\Health_I" },
+		{ MediaUI::SkillVisual_Health_II, "SkillVisual\\Health_II" },
+		{ MediaUI::SkillVisual_Health_III, "SkillVisual\\Health_III" },
+		{ MediaUI::SkillVisual_Health_IV, "SkillVisual\\Health_IV" },
+		{ MediaUI::SkillVisual_Accuracy_I, "SkillVisual\\Accuracy_I" },
+		{ MediaUI::SkillVisual_Accuracy_II, "SkillVisual\\Accuracy_II" },
+		{ MediaUI::SkillVisual_Accuracy_III, "SkillVisual\\Accuracy_III" },
+		{ MediaUI::SkillVisual_Accuracy_IV, "SkillVisual\\Accuracy_IV" },
+		{ MediaUI::SkillVisual_QuickHand_I, "SkillVisual\\QuickHand_I" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },

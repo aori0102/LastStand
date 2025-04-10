@@ -3,9 +3,10 @@
 #include <string>
 #include <unordered_map>
 
-#include <GameComponent.h>
+#include <GameObject.h>
 #include <Utils.h>
 
+enum class MediaUI;
 enum class PlayerAttribute;
 
 enum class SkillListIndex {
@@ -13,6 +14,9 @@ enum class SkillListIndex {
 	First,
 	Second,
 	Third,
+
+	Total,
+	None,
 
 };
 
@@ -22,31 +26,36 @@ struct SkillNodeUI {
 	GameObject* skillNodeVisual;
 	GameObject* nodeConnector;
 
-	~SkillNodeUI() {
-		delete skillNodeBackground;
-		delete skillNodeVisual;
-		delete nodeConnector;
-	}
+};
+
+struct SkillInfo {
+
+	int skillPoint;
+	float value;
+	std::string name;
+	std::string description;
+	PlayerAttribute playerAttribute;
+	SkillListIndex listIndex;
+	MediaUI skillVisualIndex;
 
 };
 
-struct SkillNode {
+class SkillNode {
 
-	int skillPoint;
+private:
+
+	friend class SkillList;
 
 	bool acquired;
 	bool available;
-
-	float value;
-
-	std::string name;
-	std::string description;
-
-	PlayerAttribute playerAttribute;
-
 	SkillNode* next;
-
 	SkillNodeUI* skillNodeUI;
+	SkillInfo info;
+
+public:
+
+	SkillNode();
+	~SkillNode();
 
 };
 
@@ -62,11 +71,13 @@ private:
 	std::unordered_map<SkillListIndex, SkillNode*> headNodeMap;
 	std::unordered_map<SkillListIndex, SkillNode*> tailNodeMap;
 	std::unordered_map<SkillListIndex, SkillNode*> currentNodeMap;
+	std::unordered_map<SkillListIndex, int> skillProgressMap;
+	std::unordered_map<SkillListIndex, int> tempProgressMap;	// To check if the skill is acquired
 	
 	SkillNode* selectedNode;
 
 	int GetCurrentSkillCost() const;
-	void AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode);
+	void AddSkill(SkillInfo info);
 	void SetPosition(Vector2 position);
 	void SelectNode(SkillNode* skillNode);
 	SkillNode* UpgradeSelected();
@@ -74,5 +85,6 @@ private:
 public:
 
 	SkillList();
+	~SkillList();
 
 };

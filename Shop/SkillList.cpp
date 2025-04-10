@@ -2,29 +2,43 @@
 
 #include <exception>
 
+#include <DataManager.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <PlayerStatistic.h>
 #include <Shop.h>
 #include <Texture.h>
 
 const float SkillList::SKILL_NODE_OFFSET = 87.0f;
 const float SkillList::SKILL_LIST_OFFSET = 104.0f;
 
-int SkillList::GetCurrentSkillCost() const { return selectedNode ? selectedNode->skillPoint : INT_MAX; }
+int SkillList::GetCurrentSkillCost() const { return selectedNode ? selectedNode->info.skillPoint : INT_MAX; }
 
-void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
+void SkillList::AddSkill(SkillInfo info) {
 
 	SkillNodeUI* skillNodeUI = new SkillNodeUI;
+	SkillNode* skillNode = new SkillNode;
 
 	skillNode->skillNodeUI = skillNodeUI;
+	skillNode->info = info;
 	skillNode->next = nullptr;
-	skillNode->acquired = false;
+
 	skillNode->available = false;
+
+	if (tempProgressMap.at(info.listIndex) == skillProgressMap.at(info.listIndex))
+		skillNode->available = true;
+	else if (tempProgressMap.at(info.listIndex) < skillProgressMap.at(info.listIndex))
+		skillNode->acquired = true;
+
+	tempProgressMap.at(info.listIndex)++;
 
 	skillNodeUI->skillNodeBackground = GameObject::Instantiate("Skill Node Background", Layer::Menu);
 	Image* skillNodeBackground_image = skillNodeUI->skillNodeBackground->AddComponent<Image>();
 	skillNodeBackground_image->showOnScreen = true;
-	skillNodeBackground_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_SkillNode), true);
+	skillNodeBackground_image->LinkSprite(
+		MediaManager::Instance()->GetUISprite(skillNode->acquired ? MediaUI::Shop_SkillNode_Acquired : MediaUI::Shop_SkillNode),
+		true
+	);
 	skillNodeBackground_image->transform->position.x += SKILL_NODE_OFFSET;
 	Button* skillNodeVisual_button = skillNodeUI->skillNodeBackground->AddComponent<Button>();
 	skillNodeVisual_button->backgroundColor = Color::TRANSPARENT;
@@ -42,25 +56,25 @@ void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
 	skillNodeUI->skillNodeVisual = GameObject::Instantiate("Skill Node Visual", Layer::Menu);
 	Image* skillNodeVisual_image = skillNodeUI->skillNodeVisual->AddComponent<Image>();
 	skillNodeVisual_image->showOnScreen = true;
+	skillNodeVisual_image->LinkSprite(MediaManager::Instance()->GetUISprite(info.skillVisualIndex), true);
 	skillNodeVisual_image->transform->position = skillNodeUI->skillNodeBackground->transform->position;
 	skillNodeUI->skillNodeVisual->Render = [this, skillNodeVisual_image]() {
 		if (IsActive())
 			skillNodeVisual_image->Render();
 		};
 
-	if (!headNodeMap.at(skillListIndex)) {
+	if (!headNodeMap.at(info.listIndex)) {
 		// This is the first node
 
-		headNodeMap.at(skillListIndex) = skillNode;
-		currentNodeMap.at(skillListIndex) = skillNode;
-		tailNodeMap.at(skillListIndex) = skillNode;
-		skillNode->available = true;
+		headNodeMap.at(info.listIndex) = skillNode;
+		currentNodeMap.at(info.listIndex) = skillNode;
+		tailNodeMap.at(info.listIndex) = skillNode;
 		return;
 
 	}
 
 	// Add connection to the previous node
-	SkillNode* tailNode = tailNodeMap.at(skillListIndex);
+	SkillNode* tailNode = tailNodeMap.at(info.listIndex);
 	tailNode->skillNodeUI->nodeConnector = GameObject::Instantiate("Node Connector", Layer::Menu);
 	Image* nodeConnector_image = tailNode->skillNodeUI->nodeConnector->AddComponent<Image>();
 	nodeConnector_image->showOnScreen = true;
@@ -74,7 +88,7 @@ void SkillList::AddSkill(SkillListIndex skillListIndex, SkillNode* skillNode) {
 		};
 
 	tailNode->next = skillNode;
-	tailNodeMap.at(skillListIndex) = skillNode;
+	tailNodeMap.at(info.listIndex) = skillNode;
 
 }
 
@@ -136,7 +150,7 @@ void SkillList::SelectNode(SkillNode* skillNode) {
 
 	selectedNode = skillNode;
 
-	Shop::Instance()->SelectSkillNode(skillNode);
+	Shop::Instance()->SelectSkillNode(selectedNode->info);
 
 }
 
@@ -145,16 +159,21 @@ SkillNode* SkillList::UpgradeSelected() {
 	if (!selectedNode || !selectedNode->available || selectedNode->acquired)
 		return nullptr;
 
+	if (!PlayerStatistic::Instance()->TryConsumeSkillPoint(selectedNode->info.skillPoint))
+		return nullptr;
+
 	selectedNode->skillNodeUI->skillNodeBackground->GetComponent<Image>()->LinkSprite(
 		MediaManager::Instance()->GetUISprite(MediaUI::Shop_SkillNode_Acquired), true
 	);
 
 	// Modify attribute after upgrade
-	Player::Instance()->SetAttribute(selectedNode->playerAttribute, selectedNode->value);
+	Player::Instance()->SetAttribute(selectedNode->info.playerAttribute, selectedNode->info.value);
 
 	selectedNode->acquired = true;
+	selectedNode->available = false;
 	if (selectedNode->next)
 		selectedNode->next->available = true;
+	skillProgressMap.at(selectedNode->info.listIndex)++;
 
 	return selectedNode;
 
@@ -162,21 +181,39 @@ SkillNode* SkillList::UpgradeSelected() {
 
 SkillList::SkillList() {
 
-	headNodeMap = {
-		{ SkillListIndex::First, nullptr },
-		{ SkillListIndex::Second, nullptr },
-		{ SkillListIndex::Third, nullptr },
-	};
-	tailNodeMap = {
-		{ SkillListIndex::First, nullptr },
-		{ SkillListIndex::Second, nullptr },
-		{ SkillListIndex::Third, nullptr },
-	};
-	currentNodeMap = {
-		{ SkillListIndex::First, nullptr },
-		{ SkillListIndex::Second, nullptr },
-		{ SkillListIndex::Third, nullptr },
-	};
+	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++) {
+
+		headNodeMap[static_cast<SkillListIndex>(i)] = nullptr;
+		tailNodeMap[static_cast<SkillListIndex>(i)] = nullptr;
+		currentNodeMap[static_cast<SkillListIndex>(i)] = nullptr;
+		tempProgressMap[static_cast<SkillListIndex>(i)] = 0;
+		skillProgressMap = DataManager::Instance()->playerSaveData->skillProgress;
+
+	}
+
 	selectedNode = nullptr;
+
+}
+
+SkillList::~SkillList() {
+
+	// Save progress
+	PlayerSaveData* saveData = DataManager::Instance()->playerSaveData;
+
+	for (auto it = skillProgressMap.begin(); it != skillProgressMap.end(); it++)
+		saveData->skillProgress[it->first] = it->second;
+
+	for (auto it = headNodeMap.begin(); it != headNodeMap.end(); it++) {
+
+		SkillNode* temp = it->second;
+		while (temp) {
+
+			SkillNode* next = temp->next;
+			delete temp;
+			temp = next;
+
+		}
+
+	}
 
 }

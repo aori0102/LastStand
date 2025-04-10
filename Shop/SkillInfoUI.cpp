@@ -20,30 +20,31 @@ const Vector2 SkillInfoUI::BUTTON_FRAME_POSITION = Vector2(956.0f, 229.0f);
 const Vector2 SkillInfoUI::SKILL_DESCRIPTION_OFFSET = Vector2(0.0f, -31.0f);
 const Vector2 SkillInfoUI::SKILL_LABEL_OFFSET = Vector2(117.0f, -10.0f);
 
-void SkillInfoUI::UpdateSkillInfo(SkillNode* skillNode) {
-
-	if (!skillNode)
-		return;
+void SkillInfoUI::UpdateSkillInfo(SkillInfo info) {
 
 	showingSkill = true;
 
 	buttonCostLabel->GetComponent<Text>()->LoadText(
-		std::to_string(skillNode->skillPoint), Color::WHITE, COST_LABEL_FONT_SIZE
+		std::to_string(info.skillPoint), Color::WHITE, COST_LABEL_FONT_SIZE
 		);
 
 	Text* skillLabel_text = skillLabel->AddComponent<Text>();
-	skillLabel_text->LoadText(skillNode->name, Color::WHITE, SKILL_LABEL_FONT_SIZE);
+	skillLabel_text->LoadText(info.name, Color::WHITE, SKILL_LABEL_FONT_SIZE);
 	skillLabel_text->showOnScreen = true;
 	Align::Left(skillLabel->transform, frame->transform);
 	Align::Top(skillLabel->transform, frame->transform);
 	skillLabel->transform->position += SKILL_LABEL_OFFSET;
 
 	Text* skillDescription_text = skillDescription->AddComponent<Text>();
-	skillDescription_text->LoadText(skillNode->description, Color::WHITE, SKILL_DESCRIPTION_FONT_SIZE);
+	skillDescription_text->LoadText(info.description, Color::WHITE, SKILL_DESCRIPTION_FONT_SIZE);
 	skillDescription_text->showOnScreen = true;
 	Align::Left(skillDescription->transform, skillLabel->transform);
 	Align::Top(skillDescription->transform, skillLabel->transform);
 	skillDescription->transform->position += SKILL_DESCRIPTION_OFFSET;
+
+	skillVisual->GetComponent<Image>()->LinkSprite(
+		MediaManager::Instance()->GetUISprite(info.skillVisualIndex), true
+	);
 
 }
 
@@ -127,7 +128,12 @@ SkillInfoUI::SkillInfoUI() : GameObject("Skill Info UI", Layer::Menu) {
 	frameUnselected_text->LoadText(FRAME_UNSELECTED_MESSAGE, Color::WHITE, FRAME_UNSELECTED_MESSAGE_FONT_SIZE);
 	frameUnselectedMessage->transform->position = frame->transform->position;
 
-	Render = [this, frameUnselected_image, frameUnselected_text, buttonIcon_image, buttonCostLabel_text, buyButton_image, iconFrame_image, frame_image, skillLabel_text, skillDescription_text]() {
+	skillVisual = GameObject::Instantiate("Skill Info Icon Visual", Layer::Menu);
+	Image* skillVisual_image = skillVisual->AddComponent<Image>();
+	skillVisual_image->showOnScreen = true;
+	skillVisual->transform->position = iconFrame->transform->position;
+
+	Render = [this, skillVisual_image, frameUnselected_image, frameUnselected_text, buttonIcon_image, buttonCostLabel_text, buyButton_image, iconFrame_image, frame_image, skillLabel_text, skillDescription_text]() {
 		frame_image->Render();
 		if (!showingSkill) {
 			frameUnselected_image->Render();
@@ -140,6 +146,7 @@ SkillInfoUI::SkillInfoUI() : GameObject("Skill Info UI", Layer::Menu) {
 		buyButton_image->Render();
 		skillLabel_text->Render();
 		skillDescription_text->Render();
+		skillVisual_image->Render();
 		};
 
 }

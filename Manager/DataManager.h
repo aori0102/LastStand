@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 enum class ItemIndex;
+enum class SkillListIndex;
 
 class PlayerSaveData {
 
@@ -13,6 +14,7 @@ private:
 	friend class DataManager;
 	friend class Inventory;
 	friend class WaveManager;
+	friend class SkillList;
 
 	int level;
 	int money;
@@ -22,6 +24,7 @@ private:
 	float health;
 	bool newSave;
 	std::unordered_map<ItemIndex, int> storage;
+	std::unordered_map<SkillListIndex, int> skillProgress;
 
 	PlayerSaveData();
 

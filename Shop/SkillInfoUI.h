@@ -3,7 +3,7 @@
 #include <GameComponent.h>
 #include <Utils.h>
 
-struct SkillNode;
+struct SkillInfo;
 
 class SkillInfoUI : public GameObject {
 
@@ -34,10 +34,11 @@ private:
 	GameObject* skillDescription;
 	GameObject* frameUnselected;
 	GameObject* frameUnselectedMessage;
+	GameObject* skillVisual;
 
 	bool showingSkill;
 
-	void UpdateSkillInfo(SkillNode* skillNode);
+	void UpdateSkillInfo(SkillInfo skillNode);
 
 public:
 

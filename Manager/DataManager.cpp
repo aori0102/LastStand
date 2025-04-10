@@ -8,6 +8,7 @@
 
 #include <GameCore.h>
 #include <ItemManager.h>
+#include <SkillList.h>
 
 DataManager* DataManager::instance = nullptr;
 
@@ -21,6 +22,8 @@ PlayerSaveData::PlayerSaveData() {
 	health = 100.0f;
 	newSave = true;
 	storage = {};
+	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++)
+		skillProgress[static_cast<SkillListIndex>(i)] = 0;
 
 }
 
@@ -37,10 +40,11 @@ void DataManager::SavePlayerData() {
 	file << "Health:" << playerSaveData->health << std::endl;
 	file << "Wave:" << playerSaveData->wave << std::endl;
 
-	int storageSize = playerSaveData->storage.size();
-	file << storageSize << std::endl;
 	for (auto it = playerSaveData->storage.begin(); it != playerSaveData->storage.end(); it++)
 		file << "Item:" << static_cast<int>(it->first) << "|" << it->second << std::endl;
+
+	for (auto it = playerSaveData->skillProgress.begin(); it != playerSaveData->skillProgress.end(); it++)
+		file << "Skill:" << static_cast<int>(it->first) << "|" << it->second << std::endl;
 
 	file.close();
 
@@ -78,6 +82,10 @@ void DataManager::LoadPlayerData() {
 		else if (line.find("Item") != std::string::npos)
 			playerSaveData->storage[
 				static_cast<ItemIndex>(std::stoi(line.substr(line.find(':') + 1, line.rfind('|') - line.find(':') - 1)))
+			] = std::stoi(line.substr(line.find('|') + 1));
+		else if (line.find("Skill") != std::string::npos)
+			playerSaveData->skillProgress[
+				static_cast<SkillListIndex>(std::stoi(line.substr(line.find(':') + 1, line.rfind('|') - line.find(':') - 1)))
 			] = std::stoi(line.substr(line.find('|') + 1));
 
 	}

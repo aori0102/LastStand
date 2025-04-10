@@ -20,6 +20,8 @@ enum class PlayerAttribute {
 	ReloadSpeed,
 	Accuracy,
 	MaxHealth,
+
+	None,
 };
 
 class Player : public GameObject {

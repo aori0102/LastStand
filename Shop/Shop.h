@@ -16,7 +16,7 @@
 #include <Utils.h>
 
 struct ButtonUIGroup;
-struct SkillNode;
+struct SkillInfo;
 class Player;
 class Firearm;
 class FirearmUpgrade;
@@ -236,7 +236,7 @@ public:
 	void SelectFirearm(Firearm* firearm);
 	void SelectItem(ItemIndex itemIndex);
 	void BuyItem();
-	void SelectSkillNode(SkillNode* skillNode);
+	void SelectSkillNode(SkillInfo info);
 	void BuySkillNode();
 	void UpdateSkillPoint(int amount);
 	void Toggle();
