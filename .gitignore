@@ -403,7 +403,7 @@ FodyWeavers.xsd
 out/
 
 # Ignore SDL2 files
-!Lib/SDL2/lib/x64/SDL2.dll
-!Lib/SDL2_ttf/lib/x64/SDL2_ttf.dll
-!Lib/SDL2_image/lib/x64/SDL2_image.dll
-!Lib/SDL2_mixer/lib/x64/SDL2_mixer.dll
+!Lib/SDL2/
+!Lib/SDL2_ttf/
+!Lib/SDL2_image/
+!Lib/SDL2_mixer/
