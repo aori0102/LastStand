@@ -38,7 +38,11 @@ private:
 
 	bool showingSkill;
 
+private:
+
 	void UpdateSkillInfo(SkillInfo skillNode);
+	void Show();
+	void Hide();
 
 public:
 

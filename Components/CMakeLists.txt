@@ -8,7 +8,6 @@ set(SOURCES
     "GameComponent.cpp"
     "GameObject.cpp"
     "Humanoid.cpp"
-    "Inventory.cpp"
     "RigidBody.cpp"
     "Transform.cpp"
 )

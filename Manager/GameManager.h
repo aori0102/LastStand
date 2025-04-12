@@ -16,13 +16,16 @@
 class AudioManager;
 class AnimationManager;
 class DataManager;
+class Inventory;
 class ItemManager;
 class MediaManager;
 class Menu;
+class PauseMenu;
 class PhysicsManager;
 class Player;
 class PlayerStatistic;
 class RenderManager;
+class SettingsUI;
 class Shop;
 class StatusBar;
 class UIEventManager;
@@ -33,7 +36,9 @@ enum class ZombieIndex;
 enum class SceneIndex {
 
 	MainMenu,
-	Game,
+	Settings,
+	InGame,
+	InGamePaused,
 
 };
 
@@ -45,7 +50,6 @@ class GameManager {
 
 private:
 
-	const Vector2 MAP_SIZE = Vector2(3000.0f, 3000.0f);
 	const std::vector<Vector2> SPAWN_POSITION_LIST =
 	{
 	Vector2(-1450.0f, 500.0f),
@@ -58,13 +62,19 @@ private:
 	Vector2(500.0f, -1450.0f)
 	};
 
+public:
+
+	const Vector2 MAP_SIZE = Vector2(3700.0f, 3700.0f);
+
 	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
 
 private:
 
+	bool gameRunning;
 	SceneIndex currentScene;
+	SceneIndex previousScene;
 	AudioManager* audioManager;
 	AnimationManager* animationManager;
 	DataManager* dataManager;
@@ -84,6 +94,9 @@ private:
 	PlayerStatistic* playerStatistic;
 	StatusBar* statusBar;
 	Shop* shop;
+	Inventory* inventory;
+	SettingsUI* settingsUI;
+	PauseMenu* pauseMenu;
 
 	static GameManager* instance;
 
@@ -105,6 +118,10 @@ public:
 	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void Update();
 	void SwitchScene(SceneIndex targetScene);
+	void SwitchToPreviousScene();
+	void FreezeGame();
+	void UnfreezeGame();
+	bool GameRunning() const;
 	
 	static GameManager* Instance();
 

@@ -22,6 +22,12 @@ private:
 	GameObject* frame;
 	GameObject* keyLabel;
 
+private:
+
+	void UpdateVisual(std::string keyString);
+	void Show();
+	void Hide();
+
 public:
 
 	KeyBindSingleUIGroup();

@@ -52,6 +52,9 @@ private:
 
 	void InitializeInventorySlots();
 	void InitializeHotBarSlots();
+	void InitializeUI();
+	void Show();
+	void Hide();
 	void SwapSlots(SlotUI* first, SlotUI* second);
 	void UpdateSlot(SlotUI* slotUI);
 

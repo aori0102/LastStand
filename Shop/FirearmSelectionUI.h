@@ -47,7 +47,9 @@ private:
 
 private:
 
-	void UpdateNodeVisual();
+	void UpdateListPosition();
+	void Show();
+	void Hide();
 
 public:
 

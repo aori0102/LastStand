@@ -203,7 +203,7 @@ private:
 private:
 
 	bool showShop;
-	std::unordered_map<FirearmAttributeIndex, FirearmUpgrade*> firearmUpgradeMap;
+	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, FirearmUpgrade*>> firearmUpgradeMap;
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 	Firearm* currentFirearm;
 	ItemIndex currentItemIndex;
@@ -222,7 +222,7 @@ private:
 	void ShowCurrentMenu();
 	void HideCurrentMenu();
 	void InitializeUI();
-	void InitializeUpgrades();
+	void InitializeUpgrades(ItemIndex firearmIndex);
 	void SwitchMenu(ShopMenuIndex targetMenuIndex);
 	void UpdateAttributeList();
 
@@ -240,6 +240,7 @@ public:
 	void BuySkillNode();
 	void UpdateSkillPoint(int amount);
 	void Toggle();
+	void AddFirearmToUpgrade(Firearm* firearm);
 
 	ItemIndex GetSelectedItem() const;
 

@@ -45,6 +45,8 @@ private:
 private:
 
 	void UpdateVisual();
+	void Show();
+	void Hide();
 
 public:
 

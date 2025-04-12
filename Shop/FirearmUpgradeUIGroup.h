@@ -44,6 +44,8 @@ private:
 private:
 
 	void UpdateDescription();
+	void Show();
+	void Hide();
 
 public:
 

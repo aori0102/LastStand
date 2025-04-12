@@ -41,23 +41,22 @@ void Shotgun::SetFirearmItemID(ItemIndex initItemIndex) {
 
 	}
 
-	attributeMap = BASE_FIREARM_INFO_MAP.at(initItemIndex).attributeMap;
 	reloadType = BASE_FIREARM_INFO_MAP.at(initItemIndex).reloadType;
 
 	SetIndex(initItemIndex);
 
 }
 
-bool Shotgun::TryUse(Player* player) {
+bool Shotgun::TryUse() {
 
 	if (!CanShoot())
 		return false;
 
 	OnShoot();
-	float baseDamage = attributeMap.at(FirearmAttributeIndex::Damage);;
+	float baseDamage = firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Damage);;
 	float damage;
 	bool isCrit;
-	Vector2 direction = player->GetAimingDirection();
+	Vector2 direction = Player::Instance()->GetAimingDirection();
 
 	AudioManager::Instance()->PlayOneShot(MediaSFX::ShotgunShot);
 
@@ -66,7 +65,7 @@ bool Shotgun::TryUse(Player* player) {
 		isCrit = IsCrit();
 
 		if (isCrit)
-			damage = baseDamage * (1.0f + attributeMap.at(FirearmAttributeIndex::CriticalDamage));
+			damage = baseDamage * (1.0f + firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::CriticalDamage));
 		else
 			damage = baseDamage;
 
@@ -74,7 +73,7 @@ bool Shotgun::TryUse(Player* player) {
 
 		// Won't cause memory leak because of self destruction
 		Bullet* bullet = GameObject::Instantiate<Bullet>("Bullet", Layer::Bullet);
-		bullet->SetUpBullet(player->transform->position, player->GetAimingDirection(), damage, isCrit);
+		bullet->SetUpBullet(Player::Instance()->transform->position, Player::Instance()->GetAimingDirection(), damage, isCrit);
 
 	}
 

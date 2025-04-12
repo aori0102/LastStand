@@ -6,6 +6,7 @@
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <Shop.h>
 #include <Texture.h>
 #include <Transform.h>
 
@@ -34,15 +35,12 @@ void InventoryUI::InitializeInventorySlots() {
 				MediaManager::Instance()->GetUISprite(MediaUI::Inventory_Slot), true
 			);
 			frame->transform->position = Math::SDLToC00(slotPosition, frame->transform->scale);
-			frame->Render = [this, frame_image]() {
-				if (IsActive())
-					frame_image->Render();
+			frame->Render = [frame_image]() {
+				frame_image->Render();
 				};
 			Button* frame_button = frame->AddComponent<Button>();
 			frame_button->backgroundColor = Color::TRANSPARENT;
 			frame_button->OnClick = [this, slotUI]() {
-				if (!IsActive())
-					return false;
 				SelectSlot(slotUI);
 				return true;
 				};
@@ -54,9 +52,8 @@ void InventoryUI::InitializeInventorySlots() {
 			itemCountLabel_text->LoadText("", Color::WHITE, ITEM_COUNT_FONT_SIZE);
 			Align::Right(itemCountLabel->transform, frame->transform);
 			Align::Bottom(itemCountLabel->transform, frame->transform);
-			itemCountLabel->Render = [this, itemCountLabel_text]() {
-				if (IsActive())
-					itemCountLabel_text->Render();
+			itemCountLabel->Render = [itemCountLabel_text]() {
+				itemCountLabel_text->Render();
 				};
 			slotUI->itemCountLabel = itemCountLabel;
 
@@ -64,9 +61,8 @@ void InventoryUI::InitializeInventorySlots() {
 			Image* visual_image = visual->AddComponent<Image>();
 			visual_image->showOnScreen = true;
 			visual->transform->position = frame->transform->position;
-			visual->Render = [this, visual_image]() {
-				if (IsActive())
-					visual_image->Render();
+			visual->Render = [visual_image]() {
+				visual_image->Render();
 				};
 			visual->Disable();
 			slotUI->visual = visual;
@@ -105,15 +101,12 @@ void InventoryUI::InitializeHotBarSlots() {
 		frame_image->showOnScreen = true;
 		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Inventory_HotBarSlot), true);
 		frame->transform->position = Math::SDLToC00(slotPosition, frame->transform->scale);
-		frame->Render = [this, frame_image]() {
-			if (IsActive())
-				frame_image->Render();
+		frame->Render = [frame_image]() {
+			frame_image->Render();
 			};
 		Button* frame_button = frame->AddComponent<Button>();
 		frame_button->backgroundColor = Color::TRANSPARENT;
 		frame_button->OnClick = [this, slotUI]() {
-			if (!IsActive())
-				return false;
 			SelectSlot(slotUI);
 			return true;
 			};
@@ -123,9 +116,8 @@ void InventoryUI::InitializeHotBarSlots() {
 		Image* visual_image = visual->AddComponent<Image>();
 		visual_image->showOnScreen = true;
 		visual->transform->position = frame->transform->position;
-		visual->Render = [this, visual_image]() {
-			if (IsActive())
-				visual_image->Render();
+		visual->Render = [visual_image]() {
+			visual_image->Render();
 			};
 		visual->Disable();
 		slotUI->visual = visual;
@@ -136,9 +128,8 @@ void InventoryUI::InitializeHotBarSlots() {
 		itemCountLabel_text->LoadText("", Color::WHITE, ITEM_COUNT_FONT_SIZE);
 		Align::Left(itemCountLabel->transform, frame->transform);
 		Align::Bottom(itemCountLabel->transform, frame->transform);
-		itemCountLabel->Render = [this, itemCountLabel_text]() {
-			if (IsActive())
-				itemCountLabel_text->Render();
+		itemCountLabel->Render = [itemCountLabel_text]() {
+			itemCountLabel_text->Render();
 			};
 		slotUI->itemCountLabel = itemCountLabel;
 
@@ -151,6 +142,92 @@ void InventoryUI::InitializeHotBarSlots() {
 
 	}
 
+
+}
+
+void InventoryUI::InitializeUI() {
+
+	background = GameObject::Instantiate("Inventory UI Background", Layer::Menu);
+	Image* background_image = background->AddComponent<Image>();
+	background_image->showOnScreen = true;
+	background_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Inventory_Background), true);
+	background->transform->position = Vector2::zero;
+	background->Render = [this, background_image]() {
+		if (IsActive())
+			background_image->Render();
+		};
+
+	title = GameObject::Instantiate("Inventory UI Title", Layer::Menu);
+	Text* title_text = title->AddComponent<Text>();
+	title_text->showOnScreen = true;
+	title_text->LoadText(INVENTORY_TITLE, Color::WHITE, INVENTORY_TITLE_FONT_SIZE);
+	Align::MiddleHorizontally(title->transform, background->transform);
+	Align::Top(title->transform, background->transform);
+	title->transform->position.y += INVENTORY_TITLE_OFFSET;
+	title->Render = [this, title_text]() {
+		if (IsActive())
+			title_text->Render();
+		};
+
+	InitializeInventorySlots();
+
+	InitializeHotBarSlots();
+
+}
+
+void InventoryUI::Show() {
+
+	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
+
+		(it->second)->frame->Enable();
+		(it->second)->itemCountLabel->Enable();
+		(it->second)->visual->Enable();
+
+	}
+
+	for (auto& row : storageGrid) {
+
+		for (auto slot : row) {
+
+			slot->frame->Enable();
+			slot->itemCountLabel->Enable();
+			slot->visual->Enable();
+
+		}
+
+	}
+
+	background->Enable();
+	title->Enable();
+
+	Shop::Instance()->Disable();
+
+}
+
+void InventoryUI::Hide() {
+
+	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
+
+		(it->second)->frame->Disable();
+		(it->second)->itemCountLabel->Disable();
+		(it->second)->visual->Disable();
+
+	}
+
+	for (auto& row : storageGrid) {
+
+		for (auto slot : row) {
+
+			slot->frame->Disable();
+			slot->itemCountLabel->Disable();
+			slot->visual->Disable();
+
+		}
+
+	}
+
+	background->Disable();
+	title->Disable();
 
 }
 
@@ -179,7 +256,7 @@ void InventoryUI::UpdateSlot(SlotUI* slotUI) {
 		return;
 
 	if (slotUI->isHotBar)
-		Player::Instance()->GetComponent<Inventory>()->LinkItemToHotBar(slotUI->hotBarSlotIndex, slotUI->itemIndex);
+		Inventory::Instance()->LinkItemToHotBar(slotUI->hotBarSlotIndex, slotUI->itemIndex);
 
 	if (slotUI->itemIndex == ItemIndex::None) {
 
@@ -187,7 +264,8 @@ void InventoryUI::UpdateSlot(SlotUI* slotUI) {
 		return;
 
 	}
-	slotUI->visual->Enable();
+	if (IsActive())
+		slotUI->visual->Enable();
 	ItemManager::Instance()->LinkItemIcon(slotUI->itemIndex, slotUI->visual->GetComponent<Image>());
 
 }
@@ -198,34 +276,16 @@ InventoryUI::InventoryUI() {
 		throw std::exception("Inventory UI can only have one instance");
 
 	instance = this;
-
-	background = GameObject::Instantiate("Inventory UI Background", Layer::Menu);
-	Image* background_image = background->AddComponent<Image>();
-	background_image->showOnScreen = true;
-	background_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Inventory_Background), true);
-	background->transform->position = Vector2::zero;
-	background->Render = [this, background_image]() {
-		if (IsActive())
-			background_image->Render();
-		};
-
-	title = GameObject::Instantiate("Inventory UI Title", Layer::Menu);
-	Text* title_text = title->AddComponent<Text>();
-	title_text->showOnScreen = true;
-	title_text->LoadText(INVENTORY_TITLE, Color::WHITE, INVENTORY_TITLE_FONT_SIZE);
-	Align::MiddleHorizontally(title->transform, background->transform);
-	Align::Top(title->transform, background->transform);
-	title->transform->position.y += INVENTORY_TITLE_OFFSET;
-	title->Render = [this, title_text]() {
-		if (IsActive())
-			title_text->Render();
-		};
-
-	InitializeInventorySlots();
-
-	InitializeHotBarSlots();
-
 	selectedSlotUI = nullptr;
+
+	InitializeUI();
+
+	OnEnabled = [this]() {
+		Show();
+		};
+	OnDisabled = [this]() {
+		Hide();
+		};
 
 }
 
@@ -335,7 +395,6 @@ void InventoryUI::UpdateHotBarSlot(ItemIndex itemIndex, int amount, HotBarSlotIn
 		return;
 
 	hotbarSlotMap.at(hotBarSlotIndex)->itemIndex = itemIndex;
-
 	UpdateSlot(hotbarSlotMap.at(hotBarSlotIndex));
 
 }

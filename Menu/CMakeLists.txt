@@ -6,6 +6,7 @@ set(SOURCES
     "KeyBindSingleUIGroup.cpp"
     "KeyBindUIGroup.cpp"
     "Menu.cpp"
+    "SettingsUI.cpp"
     "SliderUIGroup.cpp"
 )
 

@@ -25,9 +25,17 @@ AudioManager::~AudioManager() {
 
 }
 
-void AudioManager::PlayOneShot(MediaSFX mediaSFX) {
+void AudioManager::PlayOneShot(MediaSFX mediaSFX, float distance) {
 
-	Mix_PlayChannel(-1, MediaManager::Instance()->GetSFX(mediaSFX), 0);
+	if (distance > MAX_DISTANCE)
+		// To far
+		return;
+
+	Mix_Chunk* chunk = MediaManager::Instance()->GetSFX(mediaSFX);
+
+	Mix_VolumeChunk(chunk, MIX_MAX_VOLUME / (1.0f + VOLUME_FALLOFF_COEFFICIENT * distance));
+
+	Mix_PlayChannel(-1, chunk, 0);
 
 }
 

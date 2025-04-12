@@ -70,4 +70,4 @@ bool Ammunition::TryRemoveFromStack(int amount) {
 
 }
 
-bool Ammunition::TryUse(Player* player) { return false; }
+bool Ammunition::TryUse() { return false; }

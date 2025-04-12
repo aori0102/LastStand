@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include <AudioManager.h>
 #include <Firearm.h>
 #include <MediaManager.h>
 #include <Shop.h>
@@ -28,6 +29,22 @@ const std::string FirearmUpgradeUIGroup::COST_PREFIX = "Cost: ";
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
+
+void FirearmUpgradeUIGroup::Show() {
+
+	upgradeLabel->Enable();
+	upgradeDescription->Enable();
+	upgradeCost->Enable();
+
+}
+
+void FirearmUpgradeUIGroup::Hide() {
+
+	upgradeLabel->Disable();
+	upgradeDescription->Disable();
+	upgradeCost->Disable();
+
+}
 
 void FirearmUpgradeUIGroup::UpdateDescription() {
 
@@ -54,10 +71,12 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup() {
 	upgrade_button->backgroundColor = Color::TRANSPARENT;
 	upgrade_button->OnClick = [this]() {
 		Shop::Instance()->BuyUpgrade(firearmAttributeIndex);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
 		};
 	upgrade_button->OnMouseEnter = [upgrade_image]() {
 		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmUpgradeSlotHovered), true);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
 		};
 	upgrade_button->OnMouseLeave = [upgrade_image]() {
 		upgrade_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmUpgradeSlot), true);
@@ -87,6 +106,9 @@ FirearmUpgradeUIGroup::FirearmUpgradeUIGroup() {
 		upgradeDescription_text->Render();
 		upgradeCost_text->Render();
 		};
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 

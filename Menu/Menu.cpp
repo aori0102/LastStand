@@ -3,6 +3,7 @@
 #include <iostream>
 #include <exception>
 
+#include <AudioManager.h>
 #include <GameCore.h>
 #include <GameManager.h>
 #include <KeyBindUIGroup.h>
@@ -42,9 +43,16 @@ void Menu::InitializeMenu() {
 	playButton_button->OnClick = [this]() {
 		if (!IsActive())
 			return false;
-		std::cout << "Play Button Clicked!" << std::endl;
-		GameManager::Instance()->SwitchScene(SceneIndex::Game);
+		GameManager::Instance()->SwitchScene(SceneIndex::InGame);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
+		};
+	playButton_button->OnMouseEnter = [playButton_image]() {
+		playButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button_Selected), true);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
+		};
+	playButton_button->OnMouseLeave = [playButton_image]() {
+		playButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 		};
 	playButton->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::PlayButton), playButton->transform->position
@@ -83,9 +91,16 @@ void Menu::InitializeMenu() {
 	settingsButton_button->OnClick = [this]() {
 		if (!IsActive())
 			return false;
-		std::cout << "Click Settings\n";
-		SwitchMenu(MenuStateIndex::Settings);
+		GameManager::Instance()->SwitchScene(SceneIndex::Settings);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
+		};
+	settingsButton_button->OnMouseEnter = [settingsButton_image]() {
+		settingsButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button_Selected), true);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
+		};
+	settingsButton_button->OnMouseLeave = [settingsButton_image]() {
+		settingsButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 		};
 	settingsButton->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::SettingsButton), settingsButton->transform->position
@@ -125,7 +140,15 @@ void Menu::InitializeMenu() {
 		if (!IsActive())
 			return false;
 		std::cout << "Quit Button Clicked!" << std::endl;
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
+		};
+	quitButton_button->OnMouseEnter = [quitButton_image]() {
+		quitButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button_Selected), true);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
+		};
+	quitButton_button->OnMouseLeave = [quitButton_image]() {
+		quitButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 		};
 	quitButton->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::QuitButton), quitButton->transform->position
@@ -170,180 +193,31 @@ void Menu::InitializeMenu() {
 		};
 	uiElementMap[UIElementIndex::VersionLabel] = versionLabel;
 
-	// -------------
-	// MASTER VOLUME SLIDER
-	// -------------
-	SliderUIGroup* masterVolumeSlider = GameObject::Instantiate<SliderUIGroup>("Master Volume Slider", Layer::Menu);
-	masterVolumeSlider->SetSliderLabel(UI_TEXT_MAP.at(UIElementIndex::MasterVolumeSlider));
-	masterVolumeSlider->SetPosition(UI_POSITION_MAP.at(UIElementIndex::MasterVolumeSlider));
-	masterVolumeSlider->OnValueUpdated = [](float value) {
-		GameCore::SetMasterVolume(value);
-		};
-	uiElementMap[UIElementIndex::MasterVolumeSlider] = masterVolumeSlider;
+}
 
-	// -------------
-	// SFX VOLUME SLIDER
-	// -------------
-	SliderUIGroup* sfxVolumeSlider = GameObject::Instantiate<SliderUIGroup>("SFX Volume Slider", Layer::Menu);
-	sfxVolumeSlider->SetSliderLabel(UI_TEXT_MAP.at(UIElementIndex::SFXVolumeSlider));
-	sfxVolumeSlider->SetPosition(UI_POSITION_MAP.at(UIElementIndex::SFXVolumeSlider));
-	sfxVolumeSlider->OnValueUpdated = [](float value) {
-		GameCore::SetSFXVolume(value);
-		};
-	uiElementMap[UIElementIndex::SFXVolumeSlider] = sfxVolumeSlider;
+void Menu::Show() {
 
-	// -------------
-	// MASTER VOLUME SLIDER
-	// -------------
-	SliderUIGroup* musicVolumeSlider = GameObject::Instantiate<SliderUIGroup>("Master Volume Slider", Layer::Menu);
-	musicVolumeSlider->SetSliderLabel(UI_TEXT_MAP.at(UIElementIndex::MusicVolumeSlider));
-	musicVolumeSlider->SetPosition(UI_POSITION_MAP.at(UIElementIndex::MusicVolumeSlider));
-	musicVolumeSlider->OnValueUpdated = [](float value) {
-		GameCore::SetMusicVolume(value);
-		};
-	uiElementMap[UIElementIndex::MusicVolumeSlider] = musicVolumeSlider;
-
-	// -------------
-	// SETTINGS RETURN BUTTON
-	// -------------
-	GameObject* settingReturnButton = GameObject::Instantiate("Settings Return Button", Layer::Menu);
-	Image* settingReturnButton_image = settingReturnButton->AddComponent<Image>();
-	settingReturnButton_image->showOnScreen = true;
-	settingReturnButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::MenuSetting_ReturnButton), true);
-	Button* settingReturnButton_button = settingReturnButton->AddComponent<Button>();
-	settingReturnButton_button->backgroundColor = Color::TRANSPARENT;
-	settingReturnButton_button->OnClick = [this]() {
-		if (!IsActive())
-			return false;
-		std::cout << "Click Retrun\n";
-		SwitchMenu(MenuStateIndex::MainMenu);
-		return true;
-		};
-	settingReturnButton->transform->position = Math::SDLToC00(
-		UI_POSITION_MAP.at(UIElementIndex::SettingReturnButton), settingReturnButton->transform->scale
-	);
-	settingReturnButton->Render = [this, settingReturnButton_image]() {
-		if (IsActive())
-			settingReturnButton_image->Render();
-		};
-	uiElementMap[UIElementIndex::SettingReturnButton] = settingReturnButton;
-
-	// -------------
-	// SETTINGS RETURN LABEL
-	// -------------
-	GameObject* settingReturnLabel = GameObject::Instantiate("Settings Return Label", Layer::Menu);
-	Text* settingReturnLabel_text = settingReturnLabel->AddComponent<Text>();
-	settingReturnLabel_text->showOnScreen = true;
-	settingReturnLabel_text->LoadText(
-		UI_TEXT_MAP.at(UIElementIndex::SettingReturnLabel),
-		Color::WHITE, 
-		UI_FONT_SIZE_MAP.at(UIElementIndex::SettingReturnLabel)
-	);
-	settingReturnLabel->Render = [this, settingReturnLabel_text]() {
-		if (IsActive())
-			settingReturnLabel_text->Render();
-		};
-	settingReturnLabel->transform->position = settingReturnButton->transform->position;
-	uiElementMap[UIElementIndex::SettingReturnLabel] = settingReturnLabel;
-
-	// -------------
-	// SETTINGS LABEL
-	// -------------
-	GameObject* settingTitleLabel = GameObject::Instantiate("Settings Title Label", Layer::Menu);
-	Text* settingTitleLabel_text = settingTitleLabel->AddComponent<Text>();
-	settingTitleLabel_text->showOnScreen = true;
-	settingTitleLabel_text->LoadText(
-		UI_TEXT_MAP.at(UIElementIndex::SettingsTitleLabel),
-		Color::WHITE,
-		UI_FONT_SIZE_MAP.at(UIElementIndex::SettingsTitleLabel)
-	);
-	settingTitleLabel->Render = [this, settingTitleLabel_text]() {
-		if (IsActive())
-			settingTitleLabel_text->Render();
-		};
-	settingTitleLabel->transform->position = Math::SDLToC00(
-		UI_POSITION_MAP.at(UIElementIndex::SettingsTitleLabel), settingTitleLabel->transform->scale
-	);
-	uiElementMap[UIElementIndex::SettingsTitleLabel] = settingTitleLabel;
-
-	// -------------
-	// SETTINGS RETURN LABEL
-	// -------------
-	uiElementMap[UIElementIndex::KeyBindList] = GameObject::Instantiate<KeyBindUIGroup>("Key Bind UI Group", Layer::Menu);
+	uiElementMap.at(UIElementIndex::PlayButton)->Enable();
+	uiElementMap.at(UIElementIndex::SettingsButton)->Enable();
+	uiElementMap.at(UIElementIndex::QuitButton)->Enable();
+	uiElementMap.at(UIElementIndex::PlayLabel)->Enable();
+	uiElementMap.at(UIElementIndex::QuitLabel)->Enable();
+	uiElementMap.at(UIElementIndex::SettingsLabel)->Enable();
+	uiElementMap.at(UIElementIndex::Title)->Enable();
+	uiElementMap.at(UIElementIndex::VersionLabel)->Enable();
 
 }
 
-void Menu::ShowCurrentMenu() {
+void Menu::Hide() {
 
-	switch (currentMenuState) {
-
-	case MenuStateIndex::MainMenu:
-
-		uiElementMap.at(UIElementIndex::PlayButton)->Enable();
-		uiElementMap.at(UIElementIndex::SettingsButton)->Enable();
-		uiElementMap.at(UIElementIndex::QuitButton)->Enable();
-		uiElementMap.at(UIElementIndex::PlayLabel)->Enable();
-		uiElementMap.at(UIElementIndex::QuitLabel)->Enable();
-		uiElementMap.at(UIElementIndex::SettingsLabel)->Enable();
-		uiElementMap.at(UIElementIndex::Title)->Enable();
-		uiElementMap.at(UIElementIndex::VersionLabel)->Enable();
-
-		break;
-
-	case MenuStateIndex::Settings:
-
-		uiElementMap.at(UIElementIndex::MasterVolumeSlider)->Enable();
-		uiElementMap.at(UIElementIndex::SFXVolumeSlider)->Enable();
-		uiElementMap.at(UIElementIndex::MusicVolumeSlider)->Enable();
-		uiElementMap.at(UIElementIndex::SettingReturnButton)->Enable();
-		uiElementMap.at(UIElementIndex::SettingReturnLabel)->Enable();
-		uiElementMap.at(UIElementIndex::KeyBindList)->Enable();
-		uiElementMap.at(UIElementIndex::SettingsTitleLabel)->Enable();
-
-		break;
-
-	case MenuStateIndex::Saves:
-
-		break;
-
-	}
-
-}
-
-void Menu::HideCurrentMenu() {
-
-	switch (currentMenuState) {
-
-	case MenuStateIndex::MainMenu:
-
-		uiElementMap.at(UIElementIndex::PlayButton)->Disable();
-		uiElementMap.at(UIElementIndex::SettingsButton)->Disable();
-		uiElementMap.at(UIElementIndex::QuitButton)->Disable();
-		uiElementMap.at(UIElementIndex::PlayLabel)->Disable();
-		uiElementMap.at(UIElementIndex::QuitLabel)->Disable();
-		uiElementMap.at(UIElementIndex::SettingsLabel)->Disable();
-		uiElementMap.at(UIElementIndex::Title)->Disable();
-		uiElementMap.at(UIElementIndex::VersionLabel)->Disable();
-
-		break;
-
-	case MenuStateIndex::Settings:
-
-		uiElementMap.at(UIElementIndex::MasterVolumeSlider)->Disable();
-		uiElementMap.at(UIElementIndex::SFXVolumeSlider)->Disable();
-		uiElementMap.at(UIElementIndex::MusicVolumeSlider)->Disable();
-		uiElementMap.at(UIElementIndex::SettingReturnButton)->Disable();
-		uiElementMap.at(UIElementIndex::SettingReturnLabel)->Disable();
-		uiElementMap.at(UIElementIndex::KeyBindList)->Disable();
-		uiElementMap.at(UIElementIndex::SettingsTitleLabel)->Disable();
-
-		break;
-
-	case MenuStateIndex::Saves:
-
-		break;
-
-	}
+	uiElementMap.at(UIElementIndex::PlayButton)->Disable();
+	uiElementMap.at(UIElementIndex::SettingsButton)->Disable();
+	uiElementMap.at(UIElementIndex::QuitButton)->Disable();
+	uiElementMap.at(UIElementIndex::PlayLabel)->Disable();
+	uiElementMap.at(UIElementIndex::QuitLabel)->Disable();
+	uiElementMap.at(UIElementIndex::SettingsLabel)->Disable();
+	uiElementMap.at(UIElementIndex::Title)->Disable();
+	uiElementMap.at(UIElementIndex::VersionLabel)->Disable();
 
 }
 
@@ -352,17 +226,12 @@ Menu::Menu() {
 	if (instance)
 		throw std::exception("Menu can only have one instance!");
 
-	currentMenuState = MenuStateIndex::MainMenu;
-
 	instance = this;
 
 	InitializeMenu();
 
-	OnEnabled = [this]() { ShowCurrentMenu(); };
-	OnDisabled = [this]() { HideAll(); };
-
-	HideAll();
-	ShowCurrentMenu();
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 
@@ -372,26 +241,6 @@ Menu::~Menu() {
 		GameObject::Destroy(it->second);
 
 	instance = nullptr;
-
-}
-
-void Menu::SwitchMenu(MenuStateIndex targetMenu) {
-
-	if (currentMenuState == targetMenu)
-		return;
-
-	HideCurrentMenu();
-
-	currentMenuState = targetMenu;
-
-	ShowCurrentMenu();
-
-}
-
-void Menu::HideAll() {
-
-	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
-		(it->second)->Disable();
 
 }
 

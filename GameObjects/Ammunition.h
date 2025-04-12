@@ -26,6 +26,6 @@ public:
 	void Dequip() override;
 	bool TryAddToStack(int amount = 1) override;
 	bool TryRemoveFromStack(int amount = 1) override;
-	bool TryUse(Player* player) override;
+	bool TryUse() override;
 
 };

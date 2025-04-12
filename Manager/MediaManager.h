@@ -72,6 +72,7 @@ enum class MediaUI {
 	Inventory_Slot_Selected,
 	Menu_Title,
 	Menu_Button,
+	Menu_Button_Selected,
 	MenuSetting_KeyBindingFrame,
 	MenuSetting_KeyBindingFrameSelected,
 	MenuSetting_ReturnButton,
@@ -87,6 +88,8 @@ enum class MediaUI {
 	SkillVisual_Accuracy_II,
 	SkillVisual_Accuracy_III,
 	SkillVisual_Accuracy_IV,
+	Menu_PauseFrame,
+	Menu_PauseMenuButton,
 
 };
 
@@ -101,6 +104,21 @@ enum class MediaSFX {
 	RifleShot,
 	PistolShot,
 	ShotgunShot,
+	WalkGrass1,
+	WalkGrass2,
+	WalkGrass3,
+	ZombieHurt1,
+	ZombieHurt2,
+	ZombieHurt3,
+	ZombieHurt4,
+	ZombieHurt5,
+	ZombieHurt6,
+	ZombieGroan1,
+	ZombieGroan2,
+	ZombieGroan3,
+	ZombieGroan4,
+	Click,
+	Clack,
 
 };
 
@@ -172,6 +190,7 @@ private:
 		{ MediaUI::Inventory_HotBarSlot, "Inventory\\HotBarSlot" },
 		{ MediaUI::Inventory_HotBarSlot_Selected, "Inventory\\HotBarSlotSelected" },
 		{ MediaUI::Menu_Button, "Menu\\Button" },
+		{ MediaUI::Menu_Button_Selected, "Menu\\ButtonSelected" },
 		{ MediaUI::Menu_Title, "Menu\\Title" },
 		{ MediaUI::MenuSetting_KeyBindingFrame, "MenuSetting\\KeyBindingFrame" },
 		{ MediaUI::MenuSetting_KeyBindingFrameSelected, "MenuSetting\\KeyBindingFrameSelected" },
@@ -188,6 +207,8 @@ private:
 		{ MediaUI::SkillVisual_Accuracy_III, "SkillVisual\\Accuracy_III" },
 		{ MediaUI::SkillVisual_Accuracy_IV, "SkillVisual\\Accuracy_IV" },
 		{ MediaUI::SkillVisual_QuickHand_I, "SkillVisual\\QuickHand_I" },
+		{ MediaUI::Menu_PauseFrame, "Menu\\PauseFrame" },
+		{ MediaUI::Menu_PauseMenuButton, "Menu\\PauseMenuButton" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
@@ -206,6 +227,21 @@ private:
 		{ MediaSFX::RifleShot, "RifleShot" },
 		{ MediaSFX::ShotgunShot, "ShotgunShot" },
 		{ MediaSFX::PistolShot, "PistolShot" },
+		{ MediaSFX::WalkGrass1, "WalkGrass1" },
+		{ MediaSFX::WalkGrass2, "WalkGrass2" },
+		{ MediaSFX::WalkGrass3, "WalkGrass3" },
+		{ MediaSFX::ZombieGroan1, "ZombieGroan1" },
+		{ MediaSFX::ZombieGroan2, "ZombieGroan2" },
+		{ MediaSFX::ZombieGroan3, "ZombieGroan3" },
+		{ MediaSFX::ZombieGroan4, "ZombieGroan4" },
+		{ MediaSFX::ZombieHurt1, "ZombieHurt1" },
+		{ MediaSFX::ZombieHurt2, "ZombieHurt2" },
+		{ MediaSFX::ZombieHurt3, "ZombieHurt3" },
+		{ MediaSFX::ZombieHurt4, "ZombieHurt4" },
+		{ MediaSFX::ZombieHurt5, "ZombieHurt5" },
+		{ MediaSFX::ZombieHurt6, "ZombieHurt6" },
+		{ MediaSFX::Click, "Click" },
+		{ MediaSFX::Clack, "Clack" },
 	};
 
 	/// ----------------------------------

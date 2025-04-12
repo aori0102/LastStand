@@ -69,6 +69,7 @@ private:
 	static const float CAMERA_WOBBLE_BASE_FREQUENCY;
 	static const float CAMERA_POSITIONAL_DISTORTION_FREQUENCY;
 	static const float CAMERA_ROTATIONAL_DISTORTION_FREQUENCY;
+	static const Vector2 MAP_ZONE;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -130,11 +131,16 @@ public:
 	static void SetSFXVolume(float amount);
 	static void SetMasterVolume(float amount);
 	static void SetActionKeyBind(ActionIndex actionIndex, SDL_Keycode keycode);
+	static void SaveConfig();
+	static void LoadConfig();
 	static bool SelectedUI();
 	static bool Initialize();
 	static bool IsAnyKeyPressed();
 	static float Time();
 	static float DeltaTime();
+	static float GetMasterVolume();
+	static float GetSFXVolume();
+	static float GetMusicVolume();
 	static std::string GetVersionString();
 	static std::string GetAppDataPath();
 	static std::string GetLastKeyInString();
@@ -144,6 +150,7 @@ public:
 	static Vector2 WindowResolution();
 	static Vector2 GetMouseInput();
 	static Vector2 ScreenToWorldPosition(Vector2 screenPosition);
+	static SDL_Keycode GetKeyBinded(ActionIndex actionIndex);
 	static SDL_Keycode GetLastKey();
 	static SDL_Texture* CreateTexture(SDL_Surface* loadedSurface);
 	static SDL_Texture* CreateTexture(Vector2 size);

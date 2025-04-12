@@ -19,6 +19,9 @@ void Button::ResetState() {
 	isHeld = false;
 	isHovered = false;
 
+	OnMouseRelease();
+	OnMouseLeave();
+
 }
 
 Button::Button(GameObject* initOwner) : GameComponent(initOwner) {

@@ -16,37 +16,25 @@
 #include <Item.h>
 #include <ItemManager.h>
 #include <Player.h>
+#include <Shop.h>
 
 const std::unordered_map<ItemIndex, int> Inventory::STARTER_KIT = {
 	{ ItemIndex::Pistol_M1911, 10 },
 	{ ItemIndex::Ammo_9mm, 80 },
 };
+Inventory* Inventory::instance = nullptr;
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void Inventory::OnComponentDestroyed() {
+Inventory::Inventory() {
 
-	SaveInventory();
+	if (instance)
+		throw std::exception("Inventory can only have one instance!");
 
-	for (auto it = storage.begin(); it != storage.end(); it++) {
-
-		GameObject::Destroy((it->second)->item);
-
-		delete (it->second);
-
-	}
-
-	storage.clear();
-
-}
-
-Inventory::Inventory(GameObject* initOwner) : GameComponent(initOwner) {
-
-	if (!initOwner->IsA<Player>())
-		throw std::exception("Inventory must belong to a player!");
-
+	instance = this;
+		
 	storage = {};
 	hotBar = {
 		{ HotBarSlotIndex::None, ItemIndex::None },
@@ -60,17 +48,36 @@ Inventory::Inventory(GameObject* initOwner) : GameComponent(initOwner) {
 
 }
 
+Inventory::~Inventory(){
+
+	for (auto it = storage.begin(); it != storage.end(); it++) {
+
+		GameObject::Destroy((it->second)->item);
+
+		delete (it->second);
+
+	}
+
+	storage.clear();
+
+	instance = nullptr;
+
+}
+
 void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 
 	auto it_storage = storage.find(itemIndex);
 	if (it_storage == storage.end() || !storage.at(itemIndex)) {
 		// Item not found in inventory
 
-		storage[itemIndex] = new ItemState{
-			.stack = amount,
+		ItemState* itemState = new ItemState{
 			.item = ItemManager::Instance()->CreateItem(itemIndex, amount),
 			.slot = HotBarSlotIndex::None,
 		};
+		storage[itemIndex] = itemState;
+
+		if (ItemManager::Instance()->IsIndexOfType<Firearm>(itemIndex))
+			Shop::Instance()->AddFirearmToUpgrade(itemState->item->ToType<Firearm>());
 
 		for (auto it_hotbar = hotBar.begin(); it_hotbar != hotBar.end(); it_hotbar++) {
 
@@ -91,8 +98,6 @@ void Inventory::AddItem(ItemIndex itemIndex, int amount) {
 
 	} else if ((it_storage->second)->item->TryAddToStack(amount)) {
 		// Item found in inventory
-
-		(it_storage->second)->stack = (it_storage->second)->item->GetCurrentStack();
 
 		if ((it_storage->second)->slot != HotBarSlotIndex::None) {
 			// Item is present in hotbar
@@ -140,13 +145,18 @@ void Inventory::ToggleInventory() {
 
 void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex itemIndex) {
 
+	std::cout << 777 << std::endl;
+
 	if (hotBarSlotIndex == HotBarSlotIndex::None)
 		return;
+	std::cout << 777 << std::endl;
 
 	auto it_hotBar = hotBar.find(hotBarSlotIndex);
+	std::cout << 777 << std::endl;
 	if (it_hotBar == hotBar.end() || it_hotBar->second == itemIndex)
 		// The item is not found or already the same
 		return;
+	std::cout << 777 << std::endl;
 
 	// If the item in the hot bar is a valid item and still belongs to the same hotbar (was not moved to a 
 	// different one), make it no longer belongs to the hot bar. This prevents more than one item
@@ -154,6 +164,7 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 	if (it_hotBar->second != ItemIndex::None && (storage.find(it_hotBar->second)->second)->slot == it_hotBar->first)
 		storage.find(it_hotBar->second)->second->slot = HotBarSlotIndex::None;
 
+	std::cout << 777 << std::endl;
 	if (itemIndex == ItemIndex::None) {
 
 		HotBarUI::Instance()->UpdateSlot(hotBarSlotIndex, itemIndex, 0);
@@ -161,15 +172,20 @@ void Inventory::LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex item
 		return;
 
 	}
+	std::cout << 777 << std::endl;
 
 	auto it_storage = storage.find(itemIndex);
 	if (it_storage == storage.end())
 		// Item does not exist in inventory
 		return;
+	std::cout << 777 << std::endl;
 
 	(it_storage->second)->slot = hotBarSlotIndex;
+	std::cout << 777 << std::endl;
 	it_hotBar->second = itemIndex;
+	std::cout << 777 << std::endl;
 	HotBarUI::Instance()->UpdateSlot(hotBarSlotIndex, itemIndex, (it_storage->second)->item->GetCurrentStack());
+	std::cout << 777 << std::endl;
 
 }
 
@@ -177,24 +193,11 @@ void Inventory::SaveInventory() {
 
 	PlayerSaveData* playerSaveData = DataManager::Instance()->playerSaveData;
 
+	playerSaveData->storage.clear();
+
 	// Save items in inventory to data
 	for (auto it = storage.begin(); it != storage.end(); it++)
-		playerSaveData->storage[it->first] = (it->second)->stack;
-
-	// Validate data, remove if the item does not exist
-	for (auto it = playerSaveData->storage.begin(); it != playerSaveData->storage.end();) {
-
-		if (storage.contains(it->first)) {
-
-			it++;
-			continue;
-
-		}
-
-		// The item no longer belongs in the inventory
-		it = playerSaveData->storage.erase(it);
-
-	}
+		playerSaveData->storage[it->first] = (it->second)->item->GetCurrentStack();
 
 }
 
@@ -215,14 +218,6 @@ void Inventory::LoadInventory() {
 		savedStorage.clear();
 
 	}
-
-}
-
-void Inventory::UpdateStack(ItemIndex itemIndex, int amount) {
-
-	auto it = storage.find(itemIndex);
-	if (it != storage.end())
-		(it->second)->stack = amount;
 
 }
 
@@ -248,7 +243,6 @@ bool Inventory::TryRemoveItem(ItemIndex itemIndex, int amount) {
 
 	if ((it_storage->second)->item->IsSufficient(amount) && (it_storage->second)->item->TryRemoveFromStack(amount)) {
 		// There is enough item
-		(it_storage->second)->stack = (it_storage->second)->item->GetCurrentStack();
 
 		// Update item in hotbar if present
 		if ((it_storage->second)->slot != HotBarSlotIndex::None)
@@ -290,7 +284,7 @@ bool Inventory::TryUseCurrent() {
 	if (!currentItem)
 		return false;
 
-	bool isUsed = currentItem->TryUse(Owner()->As<Player>());
+	bool isUsed = currentItem->TryUse();
 
 	if (isUsed)
 		TryRemoveItem(currentItem->GetIndex());
@@ -334,3 +328,5 @@ Item* Inventory::GetCurrentItem() {
 		return (it->second)->item;
 
 }
+
+Inventory* Inventory::Instance() { return instance; }

@@ -83,8 +83,9 @@ private:
 
 protected:
 
-	std::unordered_map<FirearmAttributeIndex, float> attributeMap;
 	ReloadType reloadType;
+
+	static std::unordered_map<ItemIndex, FirearmInfo> firearmInfoMap;
 
 	/// ----------------------------------
 	/// METHODS
@@ -106,7 +107,6 @@ public:
 
 	Firearm();
 	virtual ~Firearm();
-	void ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount);
 	void Reload();
 	void UpdateReserveLabel();
 	void UpdateCurrentLabel();
@@ -121,6 +121,8 @@ public:
 	std::string GetName() const;
 
 	virtual void SetFirearmItemID(ItemIndex initItemIndex) = 0;
+
+	static void ModifyAttributeMultiplier(ItemIndex firearmIndex, FirearmAttributeIndex attributeIndex, float amount);
 
 };
 
@@ -139,7 +141,7 @@ private:
 public:
 
 	void SetFirearmItemID(ItemIndex initItemIndex) override;
-	bool TryUse(Player* player) override;
+	bool TryUse() override;
 
 };
 
@@ -161,7 +163,7 @@ private:
 public:
 
 	void SetFirearmItemID(ItemIndex initItemIndex) override;
-	bool TryUse(Player* player) override;
+	bool TryUse() override;
 
 };
 
@@ -180,6 +182,6 @@ private:
 public:
 
 	void SetFirearmItemID(ItemIndex initItemIndex) override;
-	bool TryUse(Player* player) override;
+	bool TryUse() override;
 
 };

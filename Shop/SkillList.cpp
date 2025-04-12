@@ -20,6 +20,7 @@ void SkillList::AddSkill(SkillInfo info) {
 	SkillNode* skillNode = new SkillNode;
 
 	skillNode->skillNodeUI = skillNodeUI;
+	skillNodeUI->nodeConnector = nullptr;
 	skillNode->info = info;
 	skillNode->next = nullptr;
 
@@ -154,6 +155,46 @@ void SkillList::SelectNode(SkillNode* skillNode) {
 
 }
 
+void SkillList::Show() {
+
+	for (auto it = headNodeMap.begin(); it != headNodeMap.end(); it++) {
+
+		auto node = it->second;
+		while (node && node->skillNodeUI) {
+
+			if (node->skillNodeUI->nodeConnector)
+				node->skillNodeUI->nodeConnector->Enable();
+			node->skillNodeUI->skillNodeBackground->Enable();
+			node->skillNodeUI->skillNodeVisual->Enable();
+
+			node = node->next;
+
+		}
+
+	}
+
+}
+
+void SkillList::Hide() {
+
+	for (auto it = headNodeMap.begin(); it != headNodeMap.end(); it++) {
+
+		auto node = it->second;
+		while (node && node->skillNodeUI) {
+
+			if (node->skillNodeUI->nodeConnector)
+				node->skillNodeUI->nodeConnector->Disable();
+			node->skillNodeUI->skillNodeBackground->Disable();
+			node->skillNodeUI->skillNodeVisual->Disable();
+
+			node = node->next;
+
+		}
+
+	}
+
+}
+
 SkillNode* SkillList::UpgradeSelected() {
 
 	if (!selectedNode || !selectedNode->available || selectedNode->acquired)
@@ -192,6 +233,9 @@ SkillList::SkillList() {
 	}
 
 	selectedNode = nullptr;
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 

@@ -3,9 +3,9 @@
 #include <functional>
 #include <string>
 
-class Firearm;
 class UpgradeNode;
 enum class FirearmAttributeIndex;
+enum class ItemIndex;
 
 class FirearmUpgrade {
 
@@ -16,20 +16,26 @@ class FirearmUpgrade {
 private:
 
 	bool sortDescending;
+	int currentProgress;
 	UpgradeNode* currentUpgrade;
 	UpgradeNode* tailNode;
 	FirearmAttributeIndex attribute;
+	ItemIndex firearmIndex;
 
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void SaveUpgradeData();
+
 public:
 
-	FirearmUpgrade(FirearmAttributeIndex initAttribute, bool initSortDescending = false);
-
+	FirearmUpgrade(ItemIndex initFirearmIndex, FirearmAttributeIndex initAttribute, bool initSortDescending = false);
+	~FirearmUpgrade();
 	void AddUpgrade(UpgradeNode* newNode);
-	void UpgradeNext(Firearm* firearm);
+	void UpgradeNext();
 	int NextUpgradeCost();
 	float NextUpgradeAmount();
 

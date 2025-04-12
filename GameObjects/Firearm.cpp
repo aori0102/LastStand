@@ -7,6 +7,7 @@
 #include <Firearm.h>
 
 #include <Ammunition.h>
+#include <DataManager.h>
 #include <GameCore.h>
 #include <Inventory.h>
 #include <ItemManager.h>
@@ -24,7 +25,6 @@ const int Firearm::RESERVE_AMMO_LABEL_SIZE = 14;
 const float Firearm::RESERVE_AMMO_LABEL_OFFSET = 0.0f;
 const Vector2 Firearm::AMMO_FRAME_POSTIION = Vector2(1119.0f, 660.0f);
 const Vector2 Firearm::AMMO_ICON_POSTIION = Vector2(1130.0f, 676.0f);
-
 const std::unordered_map<ItemIndex, FirearmInfo> Firearm::BASE_FIREARM_INFO_MAP = {
 	{ ItemIndex::Pistol_M1911, FirearmInfo {
 		.name = "M1911",
@@ -67,6 +67,8 @@ const std::unordered_map<ItemIndex, FirearmInfo> Firearm::BASE_FIREARM_INFO_MAP 
 	} },
 };
 
+std::unordered_map<ItemIndex, FirearmInfo> Firearm::firearmInfoMap = Firearm::BASE_FIREARM_INFO_MAP;
+
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
@@ -97,9 +99,9 @@ void Firearm::OnShoot() {
 
 void Firearm::HandleReloading() {
 
-	if (isReloading && GameCore::Time() >= lastReloadTick + attributeMap.at(FirearmAttributeIndex::ReloadTime)) {
+	if (isReloading && GameCore::Time() >= lastReloadTick + firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::ReloadTime)) {
 
-		int magazineCapacity = static_cast<int>(attributeMap.at(FirearmAttributeIndex::MagazineCapacity));
+		int magazineCapacity = static_cast<int>(firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::MagazineCapacity));
 
 		// Finish reloading
 		if (reloadType == ReloadType::PerAmmo) {
@@ -138,7 +140,6 @@ void Firearm::HandleReloading() {
 		}
 
 		UpdateReserveLabel();
-		Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), GetCurrentStack());
 
 	}
 
@@ -153,14 +154,14 @@ bool Firearm::CanShoot() {
 
 	}
 
-	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / attributeMap.at(FirearmAttributeIndex::Firerate);
+	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Firerate);
 
 }
 
 bool Firearm::IsCrit() {
 
 	float chance = Random::Float(0.0f, 1.0f);
-	return 0.0f <= chance && chance <= attributeMap.at(FirearmAttributeIndex::CriticalChance);
+	return 0.0f <= chance && chance <= firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::CriticalChance);
 
 }
 
@@ -170,10 +171,9 @@ Firearm::Firearm() {
 	lastShootTick = 0.0f;
 	isReloading = false;
 	stopReload = false;
-	previousCurrentAmmo = 0;
+	previousCurrentAmmo = currentStack;
 
 	reloadType = ReloadType::Magazine;
-	attributeMap = {};
 
 	ammoFrame = GameObject::Instantiate("Ammo Frame", Layer::GUI);
 	Image* ammoFrame_image = ammoFrame->AddComponent<Image>();
@@ -197,6 +197,7 @@ Firearm::Firearm() {
 	Text* currentAmmoLabel_text = currentAmmoLabel->AddComponent<Text>();
 	currentAmmoLabel_text->showOnScreen = true;
 	currentAmmoLabel_text->LoadText(std::to_string(currentStack), Color::WHITE, CURRENT_AMMO_LABEL_SIZE);
+	UpdateCurrentLabel();
 	currentAmmoLabel->transform->position = ammoFrame->transform->position;
 	currentAmmoLabel->Render = [currentAmmoLabel_text]() {
 		currentAmmoLabel_text->Render();
@@ -241,13 +242,7 @@ Firearm::~Firearm() {
 	GameObject::Destroy(reloadLabel);
 	reloadLabel = nullptr;
 
-	attributeMap.clear();
-
-}
-
-void Firearm::ModifyAttributeMultiplier(FirearmAttributeIndex attributeIndex, float amount) {
-
-	attributeMap.at(attributeIndex) = BASE_FIREARM_INFO_MAP.at(GetIndex()).attributeMap.at(attributeIndex) * amount;
+	firearmInfoMap.at(GetIndex()).attributeMap.clear();
 
 }
 
@@ -256,7 +251,7 @@ void Firearm::Reload() {
 	if (isReloading)
 		return;
 
-	if (Player::Instance()->GetAmmoCount(BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionItemIndex) == 0 || currentStack == static_cast<int>(attributeMap.at(FirearmAttributeIndex::MagazineCapacity)))
+	if (Player::Instance()->GetAmmoCount(BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionItemIndex) == 0 || currentStack == static_cast<int>(firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::MagazineCapacity)))
 		return;
 
 	isReloading = true;
@@ -324,7 +319,6 @@ void Firearm::Update() {
 bool Firearm::TryAddToStack(int amount) {
 
 	currentStack += amount;
-	Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), amount);
 	return true;
 
 }
@@ -335,7 +329,6 @@ bool Firearm::TryRemoveFromStack(int amount) {
 		return false;
 
 	currentStack -= amount;
-	Player::Instance()->GetComponent<Inventory>()->UpdateStack(GetIndex(), amount);
 	return true;
 
 }
@@ -344,10 +337,17 @@ bool Firearm::ItemRanOut() { return false; }
 
 float Firearm::GetAttribute(FirearmAttributeIndex attributeIndex) {
 
-	return attributeMap.at(attributeIndex);
+	return firearmInfoMap.at(GetIndex()).attributeMap.at(attributeIndex);
 
 }
 
 ItemIndex Firearm::GetAmmoItemIndex() { return BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionItemIndex; }
 
 std::string Firearm::GetName() const { return firearmName; }
+
+void Firearm::ModifyAttributeMultiplier(ItemIndex firearmIndex, FirearmAttributeIndex attributeIndex, float amount) {
+
+	firearmInfoMap.at(firearmIndex).attributeMap.at(attributeIndex)
+		= BASE_FIREARM_INFO_MAP.at(firearmIndex).attributeMap.at(attributeIndex) * amount;
+
+}

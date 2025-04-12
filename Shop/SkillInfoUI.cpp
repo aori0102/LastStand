@@ -48,7 +48,37 @@ void SkillInfoUI::UpdateSkillInfo(SkillInfo info) {
 
 }
 
-SkillInfoUI::SkillInfoUI() : GameObject("Skill Info UI", Layer::Menu) {
+void SkillInfoUI::Show() {
+
+	frame->Enable();
+	iconFrame->Enable();
+	buyButton->Enable();
+	buttonCostLabel->Enable();
+	buttonIcon->Enable();
+	skillLabel->Enable();
+	skillDescription->Enable();
+	frameUnselected->Enable();
+	frameUnselectedMessage->Enable();
+	skillVisual->Enable();
+
+}
+
+void SkillInfoUI::Hide() {
+
+	frame->Disable();
+	iconFrame->Disable();
+	buyButton->Disable();
+	buttonCostLabel->Disable();
+	buttonIcon->Disable();
+	skillLabel->Disable();
+	skillDescription->Disable();
+	frameUnselected->Disable();
+	frameUnselectedMessage->Disable();
+	skillVisual->Disable();
+
+}
+
+SkillInfoUI::SkillInfoUI() {
 
 	showingSkill = false;
 
@@ -148,5 +178,8 @@ SkillInfoUI::SkillInfoUI() : GameObject("Skill Info UI", Layer::Menu) {
 		skillDescription_text->Render();
 		skillVisual_image->Render();
 		};
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }

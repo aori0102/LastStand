@@ -77,6 +77,26 @@ void SliderUIGroup::InitializeUI() {
 
 }
 
+void SliderUIGroup::Show() {
+
+	emptyFormatFrame->Enable();
+	label->Enable();
+	sliderBar->Enable();
+	sliderNob->Enable();
+	valueLabel->Enable();
+
+}
+
+void SliderUIGroup::Hide() {
+
+	emptyFormatFrame->Disable();
+	label->Disable();
+	sliderBar->Disable();
+	sliderNob->Disable();
+	valueLabel->Disable();
+
+}
+
 SliderUIGroup::SliderUIGroup() {
 
 	OnValueUpdated = [](float) {};
@@ -84,6 +104,9 @@ SliderUIGroup::SliderUIGroup() {
 	isSelected = false;
 
 	InitializeUI();
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 
@@ -133,6 +156,20 @@ void SliderUIGroup::SetSliderLabel(std::string sliderLable) {
 
 }
 
+void SliderUIGroup::SetValue(float value) {
+
+	value = Math::Clamp(value, 0.0f, 1.0f);
+
+	OnValueUpdated(value);
+
+	sliderNob->transform->position.x = sliderBar->transform->position.x + (value - 0.5f) * sliderBar->transform->scale.x;
+
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(0) << value * 100.0f << VALUE_SUFFIX;
+	valueLabel->GetComponent<Text>()->LoadText(ss.str(), Color::WHITE, VALUE_FONT_SIZE);
+
+}
+
 void SliderUIGroup::Update() {
 
 	if (!isSelected)
@@ -151,14 +188,7 @@ void SliderUIGroup::Update() {
 	float mousePositionX = Math::SDLToC00(GameCore::GetMouseInput(), Vector2::zero).x;
 	float value = (mousePositionX - (sliderBar->transform->position - sliderBar->transform->scale / 2.0f).x) 
 		/ sliderBar->transform->scale.x;
-	value = Math::Clamp(value, 0.0f, 1.0f);
 
-	OnValueUpdated(value);
-
-	sliderNob->transform->position.x = sliderBar->transform->position.x + (value - 0.5f) * sliderBar->transform->scale.x;
-
-	std::stringstream ss;
-	ss << std::fixed << std::setprecision(0) << value * 100.0f << VALUE_SUFFIX;
-	valueLabel->GetComponent<Text>()->LoadText(ss.str(), Color::WHITE, VALUE_FONT_SIZE);
+	SetValue(value);
 
 }

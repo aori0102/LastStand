@@ -28,6 +28,7 @@ private:
 public:
 
 	std::function<void()> OnDeath;
+	std::function<void()> OnDamaged;
 
 	/// ----------------------------------
 	/// METHODS
@@ -36,6 +37,7 @@ public:
 public:
 
 	Humanoid(GameObject* initOwner);
+	~Humanoid();
 	void SetHealth(float amount);
 	void Damage(float amount);
 	void Heal(float amount);

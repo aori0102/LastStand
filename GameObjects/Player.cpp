@@ -12,6 +12,7 @@
 #include <AnimationController.h>
 #include <AnimationManager.h>
 #include <Animation.h>
+#include <AudioManager.h>
 #include <BoxCollider.h>
 #include <Bullet.h>
 #include <Firearm.h>
@@ -36,16 +37,6 @@
 /// STATIC FIELDS
 /// ----------------------------------
 
-const float Player::MOVING_AIM_DEVIATION = 27.0f;
-const float Player::STANDING_AIM_DEVIATION = 10.0f;
-const float Player::ADS_AIM_DEVIATION = 5.0f;
-const float Player::MOVEMENT_SPEED_CHANGE_RATE = 50.0f;
-const float Player::CAMERA_AIM_ZOOM = 1.3f;
-const float Player::DEFAULT_MOVEMENT_SPEED = 500.0f;
-const float Player::AIM_MOVEMENT_SPEED = 300.0f;
-const float Player::SPRINT_MOVEMENT_SPEED = 750.0f;
-const float Player::STAMINA_DRAIN_RATE = 29.0f;
-const float Player::STAMINA_RECOVERY_RATE = 9.0f;
 Player* Player::instance = nullptr;
 
 /// ----------------------------------
@@ -70,19 +61,18 @@ void Player::HandleActions() {
 
 	}
 	// Hotbar
-	Inventory* inventory = GetComponent<Inventory>();
 	if (GameCore::GetKeyState(SDLK_1).started)
-		inventory->SelectSlot(HotBarSlotIndex::First);
+		Inventory::Instance()->SelectSlot(HotBarSlotIndex::First);
 	else if (GameCore::GetKeyState(SDLK_2).started)
-		inventory->SelectSlot(HotBarSlotIndex::Second);
+		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Second);
 	else if (GameCore::GetKeyState(SDLK_3).started)
-		inventory->SelectSlot(HotBarSlotIndex::Third);
+		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Third);
 	else if (GameCore::GetKeyState(SDLK_4).started)
-		inventory->SelectSlot(HotBarSlotIndex::Forth);
+		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Forth);
 	else if (GameCore::GetKeyState(SDLK_5).started)
-		inventory->SelectSlot(HotBarSlotIndex::Fifth);
+		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Fifth);
 
-	itemIndex = inventory->GetCurrentItemIndex();
+	itemIndex = Inventory::Instance()->GetCurrentItemIndex();
 
 	// Use item
 	if (itemIndex == ItemIndex::Rifle_M4)
@@ -90,16 +80,16 @@ void Player::HandleActions() {
 	else
 		usingItem = GameCore::GetMouseState(MouseButton::Left).started;
 
-	usingItem = usingItem && inventory->TryUseCurrent();
+	usingItem = usingItem && Inventory::Instance()->TryUseCurrent();
 
 	// Toggle inventory UI
 	if (GameCore::GetActionState(ActionIndex::ToggleInventory).started)
-		inventory->ToggleInventory();
+		Inventory::Instance()->ToggleInventory();
 
 	// Reload firearm
 	if (GameCore::GetActionState(ActionIndex::Reload).started) {
 
-		Item* currentItem = inventory->GetCurrentItem();
+		Item* currentItem = Inventory::Instance()->GetCurrentItem();
 		Firearm* currentFirearm = nullptr;
 		if (currentItem)
 			currentFirearm = dynamic_cast<Firearm*>(currentItem);
@@ -153,13 +143,55 @@ void Player::HandleMovement() {
 	transform->Translate(input.Normalize() * currentMovementSpeed * GameCore::DeltaTime());
 
 	// Assign deviation
-	if (isMoving)
+	if (isMoving) {
+
 		aimDeviation = MOVING_AIM_DEVIATION;
-	else
+
+	} else
 		aimDeviation = STANDING_AIM_DEVIATION;
 
 	if (isAiming)
 		aimDeviation = ADS_AIM_DEVIATION;
+
+	// Play movement sound
+	float currentTick = GameCore::Time();
+	MediaSFX audioIndex = static_cast<MediaSFX>(
+		Random::Int(static_cast<int>(MediaSFX::WalkGrass1), static_cast<int>(MediaSFX::WalkGrass3))
+		);
+
+	if (isMoving) {
+
+		if (isSprinting) {
+
+			if (currentTick >= lastWalkSoundTick + SPRINT_SOUND_DELAY) {
+
+				lastWalkSoundTick = currentTick;
+				AudioManager::Instance()->PlayOneShot(audioIndex);
+
+			}
+
+		} else if (isAiming) {
+
+			if (currentTick >= lastWalkSoundTick + AIM_SOUND_DELAY) {
+
+				lastWalkSoundTick = currentTick;
+				AudioManager::Instance()->PlayOneShot(audioIndex);
+
+			}
+
+
+		} else {
+
+			if (currentTick >= lastWalkSoundTick + WALK_SOUND_DELAY) {
+
+				lastWalkSoundTick = currentTick;
+				AudioManager::Instance()->PlayOneShot(audioIndex);
+
+			}
+
+		}
+
+	}
 
 }
 
@@ -334,7 +366,7 @@ void Player::InitializeData() {
 
 	// Components
 	transform->scale = Vector2(50.0f, 50.0f);
-	AddComponent<BoxCollider>();
+	AddComponent<BoxCollider>()->ignoreLayerSet = { Layer::Bullet };
 
 	Image* playerSprite = AddComponent<Image>();
 	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
@@ -342,8 +374,8 @@ void Player::InitializeData() {
 
 	hotBarUI = GameObject::Instantiate<HotBarUI>("Hot Bar UI", Layer::GUI);
 	inventoryUI = GameObject::Instantiate<InventoryUI>("Inventory UI", Layer::Menu);
-
-	AddComponent<Inventory>()->LoadInventory();
+	inventoryUI->Disable();
+	hotBarUI->Disable();
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->mass = 60.0f;
@@ -365,6 +397,7 @@ void Player::InitializeData() {
 	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 	targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 	aimDeviation = STANDING_AIM_DEVIATION;
+	lastWalkSoundTick = 0.0f;
 	playerAttributeMap = {
 		{ PlayerAttribute::Accuracy, 0.3f },
 		{ PlayerAttribute::ReloadSpeed, 1.0f },
@@ -394,12 +427,10 @@ Player::Player() : GameObject("Player", Layer::Player) {
 
 	OnEnabled = [this]() {
 		hotBarUI->Enable();
-		inventoryUI->Enable();
 		};
 
 	OnDisabled = [this]() {
 		hotBarUI->Disable();
-		inventoryUI->Disable();
 		};
 
 }
@@ -432,7 +463,7 @@ void Player::PlayerRender() {
 
 void Player::GiveItem(ItemIndex itemIndex, int amount) {
 
-	GetComponent<Inventory>()->AddItem(itemIndex, amount);
+	Inventory::Instance()->AddItem(itemIndex, amount);
 
 }
 
@@ -453,7 +484,7 @@ void Player::SetAttribute(PlayerAttribute playerAttribute, float value) {
 		std::vector<Firearm*> firearmList = GetFirearmList();
 		for (Firearm* firearm : firearmList)
 			firearm->ModifyAttributeMultiplier(
-				FirearmAttributeIndex::ReloadTime, 1.0f / value
+				firearm->GetIndex(), FirearmAttributeIndex::ReloadTime, 1.0f / value
 			);
 
 		break;
@@ -465,7 +496,7 @@ void Player::SetAttribute(PlayerAttribute playerAttribute, float value) {
 		std::vector<Firearm*> firearmList = GetFirearmList();
 		for (Firearm* firearm : firearmList)
 			firearm->ModifyAttributeMultiplier(
-				FirearmAttributeIndex::CriticalChance, value
+				firearm->GetIndex(), FirearmAttributeIndex::CriticalChance, value
 			);
 
 		break;
@@ -478,6 +509,9 @@ void Player::SetAttribute(PlayerAttribute playerAttribute, float value) {
 
 void Player::Update() {
 
+	if (!GameManager::Instance()->GameRunning())
+		return;
+
 	HandleMovement();
 	HandleFacing();
 	HandleActions();
@@ -487,7 +521,7 @@ void Player::Update() {
 
 int Player::GetAmmoCount(ItemIndex ammoItemIndex) {
 
-	return GetComponent<Inventory>()->GetItemCount(ammoItemIndex);
+	return Inventory::Instance()->GetItemCount(ammoItemIndex);
 
 }
 
@@ -495,7 +529,7 @@ float Player::GetAttribute(PlayerAttribute playerAttribute) { return playerAttri
 
 bool Player::TryConsumeAmmo(ItemIndex ammoItemIndex, int amount) {
 
-	return GetComponent<Inventory>()->TryRemoveItem(ammoItemIndex, amount);
+	return Inventory::Instance()->TryRemoveItem(ammoItemIndex, amount);
 
 }
 
@@ -507,7 +541,7 @@ Vector2 Player::GetAimingDirection() {
 
 std::vector<Firearm*> Player::GetFirearmList() {
 
-	return GetComponent<Inventory>()->GetItemListOfType<Firearm>();
+	return Inventory::Instance()->GetItemListOfType<Firearm>();
 
 }
 

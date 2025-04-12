@@ -33,16 +33,19 @@ class Player : public GameObject {
 private:
 
 	// The aiming error angle in degree
-	static const float MOVING_AIM_DEVIATION;
-	static const float STANDING_AIM_DEVIATION;
-	static const float ADS_AIM_DEVIATION;
-	static const float MOVEMENT_SPEED_CHANGE_RATE;
-	static const float CAMERA_AIM_ZOOM;
-	static const float DEFAULT_MOVEMENT_SPEED;
-	static const float AIM_MOVEMENT_SPEED;
-	static const float SPRINT_MOVEMENT_SPEED;
-	static const float STAMINA_DRAIN_RATE;
-	static const float STAMINA_RECOVERY_RATE;
+	const float MOVING_AIM_DEVIATION = 27.0f;
+	const float STANDING_AIM_DEVIATION = 10.0f;
+	const float ADS_AIM_DEVIATION = 5.0f;
+	const float MOVEMENT_SPEED_CHANGE_RATE = 50.0f;
+	const float CAMERA_AIM_ZOOM = 1.3f;
+	const float DEFAULT_MOVEMENT_SPEED = 500.0f;
+	const float AIM_MOVEMENT_SPEED = 300.0f;
+	const float SPRINT_MOVEMENT_SPEED = 750.0f;
+	const float STAMINA_DRAIN_RATE = 29.0f;
+	const float STAMINA_RECOVERY_RATE = 9.0f;
+	const float WALK_SOUND_DELAY = 0.6f;
+	const float AIM_SOUND_DELAY = 0.9f;
+	const float SPRINT_SOUND_DELAY = 0.35f;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -57,6 +60,7 @@ private:
 	float currentMovementSpeed;
 	float targetMovementSpeed;
 	float aimDeviation;
+	float lastWalkSoundTick;
 	std::unordered_map<PlayerAttribute, float> playerAttributeMap;
 	ItemIndex itemIndex;
 	Vector2 forward;

@@ -53,7 +53,7 @@ public:
 
 	virtual void Equip() = 0;
 	virtual void Dequip() = 0;
-	virtual bool TryUse(Player* player) = 0;
+	virtual bool TryUse() = 0;
 	virtual bool TryAddToStack(int amount = 1) = 0;
 	virtual bool TryRemoveFromStack(int amount = 1) = 0;
 	virtual bool ItemRanOut();

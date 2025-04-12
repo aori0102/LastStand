@@ -192,6 +192,11 @@ void GameObject::Destroy(GameObject* gameObject) {
 	if (!gameObjectSet.contains(gameObject))
 		return;
 
+	gameObject->enabled = false;
+	gameObject->Render = []() {};
+	gameObject->OnEnabled = []() {};
+	gameObject->OnDisabled = []() {};
+
 	deletionSet.insert(gameObject);
 
 }

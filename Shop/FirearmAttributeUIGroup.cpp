@@ -52,6 +52,30 @@ void FirearmAttributeUIGroup::UpdateVisual() {
 
 }
 
+void FirearmAttributeUIGroup::Show() {
+
+	for (auto it = attributeUIMap.begin(); it != attributeUIMap.end(); it++) {
+
+		(it->second)->amount->Enable();
+		(it->second)->format->Enable();
+		(it->second)->label->Enable();
+
+	}
+
+}
+
+void FirearmAttributeUIGroup::Hide() {
+
+	for (auto it = attributeUIMap.begin(); it != attributeUIMap.end(); it++) {
+
+		(it->second)->amount->Disable();
+		(it->second)->format->Disable();
+		(it->second)->label->Disable();
+
+	}
+
+}
+
 FirearmAttributeUIGroup::FirearmAttributeUIGroup() {
 
 	position = Vector2::zero;
@@ -89,6 +113,9 @@ FirearmAttributeUIGroup::FirearmAttributeUIGroup() {
 	}
 
 	UpdateVisual();
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 

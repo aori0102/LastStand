@@ -18,6 +18,14 @@ Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 	maxStamina = 100.0f;
 
 	OnDeath = []() {};
+	OnDamaged = []() {};
+
+}
+
+Humanoid::~Humanoid() {
+
+	OnDeath = []() {};
+	OnDamaged = []() {};
 
 }
 
@@ -34,6 +42,8 @@ void Humanoid::Damage(float amount) {
 
 	if (health <= 0.0f)
 		OnDeath();
+	else
+		OnDamaged();
 
 }
 

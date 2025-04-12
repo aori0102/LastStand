@@ -39,6 +39,11 @@ private:
 
 	std::unordered_map<UIElementIndex, KeyBindSingleUIGroup*> uiElementMap;
 
+private:
+
+	void Show();
+	void Hide();
+
 public:
 
 	KeyBindUIGroup();

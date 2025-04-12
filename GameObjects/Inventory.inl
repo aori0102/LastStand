@@ -1,5 +1,7 @@
 #include <GameComponent.h>
 
+#include <vector>
+
 #include <Item.h>
 
 template <class T>

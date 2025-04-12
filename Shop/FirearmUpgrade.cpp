@@ -6,19 +6,45 @@
 
 #include <FirearmUpgrade.h>
 
+#include <DataManager.h>
 #include <Firearm.h>
+#include <ItemManager.h>
 #include <Shop.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-FirearmUpgrade::FirearmUpgrade(FirearmAttributeIndex initAttribute, bool initSortDescending) {
+void FirearmUpgrade::SaveUpgradeData() {
 
+	DataManager::Instance()->playerSaveData->firearmUpgradeProgress[firearmIndex][attribute]
+		= currentProgress;
+
+}
+
+FirearmUpgrade::FirearmUpgrade(ItemIndex initFirearmIndex, FirearmAttributeIndex initAttribute, bool initSortDescending) {
+
+	currentProgress = 0;
 	sortDescending = initSortDescending;
 	currentUpgrade = nullptr;
 	tailNode = nullptr;
 	attribute = initAttribute;
+	firearmIndex = initFirearmIndex;
+
+}
+
+FirearmUpgrade::~FirearmUpgrade() {
+
+	SaveUpgradeData();
+
+	while (currentUpgrade) {
+
+		auto next = currentUpgrade->next;
+
+		delete currentUpgrade;
+		currentUpgrade = next;
+
+	}
 
 }
 
@@ -40,20 +66,27 @@ void FirearmUpgrade::AddUpgrade(UpgradeNode* newUpgrade) {
 	tailNode->next = newUpgrade;
 	tailNode = newUpgrade;
 
+	// If this upgrade progress tier is lower than saved one,
+	// modify the attribute and delete the node
+	if (currentProgress < DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex).at(attribute))
+		UpgradeNext();
+
 }
 
-void FirearmUpgrade::UpgradeNext(Firearm* firearm) {
+void FirearmUpgrade::UpgradeNext() {
 
-	if (!currentUpgrade || !firearm)
+	if (!currentUpgrade || firearmIndex == ItemIndex::None)
 		return;
-	
-	firearm->ModifyAttributeMultiplier(attribute, currentUpgrade->amount);
 
-	std::cout << "Upgrading to next tier. New amount: " << currentUpgrade->amount << " for " << currentUpgrade->cost << " cost" << std::endl;
+	Firearm::ModifyAttributeMultiplier(firearmIndex, attribute, currentUpgrade->amount);
 
 	UpgradeNode* nextUpgrade = currentUpgrade->next;
 	delete currentUpgrade;
 	currentUpgrade = nextUpgrade;
+
+	currentProgress++;
+	if (currentProgress > DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex).at(attribute))
+		DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex)[attribute] = currentProgress;
 
 }
 
@@ -71,6 +104,6 @@ float FirearmUpgrade::NextUpgradeAmount() {
 	if (currentUpgrade)
 		return currentUpgrade->amount;
 
-	return 0.0f;
+	return -FLT_MAX;
 
 }

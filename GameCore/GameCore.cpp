@@ -11,6 +11,7 @@
 
 #include <AnimationManager.h>
 #include <AudioManager.h>
+#include <DataManager.h>
 #include <GameComponent.h>
 #include <GameManager.h>
 #include <ItemManager.h>
@@ -37,6 +38,7 @@ const float GameCore::CAMERA_NOISE_AMPLITUDE = 58.0f;
 const float GameCore::CAMERA_WOBBLE_BASE_FREQUENCY = 0.8f;
 const float GameCore::CAMERA_POSITIONAL_DISTORTION_FREQUENCY = 0.3f;
 const float GameCore::CAMERA_ROTATIONAL_DISTORTION_FREQUENCY = 0.2f;
+const Vector2 GameCore::MAP_ZONE = Vector2(3840.0f, 3840.0f);
 
 bool GameCore::quit = false;
 bool GameCore::selectedUI = false;
@@ -54,16 +56,7 @@ std::string GameCore::gameName = "Last Stand";
 
 std::unordered_map<SDL_Keycode, ActionState> GameCore::keyStateDictionary = {};
 std::unordered_map<MouseButton, ActionState> GameCore::mouseButtonStateDictionary = {};
-std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {
-	{ ActionIndex::MoveUp, SDLK_w },
-	{ ActionIndex::MoveDown, SDLK_s },
-	{ ActionIndex::MoveLeft, SDLK_a },
-	{ ActionIndex::MoveRight, SDLK_d },
-	{ ActionIndex::Reload, SDLK_r },
-	{ ActionIndex::Sprint, SDLK_LSHIFT },
-	{ ActionIndex::ToggleInventory, SDLK_i },
-	{ ActionIndex::ToggleShop, SDLK_TAB },
-};
+std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {};
 
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
@@ -234,6 +227,9 @@ void GameCore::HandleEvent() {
 
 void GameCore::UpdateCamera() {
 
+	if (!GameManager::Instance()->GameRunning())
+		return;
+
 	if (!cameraFocusObject)
 		return;
 
@@ -251,6 +247,16 @@ void GameCore::UpdateCamera() {
 	wobble.x = std::sinf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.x * direction.x;
 	wobble.y = std::cosf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.y * direction.y;
 	cameraPosition = Vector2::Lerp(cameraPosition, cameraFocusObject->transform->position + wobble, CAMERA_FOLLOW_SPEED);
+	cameraPosition.x = Math::Clamp(
+		cameraPosition.x,
+		(windowResolution.x - MAP_ZONE.x) / 2.0f,
+		(-windowResolution.x + MAP_ZONE.x) / 2.0f
+	);
+	cameraPosition.y = Math::Clamp(
+		cameraPosition.y,
+		(windowResolution.y - MAP_ZONE.y) / 2.0f,
+		(-windowResolution.y + MAP_ZONE.y) / 2.0f
+	);
 	currentCameraZoom = Math::Lerp(currentCameraZoom, targetCameraZoom, deltaTime * CAMERA_ZOOM_SPEED);
 
 }
@@ -629,6 +635,28 @@ void GameCore::SetActionKeyBind(ActionIndex actionIndex, SDL_Keycode keycode) {
 
 }
 
+void GameCore::SaveConfig() {
+
+	PlayerConfig* config = DataManager::Instance()->playerConfig;
+
+	config->masterVolume = masterVolume;
+	config->sfxVolume = sfxVolume;
+	config->musicVolume = musicVolume;
+	config->keyBindingMap = keyMappingDictionary;
+
+}
+
+void GameCore::LoadConfig() {
+
+	PlayerConfig* config = DataManager::Instance()->playerConfig;
+
+	masterVolume = config->masterVolume;
+	sfxVolume = config->sfxVolume;
+	musicVolume = config->musicVolume;
+	keyMappingDictionary = config->keyBindingMap;
+
+}
+
 bool GameCore::SelectedUI() { return selectedUI; }
 
 bool GameCore::Initialize() {
@@ -644,6 +672,12 @@ bool GameCore::IsAnyKeyPressed() { return isAnyKeyPressed; }
 float GameCore::Time() { return time; }
 
 float GameCore::DeltaTime() { return deltaTime; }
+
+float GameCore::GetMasterVolume() { return masterVolume; }
+
+float GameCore::GetSFXVolume() { return sfxVolume; }
+
+float GameCore::GetMusicVolume() { return musicVolume; }
 
 std::string GameCore::GetVersionString() {
 
@@ -719,6 +753,12 @@ Vector2 GameCore::ScreenToWorldPosition(Vector2 screenPosition) {
 		screenPosition.x - windowResolution.x / 2.0f,
 		windowResolution.y / 2.0f - screenPosition.y
 	) + cameraPosition;
+
+}
+
+SDL_Keycode GameCore::GetKeyBinded(ActionIndex actionIndex) {
+
+	return keyMappingDictionary.at(actionIndex);
 
 }
 

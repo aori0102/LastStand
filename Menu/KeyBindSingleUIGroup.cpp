@@ -8,6 +8,35 @@ const int KeyBindSingleUIGroup::LABEL_FONT_SIZE = 16;
 const int KeyBindSingleUIGroup::KEY_FONT_SIZE = 12;
 const float KeyBindSingleUIGroup::LABEL_OFFSET = -11.0f;
 
+void KeyBindSingleUIGroup::UpdateVisual(std::string keyString) {
+
+	// Update visual
+	frame->GetComponent<Image>()->LinkSprite(
+		MediaManager::Instance()->GetUISprite(MediaUI::MenuSetting_KeyBindingFrame), true
+	);
+	keyLabel->GetComponent<Text>()->LoadText(
+		keyString, Color::WHITE, KEY_FONT_SIZE
+	);
+	keyLabel->transform->position = frame->transform->position;
+
+}
+
+void KeyBindSingleUIGroup::Show() {
+
+	label->Enable();
+	frame->Enable();
+	keyLabel->Enable();
+
+}
+
+void KeyBindSingleUIGroup::Hide() {
+
+	label->Disable();
+	frame->Disable();
+	keyLabel->Disable();
+
+}
+
 KeyBindSingleUIGroup::KeyBindSingleUIGroup() {
 
 	bindAction = ActionIndex::MoveUp;
@@ -54,6 +83,9 @@ KeyBindSingleUIGroup::KeyBindSingleUIGroup() {
 			keyLabel_text->Render();
 		};
 
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
+
 }
 
 KeyBindSingleUIGroup::~KeyBindSingleUIGroup() {
@@ -91,6 +123,8 @@ void KeyBindSingleUIGroup::BindAction(ActionIndex initBindAction) {
 
 	bindAction = initBindAction;
 
+	UpdateVisual(SDL_GetKeyName(GameCore::GetKeyBinded(bindAction)));
+
 }
 
 void KeyBindSingleUIGroup::Update() {
@@ -100,17 +134,10 @@ void KeyBindSingleUIGroup::Update() {
 
 	if (GameCore::IsAnyKeyPressed()) {
 
-		// Update visual
-		frame->GetComponent<Image>()->LinkSprite(
-			MediaManager::Instance()->GetUISprite(MediaUI::MenuSetting_KeyBindingFrame), true
-		);
-		keyLabel->GetComponent<Text>()->LoadText(
-			GameCore::GetLastKeyInString(), Color::WHITE, KEY_FONT_SIZE
-		);
-		keyLabel->transform->position = frame->transform->position;
-
 		// Set keybind
 		GameCore::SetActionKeyBind(bindAction, GameCore::GetLastKey());
+
+		UpdateVisual(GameCore::GetLastKeyInString());
 
 		// Set flag
 		isSelected = false;

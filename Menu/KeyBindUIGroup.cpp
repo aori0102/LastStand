@@ -38,6 +38,20 @@ const std::unordered_map<KeyBindUIGroup::UIElementIndex, ActionIndex> KeyBindUIG
 	{ KeyBindUIGroup::UIElementIndex::ToggleShop, ActionIndex::ToggleShop },
 };
 
+void KeyBindUIGroup::Show() {
+
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Enable();
+
+}
+
+void KeyBindUIGroup::Hide() {
+
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Disable();
+
+}
+
 KeyBindUIGroup::KeyBindUIGroup() {
 
 	int col = 0;
@@ -65,14 +79,8 @@ KeyBindUIGroup::KeyBindUIGroup() {
 	}
 
 	// Activate, deactivate
-	OnEnabled = [this]() {
-		for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
-			(it->second)->Enable();
-		};
-	OnDisabled = [this]() {
-		for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
-			(it->second)->Disable();
-		};
+	OnEnabled = [this]() { Show();  };
+	OnDisabled = [this]() { Hide(); };
 
 }
 

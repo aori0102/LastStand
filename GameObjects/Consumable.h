@@ -32,7 +32,7 @@ public:
 	Consumable();
 	void Equip() override;
 	void Dequip() override;
-	bool TryUse(Player* player) override; 
+	bool TryUse() override; 
 	bool TryAddToStack(int amount) override;
 	bool TryRemoveFromStack(int amount) override;
 	int GetCurrentStack() const;

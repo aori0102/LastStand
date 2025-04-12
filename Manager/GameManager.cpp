@@ -14,13 +14,16 @@
 #include <DataManager.h>
 #include <GameComponent.h>
 #include <GameCore.h>
+#include <Inventory.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Menu.h>
+#include <PauseMenu.h>
 #include <PhysicsManager.h>
 #include <Player.h>
 #include <PlayerStatistic.h>
 #include <RenderManager.h>
+#include <SettingsUI.h>
 #include <Shop.h>
 #include <StatusBar.h>
 #include <Texture.h>
@@ -39,6 +42,8 @@ GameManager* GameManager::instance = nullptr;
 /// ----------------------------------
 
 void GameManager::InitializeObject() {
+
+	std::cout << "[GameManager] Initializing Game Objects..." << std::endl;
 
 	menu = GameObject::Instantiate<Menu>("Game Menu");
 
@@ -85,10 +90,24 @@ void GameManager::InitializeObject() {
 	player = GameObject::Instantiate<Player>("Player", Layer::Player);
 	player->Disable();
 	GameCore::LetCameraFocus(Player::Instance());
+
+	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
+
+	inventory = new Inventory;
+	inventory->LoadInventory();
+
 	playerStatistic = new PlayerStatistic;
+
 	statusBar = GameObject::Instantiate<StatusBar>("Status Bar", Layer::GUI);
 	statusBar->Disable();
-	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
+
+	settingsUI = GameObject::Instantiate<SettingsUI>("Settings UI", Layer::Menu);
+	settingsUI->Disable();
+
+	pauseMenu = GameObject::Instantiate<PauseMenu>("Pause menu", Layer::Menu);
+	pauseMenu->Disable();
+
+	std::cout << "[GameManager] Game Objects Initialized!" << std::endl;
 
 }
 
@@ -96,7 +115,7 @@ void GameManager::EnableSceneObject() {
 
 	switch (currentScene) {
 
-	case SceneIndex::Game:
+	case SceneIndex::InGame:
 
 		waveManager->Enable();
 
@@ -110,9 +129,31 @@ void GameManager::EnableSceneObject() {
 
 		break;
 
+	case SceneIndex::InGamePaused:
+
+		waveManager->Enable();
+
+		player->Enable();
+		statusBar->Enable();
+		background->Enable();
+		northBorder->Enable();
+		southBorder->Enable();
+		westBorder->Enable();
+		eastBorder->Enable();
+
+		pauseMenu->Enable();
+
+		break;
+
 	case SceneIndex::MainMenu:
 
 		menu->Enable();
+
+		break;
+
+	case SceneIndex::Settings:
+
+		settingsUI->Enable();
 
 		break;
 
@@ -124,7 +165,7 @@ void GameManager::DisableSceneObject() {
 
 	switch (currentScene) {
 
-	case SceneIndex::Game:
+	case SceneIndex::InGame:
 
 		waveManager->Disable();
 
@@ -138,9 +179,31 @@ void GameManager::DisableSceneObject() {
 
 		break;
 
+	case SceneIndex::InGamePaused:
+
+		waveManager->Disable();
+
+		player->Disable();
+		statusBar->Disable();
+		background->Disable();
+		northBorder->Disable();
+		southBorder->Disable();
+		westBorder->Disable();
+		eastBorder->Disable();
+
+		pauseMenu->Disable();
+
+		break;
+
 	case SceneIndex::MainMenu:
 
 		menu->Disable();
+
+		break;
+
+	case SceneIndex::Settings:
+
+		settingsUI->Disable();
 
 		break;
 
@@ -155,7 +218,10 @@ GameManager::GameManager() {
 
 	instance = this;
 
+	gameRunning = true;
+
 	currentScene = SceneIndex::MainMenu;
+	previousScene = SceneIndex::MainMenu;
 
 	std::cout << "Initializing DataManager..." << std::endl;
 	dataManager = new DataManager;
@@ -185,50 +251,80 @@ GameManager::GameManager() {
 	waveManager = new WaveManager;
 	waveManager->Disable();
 
+	GameCore::LoadConfig();
+
 	InitializeObject();
 
 }
 
 GameManager::~GameManager() {
 
+	GameCore::SaveConfig();
+
+	background = nullptr;
+
+	northBorder = nullptr;
+
+	southBorder = nullptr;
+
+	westBorder = nullptr;
+
+	eastBorder = nullptr;
+
+	player = nullptr;
+
+	playerStatistic->SaveData();
+	delete playerStatistic;
+	playerStatistic = nullptr;
+
+	statusBar = nullptr;
+
+	shop = nullptr;
+
+	inventory->SaveInventory();
+	delete inventory;
+	inventory = nullptr;
+
+	settingsUI = nullptr;
+
+	pauseMenu = nullptr;
+
 	std::cout << "Flushing game objects...\n";
 	GameObject::DropNuke();
 
-	background = nullptr;
-	northBorder = nullptr;
-	southBorder = nullptr;
-	westBorder = nullptr;
-	eastBorder = nullptr;
-	player = nullptr;
-	delete playerStatistic;
-	playerStatistic = nullptr;
-	statusBar = nullptr;
-	shop = nullptr;
-
+	std::cout << "[GameManager] Unloading Datamanager..." << std::endl;
 	delete dataManager;
 	dataManager = nullptr;
 
+	std::cout << "[GameManager] Unloading UIEventManager..." << std::endl;
 	delete uiEventManager;
 	uiEventManager = nullptr;
 
+	std::cout << "[GameManager] Unloading MediaManager..." << std::endl;
 	delete mediaManager;
 	mediaManager = nullptr;
 
+	std::cout << "[GameManager] Unloading AudioManager..." << std::endl;
 	delete audioManager;
 	audioManager = nullptr;
 
+	std::cout << "[GameManager] Unloading RenderManager..." << std::endl;
 	delete renderManager;
 	renderManager = nullptr;
 
+	std::cout << "[GameManager] Unloading PhysicsManager..." << std::endl;
 	delete physicsManager;
 	physicsManager = nullptr;
 
+	std::cout << "[GameManager] Unloading AnimationManager..." << std::endl;
 	delete animationManager;
 	animationManager = nullptr;
 
+	std::cout << "[GameManager] Unloading ItemManager..." << std::endl;
 	delete itemManager;
 	itemManager = nullptr;
 
+	std::cout << "[GameManager] Unloading WaveManager..." << std::endl;
 	delete waveManager;
 	waveManager = nullptr;
 
@@ -273,6 +369,18 @@ void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 
 void GameManager::Update() {
 
+	// Freeze game
+	if (GameCore::GetKeyState(SDLK_ESCAPE).started
+		&& (currentScene == SceneIndex::InGamePaused || currentScene == SceneIndex::InGame)) {
+
+		gameRunning = !gameRunning;
+		if (gameRunning)
+			SwitchScene(SceneIndex::InGame);
+		else
+			SwitchScene(SceneIndex::InGamePaused);
+
+	}
+
 	// Update game object
 
 	GameObject::CleanUpDeleted();
@@ -290,10 +398,31 @@ void GameManager::SwitchScene(SceneIndex targetScene) {
 
 	DisableSceneObject();
 
+	previousScene = currentScene;
 	currentScene = targetScene;
 
 	EnableSceneObject();
 
 }
+
+void GameManager::SwitchToPreviousScene() {
+
+	SwitchScene(previousScene);
+
+}
+
+void GameManager::FreezeGame() {
+
+	gameRunning = false;
+
+}
+
+void GameManager::UnfreezeGame() {
+
+	gameRunning = true;
+
+}
+
+bool GameManager::GameRunning() const { return gameRunning; }
 
 GameManager* GameManager::Instance() { return instance; }

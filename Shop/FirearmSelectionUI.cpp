@@ -18,7 +18,7 @@ const Vector2 FirearmSelectionUI::CELL_SIZE = Vector2(340.0f, 195.0f);
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void FirearmSelectionUI::UpdateNodeVisual() {
+void FirearmSelectionUI::UpdateListPosition() {
 
 	int row = 0, col = 0;
 
@@ -45,10 +45,41 @@ void FirearmSelectionUI::UpdateNodeVisual() {
 
 }
 
+void FirearmSelectionUI::Show() {
+
+	auto node = headNode;
+	while (node) {
+
+		node->frame->Enable();
+		node->visual->Enable();
+
+		node = node->nextSlot;
+
+	}
+
+}
+
+void FirearmSelectionUI::Hide() {
+
+	auto node = headNode;
+	while (node) {
+
+		node->frame->Disable();
+		node->visual->Disable();
+
+		node = node->nextSlot;
+
+	}
+
+}
+
 FirearmSelectionUI::FirearmSelectionUI() {
 
 	headNode = nullptr;
 	lastNode = nullptr;
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 
@@ -115,7 +146,7 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 			visual_image->Render();
 		};
 
-	UpdateNodeVisual();
+	UpdateListPosition();
 
 }
 
@@ -136,7 +167,7 @@ void FirearmSelectionUI::RemoveFirearm(Firearm* removingFirearm) {
 			GameObject::Destroy(tempNode->visual);
 			delete tempNode;
 
-			UpdateNodeVisual();
+			UpdateListPosition();
 
 			return;
 
@@ -153,6 +184,6 @@ void FirearmSelectionUI::SetPosition(Vector2 positionInSDL) {
 
 	position = positionInSDL;
 
-	UpdateNodeVisual();
+	UpdateListPosition();
 
 }

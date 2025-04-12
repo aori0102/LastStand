@@ -76,10 +76,14 @@ private:
 	
 	SkillNode* selectedNode;
 
+private:
+
 	int GetCurrentSkillCost() const;
 	void AddSkill(SkillInfo info);
 	void SetPosition(Vector2 position);
 	void SelectNode(SkillNode* skillNode);
+	void Show();
+	void Hide();
 	SkillNode* UpgradeSelected();
 
 public:

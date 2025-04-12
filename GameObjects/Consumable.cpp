@@ -25,9 +25,9 @@ void Consumable::Equip() {}
 
 void Consumable::Dequip() {}
 
-bool Consumable::TryUse(Player* player) {
+bool Consumable::TryUse() {
 
-	Humanoid* humanoid = player->GetComponent<Humanoid>();
+	Humanoid* humanoid = Player::Instance()->GetComponent<Humanoid>();
 
 	if (!humanoid)
 		return false;

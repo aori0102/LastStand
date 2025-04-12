@@ -13,11 +13,12 @@ enum class ItemIndex;
 
 class SlotNode {
 
-public:
+private:
+
+	friend class ItemSelectionUI;
 
 	SlotNode* nextSlot;
 	GameObject* frame;
-	GameObject* cell;
 	GameObject* visual;
 	ItemIndex itemIndex;
 
@@ -52,12 +53,14 @@ private:
 
 private:
 
-	void UpdateNodeVisual();
+	void UpdateListPositioning();
+	void Show();
+	void Hide();
 
 public:
 
 	ItemSelectionUI();
-
+	~ItemSelectionUI();
 	void AddItem(ItemIndex newItemIndex);
 	void RemoveItem(ItemIndex removingItemIndex);
 	void SetPosition(Vector2 positionInSDL);

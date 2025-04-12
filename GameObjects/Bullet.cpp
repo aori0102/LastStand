@@ -11,6 +11,7 @@
 
 #include <BoxCollider.h>
 #include <GameCore.h>
+#include <GameManager.h>
 #include <Humanoid.h>
 #include <MediaManager.h>
 #include <Player.h>
@@ -84,14 +85,15 @@ Bullet::Bullet() : GameObject("Bullet", Layer::Bullet) {
 
 Bullet::~Bullet() {
 
-	std::cout << "Destroying bullet\n";
-
 	GameObject::Destroy(damageIndicator);
 	damageIndicator = nullptr;
 
 }
 
 void Bullet::Update() {
+
+	if (!GameManager::Instance()->GameRunning())
+		return;
 
 	if (hitHumanoid) {
 
@@ -143,6 +145,8 @@ void Bullet::OnCollisionEnter(BoxCollider* collider) {
 
 	if (hitHumanoid)
 		return;
+
+	std::cout << "Hit " << collider->Owner()->name << std::endl;
 
 	Humanoid* humanoid = nullptr;
 	if (collider->TryGetComponent<Humanoid>(humanoid))

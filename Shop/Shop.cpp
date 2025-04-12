@@ -17,6 +17,7 @@
 #include <FirearmUpgradeUIGroup.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <InventoryUI.h>
 #include <ItemManager.h>
 #include <ItemSelectionUI.h>
 #include <MediaManager.h>
@@ -48,6 +49,8 @@ void Shop::Show() {
 	uiElementMap.at(UIElementIndex::Shop_Navigation_Utility_Label)->Enable();
 
 	ShowCurrentMenu();
+
+	InventoryUI::Instance()->Disable();
 
 }
 
@@ -302,8 +305,8 @@ void Shop::InitializeUI() {
 	upgradeDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	upgradeDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
-	upgradeDamageUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::Damage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
-	upgradeDamageUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::Damage)->NextUpgradeCost());
+	upgradeDamageUIGroup->SetAmount(0.0f, FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeDamageUIGroup->SetCost(0);
 	upgradeDamageUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Damage));
 	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Damage] = upgradeDamageUIGroup;
 
@@ -315,8 +318,8 @@ void Shop::InitializeUI() {
 	upgradeCriticalDamageUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	upgradeCriticalDamageUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
-	upgradeCriticalDamageUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
-	upgradeCriticalDamageUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeCost());
+	upgradeCriticalDamageUIGroup->SetAmount(0.0f, FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeCriticalDamageUIGroup->SetCost(0);
 	upgradeCriticalDamageUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_CriticalDamage));
 	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_CriticalDamage] = upgradeCriticalDamageUIGroup;
 
@@ -328,8 +331,8 @@ void Shop::InitializeUI() {
 	upgradeFirerateUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	upgradeFirerateUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
-	upgradeFirerateUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::Firerate)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
-	upgradeFirerateUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::Firerate)->NextUpgradeCost());
+	upgradeFirerateUIGroup->SetAmount(0.0f, FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeFirerateUIGroup->SetCost(0);
 	upgradeFirerateUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_Firerate));
 	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_Firerate] = upgradeFirerateUIGroup;
 
@@ -341,8 +344,8 @@ void Shop::InitializeUI() {
 	upgradeMagazineCapacityUIGroup->SetLabel(UI_LABEL_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetDescriptionPrefix(UPGRADE_DESCRIPTION_PREFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	upgradeMagazineCapacityUIGroup->SetDescriptionSuffix(UPGRADE_DESCRIPTION_SUFFIX_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
-	upgradeMagazineCapacityUIGroup->SetAmount(firearmUpgradeMap.at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
-	upgradeMagazineCapacityUIGroup->SetCost(firearmUpgradeMap.at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeCost());
+	upgradeMagazineCapacityUIGroup->SetAmount(0.0f, FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+	upgradeMagazineCapacityUIGroup->SetCost(0);
 	upgradeMagazineCapacityUIGroup->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity));
 	uiElementMap[UIElementIndex::Firearm_Main_Upgrade_MagazineCapacity] = upgradeMagazineCapacityUIGroup;
 
@@ -401,9 +404,6 @@ void Shop::InitializeUI() {
 	/// >>>
 	FirearmSelectionUI* firearmSelectionUI = GameObject::Instantiate<FirearmSelectionUI>("Firearm Selection UI", Layer::Menu);
 	firearmSelectionUI->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Firearm_SelectionGrid));
-	std::vector<Firearm*> firearmList = Player::Instance()->GetFirearmList();
-	for (Firearm* firearm : firearmList)
-		firearmSelectionUI->AddFirearm(firearm);
 	uiElementMap[UIElementIndex::Firearm_SelectionGrid] = firearmSelectionUI;
 
 	/// >>>
@@ -583,7 +583,7 @@ void Shop::InitializeUI() {
 	/// >>>
 	/// --- SKILL LIST ---
 	/// >>>
-	SkillList* skillList = GameObject::Instantiate<SkillList>();
+	SkillList* skillList = GameObject::Instantiate<SkillList>("Skill List", Layer::Menu);
 	skillList->AddSkill(SkillInfo{
 		.skillPoint = 1,
 		.value = 120.0f,
@@ -702,43 +702,48 @@ void Shop::InitializeUI() {
 
 }
 
-void Shop::InitializeUpgrades() {
+void Shop::InitializeUpgrades(ItemIndex firearmIndex) {
 
 	// Reload time
 	FirearmUpgrade* firerateUpgrade = new FirearmUpgrade(
+		firearmIndex,
 		FirearmAttributeIndex::Firerate
 	);
-	// NOT FUCKING MAGIC NUMBERS, JUST RANDOM BULLSHIT GO
 	firerateUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
 	firerateUpgrade->AddUpgrade(new UpgradeNode(24, 1.3f));
 	firerateUpgrade->AddUpgrade(new UpgradeNode(45, 1.4f));
 	firerateUpgrade->AddUpgrade(new UpgradeNode(69, 1.5f));
 	firerateUpgrade->AddUpgrade(new UpgradeNode(124, 1.6f));
 	firerateUpgrade->AddUpgrade(new UpgradeNode(372, 1.7f));
-	firearmUpgradeMap[FirearmAttributeIndex::Firerate] = firerateUpgrade;
+	firearmUpgradeMap[firearmIndex][FirearmAttributeIndex::Firerate] = firerateUpgrade;
 
 	// Damage
 	FirearmUpgrade* damageUpgrade = new FirearmUpgrade(
+		firearmIndex,
 		FirearmAttributeIndex::Damage
 	);
 	damageUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
 	damageUpgrade->AddUpgrade(new UpgradeNode(25, 1.5f));
 	damageUpgrade->AddUpgrade(new UpgradeNode(64, 1.9f));
 	damageUpgrade->AddUpgrade(new UpgradeNode(189, 2.3f));
-	firearmUpgradeMap[FirearmAttributeIndex::Damage] = damageUpgrade;
+	damageUpgrade->AddUpgrade(new UpgradeNode(265, 2.6f));
+	damageUpgrade->AddUpgrade(new UpgradeNode(397, 2.9f));
+	firearmUpgradeMap[firearmIndex][FirearmAttributeIndex::Damage] = damageUpgrade;
 
 	// Max ammo
 	FirearmUpgrade* magazineCapacityUpgrade = new FirearmUpgrade(
+		firearmIndex,
 		FirearmAttributeIndex::MagazineCapacity
 	);
 	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(10, 1.2f));
 	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(54, 1.3f));
 	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(123, 1.5f));
 	magazineCapacityUpgrade->AddUpgrade(new UpgradeNode(256, 2.0f));
-	firearmUpgradeMap[FirearmAttributeIndex::MagazineCapacity] = magazineCapacityUpgrade;
+	firearmUpgradeMap[firearmIndex][FirearmAttributeIndex::MagazineCapacity] = magazineCapacityUpgrade;
 
 	// Critical chance
 	FirearmUpgrade* criticalDamageUpgrade = new FirearmUpgrade(
+		firearmIndex,
 		FirearmAttributeIndex::CriticalDamage
 	);
 	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(24, 0.3f));
@@ -746,7 +751,7 @@ void Shop::InitializeUpgrades() {
 	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(125, 0.55f));
 	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(299, 0.6f));
 	criticalDamageUpgrade->AddUpgrade(new UpgradeNode(372, 0.7f));
-	firearmUpgradeMap[FirearmAttributeIndex::CriticalDamage] = criticalDamageUpgrade;
+	firearmUpgradeMap[firearmIndex][FirearmAttributeIndex::CriticalDamage] = criticalDamageUpgrade;
 
 }
 
@@ -816,7 +821,9 @@ Shop::Shop() {
 	currentFirearm = nullptr;
 	currentItemIndex = ItemIndex::None;
 
-	InitializeUpgrades();
+	InitializeUpgrades(ItemIndex::Pistol_M1911);
+	InitializeUpgrades(ItemIndex::Shotgun_Beretta1301);
+	InitializeUpgrades(ItemIndex::Rifle_M4);
 	InitializeUI();
 
 	SwitchMenu(currentMenuIndex);
@@ -830,18 +837,18 @@ void Shop::BuyUpgrade(FirearmAttributeIndex attribute) {
 	if (!currentFirearm)
 		return;
 
-	auto it = firearmUpgradeMap.find(attribute);
+	auto it = firearmUpgradeMap.find(currentFirearm->GetIndex());
 
 	if (it == firearmUpgradeMap.end())
 		throw std::exception("Shop: Trying to buy an invalid upgrade");
 
-	if (PlayerStatistic::Instance()->TrySpendMoney((it->second)->NextUpgradeCost())) {
+	if (PlayerStatistic::Instance()->TrySpendMoney((it->second).at(attribute)->NextUpgradeCost())) {
 
-		(it->second)->UpgradeNext(currentFirearm);
+		(it->second).at(attribute)->UpgradeNext();
 
 		FirearmUpgradeUIGroup* upgradeUI = uiElementMap.at(UPGRADE_INDEX_BY_ATTRIBUTE_MAP.at(attribute))->As<FirearmUpgradeUIGroup>();
-		upgradeUI->SetCost((it->second)->NextUpgradeCost());
-		upgradeUI->SetAmount((it->second)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+		upgradeUI->SetCost((it->second).at(attribute)->NextUpgradeCost());
+		upgradeUI->SetAmount((it->second).at(attribute)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 
 	}
 
@@ -858,6 +865,23 @@ void Shop::SelectFirearm(Firearm* firearm) {
 	uiElementMap.at(UIElementIndex::Firearm_Main_GunLabel)->GetComponent<Text>()->LoadText(
 		currentFirearm->GetName(), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::Firearm_Main_GunLabel)
 	);
+
+	FirearmUpgradeUIGroup* upgradeUI;
+	upgradeUI = uiElementMap.at(UPGRADE_INDEX_BY_ATTRIBUTE_MAP.at(FirearmAttributeIndex::Damage))->As<FirearmUpgradeUIGroup>();
+	upgradeUI->SetCost(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::Damage)->NextUpgradeCost());
+	upgradeUI->SetAmount(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::Damage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+
+	upgradeUI = uiElementMap.at(UPGRADE_INDEX_BY_ATTRIBUTE_MAP.at(FirearmAttributeIndex::CriticalDamage))->As<FirearmUpgradeUIGroup>();
+	upgradeUI->SetCost(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeCost());
+	upgradeUI->SetAmount(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::CriticalDamage)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+
+	upgradeUI = uiElementMap.at(UPGRADE_INDEX_BY_ATTRIBUTE_MAP.at(FirearmAttributeIndex::Firerate))->As<FirearmUpgradeUIGroup>();
+	upgradeUI->SetCost(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::Firerate)->NextUpgradeCost());
+	upgradeUI->SetAmount(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::Firerate)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+
+	upgradeUI = uiElementMap.at(UPGRADE_INDEX_BY_ATTRIBUTE_MAP.at(FirearmAttributeIndex::MagazineCapacity))->As<FirearmUpgradeUIGroup>();
+	upgradeUI->SetCost(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeCost());
+	upgradeUI->SetAmount(firearmUpgradeMap.at(firearm->GetIndex()).at(FirearmAttributeIndex::MagazineCapacity)->NextUpgradeAmount(), FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
 
 	SwitchMenu(ShopMenuIndex::Firearm_Main);
 	UpdateAttributeList();
@@ -937,6 +961,12 @@ void Shop::Toggle() {
 
 	showShop ? Show() : Hide();
 
+}
+
+void Shop::AddFirearmToUpgrade(Firearm* firearm) {
+
+	uiElementMap.at(UIElementIndex::Firearm_SelectionGrid)->As<FirearmSelectionUI>()->AddFirearm(firearm);
+		
 }
 
 ItemIndex Shop::GetSelectedItem() const { return currentItemIndex; }

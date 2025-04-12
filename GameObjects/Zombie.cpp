@@ -6,6 +6,7 @@
 
 #include <Zombie.h>
 
+#include <AudioManager.h>
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <GameManager.h>
@@ -27,6 +28,8 @@ const float ZombieAttribute::EXP_MULTIPLIER = 1.01f;
 const float Zombie::KNOCKBACK_FORCE = 50.0f;
 const float Zombie::HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const float Zombie::HEALTH_BAR_SCALE = 0.4f;
+const float Zombie::GROAN_SOUND_DELAY_MIN = 4.7f;
+const float Zombie::GROAN_SOUND_DELAY_MAX = 9.9f;
 const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRIBUTE_MAP = {
 	{ ZombieIndex::Normal, ZombieAttribute{
 		.movementSpeed = 60.0f,
@@ -70,6 +73,9 @@ const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP =
 
 Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 
+	lastGroanTick = 0.0f;
+	groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
+
 	zombieIndex = ZombieIndex::Normal;
 
 	// Attribute
@@ -108,6 +114,14 @@ Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 	humanoid->SetHealth(zombieAttribute->health);
 	humanoid->OnDeath = [this]() {
 		GameManager::Instance()->ReportDead(this);
+		};
+	humanoid->OnDamaged = [this]() {
+		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
+			static_cast<int>(MediaSFX::ZombieHurt1), static_cast<int>(MediaSFX::ZombieHurt6)
+		));
+		AudioManager::Instance()->PlayOneShot(
+			audioIndex, (transform->position - Player::Instance()->transform->position).Magnitude()
+		);
 		};
 
 	Image* image = AddComponent<Image>();
@@ -167,7 +181,8 @@ void Zombie::SetIndex(ZombieIndex initZombieIndex) {
 
 void Zombie::Update() {
 
-
+	if (!GameManager::Instance()->GameRunning())
+		return;
 
 	Vector2 forward = (Player::Instance()->transform->position - transform->position).Normalize();
 
@@ -177,6 +192,21 @@ void Zombie::Update() {
 
 	// Calculate rotation
 	GetComponent<Image>()->angle = Math::RadToDeg(forward.Angle());
+
+	// Play sound
+	if (GameCore::Time() >= lastGroanTick + groanDelay) {
+
+		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
+			static_cast<int>(MediaSFX::ZombieGroan1), static_cast<int>(MediaSFX::ZombieGroan4)
+		));
+		AudioManager::Instance()->PlayOneShot(
+			audioIndex, (transform->position-Player::Instance()->transform->position).Magnitude()
+		);
+
+		lastGroanTick = GameCore::Time();
+		groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
+
+	}
 
 }
 

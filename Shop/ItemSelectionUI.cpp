@@ -21,13 +21,12 @@ SlotNode::SlotNode() {
 
 	nextSlot = nullptr;
 	frame = nullptr;
-	cell = nullptr;
 	visual = nullptr;
 	itemIndex = ItemIndex::None;
 
 }
 
-void ItemSelectionUI::UpdateNodeVisual() {
+void ItemSelectionUI::UpdateListPositioning() {
 
 	int row = 0, col = 0;
 
@@ -54,7 +53,58 @@ void ItemSelectionUI::UpdateNodeVisual() {
 
 }
 
+void ItemSelectionUI::Show() {
+
+	auto node = headNode;
+	while (node) {
+
+		node->frame->Enable();
+		node->visual->Enable();
+
+		node = node->nextSlot;
+
+	}
+
+}
+
+void ItemSelectionUI::Hide() {
+
+	auto node = headNode;
+	while (node) {
+
+		node->frame->Disable();
+		node->visual->Disable();
+
+		node = node->nextSlot;
+
+	}
+
+}
+
 ItemSelectionUI::ItemSelectionUI() {
+
+	headNode = nullptr;
+	lastNode = nullptr;
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
+
+}
+
+ItemSelectionUI::~ItemSelectionUI() {
+
+	auto node = headNode;
+	while (node) {
+
+		GameObject::Destroy(node->frame);
+		GameObject::Destroy(node->visual);
+
+		auto next = node->nextSlot;
+
+		delete node;
+		node = next;
+
+	}
 
 	headNode = nullptr;
 	lastNode = nullptr;
@@ -74,8 +124,8 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 
 	}
 
+	// Add new slot
 	SlotNode* newSlot = new SlotNode;
-
 	if (!headNode) {
 
 		headNode = newSlot;
@@ -91,22 +141,19 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 	lastNode->nextSlot = nullptr;
 	lastNode->itemIndex = newItemIndex;
 
+	// Update UI
 	lastNode->frame = GameObject::Instantiate("Item Selection UI Frame", Layer::Menu);
 	Image* frame_image = lastNode->frame->AddComponent<Image>();
 	frame_image->showOnScreen = true;
 	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemBar), true);
 	Button* frame_button = lastNode->frame->AddComponent<Button>();
 	frame_button->backgroundColor = Color::TRANSPARENT;
-	frame_button->OnClick = [this, newSlot]() {
-		if (!IsActive())
-			return false;
-		// Shop select item
-		Shop::Instance()->SelectItem(newSlot->itemIndex);
+	frame_button->OnClick = [newItemIndex]() {
+		Shop::Instance()->SelectItem(newItemIndex);
 		return true;
 		};
-	lastNode->frame->Render = [this, frame_image]() {
-		if (IsActive())
-			frame_image->Render();
+	lastNode->frame->Render = [frame_image]() {
+		frame_image->Render();
 		};
 
 	lastNode->visual = GameObject::Instantiate("Item Selection UI Visual", Layer::Menu);
@@ -115,11 +162,10 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 	ItemManager::Instance()->LinkItemIcon(newItemIndex, visual_image);
 	lastNode->visual->transform->position = lastNode->frame->transform->position;
 	lastNode->visual->Render = [this, visual_image]() {
-		if (IsActive())
-			visual_image->Render();
+		visual_image->Render();
 		};
 
-	UpdateNodeVisual();
+	UpdateListPositioning();
 
 }
 
@@ -137,11 +183,10 @@ void ItemSelectionUI::RemoveItem(ItemIndex removingItemIndex) {
 				prevNode->nextSlot = tempNode->nextSlot;
 
 			GameObject::Destroy(tempNode->frame);
-			GameObject::Destroy(tempNode->cell);
 			GameObject::Destroy(tempNode->visual);
 			delete tempNode;
 
-			UpdateNodeVisual();
+			UpdateListPositioning();
 
 			return;
 
@@ -158,6 +203,6 @@ void ItemSelectionUI::SetPosition(Vector2 positionInSDL) {
 
 	position = positionInSDL;
 
-	UpdateNodeVisual();
+	UpdateListPositioning();
 
 }

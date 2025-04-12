@@ -32,6 +32,8 @@ public:
 private:
 
 	void InitializeUI();
+	void Show();
+	void Hide();
 
 public:
 
@@ -39,6 +41,7 @@ public:
 	~SliderUIGroup();
 	void SetPosition(Vector2 positionInSDL);
 	void SetSliderLabel(std::string sliderLabel);
+	void SetValue(float value);
 	void Update() override;
 
 };

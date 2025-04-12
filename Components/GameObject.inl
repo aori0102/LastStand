@@ -27,6 +27,8 @@ bool GameObject::IsA() {
 template<class T>
 bool GameObject::TryGetComponent() {
 
+	static_assert(std::is_base_of<GameComponent, T>::value, "T must inherit from GameComponent");
+
 	T* component = GetComponent<T>();
 
 	return component != nullptr;
@@ -36,6 +38,8 @@ bool GameObject::TryGetComponent() {
 template<class T>
 bool GameObject::TryGetComponent(T*& out) {
 
+	static_assert(std::is_base_of<GameComponent, T>::value, "T must inherit from GameComponent");
+
 	out = GetComponent<T>();
 
 	return out != nullptr;
@@ -44,6 +48,8 @@ bool GameObject::TryGetComponent(T*& out) {
 
 template <class T>
 T* GameObject::AddComponent() {
+
+	static_assert(std::is_base_of<GameComponent, T>::value, "T must inherit from GameComponent");
 
 	if (!std::is_base_of<GameComponent, T>::value)
 		return nullptr;
@@ -63,6 +69,8 @@ T* GameObject::AddComponent() {
 
 template <class T>
 T* GameObject::GetComponent() {
+
+	static_assert(std::is_base_of<GameComponent, T>::value, "T must inherit from GameComponent");
 
 	if (!std::is_base_of<GameComponent, T>::value)
 		return nullptr;

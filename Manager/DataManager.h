@@ -3,8 +3,12 @@
 #include <string>
 #include <unordered_map>
 
+#include <SDL.h>
+
+enum class ActionIndex;
 enum class ItemIndex;
 enum class SkillListIndex;
+enum class FirearmAttributeIndex;
 
 class PlayerSaveData {
 
@@ -15,6 +19,7 @@ private:
 	friend class Inventory;
 	friend class WaveManager;
 	friend class SkillList;
+	friend class FirearmUpgrade;
 
 	int level;
 	int money;
@@ -25,8 +30,25 @@ private:
 	bool newSave;
 	std::unordered_map<ItemIndex, int> storage;
 	std::unordered_map<SkillListIndex, int> skillProgress;
+	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, int>> firearmUpgradeProgress;
 
 	PlayerSaveData();
+
+};
+
+class PlayerConfig {
+
+private:
+
+	friend class GameCore;
+	friend class DataManager;
+
+	float masterVolume;
+	float sfxVolume;
+	float musicVolume;
+	std::unordered_map<ActionIndex, SDL_Keycode> keyBindingMap;
+
+	PlayerConfig();
 
 };
 
@@ -47,11 +69,15 @@ private:
 public:
 
 	PlayerSaveData* playerSaveData;
+	PlayerConfig* playerConfig;
 
 private:
 
 	void SavePlayerData();
 	void LoadPlayerData();
+
+	void SavePlayerConfig();
+	void LoadPlayerConfig();
 
 public:
 

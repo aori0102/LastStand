@@ -21,8 +21,6 @@ void Item::SetIndex(ItemIndex initItemIndex) {
 
 Item::Item() {
 
-	std::cout << "Item default constructor\n";
-
 	itemIndex = ItemIndex::None;
 
 	currentStack = 1;
@@ -33,8 +31,6 @@ Item::Item() {
 }
 
 Item::Item(ItemIndex initItemIndex, int amount) {
-
-	std::cout << "Item overloaded constructor\n";
 
 	itemIndex = initItemIndex;
 
