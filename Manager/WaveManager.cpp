@@ -28,6 +28,17 @@ WaveManager* WaveManager::instance = nullptr;
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+void WaveManager::EndWave() {
+
+	waveInProgress = false;
+
+	PlayerStatistic::Instance()->AddMoney(BASE_WAVE_REWARD * std::powf(REWARD_MULTIPLIER, currentWave));
+
+	PlayerStatistic::Instance()->SaveData();
+	DataManager::Instance()->playerSaveData->wave = currentWave;
+
+}
+
 WaveManager::WaveManager() {
 
 	if (instance)
@@ -120,14 +131,8 @@ void WaveManager::RemoveZombie() {
 
 	currentProgress = zombieKilled * 1.0f / totalZombie;
 
-	if (zombieLeft == 0 && zombieToSpawn == 0) {
-
-		waveInProgress = false;
-
-		PlayerStatistic::Instance()->SaveData();
-		DataManager::Instance()->playerSaveData->wave = currentWave;
-
-	}
+	if (zombieLeft == 0 && zombieToSpawn == 0)
+		EndWave();
 
 }
 

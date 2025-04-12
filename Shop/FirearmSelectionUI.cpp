@@ -1,5 +1,6 @@
 #include <FirearmSelectionUI.h>
 
+#include <AudioManager.h>
 #include <Firearm.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
@@ -120,12 +121,13 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 	frame_button->OnClick = [this, newFirearm]() {
 		if (!IsActive())
 			return false;
-
 		Shop::Instance()->SelectFirearm(newFirearm);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
 		};
 	frame_button->OnMouseEnter = [frame_image]() {
 		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlotHovered), true);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
 		};
 	frame_button->OnMouseLeave = [frame_image]() {
 		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);

@@ -16,8 +16,6 @@ enum class MediaObject {
 
 	Entity_Zombie,
 	Entity_Player,
-	Gun_M1911,
-	Gun_Beretta1301,
 	Misc_Bullet,
 	Misc_Background,
 	Misc_HealthBar,
@@ -213,8 +211,6 @@ private:
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },
 		{ MediaObject::Entity_Player, "Entity\\Player" },
-		{ MediaObject::Gun_Beretta1301, "Firearm\\Beretta1301" },
-		{ MediaObject::Gun_M1911, "Firearm\\M1911" },
 		{ MediaObject::Misc_Bullet, "Misc\\Bullet" },
 		{ MediaObject::Misc_Background, "Misc\\Background" },
 		{ MediaObject::Misc_HealthBar, "Misc\\HealthBar" },

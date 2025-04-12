@@ -23,10 +23,12 @@ class WaveManager {
 private:
 
 	const int BASE_SPAWN = 7;
-	const float SPAWN_MULTIPLIER = 1.26f;
-	const float SPAWN_DELAY = 4.39f;
 	const int MIN_HORDE = 2;
 	const int MAX_HORDE = 7;
+	const int BASE_WAVE_REWARD = 500;
+	const float REWARD_MULTIPLIER = 1.19f;
+	const float SPAWN_MULTIPLIER = 1.26f;
+	const float SPAWN_DELAY = 4.39f;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -51,6 +53,10 @@ private:
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
+
+private:
+
+	void EndWave();
 
 public:
 
