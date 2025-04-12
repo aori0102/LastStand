@@ -401,9 +401,3 @@ FodyWeavers.xsd
 
 # Build
 out/
-
-# Ignore SDL2 files
-!Lib/SDL2/
-!Lib/SDL2_ttf/
-!Lib/SDL2_image/
-!Lib/SDL2_mixer/
