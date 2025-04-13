@@ -15,6 +15,7 @@
 #include <AudioManager.h>
 #include <BoxCollider.h>
 #include <Bullet.h>
+#include <DataManager.h>
 #include <Firearm.h>
 #include <GameComponent.h>
 #include <GameCore.h>
@@ -382,7 +383,8 @@ void Player::InitializeData() {
 	rigidBody->drag = 6.0f;
 
 	Humanoid* humanoid = AddComponent<Humanoid>();
-	humanoid->SetHealth(100.0f);
+	humanoid->SetHealth(DataManager::Instance()->playerSaveData->health);
+	humanoid->SetMaxHealth(DataManager::Instance()->playerSaveData->maxHealth);
 	humanoid->OnDeath = [this]() {
 		GameManager::Instance()->ReportDead(this);
 		};

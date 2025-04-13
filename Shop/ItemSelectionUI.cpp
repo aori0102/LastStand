@@ -1,5 +1,6 @@
 #include <ItemSelectionUI.h>
 
+#include <AudioManager.h>
 #include <Item.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
@@ -150,7 +151,15 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 	frame_button->backgroundColor = Color::TRANSPARENT;
 	frame_button->OnClick = [newItemIndex]() {
 		Shop::Instance()->SelectItem(newItemIndex);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
+		};
+	frame_button->OnMouseEnter = [frame_image]() {
+		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemBar_Selected),true);
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
+		};
+	frame_button->OnMouseLeave = [frame_image]() {
+		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_UtilityItemBar), true);
 		};
 	lastNode->frame->Render = [frame_image]() {
 		frame_image->Render();
@@ -164,6 +173,12 @@ void ItemSelectionUI::AddItem(ItemIndex newItemIndex) {
 	lastNode->visual->Render = [this, visual_image]() {
 		visual_image->Render();
 		};
+	if (!IsActive()) {
+
+		lastNode->frame->Disable();
+		lastNode->visual->Disable();
+
+	}
 
 	UpdateListPositioning();
 

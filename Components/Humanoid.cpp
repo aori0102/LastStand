@@ -32,6 +32,12 @@ Humanoid::~Humanoid() {
 void Humanoid::SetHealth(float amount) {
 
 	health = amount;
+	maxHealth = std::max(maxHealth, amount);
+
+}
+
+void Humanoid::SetMaxHealth(float amount) {
+
 	maxHealth = amount;
 
 }

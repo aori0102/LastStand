@@ -118,9 +118,7 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 	frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);
 	Button* frame_button = lastNode->frame->AddComponent<Button>();
 	frame_button->backgroundColor = Color::TRANSPARENT;
-	frame_button->OnClick = [this, newFirearm]() {
-		if (!IsActive())
-			return false;
+	frame_button->OnClick = [newFirearm]() {
 		Shop::Instance()->SelectFirearm(newFirearm);
 		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
@@ -132,21 +130,25 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 	frame_button->OnMouseLeave = [frame_image]() {
 		frame_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Shop_FirearmSelectionSlot), true);
 		};
-	lastNode->frame->Render = [this, frame_image]() {
-		if (IsActive())
-			frame_image->Render();
+	lastNode->frame->Render = [frame_image]() {
+		frame_image->Render();
 		};
 
 	lastNode->visual = GameObject::Instantiate("Selection Node Visual", Layer::Menu);
 	Image* visual_image = lastNode->visual->AddComponent<Image>();
 	ItemManager::Instance()->LinkItemIcon(newFirearm->GetIndex(), visual_image);
 	visual_image->showOnScreen = true;
-
 	lastNode->visual->transform->position = lastNode->frame->transform->position;
-	lastNode->visual->Render = [this, visual_image]() {
-		if (IsActive())
-			visual_image->Render();
+	lastNode->visual->Render = [visual_image]() {
+		visual_image->Render();
 		};
+
+	if (!IsActive()) {
+
+		lastNode->frame->Disable();
+		lastNode->visual->Disable();
+
+	}
 
 	UpdateListPosition();
 

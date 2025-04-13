@@ -51,6 +51,7 @@ enum class MediaUI {
 	Shop_UtilityBuyButton,
 	Shop_UtilityInfoBoard,
 	Shop_UtilityItemBar,
+	Shop_UtilityItemBar_Selected,
 	Shop_UtilityItemCell,
 	Shop_UtilityItemViewport,
 	Shop_SkillNode,
@@ -117,6 +118,8 @@ enum class MediaSFX {
 	ZombieGroan4,
 	Click,
 	Clack,
+	Coin,
+	Invalid,
 
 };
 
@@ -170,6 +173,7 @@ private:
 		{ MediaUI::Shop_UtilityBuyButton, "Shop\\UtilityBuyButton" },
 		{ MediaUI::Shop_UtilityInfoBoard, "Shop\\UtilityInfoBoard" },
 		{ MediaUI::Shop_UtilityItemBar, "Shop\\UtilityItemBar" },
+		{ MediaUI::Shop_UtilityItemBar_Selected, "Shop\\UtilityItemBarSelected" },
 		{ MediaUI::Shop_UtilityItemCell, "Shop\\UtilityItemCell" },
 		{ MediaUI::Shop_UtilityItemViewport, "Shop\\UtilityItemViewport" },
 		{ MediaUI::Shop_SkillNode, "Shop\\SkillNode" },
@@ -238,6 +242,8 @@ private:
 		{ MediaSFX::ZombieHurt6, "ZombieHurt6" },
 		{ MediaSFX::Click, "Click" },
 		{ MediaSFX::Clack, "Clack" },
+		{ MediaSFX::Coin, "Coin" },
+		{ MediaSFX::Invalid, "Invalid" },
 	};
 
 	/// ----------------------------------

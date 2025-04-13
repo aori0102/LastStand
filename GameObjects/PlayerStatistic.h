@@ -44,6 +44,7 @@ public:
 	void AddEXP(int amount);
 	void AddMoney(int amount);
 	void SaveData();
+	bool IsMoneySufficient(int amount);
 	bool TrySpendMoney(int amount);
 	bool TryConsumeSkillPoint(int amount);
 	int GetLevel() const;

@@ -20,6 +20,7 @@ private:
 	friend class WaveManager;
 	friend class SkillList;
 	friend class FirearmUpgrade;
+	friend class Player;
 
 	int level;
 	int money;
@@ -27,6 +28,7 @@ private:
 	int skillPoint;
 	int wave;
 	float health;
+	float maxHealth;
 	bool newSave;
 	std::unordered_map<ItemIndex, int> storage;
 	std::unordered_map<SkillListIndex, int> skillProgress;

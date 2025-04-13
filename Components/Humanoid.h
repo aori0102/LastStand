@@ -39,6 +39,7 @@ public:
 	Humanoid(GameObject* initOwner);
 	~Humanoid();
 	void SetHealth(float amount);
+	void SetMaxHealth(float amount);
 	void Damage(float amount);
 	void Heal(float amount);
 	void DrainStamina(float amount);

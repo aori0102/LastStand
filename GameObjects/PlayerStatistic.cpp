@@ -78,12 +78,20 @@ void PlayerStatistic::SaveData() {
 	playerSaveData->exp = playerEXP;
 	playerSaveData->level = playerLevel;
 	playerSaveData->skillPoint = playerSkillPoint;
+	playerSaveData->health = GetHealth();
+	playerSaveData->maxHealth = GetMaxHealth();
+
+}
+
+bool PlayerStatistic::IsMoneySufficient(int amount) {
+
+	return playerMoney >= amount;
 
 }
 
 bool PlayerStatistic::TrySpendMoney(int amount) {
 
-	if (amount > playerMoney)
+	if (!IsMoneySufficient(amount))
 		return false;
 
 	playerMoney -= amount;
