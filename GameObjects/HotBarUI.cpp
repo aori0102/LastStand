@@ -144,6 +144,7 @@ void HotBarUI::RemoveSlotItem(HotBarSlotIndex slotIndex) {
 
 	slot->label->Disable();
 	slot->visual->Disable();
+	slot->itemIndex = ItemIndex::None;
 
 }
 
@@ -153,6 +154,8 @@ void HotBarUI::UpdateSlotItemVisual(HotBarSlotIndex slotIndex, ItemIndex itemInd
 		return;
 
 	auto slot = hotbarSlotMap.at(slotIndex);
+
+	slot->itemIndex = itemIndex;
 
 	if (itemIndex == ItemIndex::None) {
 

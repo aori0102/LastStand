@@ -180,7 +180,7 @@ int Inventory::GetItemCount(ItemIndex itemIndex) {
 
 	}
 
-	return -1;
+	return 0;
 
 }
 
