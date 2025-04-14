@@ -63,7 +63,6 @@ KeyBindUIGroup::KeyBindUIGroup() {
 		);
 		singleKeyGroup->SetLabel(LABEL_MAP.at(static_cast<UIElementIndex>(i)));
 		singleKeyGroup->SetPosition(position);
-		singleKeyGroup->BindAction(ACTION_INDEX_MAP.at(static_cast<UIElementIndex>(i)));
 		uiElementMap[static_cast<UIElementIndex>(i)] = singleKeyGroup;
 
 		col++;
@@ -90,5 +89,16 @@ KeyBindUIGroup::~KeyBindUIGroup() {
 		GameObject::Destroy(it->second);
 
 	uiElementMap.clear();
+
+}
+
+void KeyBindUIGroup::UpdateConfig() {
+
+	for (int i = 0; i < static_cast<int>(UIElementIndex::Total); i++) {
+
+		UIElementIndex index = static_cast<UIElementIndex>(i);
+		uiElementMap.at(index)->As<KeyBindSingleUIGroup>()->BindAction(ACTION_INDEX_MAP.at(index));
+
+	}
 
 }

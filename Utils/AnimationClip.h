@@ -14,57 +14,13 @@
 #include <SDL.h>
 #include <Utils.h>
 
-class AnimationClip;
-class AnimationNode;
-class Image;
 class Sprite;
-
-struct AnimationTransition {
-
-	AnimationNode* to = nullptr;
-	std::function<bool()> condition = []() { return true; };
-
-};
 
 struct AnimationFrame {
 
 	float scale = 1.0f;
 	float duration = 0.0f;
 	SDL_Rect clip = { 0, 0, 0, 0 };
-
-};
-
-class AnimationNode {
-
-	/// ----------------------------------
-	/// FIELDS
-	/// ----------------------------------
-
-private:
-
-	bool isStateMachine;
-	std::vector<AnimationTransition*> transitionList;
-	AnimationClip* animationClip;
-
-	friend class AnimationController;
-
-	/// ----------------------------------
-	/// METHODS
-	/// ----------------------------------
-
-private:
-
-	AnimationNode(AnimationClip* initAnimationClip, bool initIsStateMachine);
-	~AnimationNode();
-	void StopNode();
-	AnimationNode* PlayNode();
-
-public:
-
-	bool IsLoop();
-	bool IsEnded();
-	bool IsStateMachine() const;
-	void RenderCurrent(Vector2 position, float angle);
 
 };
 
@@ -100,7 +56,7 @@ private:
 	void Stop();
 	void EndAndReset();
 	void AddAnimationFrame(AnimationFrame* animationFrame);
-	void RenderCurrent(Vector2 position, float angle = 0.0f);
+	void RenderCurrent(Vector2 position, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void SetSprite(Sprite* initAnimationSpriteSheet);
 	void Update() override;
 	bool IsPlaying() const;

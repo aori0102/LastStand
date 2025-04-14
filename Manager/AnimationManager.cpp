@@ -8,7 +8,7 @@
 
 #include <exception>
 
-#include <Animation.h>
+#include <AnimationClip.h>
 #include <MediaManager.h>
 
 /// ----------------------------------

@@ -64,7 +64,7 @@ const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP =
 	{ ZombieIndex::Normal, { 16, 16, 96, 96 } },
 	{ ZombieIndex::Bomber, { 16, 16, 96, 96 } },
 	{ ZombieIndex::Lurker, { 32, 144, 80, 80 } },
-	{ ZombieIndex::Tanker, { 16, 16, 96, 96 } },
+	{ ZombieIndex::Tanker, { 160, 16, 128, 128 } },
 };
 
 /// ----------------------------------

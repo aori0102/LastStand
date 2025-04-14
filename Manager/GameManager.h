@@ -16,6 +16,7 @@
 class AudioManager;
 class AnimationManager;
 class DataManager;
+class HotBar;
 class Inventory;
 class ItemManager;
 class MediaManager;
@@ -43,24 +44,6 @@ enum class SceneIndex {
 };
 
 class GameManager {
-
-	/// ----------------------------------
-	/// STRUCTURES AND CONSTANTS
-	/// ----------------------------------
-
-private:
-
-	const std::vector<Vector2> SPAWN_POSITION_LIST =
-	{
-	Vector2(-1450.0f, 500.0f),
-	Vector2(-1450.0f, -500.0f),
-	Vector2(-500.0f, 1450.0f),
-	Vector2(500.0f, 1450.0f),
-	Vector2(1450.0f, -500.0f),
-	Vector2(1450.0f, 500.0f),
-	Vector2(-500.0f, -1450.0f),
-	Vector2(500.0f, -1450.0f)
-	};
 
 public:
 
@@ -97,6 +80,7 @@ private:
 	Inventory* inventory;
 	SettingsUI* settingsUI;
 	PauseMenu* pauseMenu;
+	HotBar* hotBar;
 
 	static GameManager* instance;
 
@@ -109,13 +93,14 @@ private:
 	void InitializeObject();
 	void EnableSceneObject();
 	void DisableSceneObject();
+	void SaveGame();
+	void LoadGame();
 
 public:
 
 	GameManager();
 	~GameManager();
 	void ReportDead(GameObject* gameObject);
-	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 	void Update();
 	void SwitchScene(SceneIndex targetScene);
 	void SwitchToPreviousScene();

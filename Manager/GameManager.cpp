@@ -14,6 +14,8 @@
 #include <DataManager.h>
 #include <GameComponent.h>
 #include <GameCore.h>
+#include <HotBar.h>
+#include <HotBarUI.h>
 #include <Inventory.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
@@ -86,7 +88,6 @@ void GameManager::InitializeObject() {
 		};
 	background->Disable();
 
-	// Player
 	player = GameObject::Instantiate<Player>("Player", Layer::Player);
 	player->Disable();
 	GameCore::LetCameraFocus(Player::Instance());
@@ -94,7 +95,7 @@ void GameManager::InitializeObject() {
 	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
 
 	inventory = new Inventory;
-	inventory->LoadInventory();
+	hotBar = GameObject::Instantiate<HotBar>("Hot Bar");
 
 	playerStatistic = new PlayerStatistic;
 
@@ -126,6 +127,7 @@ void GameManager::EnableSceneObject() {
 		southBorder->Enable();
 		westBorder->Enable();
 		eastBorder->Enable();
+		HotBarUI::Instance()->Enable();
 
 		break;
 
@@ -176,6 +178,7 @@ void GameManager::DisableSceneObject() {
 		southBorder->Disable();
 		westBorder->Disable();
 		eastBorder->Disable();
+		HotBarUI::Instance()->Disable();
 
 		break;
 
@@ -208,6 +211,24 @@ void GameManager::DisableSceneObject() {
 		break;
 
 	}
+
+}
+
+void GameManager::SaveGame() {
+
+	GameCore::SaveConfig();
+	playerStatistic->SaveData();
+	inventory->SaveInventory();
+	player->SaveData();
+
+}
+
+void GameManager::LoadGame() {
+
+	GameCore::LoadConfig();
+	playerStatistic->LoadData();
+	inventory->LoadInventory();
+	player->LoadData();
 
 }
 
@@ -251,15 +272,15 @@ GameManager::GameManager() {
 	waveManager = new WaveManager;
 	waveManager->Disable();
 
-	GameCore::LoadConfig();
-
 	InitializeObject();
+
+	LoadGame();
 
 }
 
 GameManager::~GameManager() {
-
-	GameCore::SaveConfig();
+	
+	SaveGame();
 
 	background = nullptr;
 
@@ -273,7 +294,6 @@ GameManager::~GameManager() {
 
 	player = nullptr;
 
-	playerStatistic->SaveData();
 	delete playerStatistic;
 	playerStatistic = nullptr;
 
@@ -281,9 +301,10 @@ GameManager::~GameManager() {
 
 	shop = nullptr;
 
-	inventory->SaveInventory();
 	delete inventory;
 	inventory = nullptr;
+
+	hotBar = nullptr;
 
 	settingsUI = nullptr;
 
@@ -347,21 +368,6 @@ void GameManager::ReportDead(GameObject* gameObject) {
 		WaveManager::Instance()->RemoveZombie();
 
 		GameObject::Destroy(gameObject);
-
-	}
-
-}
-
-void GameManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
-
-	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
-	Algorithm::Shuffle(spawnPositionList);
-
-	for (int i = 0; i < amount; i++) {
-
-		Zombie* zombie = GameObject::Instantiate<Zombie>("Zombie", Layer::Zombie);
-		zombie->SetIndex(zombieIndex);
-		zombie->transform->position = spawnPositionList[i];
 
 	}
 

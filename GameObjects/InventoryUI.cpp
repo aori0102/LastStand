@@ -2,6 +2,7 @@
 
 #include <exception>
 
+#include <HotBar.h>
 #include <Inventory.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
@@ -45,17 +46,6 @@ void InventoryUI::InitializeInventorySlots() {
 				return true;
 				};
 			slotUI->frame = frame;
-
-			GameObject* itemCountLabel = GameObject::Instantiate("Inventory Slot UI Item Count Label", Layer::Menu);
-			Text* itemCountLabel_text = itemCountLabel->AddComponent<Text>();
-			itemCountLabel_text->showOnScreen = true;
-			itemCountLabel_text->LoadText("", Color::WHITE, ITEM_COUNT_FONT_SIZE);
-			Align::Right(itemCountLabel->transform, frame->transform);
-			Align::Bottom(itemCountLabel->transform, frame->transform);
-			itemCountLabel->Render = [itemCountLabel_text]() {
-				itemCountLabel_text->Render();
-				};
-			slotUI->itemCountLabel = itemCountLabel;
 
 			GameObject* visual = GameObject::Instantiate("Inventory Slot UI Visual", Layer::Menu);
 			Image* visual_image = visual->AddComponent<Image>();
@@ -122,17 +112,6 @@ void InventoryUI::InitializeHotBarSlots() {
 		visual->Disable();
 		slotUI->visual = visual;
 
-		GameObject* itemCountLabel = GameObject::Instantiate("Inventory UI Hot Bar Item Count Label", Layer::Menu);
-		Text* itemCountLabel_text = itemCountLabel->AddComponent<Text>();
-		itemCountLabel_text->showOnScreen = true;
-		itemCountLabel_text->LoadText("", Color::WHITE, ITEM_COUNT_FONT_SIZE);
-		Align::Left(itemCountLabel->transform, frame->transform);
-		Align::Bottom(itemCountLabel->transform, frame->transform);
-		itemCountLabel->Render = [itemCountLabel_text]() {
-			itemCountLabel_text->Render();
-			};
-		slotUI->itemCountLabel = itemCountLabel;
-
 		slotUI->itemIndex = ItemIndex::None;
 		slotUI->hotBarSlotIndex = slotIndex;
 
@@ -180,8 +159,8 @@ void InventoryUI::Show() {
 	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
 
 		(it->second)->frame->Enable();
-		(it->second)->itemCountLabel->Enable();
-		(it->second)->visual->Enable();
+		if ((it->second)->itemIndex != ItemIndex::None)
+			(it->second)->visual->Enable();
 
 	}
 
@@ -190,7 +169,7 @@ void InventoryUI::Show() {
 		for (auto slot : row) {
 
 			slot->frame->Enable();
-			slot->itemCountLabel->Enable();
+			if(slot->itemIndex!=ItemIndex::None)
 			slot->visual->Enable();
 
 		}
@@ -209,7 +188,6 @@ void InventoryUI::Hide() {
 	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
 
 		(it->second)->frame->Disable();
-		(it->second)->itemCountLabel->Disable();
 		(it->second)->visual->Disable();
 
 	}
@@ -219,7 +197,6 @@ void InventoryUI::Hide() {
 		for (auto slot : row) {
 
 			slot->frame->Disable();
-			slot->itemCountLabel->Disable();
 			slot->visual->Disable();
 
 		}
@@ -256,7 +233,7 @@ void InventoryUI::UpdateSlot(SlotUI* slotUI) {
 		return;
 
 	if (slotUI->isHotBar)
-		Inventory::Instance()->LinkItemToHotBar(slotUI->hotBarSlotIndex, slotUI->itemIndex);
+		HotBar::Instance()->LinkItemToSlot(slotUI->itemIndex, slotUI->hotBarSlotIndex);
 
 	if (slotUI->itemIndex == ItemIndex::None) {
 
@@ -266,6 +243,7 @@ void InventoryUI::UpdateSlot(SlotUI* slotUI) {
 	}
 	if (IsActive())
 		slotUI->visual->Enable();
+
 	ItemManager::Instance()->LinkItemIcon(slotUI->itemIndex, slotUI->visual->GetComponent<Image>());
 
 }
@@ -297,7 +275,6 @@ InventoryUI::~InventoryUI() {
 
 			GameObject::Destroy(slot->frame);
 			GameObject::Destroy(slot->visual);
-			GameObject::Destroy(slot->itemCountLabel);
 
 			delete slot;
 
@@ -312,7 +289,6 @@ InventoryUI::~InventoryUI() {
 	for (auto it = hotbarSlotMap.begin(); it != hotbarSlotMap.end(); it++) {
 
 		GameObject::Destroy((it->second)->frame);
-		GameObject::Destroy((it->second)->itemCountLabel);
 		GameObject::Destroy((it->second)->visual);
 
 		delete it->second;
@@ -353,7 +329,7 @@ void InventoryUI::SelectSlot(SlotUI* slotUI) {
 
 }
 
-void InventoryUI::UpdateInventorySlot(ItemIndex itemIndex, int amount) {
+void InventoryUI::AddItemToInventory(ItemIndex itemIndex) {
 
 	if (itemIndex == ItemIndex::None)
 		return;
@@ -366,12 +342,30 @@ void InventoryUI::UpdateInventorySlot(ItemIndex itemIndex, int amount) {
 
 			if (!firstEmptySlot && storageGrid[i][j]->itemIndex == ItemIndex::None)
 				firstEmptySlot = storageGrid[i][j];
-			else if (itemIndex == storageGrid[i][j]->itemIndex) {
+			else if (itemIndex == storageGrid[i][j]->itemIndex)
+				return;
 
-				if (amount == 0)
-					storageGrid[i][j]->itemIndex = ItemIndex::None;
-				else
-					storageGrid[i][j]->itemIndex = itemIndex;
+		}
+
+	}
+
+	if (firstEmptySlot) {
+		firstEmptySlot->itemIndex = itemIndex;
+		UpdateSlot(firstEmptySlot);
+	} else
+		throw std::exception("No available grid to store item while adding or inventory content does not match when removing");
+
+}
+
+void InventoryUI::RemoveItemFromInventory(ItemIndex itemIndex) {
+
+	for (int i = 0; i < MAX_ROW; i++) {
+
+		for (int j = 0; j < MAX_COLUMN; j++) {
+
+			if (storageGrid[i][j]->itemIndex == itemIndex) {
+
+				storageGrid[i][j]->itemIndex = ItemIndex::None;
 				UpdateSlot(storageGrid[i][j]);
 				return;
 
@@ -381,21 +375,15 @@ void InventoryUI::UpdateInventorySlot(ItemIndex itemIndex, int amount) {
 
 	}
 
-	if (firstEmptySlot && amount > 0) {
-		firstEmptySlot->itemIndex = itemIndex;
-		UpdateSlot(firstEmptySlot);
-	} else
-		throw std::exception("No available grid to store item while adding or inventory content does not match when removing");
-
 }
 
-void InventoryUI::UpdateHotBarSlot(ItemIndex itemIndex, int amount, HotBarSlotIndex hotBarSlotIndex) {
+void InventoryUI::UpdateHotBarSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex) {
 
-	if (hotBarSlotIndex == HotBarSlotIndex::None)
+	if (slotIndex == HotBarSlotIndex::None)
 		return;
 
-	hotbarSlotMap.at(hotBarSlotIndex)->itemIndex = itemIndex;
-	UpdateSlot(hotbarSlotMap.at(hotBarSlotIndex));
+	hotbarSlotMap.at(slotIndex)->itemIndex = itemIndex;
+	UpdateSlot(hotbarSlotMap.at(slotIndex));
 
 }
 

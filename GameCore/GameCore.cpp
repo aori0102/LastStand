@@ -22,6 +22,7 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <SettingsUI.h>
 #include <Texture.h>
 #include <UIEventManager.h>
 #include <Version.h>
@@ -56,7 +57,16 @@ std::string GameCore::gameName = "Last Stand";
 
 std::unordered_map<SDL_Keycode, ActionState> GameCore::keyStateDictionary = {};
 std::unordered_map<MouseButton, ActionState> GameCore::mouseButtonStateDictionary = {};
-std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {};
+std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {
+	{ ActionIndex::MoveUp, SDLK_w },
+	{ ActionIndex::MoveDown, SDLK_s },
+	{ ActionIndex::MoveLeft, SDLK_a },
+	{ ActionIndex::MoveRight, SDLK_d },
+	{ ActionIndex::Reload, SDLK_r },
+	{ ActionIndex::Sprint, SDLK_LSHIFT },
+	{ ActionIndex::ToggleInventory, SDLK_i },
+	{ ActionIndex::ToggleShop, SDLK_TAB },
+};
 
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);
@@ -654,6 +664,8 @@ void GameCore::LoadConfig() {
 	sfxVolume = config->sfxVolume;
 	musicVolume = config->musicVolume;
 	keyMappingDictionary = config->keyBindingMap;
+
+	SettingsUI::Instance()->UpdateConfig();
 
 }
 

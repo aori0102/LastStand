@@ -48,5 +48,6 @@ public:
 
 	KeyBindUIGroup();
 	~KeyBindUIGroup();
+	void UpdateConfig();
 
 };

@@ -146,8 +146,6 @@ void Bullet::OnCollisionEnter(BoxCollider* collider) {
 	if (hitHumanoid)
 		return;
 
-	std::cout << "Hit " << collider->Owner()->name << std::endl;
-
 	Humanoid* humanoid = nullptr;
 	if (collider->TryGetComponent<Humanoid>(humanoid))
 		humanoid->Damage(damage);

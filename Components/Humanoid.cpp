@@ -44,6 +44,9 @@ void Humanoid::SetMaxHealth(float amount) {
 
 void Humanoid::Damage(float amount) {
 
+	if (health <= 0.0f)	// Already dead
+		return;
+
 	health -= amount;
 
 	if (health <= 0.0f)

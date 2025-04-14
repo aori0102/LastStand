@@ -32,10 +32,10 @@ PlayerStatistic::PlayerStatistic() {
 
 	instance = this;
 
-	playerMoney = DataManager::Instance()->playerSaveData->money;
-	playerSkillPoint = DataManager::Instance()->playerSaveData->skillPoint;
-	playerLevel = DataManager::Instance()->playerSaveData->level;
-	playerEXP = DataManager::Instance()->playerSaveData->exp;
+	playerMoney = 0;
+	playerSkillPoint = 0;
+	playerLevel = 0;
+	playerEXP = 0;
 	playerEXPNeeded = PLAYER_BASE_EXP;
 
 }
@@ -78,8 +78,16 @@ void PlayerStatistic::SaveData() {
 	playerSaveData->exp = playerEXP;
 	playerSaveData->level = playerLevel;
 	playerSaveData->skillPoint = playerSkillPoint;
-	playerSaveData->health = GetHealth();
-	playerSaveData->maxHealth = GetMaxHealth();
+
+}
+
+void PlayerStatistic::LoadData() {
+	PlayerSaveData* data = DataManager::Instance()->playerSaveData;
+
+	playerMoney = data->money;
+	playerSkillPoint = data->skillPoint;
+	playerLevel = data->level;
+	playerEXP = data->exp;
 
 }
 

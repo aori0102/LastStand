@@ -13,6 +13,7 @@
 #include <Utils.h>
 
 class WaveInfoUI;
+enum class ZombieIndex;
 
 class WaveManager {
 
@@ -29,6 +30,17 @@ private:
 	const float REWARD_MULTIPLIER = 1.19f;
 	const float SPAWN_MULTIPLIER = 1.26f;
 	const float SPAWN_DELAY = 4.39f;
+	const std::vector<Vector2> SPAWN_POSITION_LIST =
+	{
+	Vector2(-1450.0f, 500.0f),
+	Vector2(-1450.0f, -500.0f),
+	Vector2(-500.0f, 1450.0f),
+	Vector2(500.0f, 1450.0f),
+	Vector2(1450.0f, -500.0f),
+	Vector2(1450.0f, 500.0f),
+	Vector2(-500.0f, -1450.0f),
+	Vector2(500.0f, -1450.0f)
+	};
 
 	/// ----------------------------------
 	/// FIELDS
@@ -57,6 +69,7 @@ private:
 private:
 
 	void EndWave();
+	void SpawnZombie(int amount, ZombieIndex zombieIndex);
 
 public:
 

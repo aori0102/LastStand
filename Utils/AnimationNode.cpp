@@ -4,7 +4,9 @@
 /// ---------------------------------------------------------------
 /// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
 
-#include <Animation.h>
+#include <AnimationNode.h>
+
+#include <AnimationClip.h>
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -78,11 +80,11 @@ bool AnimationNode::IsEnded() {
 
 bool AnimationNode::IsStateMachine() const { return isStateMachine; }
 
-void AnimationNode::RenderCurrent(Vector2 position, float angle) {
+void AnimationNode::RenderCurrent(Vector2 position, float angle, SDL_RendererFlip flip) {
 
 	if (isStateMachine) // This should not happen
 		throw std::exception("Unexpected! this is a state machine!");
 
-	animationClip->RenderCurrent(position, angle);
+	animationClip->RenderCurrent(position, angle, flip);
 
 }

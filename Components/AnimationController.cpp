@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include <Animation.h>
+#include <AnimationNode.h>
 #include <AnimationManager.h>
 
 /// ----------------------------------
@@ -121,11 +121,11 @@ void AnimationController::MakeDefault(AnimationIndex animationIndex) {
 
 }
 
-void AnimationController::RenderCurrent(Vector2 position, Vector2 scale, float angle) {
+void AnimationController::RenderCurrent(Vector2 position, Vector2 scale, float angle,SDL_RendererFlip flip) {
 
 	if (!currentAnimationNode)
 		return;
 
-	currentAnimationNode->RenderCurrent(position, angle);
+	currentAnimationNode->RenderCurrent(position, angle,flip);
 
 }

@@ -9,6 +9,7 @@
 #include <Firearm.h>
 #include <GameCore.h>
 #include <ItemManager.h>
+#include <Player.h>
 #include <SkillList.h>
 
 DataManager* DataManager::instance = nullptr;
@@ -21,7 +22,6 @@ PlayerSaveData::PlayerSaveData() {
 	skillPoint = 0;
 	wave = 0;
 	health = 100.0f;
-	maxHealth = 100.0f;
 	newSave = true;
 	storage = {};
 	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++)
@@ -55,6 +55,12 @@ PlayerSaveData::PlayerSaveData() {
 			{ FirearmAttributeIndex::Firerate, 0 },
 		}
 		},
+	};
+	
+	playerAttribute = {
+		{ PlayerAttribute::Accuracy, 0.3f },
+		{ PlayerAttribute::MaxHealth, 100.0f },
+		{ PlayerAttribute::ReloadSpeed, 1.0f },
 	};
 
 }
@@ -90,7 +96,6 @@ void DataManager::SavePlayerData() {
 	file << "SkillPoint:" << playerSaveData->skillPoint << std::endl;
 	file << "Health:" << playerSaveData->health << std::endl;
 	file << "Wave:" << playerSaveData->wave << std::endl;
-	file << "MaxHealth:" << playerSaveData->maxHealth << std::endl;
 
 	for (auto it = playerSaveData->storage.begin(); it != playerSaveData->storage.end(); it++)
 		file << "Item:" << static_cast<int>(it->first) << "|" << it->second << std::endl;
@@ -106,6 +111,9 @@ void DataManager::SavePlayerData() {
 			<< it_attribute->second << std::endl;
 
 	}
+
+	for (auto it = playerSaveData->playerAttribute.begin(); it != playerSaveData->playerAttribute.end(); it++)
+		file << "PlayerAttribute:" << static_cast<int>(it->first) << "|" << it->second << std::endl;
 
 	file.close();
 
@@ -140,8 +148,6 @@ void DataManager::LoadPlayerData() {
 			playerSaveData->skillPoint = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("Wave") != std::string::npos)
 			playerSaveData->wave = std::stoi(line.substr(line.find(':') + 1));
-		else if (line.find("MaxHealth") != std::string::npos)
-			playerSaveData->maxHealth = std::stof(line.substr(line.find(':') + 1));
 		else if (line.find("Health") != std::string::npos)
 			playerSaveData->health = std::stof(line.substr(line.find(':') + 1));
 		else if (line.find("Item") != std::string::npos)
@@ -157,6 +163,10 @@ void DataManager::LoadPlayerData() {
 				static_cast<ItemIndex>(std::stoi(line.substr(line.find(':') + 1, line.rfind('#') - line.find(':') - 1)))
 			][
 				static_cast<FirearmAttributeIndex>(std::stoi(line.substr(line.find('#') + 1, line.rfind('|') - line.find('#') - 1)))
+			] = std::stoi(line.substr(line.find('|') + 1));
+		else if (line.find("PlayerAttribute") != std::string::npos)
+			playerSaveData->playerAttribute[
+				static_cast<PlayerAttribute>(std::stoi(line.substr(line.find(':') + 1, line.rfind('|') - line.find(':') - 1)))
 			] = std::stoi(line.substr(line.find('|') + 1));
 
 	}

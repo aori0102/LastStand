@@ -11,18 +11,6 @@
 class Item;
 enum class ItemIndex;
 
-enum class HotBarSlotIndex {
-
-	None,
-
-	First,
-	Second,
-	Third,
-	Forth,
-	Fifth,
-
-};
-
 class Inventory {
 
 	/// ----------------------------------
@@ -30,11 +18,6 @@ class Inventory {
 	/// ----------------------------------
 
 private:
-
-	struct ItemState {
-		Item* item;
-		HotBarSlotIndex slot;
-	};
 
 	static const std::unordered_map<ItemIndex, int> STARTER_KIT;
 
@@ -44,9 +27,7 @@ private:
 
 private:
 
-	std::unordered_map<ItemIndex, ItemState*> storage;
-	std::unordered_map<HotBarSlotIndex, ItemIndex> hotBar;
-	HotBarSlotIndex currentSlotIndex;
+	std::unordered_map<ItemIndex, Item*> storage;
 
 	static Inventory* instance;
 
@@ -54,24 +35,20 @@ private:
 	/// METHODS
 	/// ----------------------------------
 
-private:
-
 public:
 
 	Inventory();
 	~Inventory();
 	void AddItem(ItemIndex itemIndex, int amount = 1);
-	void SelectSlot(HotBarSlotIndex slotIndex);
 	void ToggleInventory();
-	void LinkItemToHotBar(HotBarSlotIndex hotBarSlotIndex, ItemIndex itemIndex);
 	void SaveInventory();
 	void LoadInventory();
 	bool IsSufficient(ItemIndex itemIndex, int amount);
 	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	bool TryUseCurrent();
+	bool IsItemPresent(ItemIndex itemIndex);
 	int GetItemCount(ItemIndex itemIndex);
-	ItemIndex GetCurrentItemIndex();
-	Item* GetCurrentItem();
+	Item* GetItem(ItemIndex itemIndex);
 
 	template <class T> std::vector<T*> GetItemListOfType();
 

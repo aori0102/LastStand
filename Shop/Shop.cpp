@@ -692,6 +692,9 @@ Shop::Shop() {
 
 	SwitchMenu(currentMenuIndex);
 
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
+
 	Hide();
 
 }

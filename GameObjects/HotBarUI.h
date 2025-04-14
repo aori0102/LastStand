@@ -52,12 +52,20 @@ private:
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void Show();
+	void Hide();
+	void InitializeUI();
+
 public:
 
 	HotBarUI();
 	~HotBarUI();
 	void SwitchSlot(HotBarSlotIndex slotIndex);
-	void UpdateSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex, int amount = 1);
+	void RemoveSlotItem(HotBarSlotIndex slotIndex);
+	void UpdateSlotItemVisual(HotBarSlotIndex slotIndex, ItemIndex itemIndex);
+	void UpdateSlotItemCount(HotBarSlotIndex slotIndex, int amount);
 	void Update() override;
 
 	static HotBarUI* Instance();

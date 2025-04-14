@@ -11,7 +11,6 @@
 #include <Ammunition.h>
 #include <AnimationController.h>
 #include <AnimationManager.h>
-#include <Animation.h>
 #include <AudioManager.h>
 #include <BoxCollider.h>
 #include <Bullet.h>
@@ -20,6 +19,7 @@
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <GameManager.h>
+#include <HotBar.h>
 #include <HotBarUI.h>
 #include <Humanoid.h>
 #include <Inventory.h>
@@ -63,17 +63,17 @@ void Player::HandleActions() {
 	}
 	// Hotbar
 	if (GameCore::GetKeyState(SDLK_1).started)
-		Inventory::Instance()->SelectSlot(HotBarSlotIndex::First);
+		HotBar::Instance()->SelectSlot(HotBarSlotIndex::First);
 	else if (GameCore::GetKeyState(SDLK_2).started)
-		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Second);
+		HotBar::Instance()->SelectSlot(HotBarSlotIndex::Second);
 	else if (GameCore::GetKeyState(SDLK_3).started)
-		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Third);
+		HotBar::Instance()->SelectSlot(HotBarSlotIndex::Third);
 	else if (GameCore::GetKeyState(SDLK_4).started)
-		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Forth);
+		HotBar::Instance()->SelectSlot(HotBarSlotIndex::Forth);
 	else if (GameCore::GetKeyState(SDLK_5).started)
-		Inventory::Instance()->SelectSlot(HotBarSlotIndex::Fifth);
+		HotBar::Instance()->SelectSlot(HotBarSlotIndex::Fifth);
 
-	itemIndex = Inventory::Instance()->GetCurrentItemIndex();
+	itemIndex = HotBar::Instance()->GetSelectedItemIndex();
 
 	// Use item
 	if (itemIndex == ItemIndex::Rifle_M4)
@@ -90,7 +90,7 @@ void Player::HandleActions() {
 	// Reload firearm
 	if (GameCore::GetActionState(ActionIndex::Reload).started) {
 
-		Item* currentItem = Inventory::Instance()->GetCurrentItem();
+		Item* currentItem = HotBar::Instance()->GetSelectedItem();
 		Firearm* currentFirearm = nullptr;
 		if (currentItem)
 			currentFirearm = dynamic_cast<Firearm*>(currentItem);
@@ -364,33 +364,7 @@ void Player::InitializeAnimation() {
 }
 
 void Player::InitializeData() {
-
-	// Components
-	transform->scale = Vector2(50.0f, 50.0f);
-	AddComponent<BoxCollider>()->ignoreLayerSet = { Layer::Bullet };
-
-	Image* playerSprite = AddComponent<Image>();
-	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
-	playerSprite->showOnScreen = false;
-
-	hotBarUI = GameObject::Instantiate<HotBarUI>("Hot Bar UI", Layer::GUI);
-	inventoryUI = GameObject::Instantiate<InventoryUI>("Inventory UI", Layer::Menu);
-	inventoryUI->Disable();
-	hotBarUI->Disable();
-
-	RigidBody* rigidBody = AddComponent<RigidBody>();
-	rigidBody->mass = 60.0f;
-	rigidBody->drag = 6.0f;
-
-	Humanoid* humanoid = AddComponent<Humanoid>();
-	humanoid->SetHealth(DataManager::Instance()->playerSaveData->health);
-	humanoid->SetMaxHealth(DataManager::Instance()->playerSaveData->maxHealth);
-	humanoid->OnDeath = [this]() {
-		GameManager::Instance()->ReportDead(this);
-		};
-
-	// Field
-
+	
 	isMoving = false;
 	isAiming = false;
 	isSprinting = false;
@@ -400,11 +374,6 @@ void Player::InitializeData() {
 	targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 	aimDeviation = STANDING_AIM_DEVIATION;
 	lastWalkSoundTick = 0.0f;
-	playerAttributeMap = {
-		{ PlayerAttribute::Accuracy, 0.3f },
-		{ PlayerAttribute::ReloadSpeed, 1.0f },
-		{ PlayerAttribute::MaxHealth, 100.0f },
-	};
 	itemIndex = ItemIndex::None;
 	forward = Vector2::zero;
 
@@ -416,6 +385,52 @@ void Player::InitializeData() {
 
 }
 
+void Player::InitializeComponents() {
+
+	transform->scale = Vector2(50.0f, 50.0f);
+	AddComponent<BoxCollider>()->ignoreLayerSet = { Layer::Bullet };
+
+	Image* playerSprite = AddComponent<Image>();
+	playerSprite->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player), false);
+	playerSprite->showOnScreen = false;
+
+	inventoryUI = GameObject::Instantiate<InventoryUI>("Inventory UI", Layer::Menu);
+	inventoryUI->Disable();
+
+	RigidBody* rigidBody = AddComponent<RigidBody>();
+	rigidBody->mass = 60.0f;
+	rigidBody->drag = 6.0f;
+
+	Humanoid* humanoid = AddComponent<Humanoid>();
+	humanoid->OnDeath = [this]() {
+		GameManager::Instance()->ReportDead(this);
+		};
+
+}
+
+void Player::LoadData() {
+
+	PlayerSaveData* data = DataManager::Instance()->playerSaveData;
+
+	playerAttributeMap = data->playerAttribute;
+	for (auto it = data->playerAttribute.begin(); it != data->playerAttribute.end(); it++)
+		SetAttribute(it->first, it->second);
+
+	GetComponent<Humanoid>()->SetHealth(data->health);
+
+}
+
+void Player::SaveData() {
+
+	PlayerSaveData* data = DataManager::Instance()->playerSaveData;
+
+	data->playerAttribute = playerAttributeMap;
+
+	Humanoid* humanoid = GetComponent<Humanoid>();
+	data->health = humanoid->GetHealth();
+
+}
+
 Player::Player() : GameObject("Player", Layer::Player) {
 
 	if (instance)
@@ -423,24 +438,13 @@ Player::Player() : GameObject("Player", Layer::Player) {
 
 	instance = this;
 
+	InitializeComponents();
 	InitializeData();
-
 	InitializeAnimation();
-
-	OnEnabled = [this]() {
-		hotBarUI->Enable();
-		};
-
-	OnDisabled = [this]() {
-		hotBarUI->Disable();
-		};
-
+	
 }
 
 Player::~Player() {
-
-	GameObject::Destroy(hotBarUI);
-	hotBarUI = nullptr;
 
 	GameObject::Destroy(inventoryUI);
 	inventoryUI = nullptr;
@@ -453,10 +457,12 @@ Player::~Player() {
 
 void Player::PlayerRender() {
 
+	float angle = forward.Angle();
 	GetComponent<AnimationController>()->RenderCurrent(
 		transform->position,
 		transform->scale,
-		Math::RadToDeg(forward.Angle())
+		Math::RadToDeg(angle),
+		std::cosf(angle) < 0 ? SDL_FLIP_VERTICAL : SDL_FLIP_NONE
 	);
 
 	GetComponent<BoxCollider>()->Debug();

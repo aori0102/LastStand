@@ -42,6 +42,8 @@ private:
 
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 
+	static SettingsUI* instance;
+
 private:
 
 	void InitializeUI();
@@ -52,5 +54,8 @@ public:
 
 	SettingsUI();
 	~SettingsUI();
+	void UpdateConfig();
+
+	static SettingsUI* Instance();
 
 };

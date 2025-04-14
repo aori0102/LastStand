@@ -9,6 +9,7 @@ enum class ActionIndex;
 enum class ItemIndex;
 enum class SkillListIndex;
 enum class FirearmAttributeIndex;
+enum class PlayerAttribute;
 
 class PlayerSaveData {
 
@@ -28,11 +29,11 @@ private:
 	int skillPoint;
 	int wave;
 	float health;
-	float maxHealth;
 	bool newSave;
 	std::unordered_map<ItemIndex, int> storage;
 	std::unordered_map<SkillListIndex, int> skillProgress;
 	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, int>> firearmUpgradeProgress;
+	std::unordered_map<PlayerAttribute, float> playerAttribute;
 
 	PlayerSaveData();
 

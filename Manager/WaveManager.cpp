@@ -39,6 +39,23 @@ void WaveManager::EndWave() {
 
 }
 
+void WaveManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
+
+	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
+	Algorithm::Shuffle(spawnPositionList);
+
+	std::cout << "Spawning " << amount << std::endl;
+
+	for (int i = 0; i < amount; i++) {
+
+		Zombie* zombie = GameObject::Instantiate<Zombie>("Zombie", Layer::Zombie);
+		zombie->SetIndex(zombieIndex);
+		zombie->transform->position = spawnPositionList[i];
+
+	}
+
+}
+
 WaveManager::WaveManager() {
 
 	if (instance)
@@ -103,8 +120,12 @@ void WaveManager::Update() {
 
 		lastSpawnTick = GameCore::Time();
 
-		GameManager::Instance()->SpawnZombie(spawnAmount,
-			Random::Int(0, 10) & 1 ? ZombieIndex::Normal : ZombieIndex::Lurker);
+		SpawnZombie(
+			spawnAmount,
+			static_cast<ZombieIndex>(
+				Random::Int(static_cast<int>(ZombieIndex::Normal), static_cast<int>(ZombieIndex::Tanker))
+				)
+		);
 
 	}
 
@@ -129,7 +150,9 @@ void WaveManager::RemoveZombie() {
 	zombieLeft--;
 	zombieKilled++;
 
-	currentProgress = zombieKilled * 1.0f / totalZombie;
+	currentProgress = static_cast<float>(zombieKilled) / static_cast<float>(totalZombie);
+
+	std::cout << zombieLeft << " " << zombieKilled << " " << zombieToSpawn << std::endl;
 
 	if (zombieLeft == 0 && zombieToSpawn == 0)
 		EndWave();

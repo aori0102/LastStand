@@ -41,6 +41,6 @@ public:
 	void AddAnimationClip(AnimationIndex animationIndex, bool isStateMachine = false);
 	void AddTransition(AnimationIndex from, AnimationIndex to, std::function<bool()> condition = []() { return true; });
 	void MakeDefault(AnimationIndex animationIndex);
-	void RenderCurrent(Vector2 position, Vector2 scale, float angle);
+	void RenderCurrent(Vector2 position, Vector2 scale, float angle, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 };

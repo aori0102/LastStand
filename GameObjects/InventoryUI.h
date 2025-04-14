@@ -16,7 +16,6 @@ private:
 
 	bool isHotBar;
 	GameObject* frame;
-	GameObject* itemCountLabel;
 	GameObject* visual;
 	ItemIndex itemIndex;
 	HotBarSlotIndex hotBarSlotIndex;
@@ -63,8 +62,9 @@ public:
 	InventoryUI();
 	~InventoryUI();
 	void SelectSlot(SlotUI* slotUI);
-	void UpdateInventorySlot(ItemIndex itemIndex, int amount);
-	void UpdateHotBarSlot(ItemIndex itemIndex, int amount, HotBarSlotIndex hotBarSlotIndex);
+	void AddItemToInventory(ItemIndex itemIndex);
+	void RemoveItemFromInventory(ItemIndex itemIndex);
+	void UpdateHotBarSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex);
 
 	static InventoryUI* Instance();
 

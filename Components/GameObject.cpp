@@ -70,6 +70,8 @@ void GameObject::DropNuke() {
 
 	for (auto obj : gameObjectSet) {
 
+		std::cout << "Trashing " << obj->name << std::endl;
+
 		Destroy(obj);
 
 	}

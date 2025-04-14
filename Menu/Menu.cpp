@@ -44,6 +44,7 @@ void Menu::InitializeMenu() {
 		if (!IsActive())
 			return false;
 		GameManager::Instance()->SwitchScene(SceneIndex::InGame);
+		GameManager::Instance()->UnfreezeGame();
 		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
 		};

@@ -7,6 +7,8 @@
 #include <SliderUIGroup.h>
 #include <Texture.h>
 
+SettingsUI* SettingsUI::instance = nullptr;
+
 void SettingsUI::InitializeUI() {
 
 	// -------------
@@ -18,7 +20,6 @@ void SettingsUI::InitializeUI() {
 	masterVolumeSlider->OnValueUpdated = [](float value) {
 		GameCore::SetMasterVolume(value);
 		};
-	masterVolumeSlider->SetValue(GameCore::GetMasterVolume());
 	uiElementMap[UIElementIndex::MasterVolumeSlider] = masterVolumeSlider;
 
 	// -------------
@@ -30,7 +31,6 @@ void SettingsUI::InitializeUI() {
 	sfxVolumeSlider->OnValueUpdated = [](float value) {
 		GameCore::SetSFXVolume(value);
 		};
-	sfxVolumeSlider->SetValue(GameCore::GetSFXVolume());
 	uiElementMap[UIElementIndex::SFXVolumeSlider] = sfxVolumeSlider;
 
 	// -------------
@@ -42,7 +42,6 @@ void SettingsUI::InitializeUI() {
 	musicVolumeSlider->OnValueUpdated = [](float value) {
 		GameCore::SetMusicVolume(value);
 		};
-	musicVolumeSlider->SetValue(GameCore::GetMusicVolume());
 	uiElementMap[UIElementIndex::MusicVolumeSlider] = musicVolumeSlider;
 
 	// -------------
@@ -125,6 +124,11 @@ void SettingsUI::Hide() {
 
 SettingsUI::SettingsUI() {
 
+	if (instance)
+		throw std::exception("SettingsUI can only have one instance");
+
+	instance = this;
+
 	InitializeUI();
 
 	OnEnabled = [this]() { Show(); };
@@ -137,4 +141,19 @@ SettingsUI::~SettingsUI() {
 	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
 		GameObject::Destroy(it->second);
 
+	uiElementMap.clear();
+
+	instance = nullptr;
+
 }
+
+void SettingsUI::UpdateConfig() {
+
+	uiElementMap.at(UIElementIndex::MasterVolumeSlider)->As<SliderUIGroup>()->SetValue(GameCore::GetMasterVolume());
+	uiElementMap.at(UIElementIndex::SFXVolumeSlider)->As<SliderUIGroup>()->SetValue(GameCore::GetSFXVolume());
+	uiElementMap.at(UIElementIndex::MusicVolumeSlider)->As<SliderUIGroup>()->SetValue(GameCore::GetMusicVolume());
+	uiElementMap.at(UIElementIndex::KeyBindList)->As<KeyBindUIGroup>()->UpdateConfig();
+
+}
+
+SettingsUI* SettingsUI::Instance() { return instance; }

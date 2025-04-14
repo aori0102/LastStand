@@ -15,8 +15,8 @@ enum class ZombieIndex {
 
 	Normal,
 	Lurker,
-	Bomber,
 	Tanker,
+	Bomber,
 
 };
 
