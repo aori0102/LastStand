@@ -45,6 +45,7 @@ public:
 	void SelectSlot(HotBarSlotIndex slotIndex);
 	void RemoveItem(ItemIndex itemIndex);
 	void LinkItemToSlot(ItemIndex itemIndex, HotBarSlotIndex slotIndex);
+	void Reset();
 	void Update() override;
 	bool TryAddItem(ItemIndex itemIndex);
 	ItemIndex GetSelectedItemIndex();

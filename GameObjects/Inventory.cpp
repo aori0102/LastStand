@@ -115,6 +115,19 @@ void Inventory::LoadInventory() {
 
 }
 
+void Inventory::ResetInventory() {
+
+	for (auto it = storage.begin(); it != storage.end(); it++)
+		GameObject::Destroy(it->second);
+
+	storage.clear();
+	InventoryUI::Instance()->Reset();
+
+	for (auto it = STARTER_KIT.begin(); it != STARTER_KIT.end(); it++)
+		AddItem(it->first, it->second);
+
+}
+
 bool Inventory::IsSufficient(ItemIndex itemIndex, int amount) {
 
 	for (auto it = storage.begin(); it != storage.end(); it++) {

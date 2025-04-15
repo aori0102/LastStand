@@ -28,8 +28,10 @@ private:
 	int playerMoney;
 	int playerLevel;
 	int playerEXP;
+	int playerTotalEXP;
 	int playerEXPNeeded;
 	int playerSkillPoint;
+	float playerDamage;
 
 	static PlayerStatistic* instance;
 
@@ -43,19 +45,23 @@ public:
 	~PlayerStatistic();
 	void AddEXP(int amount);
 	void AddMoney(int amount);
+	void AddDamage(float amount);
 	void SaveData();
 	void LoadData();
+	void ResetStat();
 	bool IsMoneySufficient(int amount);
 	bool TrySpendMoney(int amount);
 	bool TryConsumeSkillPoint(int amount);
 	int GetLevel() const;
 	int GetEXP() const;
+	int GetTotalEXP() const;
 	int GetMoney() const;
 	int GetEXPNeeded() const;
 	float GetHealth() const;
 	float GetMaxHealth() const;
 	float GetStamina() const;
 	float GetMaxStamina() const;
+	float GetDamage() const;
 
 	static PlayerStatistic* Instance();
 

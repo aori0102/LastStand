@@ -23,27 +23,6 @@ class FirearmUpgrade;
 enum class FirearmAttributeIndex;
 
 // Upgrades
-class UpgradeNode {
-
-	/// ----------------------------------
-	/// FIELDS
-	/// ----------------------------------
-
-	int cost;
-	float amount;
-	UpgradeNode* next;
-
-	friend class Shop;
-	friend class FirearmUpgrade;
-
-	/// ----------------------------------
-	/// METHODS
-	/// ----------------------------------
-
-	UpgradeNode(int initCost, float initAmount)
-		: cost(initCost), amount(initAmount), next(nullptr) {}
-
-};
 
 class Shop : public GameObject {
 
@@ -206,6 +185,7 @@ private:
 	void InitializeUpgrades(ItemIndex firearmIndex);
 	void SwitchMenu(ShopMenuIndex targetMenuIndex);
 	void UpdateAttributeList();
+	void InitializeSkillList();
 
 	UIElementIndex GetUIElementIndex(ShopMenuIndex shopMenuIndex);
 
@@ -222,6 +202,7 @@ public:
 	void UpdateSkillPoint(int amount);
 	void Toggle();
 	void AddFirearmToUpgrade(Firearm* firearm);
+	void ResetData();
 
 	ItemIndex GetSelectedItem() const;
 

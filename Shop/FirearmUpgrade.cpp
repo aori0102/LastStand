@@ -24,12 +24,14 @@ void FirearmUpgrade::SaveUpgradeData() {
 
 FirearmUpgrade::FirearmUpgrade(ItemIndex initFirearmIndex, FirearmAttributeIndex initAttribute, bool initSortDescending) {
 
-	currentProgress = 0;
 	sortDescending = initSortDescending;
-	currentUpgrade = nullptr;
+	currentNode = nullptr;
 	tailNode = nullptr;
+	headNode = nullptr;
 	attribute = initAttribute;
 	firearmIndex = initFirearmIndex;
+	currentProgress = 0;
+	savedProgress = DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex).at(attribute);
 
 }
 
@@ -37,12 +39,12 @@ FirearmUpgrade::~FirearmUpgrade() {
 
 	SaveUpgradeData();
 
-	while (currentUpgrade) {
+	while (currentNode) {
 
-		auto next = currentUpgrade->next;
+		auto next = currentNode->next;
 
-		delete currentUpgrade;
-		currentUpgrade = next;
+		delete currentNode;
+		currentNode = next;
 
 	}
 
@@ -50,50 +52,65 @@ FirearmUpgrade::~FirearmUpgrade() {
 
 void FirearmUpgrade::AddUpgrade(UpgradeNode* newUpgrade) {
 
-	if (!currentUpgrade) {
+	if (currentProgress < savedProgress) {
 
-		currentUpgrade = newUpgrade;
+		Firearm::ModifyAttributeMultiplier(firearmIndex, attribute, newUpgrade->amount);
+		delete newUpgrade;
+		currentProgress++;
+		return;
+
+	}
+
+	if (!headNode) {
+
+		headNode = newUpgrade;
+		currentNode = newUpgrade;
 		tailNode = newUpgrade;
 		return;
 
 	}
 
-	if (sortDescending && newUpgrade->cost > currentUpgrade->cost)
+	if (sortDescending && newUpgrade->cost > currentNode->cost)
 		throw std::exception("Invalid upgrade amount order");
-	else if (!sortDescending && newUpgrade->cost < currentUpgrade->cost)
+	else if (!sortDescending && newUpgrade->cost < currentNode->cost)
 		throw std::exception("Invalid upgrade amount order");
 
 	tailNode->next = newUpgrade;
 	tailNode = newUpgrade;
 
-	// If this upgrade progress tier is lower than saved one,
-	// modify the attribute and delete the node
-	if (currentProgress < DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex).at(attribute))
-		UpgradeNext();
-
 }
 
 void FirearmUpgrade::UpgradeNext() {
 
-	if (!currentUpgrade || firearmIndex == ItemIndex::None)
+	if (!currentNode || firearmIndex == ItemIndex::None)
 		return;
 
-	Firearm::ModifyAttributeMultiplier(firearmIndex, attribute, currentUpgrade->amount);
+	Firearm::ModifyAttributeMultiplier(firearmIndex, attribute, currentNode->amount);
 
-	UpgradeNode* nextUpgrade = currentUpgrade->next;
-	delete currentUpgrade;
-	currentUpgrade = nextUpgrade;
+	UpgradeNode* nextUpgrade = currentNode->next;
+	delete currentNode;
+	currentNode = nextUpgrade;
 
 	currentProgress++;
-	if (currentProgress > DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex).at(attribute))
-		DataManager::Instance()->playerSaveData->firearmUpgradeProgress.at(firearmIndex)[attribute] = currentProgress;
+
+}
+
+void FirearmUpgrade::ClearUpgrade() {
+
+	currentNode = headNode;
+
+	currentNode = nullptr;
+	tailNode = nullptr;
+
+	currentProgress = 0;
+	savedProgress = 0;
 
 }
 
 int FirearmUpgrade::NextUpgradeCost() {
 
-	if (currentUpgrade)
-		return currentUpgrade->cost;
+	if (currentNode)
+		return currentNode->cost;
 
 	return INT_MAX;
 
@@ -101,8 +118,8 @@ int FirearmUpgrade::NextUpgradeCost() {
 
 float FirearmUpgrade::NextUpgradeAmount() {
 
-	if (currentUpgrade)
-		return currentUpgrade->amount;
+	if (currentNode)
+		return currentNode->amount;
 
 	return -FLT_MAX;
 

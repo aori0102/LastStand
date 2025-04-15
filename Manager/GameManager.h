@@ -16,6 +16,7 @@
 class AudioManager;
 class AnimationManager;
 class DataManager;
+class DeathMessage;
 class HotBar;
 class Inventory;
 class ItemManager;
@@ -40,6 +41,7 @@ enum class SceneIndex {
 	Settings,
 	InGame,
 	InGamePaused,
+	GameOver,
 
 };
 
@@ -81,6 +83,7 @@ private:
 	SettingsUI* settingsUI;
 	PauseMenu* pauseMenu;
 	HotBar* hotBar;
+	DeathMessage* deathMessage;
 
 	static GameManager* instance;
 
@@ -106,6 +109,7 @@ public:
 	void SwitchToPreviousScene();
 	void FreezeGame();
 	void UnfreezeGame();
+	void ResetGameData();
 	bool GameRunning() const;
 	
 	static GameManager* Instance();

@@ -15,6 +15,7 @@
 #include <Humanoid.h>
 #include <MediaManager.h>
 #include <Player.h>
+#include <PlayerStatistic.h>
 #include <RigidBody.h>
 #include <Texture.h>
 #include <Transform.h>
@@ -147,8 +148,12 @@ void Bullet::OnCollisionEnter(BoxCollider* collider) {
 		return;
 
 	Humanoid* humanoid = nullptr;
-	if (collider->TryGetComponent<Humanoid>(humanoid))
+	if (collider->TryGetComponent<Humanoid>(humanoid)) {
+
 		humanoid->Damage(damage);
+		PlayerStatistic::Instance()->AddDamage(damage);
+
+	}
 
 	RigidBody* rigidBody = nullptr;
 	if (collider->TryGetComponent<RigidBody>(rigidBody))

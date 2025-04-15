@@ -43,6 +43,7 @@ public:
 	void ToggleInventory();
 	void SaveInventory();
 	void LoadInventory();
+	void ResetInventory();
 	bool IsSufficient(ItemIndex itemIndex, int amount);
 	bool TryRemoveItem(ItemIndex itemIndex, int amount = 1);
 	bool TryUseCurrent();

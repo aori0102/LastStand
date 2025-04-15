@@ -90,5 +90,6 @@ public:
 
 	SkillList();
 	~SkillList();
+	void Reset();
 
 };

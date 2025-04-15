@@ -3,6 +3,7 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
+    "DeathMessage.cpp"
     "KeyBindSingleUIGroup.cpp"
     "KeyBindUIGroup.cpp"
     "Menu.cpp"

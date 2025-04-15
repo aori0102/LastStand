@@ -140,7 +140,7 @@ void Menu::InitializeMenu() {
 	quitButton_button->OnClick = [this]() {
 		if (!IsActive())
 			return false;
-		std::cout << "Quit Button Clicked!" << std::endl;
+		GameCore::QuitGame();
 		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
 		};

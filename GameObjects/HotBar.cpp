@@ -117,6 +117,15 @@ void HotBar::LinkItemToSlot(ItemIndex itemIndex, HotBarSlotIndex slotIndex) {
 
 }
 
+void HotBar::Reset() {
+
+	for (int i = 0; i < static_cast<int>(HotBarSlotIndex::Total); i++)
+		LinkItemToSlot(ItemIndex::None, static_cast<HotBarSlotIndex>(i));
+
+	HotBar::SelectSlot(HotBarSlotIndex::None);
+
+}
+
 void HotBar::Update() {
 
 	for (auto it = hotBar.begin(); it != hotBar.end(); it++) {

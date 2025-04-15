@@ -13,6 +13,7 @@
 #include <Utils.h>
 
 class WaveInfoUI;
+class Zombie;
 enum class ZombieIndex;
 
 class WaveManager {
@@ -54,10 +55,12 @@ private:
 	int totalZombie;
 	int zombieLeft;
 	int zombieToSpawn;
-	int zombieKilled;
+	int zombieKilledThisWave;
+	int zombieKilledTotal;
 	float lastSpawnTick;
 	float difficulty;
 	float currentProgress;
+	std::unordered_set<Zombie*> zombieSet;
 	WaveInfoUI* waveInfoUI;
 
 	static WaveManager* instance;
@@ -79,11 +82,13 @@ public:
 	void Update();
 	void Disable();
 	void Enable();
-	void RemoveZombie();
+	void RemoveZombie(Zombie* zombie);
+	void ResetStat();
 	bool WaveInProgress() const;
 	int GetCurrentWave() const;
 	int GetTotalZombie() const;
 	int GetZombieLeft() const;
+	int GetTotalZombieKilled() const;
 	float GetDifficulty() const;
 	float GetCurrentProgress() const;
 

@@ -12,6 +12,7 @@
 #include <AnimationManager.h>
 #include <AudioManager.h>
 #include <DataManager.h>
+#include <DeathMessage.h>
 #include <GameComponent.h>
 #include <GameCore.h>
 #include <HotBar.h>
@@ -108,6 +109,9 @@ void GameManager::InitializeObject() {
 	pauseMenu = GameObject::Instantiate<PauseMenu>("Pause menu", Layer::Menu);
 	pauseMenu->Disable();
 
+	deathMessage = GameObject::Instantiate<DeathMessage>("Death Message", Layer::Menu);
+	deathMessage->Disable();
+
 	std::cout << "[GameManager] Game Objects Initialized!" << std::endl;
 
 }
@@ -159,6 +163,12 @@ void GameManager::EnableSceneObject() {
 
 		break;
 
+	case SceneIndex::GameOver:
+
+		deathMessage->Enable();
+
+		break;
+
 	}
 
 }
@@ -178,6 +188,7 @@ void GameManager::DisableSceneObject() {
 		southBorder->Disable();
 		westBorder->Disable();
 		eastBorder->Disable();
+		shop->Disable();
 		HotBarUI::Instance()->Disable();
 
 		break;
@@ -207,6 +218,12 @@ void GameManager::DisableSceneObject() {
 	case SceneIndex::Settings:
 
 		settingsUI->Disable();
+
+		break;
+
+	case SceneIndex::GameOver:
+
+		deathMessage->Disable();
 
 		break;
 
@@ -310,6 +327,8 @@ GameManager::~GameManager() {
 
 	pauseMenu = nullptr;
 
+	deathMessage = nullptr;
+
 	std::cout << "Flushing game objects...\n";
 	GameObject::DropNuke();
 
@@ -357,17 +376,20 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 	if (gameObject->IsA<Player>()) {
 
-		throw std::exception("You're dead. You fucking suck. Also, say goodbye to your PC :)");
+		DeathMessage::Instance()->UpdateMessage();
+
+		SwitchScene(SceneIndex::GameOver);
+		FreezeGame();
 
 	} else if (gameObject->IsA<Zombie>()) {
 
+		Zombie* zombie = gameObject->As<Zombie>();
+
 		// Point, xp, money, etc
 		PlayerStatistic::Instance()->AddMoney(10);
-		PlayerStatistic::Instance()->AddEXP(gameObject->As<Zombie>()->GetExp());
+		PlayerStatistic::Instance()->AddEXP(zombie->GetExp());
 
-		WaveManager::Instance()->RemoveZombie();
-
-		GameObject::Destroy(gameObject);
+		WaveManager::Instance()->RemoveZombie(zombie);
 
 	}
 
@@ -426,6 +448,19 @@ void GameManager::FreezeGame() {
 void GameManager::UnfreezeGame() {
 
 	gameRunning = true;
+
+}
+
+void GameManager::ResetGameData() {
+
+	Firearm::ResetAttribute();
+	waveManager->ResetStat();
+	shop->ResetData();
+	DataManager::Instance()->ResetPlayerData();
+	player->Reset();
+	playerStatistic->ResetStat();
+	hotBar->Reset();
+	inventory->ResetInventory();
 
 }
 

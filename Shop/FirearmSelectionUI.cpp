@@ -13,7 +13,7 @@
 /// ----------------------------------
 
 const int FirearmSelectionUI::MAX_COLUMN = 3;
-const Vector2 FirearmSelectionUI::CELL_SIZE = Vector2(340.0f, 195.0f);
+const Vector2 FirearmSelectionUI::CELL_SIZE = Vector2(320.0f, 195.0f);
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -84,14 +84,76 @@ FirearmSelectionUI::FirearmSelectionUI() {
 
 }
 
-void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
+FirearmSelectionUI::~FirearmSelectionUI() {
+
+	ClearSelection();
+
+}
+
+void FirearmSelectionUI::RemoveFirearm(Firearm* removingFirearm) {
+
+	SlotNode* tempNode = headNode;
+	SlotNode* prevNode = nullptr;
+	while (tempNode) {
+
+		if (tempNode->firearm == removingFirearm) {
+
+			if (!prevNode)
+				headNode = tempNode->nextSlot;
+			else
+				prevNode->nextSlot = tempNode->nextSlot;
+
+			GameObject::Destroy(tempNode->frame);
+			GameObject::Destroy(tempNode->visual);
+			delete tempNode;
+
+			UpdateListPosition();
+
+			return;
+
+		}
+
+		prevNode = tempNode;
+		tempNode = tempNode->nextSlot;
+
+	}
+
+}
+
+void FirearmSelectionUI::SetPosition(Vector2 positionInSDL) {
+
+	position = positionInSDL;
+
+	UpdateListPosition();
+
+}
+
+void FirearmSelectionUI::ClearSelection() {
+
+	auto node = headNode;
+	while (node) {
+
+		GameObject::Destroy(node->frame);
+		GameObject::Destroy(node->visual);
+		auto nextSlot = node->nextSlot;
+		delete node;
+		node = nextSlot;
+
+	}
+
+	headNode = nullptr;
+	lastNode = nullptr;
+
+}
+
+bool FirearmSelectionUI::TryAddFirearm(Firearm* newFirearm) {
 
 	SlotNode* tempNode = headNode;
 	while (tempNode) {
 
 		// Firearm already added
 		if (tempNode->firearm == newFirearm)
-			return;
+			return false;
 
 		tempNode = tempNode->nextSlot;
 
@@ -152,42 +214,6 @@ void FirearmSelectionUI::AddFirearm(Firearm* newFirearm) {
 
 	UpdateListPosition();
 
-}
-
-void FirearmSelectionUI::RemoveFirearm(Firearm* removingFirearm) {
-
-	SlotNode* tempNode = headNode;
-	SlotNode* prevNode = nullptr;
-	while (tempNode) {
-
-		if (tempNode->firearm == removingFirearm) {
-
-			if (!prevNode)
-				headNode = tempNode->nextSlot;
-			else
-				prevNode->nextSlot = tempNode->nextSlot;
-
-			GameObject::Destroy(tempNode->frame);
-			GameObject::Destroy(tempNode->visual);
-			delete tempNode;
-
-			UpdateListPosition();
-
-			return;
-
-		}
-
-		prevNode = tempNode;
-		tempNode = tempNode->nextSlot;
-
-	}
-
-}
-
-void FirearmSelectionUI::SetPosition(Vector2 positionInSDL) {
-
-	position = positionInSDL;
-
-	UpdateListPosition();
+	return true;
 
 }

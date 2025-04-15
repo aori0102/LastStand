@@ -89,6 +89,8 @@ enum class MediaUI {
 	SkillVisual_Accuracy_IV,
 	Menu_PauseFrame,
 	Menu_PauseMenuButton,
+	Menu_DeathMessageFrame,
+	Menu_DeathMessageButton,
 
 };
 
@@ -211,6 +213,8 @@ private:
 		{ MediaUI::SkillVisual_QuickHand_I, "SkillVisual\\QuickHand_I" },
 		{ MediaUI::Menu_PauseFrame, "Menu\\PauseFrame" },
 		{ MediaUI::Menu_PauseMenuButton, "Menu\\PauseMenuButton" },
+		{ MediaUI::Menu_DeathMessageButton, "Menu\\DeathMessageButton" },
+		{ MediaUI::Menu_DeathMessageFrame, "Menu\\DeathMessageFrame" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },

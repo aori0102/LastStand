@@ -154,6 +154,9 @@ bool Firearm::CanShoot() {
 
 	}
 
+	for (auto it = firearmInfoMap.at(GetIndex()).attributeMap.begin(); it != firearmInfoMap.at(GetIndex()).attributeMap.end(); it++)
+		std::cout << (int)(it->first) << " " << it->second << std::endl;
+
 	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Firerate);
 
 }
@@ -241,8 +244,6 @@ Firearm::~Firearm() {
 
 	GameObject::Destroy(reloadLabel);
 	reloadLabel = nullptr;
-
-	firearmInfoMap.at(GetIndex()).attributeMap.clear();
 
 }
 
@@ -349,5 +350,11 @@ void Firearm::ModifyAttributeMultiplier(ItemIndex firearmIndex, FirearmAttribute
 
 	firearmInfoMap.at(firearmIndex).attributeMap.at(attributeIndex)
 		= BASE_FIREARM_INFO_MAP.at(firearmIndex).attributeMap.at(attributeIndex) * amount;
+
+}
+
+void Firearm::ResetAttribute() {
+
+	firearmInfoMap = BASE_FIREARM_INFO_MAP;
 
 }

@@ -169,8 +169,8 @@ void InventoryUI::Show() {
 		for (auto slot : row) {
 
 			slot->frame->Enable();
-			if(slot->itemIndex!=ItemIndex::None)
-			slot->visual->Enable();
+			if (slot->itemIndex != ItemIndex::None)
+				slot->visual->Enable();
 
 		}
 
@@ -384,6 +384,29 @@ void InventoryUI::UpdateHotBarSlot(HotBarSlotIndex slotIndex, ItemIndex itemInde
 
 	hotbarSlotMap.at(slotIndex)->itemIndex = itemIndex;
 	UpdateSlot(hotbarSlotMap.at(slotIndex));
+
+}
+
+void InventoryUI::Reset() {
+
+	for (int i = 0; i < MAX_ROW; i++) {
+
+		for (int j = 0; j < MAX_COLUMN; j++) {
+
+			storageGrid[i][j]->itemIndex = ItemIndex::None;
+			UpdateSlot(storageGrid[i][j]);
+
+		}
+
+	}
+
+	for (int i = 0; i < static_cast<int>(HotBarSlotIndex::Total); i++) {
+
+		auto slot = hotbarSlotMap.at(static_cast<HotBarSlotIndex>(i));
+		slot->itemIndex = ItemIndex::None;
+		UpdateSlot(slot);
+
+	}
 
 }
 

@@ -123,6 +123,7 @@ public:
 	virtual void SetFirearmItemID(ItemIndex initItemIndex) = 0;
 
 	static void ModifyAttributeMultiplier(ItemIndex firearmIndex, FirearmAttributeIndex attributeIndex, float amount);
+	static void ResetAttribute();
 
 };
 

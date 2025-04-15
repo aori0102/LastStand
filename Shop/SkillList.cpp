@@ -261,3 +261,36 @@ SkillList::~SkillList() {
 	}
 
 }
+
+void SkillList::Reset() {
+
+	headNodeMap.clear();
+	tailNodeMap.clear();
+	currentNodeMap.clear();
+	skillProgressMap.clear();
+
+	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++) {
+
+		headNodeMap[static_cast<SkillListIndex>(i)] = nullptr;
+		tailNodeMap[static_cast<SkillListIndex>(i)] = nullptr;
+		currentNodeMap[static_cast<SkillListIndex>(i)] = nullptr;
+		skillProgressMap[static_cast<SkillListIndex>(i)] = 0;
+
+	}
+
+	for (auto it = headNodeMap.begin(); it != headNodeMap.end(); it++) {
+
+		SkillNode* temp = it->second;
+		while (temp) {
+
+			SkillNode* next = temp->next;
+			delete temp;
+			temp = next;
+
+		}
+
+	}
+
+	selectedNode = nullptr;
+
+}

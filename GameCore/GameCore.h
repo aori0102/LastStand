@@ -133,6 +133,7 @@ public:
 	static void SetActionKeyBind(ActionIndex actionIndex, SDL_Keycode keycode);
 	static void SaveConfig();
 	static void LoadConfig();
+	static void QuitGame();
 	static bool SelectedUI();
 	static bool Initialize();
 	static bool IsAnyKeyPressed();

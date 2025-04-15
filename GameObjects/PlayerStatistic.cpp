@@ -32,8 +32,10 @@ PlayerStatistic::PlayerStatistic() {
 
 	instance = this;
 
+	playerDamage = 0.0f;
 	playerMoney = 0;
 	playerSkillPoint = 0;
+	playerTotalEXP = 0;
 	playerLevel = 0;
 	playerEXP = 0;
 	playerEXPNeeded = PLAYER_BASE_EXP;
@@ -51,6 +53,7 @@ PlayerStatistic::~PlayerStatistic() {
 void PlayerStatistic::AddEXP(int amount) {
 
 	playerEXP += amount;
+	playerTotalEXP += amount;
 
 	if (playerEXP >= playerEXPNeeded) {
 
@@ -70,6 +73,12 @@ void PlayerStatistic::AddMoney(int amount) {
 
 }
 
+void PlayerStatistic::AddDamage(float amount) {
+
+	playerDamage += amount;
+
+}
+
 void PlayerStatistic::SaveData() {
 
 	PlayerSaveData* playerSaveData = DataManager::Instance()->playerSaveData;
@@ -78,6 +87,8 @@ void PlayerStatistic::SaveData() {
 	playerSaveData->exp = playerEXP;
 	playerSaveData->level = playerLevel;
 	playerSaveData->skillPoint = playerSkillPoint;
+	playerSaveData->damage = playerDamage;
+	playerSaveData->accumulatedEXP = playerTotalEXP;
 
 }
 
@@ -88,6 +99,20 @@ void PlayerStatistic::LoadData() {
 	playerSkillPoint = data->skillPoint;
 	playerLevel = data->level;
 	playerEXP = data->exp;
+	playerDamage = data->damage;
+	playerTotalEXP = data->accumulatedEXP;
+
+}
+
+void PlayerStatistic::ResetStat() {
+
+	playerEXP = 0;
+	playerMoney = 0;
+	playerLevel = 0;
+	playerEXPNeeded = PLAYER_BASE_EXP;
+	playerSkillPoint = 0;
+	playerDamage = 0.0f;
+	playerTotalEXP = 0;
 
 }
 
@@ -131,6 +156,12 @@ int PlayerStatistic::GetEXP() const {
 
 }
 
+int PlayerStatistic::GetTotalEXP() const {
+
+	return playerTotalEXP;
+
+}
+
 int PlayerStatistic::GetMoney() const {
 
 	return playerMoney;
@@ -166,5 +197,7 @@ float PlayerStatistic::GetMaxStamina() const {
 	return Player::Instance()->GetComponent<Humanoid>()->GetMaxStamina();
 
 }
+
+float PlayerStatistic::GetDamage() const { return playerDamage; }
 
 PlayerStatistic* PlayerStatistic::Instance() { return instance; }

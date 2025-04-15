@@ -11,31 +11,22 @@ enum class SkillListIndex;
 enum class FirearmAttributeIndex;
 enum class PlayerAttribute;
 
-class PlayerSaveData {
+struct PlayerSaveData {
 
-private:
-
-	friend class PlayerStatistic;
-	friend class DataManager;
-	friend class Inventory;
-	friend class WaveManager;
-	friend class SkillList;
-	friend class FirearmUpgrade;
-	friend class Player;
-
-	int level;
-	int money;
-	int exp;
-	int skillPoint;
-	int wave;
-	float health;
-	bool newSave;
-	std::unordered_map<ItemIndex, int> storage;
-	std::unordered_map<SkillListIndex, int> skillProgress;
-	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, int>> firearmUpgradeProgress;
-	std::unordered_map<PlayerAttribute, float> playerAttribute;
-
-	PlayerSaveData();
+	int level = 0;
+	int money = 0;
+	int exp = 0;
+	int accumulatedEXP = 0;
+	int skillPoint = 0;
+	int wave = 0;
+	int zombieKilled = 0;
+	float health = 0.0f;
+	float damage = 0.0f;
+	bool newSave = true;
+	std::unordered_map<ItemIndex, int> storage = {};
+	std::unordered_map<SkillListIndex, int> skillProgress = {};
+	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, int>> firearmUpgradeProgress = {};
+	std::unordered_map<PlayerAttribute, float> playerAttribute = {};
 
 };
 
@@ -66,6 +57,7 @@ private:
 private:
 
 	std::string dataPath;
+	PlayerSaveData defaultPlayerSaveData;
 
 	static DataManager* instance;
 
@@ -78,6 +70,7 @@ private:
 
 	void SavePlayerData();
 	void LoadPlayerData();
+	void InitializePlayerData();
 
 	void SavePlayerConfig();
 	void LoadPlayerConfig();
@@ -86,6 +79,7 @@ public:
 
 	DataManager();
 	~DataManager();
+	void ResetPlayerData();
 
 	static DataManager* Instance();
 

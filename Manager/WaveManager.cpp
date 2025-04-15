@@ -11,6 +11,7 @@
 #include <string>
 
 #include <DataManager.h>
+#include <DeathMessage.h>
 #include <GameCore.h>
 #include <GameManager.h>
 #include <PlayerStatistic.h>
@@ -36,6 +37,7 @@ void WaveManager::EndWave() {
 
 	PlayerStatistic::Instance()->SaveData();
 	DataManager::Instance()->playerSaveData->wave = currentWave;
+	DataManager::Instance()->playerSaveData->zombieKilled = zombieKilledTotal;
 
 }
 
@@ -44,13 +46,12 @@ void WaveManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
 	Algorithm::Shuffle(spawnPositionList);
 
-	std::cout << "Spawning " << amount << std::endl;
-
 	for (int i = 0; i < amount; i++) {
 
 		Zombie* zombie = GameObject::Instantiate<Zombie>("Zombie", Layer::Zombie);
 		zombie->SetIndex(zombieIndex);
 		zombie->transform->position = spawnPositionList[i];
+		zombieSet.insert(zombie);
 
 	}
 
@@ -70,7 +71,8 @@ WaveManager::WaveManager() {
 	totalZombie = 0;
 	zombieLeft = 0;
 	zombieToSpawn = 0;
-	zombieKilled = 0;
+	zombieKilledThisWave = 0;
+	zombieKilledTotal = DataManager::Instance()->playerSaveData->zombieKilled;
 	lastSpawnTick = 0.0f;
 	difficulty = 1.0f;
 	currentProgress = 0.0f;
@@ -97,7 +99,7 @@ void WaveManager::InitiateWave() {
 
 	currentWave++;
 
-	zombieKilled = 0;
+	zombieKilledThisWave = 0;
 	zombieLeft = 0;
 
 	currentProgress = 0.0f;
@@ -145,17 +147,36 @@ void WaveManager::Disable() {
 
 }
 
-void WaveManager::RemoveZombie() {
+void WaveManager::RemoveZombie(Zombie* zombie) {
 
 	zombieLeft--;
-	zombieKilled++;
+	zombieKilledThisWave++;
+	zombieKilledTotal++;
 
-	currentProgress = static_cast<float>(zombieKilled) / static_cast<float>(totalZombie);
+	currentProgress = static_cast<float>(zombieKilledThisWave) / static_cast<float>(totalZombie);
 
-	std::cout << zombieLeft << " " << zombieKilled << " " << zombieToSpawn << std::endl;
+	zombieSet.erase(zombie);
+
+	GameObject::Destroy(zombie);
 
 	if (zombieLeft == 0 && zombieToSpawn == 0)
 		EndWave();
+
+}
+
+void WaveManager::ResetStat() {
+
+	waveInProgress = false;
+	zombieKilledThisWave = 0;
+	zombieKilledTotal = 0;
+	zombieLeft = 0;
+	currentProgress = 0.0f;
+	currentWave = 0;
+
+	for (auto zombie : zombieSet)
+		GameObject::Destroy(zombie);
+
+	zombieSet.clear();
 
 }
 
@@ -166,6 +187,8 @@ int WaveManager::GetCurrentWave() const { return currentWave; }
 int WaveManager::GetTotalZombie() const { return totalZombie; }
 
 int WaveManager::GetZombieLeft() const { return zombieLeft; }
+
+int WaveManager::GetTotalZombieKilled() const { return zombieKilledTotal; }
 
 float WaveManager::GetDifficulty() const { return difficulty; }
 

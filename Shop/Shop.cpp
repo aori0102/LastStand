@@ -448,89 +448,8 @@ void Shop::InitializeUI() {
 	/// --- SKILL LIST ---
 	/// >>>
 	SkillList* skillList = GameObject::Instantiate<SkillList>("Skill List", Layer::Menu);
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 1,
-		.value = 120.0f,
-		.name = "Health I",
-		.description = "Increase Player Max HP to 120",
-		.playerAttribute = PlayerAttribute::MaxHealth,
-		.listIndex = SkillListIndex::First,
-		.skillVisualIndex = MediaUI::SkillVisual_Health_I,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 2,
-		.value = 130.0f,
-		.name = "Health II",
-		.description = "Increase Player Max HP to 130",
-		.playerAttribute = PlayerAttribute::MaxHealth,
-		.listIndex = SkillListIndex::First,
-		.skillVisualIndex = MediaUI::SkillVisual_Health_II,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 5,
-		.value = 150.0f,
-		.name = "Health III",
-		.description = "Increase Player Max HP to 150",
-		.playerAttribute = PlayerAttribute::MaxHealth,
-		.listIndex = SkillListIndex::First,
-		.skillVisualIndex = MediaUI::SkillVisual_Health_III,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 9,
-		.value = 190.0f,
-		.name = "Health IV",
-		.description = "Increase Player Max HP to 190",
-		.playerAttribute = PlayerAttribute::MaxHealth,
-		.listIndex = SkillListIndex::First,
-		.skillVisualIndex = MediaUI::SkillVisual_Health_IV,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 1,
-		.value = 2.9f,
-		.name = "Quick Hand",
-		.description = "Increase reload speed by 20%",
-		.playerAttribute = PlayerAttribute::ReloadSpeed,
-		.listIndex = SkillListIndex::Second,
-		.skillVisualIndex = MediaUI::SkillVisual_QuickHand_I,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 1,
-		.value = 0.35f,
-		.name = "Accuracy I",
-		.description = "Increase accuracy to 35%",
-		.playerAttribute = PlayerAttribute::Accuracy,
-		.listIndex = SkillListIndex::Third,
-		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_I,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 2,
-		.value = 0.4f,
-		.name = "Accuracy II",
-		.description = "Increase accuracy to 40%",
-		.playerAttribute = PlayerAttribute::Accuracy,
-		.listIndex = SkillListIndex::Third,
-		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_II,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 3,
-		.value = 0.45f,
-		.name = "Accuracy III",
-		.description = "Increase accuracy to 45%",
-		.playerAttribute = PlayerAttribute::Accuracy,
-		.listIndex = SkillListIndex::Third,
-		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_III,
-		});
-	skillList->AddSkill(SkillInfo{
-		.skillPoint = 4,
-		.value = 0.5f,
-		.name = "Accuracy IV",
-		.description = "Increase accuracy to 50%",
-		.playerAttribute = PlayerAttribute::Accuracy,
-		.listIndex = SkillListIndex::Third,
-		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_IV,
-		});
-	skillList->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_List));
 	uiElementMap[UIElementIndex::Skill_List] = skillList;
+	InitializeSkillList();
 
 	/// >>>
 	/// --- SKILL POINT ICON ---
@@ -567,6 +486,9 @@ void Shop::InitializeUI() {
 }
 
 void Shop::InitializeUpgrades(ItemIndex firearmIndex) {
+
+	if (firearmUpgradeMap.contains(firearmIndex))
+		return;
 
 	// Reload time
 	FirearmUpgrade* firerateUpgrade = new FirearmUpgrade(
@@ -656,7 +578,8 @@ void Shop::SwitchMenu(ShopMenuIndex targetMenuIndex) {
 
 	currentMenuIndex = targetMenuIndex;
 
-	ShowCurrentMenu();
+	if (IsActive())
+		ShowCurrentMenu();
 
 }
 
@@ -666,6 +589,95 @@ void Shop::UpdateAttributeList() {
 		return;
 
 	uiElementMap.at(UIElementIndex::Firearm_Main_Attribute_Content)->As<FirearmAttributeUIGroup>()->SetAttribute(currentFirearm, FIREARM_ATTRIBUTE_AMOUNT_DECIMAL);
+
+}
+
+void Shop::InitializeSkillList() {
+
+	SkillList* skillList = uiElementMap.at(UIElementIndex::Skill_List)->As<SkillList>();
+
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 1,
+		.value = 120.0f,
+		.name = "Health I",
+		.description = "Increase Player Max HP to 120",
+		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_I,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 2,
+		.value = 130.0f,
+		.name = "Health II",
+		.description = "Increase Player Max HP to 130",
+		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_II,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 5,
+		.value = 150.0f,
+		.name = "Health III",
+		.description = "Increase Player Max HP to 150",
+		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_III,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 9,
+		.value = 190.0f,
+		.name = "Health IV",
+		.description = "Increase Player Max HP to 190",
+		.playerAttribute = PlayerAttribute::MaxHealth,
+		.listIndex = SkillListIndex::First,
+		.skillVisualIndex = MediaUI::SkillVisual_Health_IV,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 1,
+		.value = 2.9f,
+		.name = "Quick Hand",
+		.description = "Increase reload speed by 20%",
+		.playerAttribute = PlayerAttribute::ReloadSpeed,
+		.listIndex = SkillListIndex::Second,
+		.skillVisualIndex = MediaUI::SkillVisual_QuickHand_I,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 1,
+		.value = 0.35f,
+		.name = "Accuracy I",
+		.description = "Increase accuracy to 35%",
+		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_I,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 2,
+		.value = 0.4f,
+		.name = "Accuracy II",
+		.description = "Increase accuracy to 40%",
+		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_II,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 3,
+		.value = 0.45f,
+		.name = "Accuracy III",
+		.description = "Increase accuracy to 45%",
+		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_III,
+		});
+	skillList->AddSkill(SkillInfo{
+		.skillPoint = 4,
+		.value = 0.5f,
+		.name = "Accuracy IV",
+		.description = "Increase accuracy to 50%",
+		.playerAttribute = PlayerAttribute::Accuracy,
+		.listIndex = SkillListIndex::Third,
+		.skillVisualIndex = MediaUI::SkillVisual_Accuracy_IV,
+		});
+	skillList->SetPosition(UI_ELEMENT_POSITION_MAP.at(UIElementIndex::Skill_List));
 
 }
 
@@ -685,9 +697,6 @@ Shop::Shop() {
 	currentFirearm = nullptr;
 	currentItemIndex = ItemIndex::None;
 
-	InitializeUpgrades(ItemIndex::Pistol_M1911);
-	InitializeUpgrades(ItemIndex::Shotgun_Beretta1301);
-	InitializeUpgrades(ItemIndex::Rifle_M4);
 	InitializeUI();
 
 	SwitchMenu(currentMenuIndex);
@@ -803,14 +812,37 @@ void Shop::Toggle() {
 
 	showShop = !showShop;
 
-	showShop ? Show() : Hide();
+	showShop ? Enable() : Disable();
 
 }
 
 void Shop::AddFirearmToUpgrade(Firearm* firearm) {
 
-	uiElementMap.at(UIElementIndex::Firearm_SelectionGrid)->As<FirearmSelectionUI>()->AddFirearm(firearm);
-		
+	if (uiElementMap.at(UIElementIndex::Firearm_SelectionGrid)->As<FirearmSelectionUI>()->TryAddFirearm(firearm))
+		InitializeUpgrades(firearm->GetIndex());
+
+}
+
+void Shop::ResetData() {
+
+	uiElementMap.at(UIElementIndex::Skill_List)->As<SkillList>()->Reset();
+	InitializeSkillList();
+
+	uiElementMap.at(UIElementIndex::Firearm_SelectionGrid)->As<FirearmSelectionUI>()->ClearSelection();
+	currentFirearm = nullptr;
+	SwitchMenu(ShopMenuIndex::Firearm_Selection);
+
+	for (auto it_item = firearmUpgradeMap.begin(); it_item != firearmUpgradeMap.end(); it_item++) {
+
+		for (auto it_upgrade = (it_item->second).begin(); it_upgrade != (it_item->second).end(); it_upgrade++)
+			delete (it_upgrade->second);
+
+		(it_item->second).clear();
+
+	}
+
+	firearmUpgradeMap.clear();
+
 }
 
 ItemIndex Shop::GetSelectedItem() const { return currentItemIndex; }

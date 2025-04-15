@@ -54,9 +54,10 @@ private:
 public:
 
 	FirearmSelectionUI();
-
-	void AddFirearm(Firearm* newFirearm);
+	~FirearmSelectionUI();
 	void RemoveFirearm(Firearm* removingFirearm);
 	void SetPosition(Vector2 positionInSDL);
+	void ClearSelection();
+	bool TryAddFirearm(Firearm* newFirearm);
 
 };

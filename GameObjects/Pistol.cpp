@@ -42,7 +42,7 @@ void Pistol::SetFirearmItemID(ItemIndex initItemIndex) {
 }
 
 bool Pistol::TryUse() {
-	
+
 	if (!CanShoot())
 		return false;
 

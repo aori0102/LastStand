@@ -669,6 +669,12 @@ void GameCore::LoadConfig() {
 
 }
 
+void GameCore::QuitGame() {
+
+	quit = true;
+
+}
+
 bool GameCore::SelectedUI() { return selectedUI; }
 
 bool GameCore::Initialize() {

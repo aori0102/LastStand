@@ -38,6 +38,12 @@
 /// STATIC FIELDS
 /// ----------------------------------
 
+const std::unordered_map<PlayerAttribute, float> Player::DEFAULT_PLAYER_ATTRIBUTE_MAP = {
+	{ PlayerAttribute::Accuracy, 0.3f },
+	{ PlayerAttribute::ReloadSpeed, 1.0f },
+	{ PlayerAttribute::MaxHealth, 100.0f },
+};
+
 Player* Player::instance = nullptr;
 
 /// ----------------------------------
@@ -428,6 +434,18 @@ void Player::SaveData() {
 
 	Humanoid* humanoid = GetComponent<Humanoid>();
 	data->health = humanoid->GetHealth();
+
+}
+
+void Player::Reset() {
+
+	Humanoid* humanoid = GetComponent<Humanoid>();
+	humanoid->SetHealth(100.0f);
+	humanoid->SetMaxHealth(100.0f);
+
+	playerAttributeMap = DEFAULT_PLAYER_ATTRIBUTE_MAP;
+
+	transform->position = Vector2::zero;
 
 }
 

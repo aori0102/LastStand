@@ -65,6 +65,7 @@ public:
 	void AddItemToInventory(ItemIndex itemIndex);
 	void RemoveItemFromInventory(ItemIndex itemIndex);
 	void UpdateHotBarSlot(HotBarSlotIndex slotIndex, ItemIndex itemIndex);
+	void Reset();
 
 	static InventoryUI* Instance();
 

@@ -47,6 +47,10 @@ private:
 	const float AIM_SOUND_DELAY = 0.9f;
 	const float SPRINT_SOUND_DELAY = 0.35f;
 
+public:
+
+	static const std::unordered_map<PlayerAttribute, float> DEFAULT_PLAYER_ATTRIBUTE_MAP;
+
 	/// ----------------------------------
 	/// FIELDS
 	/// ----------------------------------
@@ -97,6 +101,7 @@ public:
 	void SetAttribute(PlayerAttribute playerAttribute, float value);
 	void LoadData();
 	void SaveData();
+	void Reset();
 	void Update() override;
 	int GetAmmoCount(ItemIndex ammoItemIndex);
 	float GetAttribute(PlayerAttribute playerAttribute);

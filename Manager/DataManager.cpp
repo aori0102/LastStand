@@ -14,57 +14,6 @@
 
 DataManager* DataManager::instance = nullptr;
 
-PlayerSaveData::PlayerSaveData() {
-
-	level = 0;
-	exp = 0;
-	money = 0;
-	skillPoint = 0;
-	wave = 0;
-	health = 100.0f;
-	newSave = true;
-	storage = {};
-	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++)
-		skillProgress[static_cast<SkillListIndex>(i)] = 0;
-
-	firearmUpgradeProgress = {
-		{ ItemIndex::Pistol_M1911, {
-			{ FirearmAttributeIndex::CriticalChance, 0 },
-			{ FirearmAttributeIndex::Damage, 0 },
-			{ FirearmAttributeIndex::CriticalDamage, 0 },
-			{ FirearmAttributeIndex::MagazineCapacity, 0 },
-			{ FirearmAttributeIndex::ReloadTime, 0 },
-			{ FirearmAttributeIndex::Firerate, 0 },
-		}
-		},
-		{ ItemIndex::Shotgun_Beretta1301, {
-			{ FirearmAttributeIndex::CriticalChance, 0 },
-			{ FirearmAttributeIndex::Damage, 0 },
-			{ FirearmAttributeIndex::CriticalDamage, 0 },
-			{ FirearmAttributeIndex::MagazineCapacity, 0 },
-			{ FirearmAttributeIndex::ReloadTime, 0 },
-			{ FirearmAttributeIndex::Firerate, 0 },
-		}
-		},
-		{ ItemIndex::Rifle_M4, {
-			{ FirearmAttributeIndex::CriticalChance, 0 },
-			{ FirearmAttributeIndex::Damage, 0 },
-			{ FirearmAttributeIndex::CriticalDamage, 0 },
-			{ FirearmAttributeIndex::MagazineCapacity, 0 },
-			{ FirearmAttributeIndex::ReloadTime, 0 },
-			{ FirearmAttributeIndex::Firerate, 0 },
-		}
-		},
-	};
-	
-	playerAttribute = {
-		{ PlayerAttribute::Accuracy, 0.3f },
-		{ PlayerAttribute::MaxHealth, 100.0f },
-		{ PlayerAttribute::ReloadSpeed, 1.0f },
-	};
-
-}
-
 PlayerConfig::PlayerConfig() {
 
 	masterVolume = 1.0f;
@@ -96,6 +45,9 @@ void DataManager::SavePlayerData() {
 	file << "SkillPoint:" << playerSaveData->skillPoint << std::endl;
 	file << "Health:" << playerSaveData->health << std::endl;
 	file << "Wave:" << playerSaveData->wave << std::endl;
+	file << "Zombie:" << playerSaveData->zombieKilled << std::endl;
+	file << "AccumulatedEXP:" << playerSaveData->accumulatedEXP << std::endl;
+	file << "Damage:" << playerSaveData->damage << std::endl;
 
 	for (auto it = playerSaveData->storage.begin(); it != playerSaveData->storage.end(); it++)
 		file << "Item:" << static_cast<int>(it->first) << "|" << it->second << std::endl;
@@ -142,6 +94,8 @@ void DataManager::LoadPlayerData() {
 			playerSaveData->level = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("Money") != std::string::npos)
 			playerSaveData->money = std::stoi(line.substr(line.find(':') + 1));
+		else if (line.find("AccumulatedEXP") != std::string::npos)
+			playerSaveData->accumulatedEXP = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("EXP") != std::string::npos)
 			playerSaveData->exp = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("SkillPoint") != std::string::npos)
@@ -150,6 +104,10 @@ void DataManager::LoadPlayerData() {
 			playerSaveData->wave = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("Health") != std::string::npos)
 			playerSaveData->health = std::stof(line.substr(line.find(':') + 1));
+		else if (line.find("Zombie") != std::string::npos)
+			playerSaveData->zombieKilled = std::stoi(line.substr(line.find(':') + 1));
+		else if (line.find("Damage") != std::string::npos)
+			playerSaveData->damage = std::stof(line.substr(line.find(':') + 1));
 		else if (line.find("Item") != std::string::npos)
 			playerSaveData->storage[
 				static_cast<ItemIndex>(std::stoi(line.substr(line.find(':') + 1, line.rfind('|') - line.find(':') - 1)))
@@ -172,6 +130,65 @@ void DataManager::LoadPlayerData() {
 	}
 
 	file.close();
+
+}
+
+void DataManager::InitializePlayerData() {
+
+	// Default save data, for renewing
+	defaultPlayerSaveData = PlayerSaveData();
+
+	defaultPlayerSaveData.level = 0;
+	defaultPlayerSaveData.exp = 0;
+	defaultPlayerSaveData.money = 0;
+	defaultPlayerSaveData.skillPoint = 0;
+	defaultPlayerSaveData.wave = 0;
+	defaultPlayerSaveData.accumulatedEXP = 0;
+	defaultPlayerSaveData.zombieKilled = 0;
+	defaultPlayerSaveData.health = 100.0f;
+	defaultPlayerSaveData.damage = 0.0f;
+	defaultPlayerSaveData.newSave = true;
+	defaultPlayerSaveData.storage = {};
+	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++)
+		defaultPlayerSaveData.skillProgress[static_cast<SkillListIndex>(i)] = 0;
+
+	defaultPlayerSaveData.firearmUpgradeProgress = {
+		{ ItemIndex::Pistol_M1911, {
+			{ FirearmAttributeIndex::CriticalChance, 0 },
+			{ FirearmAttributeIndex::Damage, 0 },
+			{ FirearmAttributeIndex::CriticalDamage, 0 },
+			{ FirearmAttributeIndex::MagazineCapacity, 0 },
+			{ FirearmAttributeIndex::ReloadTime, 0 },
+			{ FirearmAttributeIndex::Firerate, 0 },
+		}
+		},
+		{ ItemIndex::Shotgun_Beretta1301, {
+			{ FirearmAttributeIndex::CriticalChance, 0 },
+			{ FirearmAttributeIndex::Damage, 0 },
+			{ FirearmAttributeIndex::CriticalDamage, 0 },
+			{ FirearmAttributeIndex::MagazineCapacity, 0 },
+			{ FirearmAttributeIndex::ReloadTime, 0 },
+			{ FirearmAttributeIndex::Firerate, 0 },
+		}
+		},
+		{ ItemIndex::Rifle_M4, {
+			{ FirearmAttributeIndex::CriticalChance, 0 },
+			{ FirearmAttributeIndex::Damage, 0 },
+			{ FirearmAttributeIndex::CriticalDamage, 0 },
+			{ FirearmAttributeIndex::MagazineCapacity, 0 },
+			{ FirearmAttributeIndex::ReloadTime, 0 },
+			{ FirearmAttributeIndex::Firerate, 0 },
+		}
+		},
+	};
+
+	defaultPlayerSaveData.playerAttribute = Player::Instance()->DEFAULT_PLAYER_ATTRIBUTE_MAP;
+
+	// Copy the data
+	playerSaveData = new PlayerSaveData;
+	*playerSaveData = defaultPlayerSaveData;
+
+	LoadPlayerData();
 
 }
 
@@ -206,8 +223,6 @@ void DataManager::LoadPlayerConfig() {
 
 	}
 
-	playerSaveData->newSave = false;
-
 	std::string line;
 	while (std::getline(file, line)) {
 
@@ -239,8 +254,7 @@ DataManager::DataManager() {
 
 	std::filesystem::create_directories(dataPath);
 
-	playerSaveData = new PlayerSaveData;
-	LoadPlayerData();
+	InitializePlayerData();
 
 	playerConfig = new PlayerConfig;
 	LoadPlayerConfig();
@@ -258,6 +272,12 @@ DataManager::~DataManager() {
 	playerConfig = nullptr;
 
 	instance = nullptr;
+
+}
+
+void DataManager::ResetPlayerData() {
+
+	*playerSaveData = defaultPlayerSaveData;
 
 }
 
