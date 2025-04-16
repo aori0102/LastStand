@@ -94,6 +94,7 @@ void GameManager::InitializeObject() {
 	GameCore::LetCameraFocus(Player::Instance());
 
 	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
+	shop->Disable();
 
 	inventory = new Inventory;
 	hotBar = GameObject::Instantiate<HotBar>("Hot Bar");

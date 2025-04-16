@@ -94,6 +94,7 @@ protected:
 private:
 
 	void HandleReloading();
+	void InitializeUI();
 
 protected:
 

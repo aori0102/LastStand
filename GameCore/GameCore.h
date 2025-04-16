@@ -19,14 +19,6 @@ class GameObject;
 class GameManager;
 class Texture;
 
-enum class UILayer {
-
-	Default,
-	Tooltip,
-	Menu
-
-};
-
 enum class MouseButton {
 
 	Left,
@@ -70,6 +62,10 @@ private:
 	static const float CAMERA_POSITIONAL_DISTORTION_FREQUENCY;
 	static const float CAMERA_ROTATIONAL_DISTORTION_FREQUENCY;
 	static const Vector2 MAP_ZONE;
+
+public:
+
+	static const std::unordered_map<ActionIndex, SDL_Keycode> DEFAULT_KEY_BINDING_MAP;
 
 	/// ----------------------------------
 	/// FIELDS

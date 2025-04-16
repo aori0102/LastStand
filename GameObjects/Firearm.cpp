@@ -73,30 +73,6 @@ std::unordered_map<ItemIndex, FirearmInfo> Firearm::firearmInfoMap = Firearm::BA
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void Firearm::ShowUI() {
-
-	ammoFrame->Enable();
-	ammoIcon->Enable();
-	currentAmmoLabel->Enable();
-	reserveAmmoLabel->Enable();
-
-}
-
-void Firearm::HideUI() {
-
-	ammoFrame->Disable();
-	ammoIcon->Disable();
-	currentAmmoLabel->Disable();
-	reserveAmmoLabel->Disable();
-
-}
-
-void Firearm::OnShoot() {
-
-	lastShootTick = GameCore::Time();
-
-}
-
 void Firearm::HandleReloading() {
 
 	if (isReloading && GameCore::Time() >= lastReloadTick + firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::ReloadTime)) {
@@ -145,38 +121,7 @@ void Firearm::HandleReloading() {
 
 }
 
-bool Firearm::CanShoot() {
-
-	if (isReloading) {
-
-		stopReload = true;
-		return false;
-
-	}
-
-	for (auto it = firearmInfoMap.at(GetIndex()).attributeMap.begin(); it != firearmInfoMap.at(GetIndex()).attributeMap.end(); it++)
-		std::cout << (int)(it->first) << " " << it->second << std::endl;
-
-	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Firerate);
-
-}
-
-bool Firearm::IsCrit() {
-
-	float chance = Random::Float(0.0f, 1.0f);
-	return 0.0f <= chance && chance <= firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::CriticalChance);
-
-}
-
-Firearm::Firearm() {
-
-	lastReloadTick = 0.0f;
-	lastShootTick = 0.0f;
-	isReloading = false;
-	stopReload = false;
-	previousCurrentAmmo = currentStack;
-
-	reloadType = ReloadType::Magazine;
+void Firearm::InitializeUI() {
 
 	ammoFrame = GameObject::Instantiate("Ammo Frame", Layer::GUI);
 	Image* ammoFrame_image = ammoFrame->AddComponent<Image>();
@@ -225,6 +170,64 @@ Firearm::Firearm() {
 		if (isReloading)
 			reloadLabel_text->Render();
 		};
+
+}
+
+void Firearm::ShowUI() {
+
+	ammoFrame->Enable();
+	ammoIcon->Enable();
+	currentAmmoLabel->Enable();
+	reserveAmmoLabel->Enable();
+
+}
+
+void Firearm::HideUI() {
+
+	ammoFrame->Disable();
+	ammoIcon->Disable();
+	currentAmmoLabel->Disable();
+	reserveAmmoLabel->Disable();
+
+}
+
+void Firearm::OnShoot() {
+
+	lastShootTick = GameCore::Time();
+
+}
+
+bool Firearm::CanShoot() {
+
+	if (isReloading) {
+
+		stopReload = true;
+		return false;
+
+	}
+
+	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Firerate);
+
+}
+
+bool Firearm::IsCrit() {
+
+	float chance = Random::Float(0.0f, 1.0f);
+	return 0.0f <= chance && chance <= firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::CriticalChance);
+
+}
+
+Firearm::Firearm() {
+
+	lastReloadTick = 0.0f;
+	lastShootTick = 0.0f;
+	isReloading = false;
+	stopReload = false;
+	previousCurrentAmmo = currentStack;
+
+	reloadType = ReloadType::Magazine;
+
+	InitializeUI();
 
 }
 

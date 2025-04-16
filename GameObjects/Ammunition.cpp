@@ -19,15 +19,8 @@
 
 void Ammunition::SetAmmunitionItemIndex(ItemIndex initItemIndex) {
 
-	switch (initItemIndex) {
-
-	case ItemIndex::Ammo_Slug:
-	case ItemIndex::Ammo_9mm:
-	case ItemIndex::Ammo_556:
-		break;
-	default:
-		throw std::exception("Invalid ammunition ID");
-	}
+	if (!ItemManager::Instance()->IsIndexOfType<Ammunition>(initItemIndex))
+		throw std::exception("Invalid Item ID for ammunition!");
 
 	SetIndex(initItemIndex);
 

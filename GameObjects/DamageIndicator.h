@@ -6,23 +6,21 @@
 
 #pragma once
 
-#include <GameComponent.h>
-#include <Utils.h>
+#include <GameObject.h>
 
-class Humanoid;
+class DamageIndicator : public GameObject {
 
-class Bullet : public GameObject {
+private:
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS
 	/// ----------------------------------
 
-private:
-
-	static const float KNOCKBACK_FORCE;
-	static const float BULLET_VELOCITY;
-	static const float BULLET_EXIST_TIME;
-	static const float DAMAGE_INDICATOR_ANGLE_OFFSET;
+	static const int DAMAGE_INDICATOR_DECIMAL;
+	static const int DAMAGE_INDICATOR_FONT_SIZE;
+	static const float DAMAGE_INDICATOR_SHOW_TIME;
+	static const float DAMAGE_INDICATOR_POP_UP_VELOCITY;
+	static const float DAMAGE_INDICATOR_GRAVITAIONAL_DECELERATION;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -30,10 +28,9 @@ private:
 
 private:
 
-	bool isCrit;
-	float damage;
-	float spawnTime;	
+	float initiateTime;
 	Vector2 direction;
+	Vector2 position;
 
 	/// ----------------------------------
 	/// METHODS
@@ -41,14 +38,16 @@ private:
 
 private:
 
-	void OnHumanoidHit(Humanoid* target);
 	void InitializeComponents();
+	void RenderUI();
+	float GetOpacity(float time);
+	Vector2 GetOffset(float time);
 
 public:
 
-	Bullet();
+	DamageIndicator();
+	void SetDamage(float damage, bool isCrit);
+	void Initiate(Vector2 position, Vector2 direction);
 	void Update() override;
-	void SetUpBullet(Vector2 initPosition, Vector2 initDirection, float damage, bool initIsCrit);
-	void OnCollisionEnter(BoxCollider* collider) override;
 
 };

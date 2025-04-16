@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <DataManager.h>
 
 #include <filesystem>
@@ -12,7 +18,15 @@
 #include <Player.h>
 #include <SkillList.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 DataManager* DataManager::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 PlayerConfig::PlayerConfig() {
 
@@ -20,16 +34,7 @@ PlayerConfig::PlayerConfig() {
 	sfxVolume = 1.0f;
 	musicVolume = 1.0f;
 
-	keyBindingMap = {
-		{ ActionIndex::MoveUp, SDLK_w },
-		{ ActionIndex::MoveDown, SDLK_s },
-		{ ActionIndex::MoveLeft, SDLK_a },
-		{ ActionIndex::MoveRight, SDLK_d },
-		{ ActionIndex::Reload, SDLK_r },
-		{ ActionIndex::Sprint, SDLK_LSHIFT },
-		{ ActionIndex::ToggleInventory, SDLK_i },
-		{ ActionIndex::ToggleShop, SDLK_TAB },
-	};
+	keyBindingMap = GameCore::DEFAULT_KEY_BINDING_MAP;
 
 }
 

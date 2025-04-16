@@ -28,6 +28,9 @@ Texture::~Texture() {
 
 void Texture::FreeTexture() {
 
+	if (!texture)
+		return;
+
 	SDL_DestroyTexture(texture);
 	texture = nullptr;
 

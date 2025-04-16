@@ -39,7 +39,19 @@ const float GameCore::CAMERA_NOISE_AMPLITUDE = 58.0f;
 const float GameCore::CAMERA_WOBBLE_BASE_FREQUENCY = 0.8f;
 const float GameCore::CAMERA_POSITIONAL_DISTORTION_FREQUENCY = 0.3f;
 const float GameCore::CAMERA_ROTATIONAL_DISTORTION_FREQUENCY = 0.2f;
+
 const Vector2 GameCore::MAP_ZONE = Vector2(3840.0f, 3840.0f);
+
+const std::unordered_map<ActionIndex, SDL_Keycode> GameCore::DEFAULT_KEY_BINDING_MAP = {
+	{ ActionIndex::MoveUp, SDLK_w },
+	{ ActionIndex::MoveDown, SDLK_s },
+	{ ActionIndex::MoveLeft, SDLK_a },
+	{ ActionIndex::MoveRight, SDLK_d },
+	{ ActionIndex::Reload, SDLK_r },
+	{ ActionIndex::Sprint, SDLK_LSHIFT },
+	{ ActionIndex::ToggleInventory, SDLK_i },
+	{ ActionIndex::ToggleShop, SDLK_TAB },
+};
 
 bool GameCore::quit = false;
 bool GameCore::selectedUI = false;
@@ -57,16 +69,7 @@ std::string GameCore::gameName = "Last Stand";
 
 std::unordered_map<SDL_Keycode, ActionState> GameCore::keyStateDictionary = {};
 std::unordered_map<MouseButton, ActionState> GameCore::mouseButtonStateDictionary = {};
-std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {
-	{ ActionIndex::MoveUp, SDLK_w },
-	{ ActionIndex::MoveDown, SDLK_s },
-	{ ActionIndex::MoveLeft, SDLK_a },
-	{ ActionIndex::MoveRight, SDLK_d },
-	{ ActionIndex::Reload, SDLK_r },
-	{ ActionIndex::Sprint, SDLK_LSHIFT },
-	{ ActionIndex::ToggleInventory, SDLK_i },
-	{ ActionIndex::ToggleShop, SDLK_TAB },
-};
+std::unordered_map<ActionIndex, SDL_Keycode> GameCore::keyMappingDictionary = {};
 
 Vector2 GameCore::cameraPosition = Vector2::zero;
 Vector2 GameCore::windowResolution = Vector2(1280.0f, 720.0f);

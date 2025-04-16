@@ -6,6 +6,7 @@ set(SOURCES
     "Ammunition.cpp"
     "Bullet.cpp"
     "Consumable.cpp"
+    "DamageIndicator.cpp"
     "Firearm.cpp"
     "HotBar.cpp"
     "HotBarUI.cpp"
