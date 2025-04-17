@@ -12,12 +12,11 @@ class UpgradeNode {
 	/// FIELDS
 	/// ----------------------------------
 
+public:
+
 	int cost;
 	float amount;
 	UpgradeNode* next;
-
-	friend class Shop;
-	friend class FirearmUpgrade;
 
 	/// ----------------------------------
 	/// METHODS
@@ -62,5 +61,6 @@ public:
 	void ClearUpgrade();
 	int NextUpgradeCost();
 	float NextUpgradeAmount();
+	UpgradeNode* GetNextUpgrade();
 
 };

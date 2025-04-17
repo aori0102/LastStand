@@ -5,8 +5,11 @@
 class Firearm;
 class Ammunition;
 class Consumable;
+class Pistol;
+class Rifle;
+class Shotgun;
 
-template <class T> 
+template <class T>
 bool ItemManager::IsIndexOfType(ItemIndex itemIndex) {
 
 	if (itemIndex == ItemIndex::None)
@@ -23,7 +26,7 @@ bool ItemManager::IsIndexOfType(ItemIndex itemIndex) {
 
 		}
 
-	}else if (std::is_same<T, Consumable>::value) {
+	} else if (std::is_same<T, Consumable>::value) {
 
 		switch (itemIndex) {
 
@@ -39,6 +42,33 @@ bool ItemManager::IsIndexOfType(ItemIndex itemIndex) {
 		case ItemIndex::Ammo_Slug:
 		case ItemIndex::Ammo_556:
 		case ItemIndex::Ammo_9mm:
+			return true;
+
+		}
+
+	} else if (std::is_same<T, Pistol>::value) {
+
+		switch (itemIndex) {
+
+		case ItemIndex::Pistol_M1911:
+			return true;
+
+		}
+
+	} else if (std::is_same<T, Shotgun>::value) {
+
+		switch (itemIndex) {
+
+		case ItemIndex::Shotgun_Beretta1301:
+			return true;
+
+		}
+
+	} else if (std::is_same<T, Rifle>::value) {
+
+		switch (itemIndex) {
+
+		case ItemIndex::Rifle_M4:
 			return true;
 
 		}

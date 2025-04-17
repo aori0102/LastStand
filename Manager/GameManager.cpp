@@ -89,6 +89,7 @@ void GameManager::InitializeObject() {
 		};
 	background->Disable();
 
+	///------------------
 	player = GameObject::Instantiate<Player>("Player", Layer::Player);
 	player->Disable();
 	GameCore::LetCameraFocus(Player::Instance());
@@ -96,8 +97,9 @@ void GameManager::InitializeObject() {
 	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
 	shop->Disable();
 
-	inventory = new Inventory;
 	hotBar = GameObject::Instantiate<HotBar>("Hot Bar");
+
+	inventory = new Inventory;
 
 	playerStatistic = new PlayerStatistic;
 
@@ -414,6 +416,7 @@ void GameManager::Update() {
 
 	GameObject::CleanUpDeleted();
 
+	GameObject::StartAll();
 	GameObject::UpdateAll();
 
 	WaveManager::Instance()->Update();

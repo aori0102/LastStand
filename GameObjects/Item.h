@@ -19,10 +19,6 @@ class Item : public GameObject {
 	/// FIELDS
 	/// ----------------------------------
 
-private:
-
-	ItemIndex itemIndex;
-
 protected:
 
 	friend class ItemManager;
@@ -32,19 +28,21 @@ protected:
 	bool stackable;
 	bool usable;
 
+	ItemIndex itemIndex;
+
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-protected:
+private:
 
-	void SetIndex(ItemIndex initItemIndex);
 	void SetAmount(int amount);
+
+	virtual void SetIndex(ItemIndex initItemIndex) = 0;
 
 public:
 
 	Item();
-	Item(ItemIndex initItemIndex, int amount = 1);
 	int GetCurrentStack() const;
 	bool IsSufficient(int amount) const;
 	bool IsUsable() const;

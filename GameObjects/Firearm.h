@@ -83,8 +83,6 @@ private:
 
 protected:
 
-	ReloadType reloadType;
-
 	static std::unordered_map<ItemIndex, FirearmInfo> firearmInfoMap;
 
 	/// ----------------------------------
@@ -111,6 +109,7 @@ public:
 	void Reload();
 	void UpdateReserveLabel();
 	void UpdateCurrentLabel();
+	void SetIndex(ItemIndex itemIndex) override;
 	void Equip() override;
 	void Dequip() override;
 	void Update() override;
@@ -121,8 +120,6 @@ public:
 	ItemIndex GetAmmoItemIndex();
 	std::string GetName() const;
 
-	virtual void SetFirearmItemID(ItemIndex initItemIndex) = 0;
-
 	static void ModifyAttributeMultiplier(ItemIndex firearmIndex, FirearmAttributeIndex attributeIndex, float amount);
 	static void ResetAttribute();
 
@@ -131,18 +128,15 @@ public:
 class Pistol : public Firearm {
 
 	/// ----------------------------------
-	/// FIELDS
+	/// METHODS
 	/// ----------------------------------
 
 private:
 
-	/// ----------------------------------
-	/// METHODS
-	/// ----------------------------------
+	void SetIndex(ItemIndex initItemIndex) override;
 
 public:
 
-	void SetFirearmItemID(ItemIndex initItemIndex) override;
 	bool TryUse() override;
 
 };
@@ -162,9 +156,12 @@ private:
 	/// METHODS
 	/// ----------------------------------
 
+private:
+
+	void SetIndex(ItemIndex initItemIndex) override;
+
 public:
 
-	void SetFirearmItemID(ItemIndex initItemIndex) override;
 	bool TryUse() override;
 
 };
@@ -172,18 +169,15 @@ public:
 class Rifle : public Firearm {
 
 	/// ----------------------------------
-	/// FIELDS
+	/// METHODS
 	/// ----------------------------------
 
 private:
 
-	/// ----------------------------------
-	/// METHODS
-	/// ----------------------------------
+	void SetIndex(ItemIndex initItemIndex) override;
 
 public:
 
-	void SetFirearmItemID(ItemIndex initItemIndex) override;
 	bool TryUse() override;
 
 };

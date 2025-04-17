@@ -16,7 +16,6 @@ enum class ZombieIndex {
 	Normal,
 	Lurker,
 	Tanker,
-	Bomber,
 
 };
 
@@ -77,6 +76,10 @@ private:
 	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
+
+private:
+
+	void InitializeComponents();
 
 public:
 

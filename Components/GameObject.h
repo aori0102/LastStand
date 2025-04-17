@@ -35,6 +35,7 @@ private:
 	// by the user
 	static std::unordered_set<GameObject*> deletionSet;
 	static std::unordered_set<GameObject*> gameObjectSet;
+	static std::unordered_set<GameObject*> startObjectSet;
 
 	friend class GameManager;
 
@@ -53,6 +54,7 @@ public:
 private:
 
 	static void CleanUpDeleted();
+	static void StartAll();
 	static void UpdateAll();
 	static void DropNuke();
 
@@ -74,6 +76,7 @@ public:
 	Layer GetLayer() const;
 
 	virtual ~GameObject();
+	virtual void Start();
 	virtual void Update();
 	virtual void OnCollisionEnter(BoxCollider* other);
 	virtual void OnCollisionExit(BoxCollider* other);

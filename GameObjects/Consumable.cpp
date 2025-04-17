@@ -8,7 +8,20 @@
 
 #include <GameComponent.h>
 #include <Humanoid.h>
+#include <ItemManager.h>
 #include <Player.h>
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
+const std::unordered_map<ItemIndex, ConsumableInfo> Consumable::CONSUMABLE_INFO_MAP = {
+	{ ItemIndex::MedKit, ConsumableInfo{
+		.health = 36.0f,
+		.stamina = 7.0f,
+	}
+	},
+};
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -24,6 +37,19 @@ Consumable::Consumable() {
 void Consumable::Equip() {}
 
 void Consumable::Dequip() {}
+
+void Consumable::SetIndex(ItemIndex initItemIndex) {
+
+	if (!ItemManager::Instance()->IsIndexOfType<Consumable>(initItemIndex))
+		throw std::exception("Invalid index for type Consumable.");
+
+	itemIndex = initItemIndex;
+
+	ConsumableInfo info = CONSUMABLE_INFO_MAP.at(itemIndex);
+	health = info.health;
+	stamina = info.stamina;
+
+}
 
 bool Consumable::TryUse() {
 

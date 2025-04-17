@@ -45,13 +45,6 @@ const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRI
 		.exp = 7.0f
 		}
 	},
-	{ ZombieIndex::Bomber, ZombieAttribute{
-		.movementSpeed = 54.0f,
-		.health = 73.0f,
-		.damage = 9.0f,
-		.exp = 5.0f
-		}
-	},
 	{ ZombieIndex::Tanker, ZombieAttribute{
 		.movementSpeed = 30.0f,
 		.health = 148.0f,
@@ -62,7 +55,6 @@ const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRI
 };
 const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP = {
 	{ ZombieIndex::Normal, { 16, 16, 96, 96 } },
-	{ ZombieIndex::Bomber, { 16, 16, 96, 96 } },
 	{ ZombieIndex::Lurker, { 32, 144, 80, 80 } },
 	{ ZombieIndex::Tanker, { 160, 16, 128, 128 } },
 };
@@ -70,6 +62,58 @@ const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP =
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
+
+void Zombie::InitializeComponents() {
+
+	RigidBody* rigidBody = AddComponent<RigidBody>();
+	rigidBody->drag = 10.0f;
+	rigidBody->mass = 60.0f;
+
+	BoxCollider* boxCollider = AddComponent<BoxCollider>();
+
+	Humanoid* humanoid = AddComponent<Humanoid>();
+	humanoid->SetHealth(zombieAttribute->health);
+	humanoid->OnDeath = [this]() {
+		GameManager::Instance()->ReportDead(this);
+		};
+	humanoid->OnDamaged = [this]() {
+		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
+			static_cast<int>(MediaSFX::ZombieHurt1), static_cast<int>(MediaSFX::ZombieHurt6)
+		));
+		AudioManager::Instance()->PlayOneShot(
+			audioIndex, (transform->position - Player::Instance()->transform->position).Magnitude()
+		);
+		};
+
+	Image* image = AddComponent<Image>();
+	image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Zombie), false);
+	image->showOnScreen = false;
+	image->clip = ZOMBIE_SPRITE_CLIP_MAP.at(zombieIndex);
+
+	transform->scale = Vector2(50.0f, 50.0f);
+
+	healthBar = GameObject::Instantiate("Health Bar", Layer::Zombie);
+	Image* healthBar_image = healthBar->AddComponent<Image>();
+	healthBar_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_HealthBar), true);
+	healthBar_image->imageFill = ImageFill::Horizontal;
+	healthBar_image->fillAmount = 1.0f;
+	healthBar_image->showOnScreen = false;
+	healthBar->transform->scale *= HEALTH_BAR_SCALE;
+
+	Render = [image, healthBar_image, humanoid, this, boxCollider]() {
+
+		image->Render();
+
+		// Render health bar
+		healthBar_image->transform->position = transform->position + Vector2::up * HEALTH_BAR_VERTICAL_OFFSET;
+		healthBar_image->fillAmount = humanoid->GetHealth() / humanoid->GetMaxHealth();
+		healthBar_image->Render();
+
+		boxCollider->Debug();
+
+		};
+
+}
 
 Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 
@@ -103,56 +147,7 @@ Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
 			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
 			);
 
-	// Components
-	RigidBody* rigidBody = AddComponent<RigidBody>();
-	rigidBody->drag = 10.0f;
-	rigidBody->mass = 60.0f;
-
-	BoxCollider* boxCollider = AddComponent<BoxCollider>();
-
-	Humanoid* humanoid = AddComponent<Humanoid>();
-	humanoid->SetHealth(zombieAttribute->health);
-	humanoid->OnDeath = [this]() {
-		GameManager::Instance()->ReportDead(this);
-		};
-	humanoid->OnDamaged = [this]() {
-		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
-			static_cast<int>(MediaSFX::ZombieHurt1), static_cast<int>(MediaSFX::ZombieHurt6)
-		));
-		AudioManager::Instance()->PlayOneShot(
-			audioIndex, (transform->position - Player::Instance()->transform->position).Magnitude()
-		);
-		};
-
-	Image* image = AddComponent<Image>();
-	image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Zombie), false);
-	image->showOnScreen = false;
-	image->clip = ZOMBIE_SPRITE_CLIP_MAP.at(zombieIndex);
-
-	transform->scale = Vector2(50.0f, 50.0f);
-
-	// Fields
-
-	healthBar = GameObject::Instantiate("Health Bar", Layer::Zombie);
-	Image* healthBar_image = healthBar->AddComponent<Image>();
-	healthBar_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_HealthBar), true);
-	healthBar_image->imageFill = ImageFill::Horizontal;
-	healthBar_image->fillAmount = 1.0f;
-	healthBar_image->showOnScreen = false;
-	healthBar->transform->scale *= HEALTH_BAR_SCALE;
-
-	Render = [image, healthBar_image, humanoid, this, boxCollider]() {
-
-		image->Render();
-
-		// Render health bar
-		healthBar_image->transform->position = transform->position + Vector2::up * HEALTH_BAR_VERTICAL_OFFSET;
-		healthBar_image->fillAmount = humanoid->GetHealth() / humanoid->GetMaxHealth();
-		healthBar_image->Render();
-
-		boxCollider->Debug();
-
-		};
+	InitializeComponents();
 
 }
 

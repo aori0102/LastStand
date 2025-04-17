@@ -80,7 +80,7 @@ void Firearm::HandleReloading() {
 		int magazineCapacity = static_cast<int>(firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::MagazineCapacity));
 
 		// Finish reloading
-		if (reloadType == ReloadType::PerAmmo) {
+		if (firearmInfoMap.at(GetIndex()).reloadType == ReloadType::PerAmmo) {
 
 			if (!Player::Instance()->TryConsumeAmmo(BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionItemIndex)) {
 
@@ -225,8 +225,6 @@ Firearm::Firearm() {
 	stopReload = false;
 	previousCurrentAmmo = currentStack;
 
-	reloadType = ReloadType::Magazine;
-
 	InitializeUI();
 
 }
@@ -288,6 +286,15 @@ void Firearm::UpdateCurrentLabel() {
 		Color::WHITE,
 		CURRENT_AMMO_LABEL_SIZE
 	);
+
+}
+
+void Firearm::SetIndex(ItemIndex initItemIndex) {
+
+	if (!ItemManager::Instance()->IsIndexOfType<Firearm>(initItemIndex))
+		throw std::exception("Invalid index for type Firearm.");
+
+	itemIndex = initItemIndex;
 
 }
 

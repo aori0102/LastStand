@@ -19,25 +19,12 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void Rifle::SetFirearmItemID(ItemIndex initItemIndex) {
+void Rifle::SetIndex(ItemIndex initItemIndex) {
 
-	auto it_baseFirearmInfo = BASE_FIREARM_INFO_MAP.find(initItemIndex);
-	if (it_baseFirearmInfo == BASE_FIREARM_INFO_MAP.end())
-		throw std::exception("Firearm: Firearm data does not exist");
+	if (!ItemManager::Instance()->IsIndexOfType<Rifle>(initItemIndex))
+		throw std::exception("Invalid index for type Rifle.");
 
-	switch (initItemIndex) {
-
-	case ItemIndex::Rifle_M4:
-		break;
-
-	default:
-		throw std::exception("Invalid ID for a rifle!");
-
-	}
-
-	reloadType = BASE_FIREARM_INFO_MAP.at(initItemIndex).reloadType;
-
-	SetIndex(initItemIndex);
+	itemIndex = initItemIndex;
 
 }
 

@@ -124,3 +124,9 @@ float FirearmUpgrade::NextUpgradeAmount() {
 	return -FLT_MAX;
 
 }
+
+UpgradeNode* FirearmUpgrade::GetNextUpgrade() {
+
+	return currentNode;
+
+}

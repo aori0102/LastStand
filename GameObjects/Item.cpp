@@ -13,12 +13,6 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void Item::SetIndex(ItemIndex initItemIndex) {
-
-	itemIndex = initItemIndex;
-
-}
-
 Item::Item() {
 
 	itemIndex = ItemIndex::None;
@@ -28,17 +22,6 @@ Item::Item() {
 	stackable = false;
 	usable = true;
 
-}
-
-Item::Item(ItemIndex initItemIndex, int amount) {
-
-	itemIndex = initItemIndex;
-
-	currentStack = amount;
-	useCooldown = 0.0f;
-	stackable = false;
-	usable = true;
-	
 }
 
 void Item::SetAmount(int amount) {

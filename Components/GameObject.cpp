@@ -22,6 +22,7 @@
 int GameObject::currentID = 0;
 std::unordered_set<GameObject*> GameObject::deletionSet = {};
 std::unordered_set<GameObject*> GameObject::gameObjectSet = {};
+std::unordered_set<GameObject*> GameObject::startObjectSet = {};
 
 /// ----------------------------------
 /// METHOD DEFINITIONS
@@ -43,6 +44,25 @@ void GameObject::CleanUpDeleted() {
 	}
 
 	toBeDeleted.clear();
+
+}
+
+void GameObject::StartAll() {
+
+	std::unordered_set<GameObject*> toStartSet = startObjectSet;
+	startObjectSet.clear();
+
+	for (auto obj : toStartSet) {
+		
+		if (gameObjectSet.contains(obj))
+			continue;
+
+		obj->Start();
+		gameObjectSet.insert(obj);
+	
+	}
+
+	toStartSet.clear();
 
 }
 
@@ -115,7 +135,7 @@ void GameObject::DebugInfo() const {
 
 void GameObject::UpdateObjectToDatabase(GameObject* obj) {
 
-	gameObjectSet.insert(obj);
+	startObjectSet.insert(obj);
 	RenderManager::Instance()->UpdateRenderObject(obj);
 
 }
@@ -182,6 +202,8 @@ GameObject::~GameObject() {
 	componentMap.clear();
 
 }
+
+void GameObject::Start() {}
 
 void GameObject::Update() {}
 

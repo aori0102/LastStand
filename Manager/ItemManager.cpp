@@ -43,7 +43,7 @@ void ItemManager::InitializeItemInfo() {
 		} },
 		{ ItemIndex::Shotgun_Beretta1301, {
 			.price = 3900,
-			.shopStack = 0,
+			.shopStack = 1,
 			.name = "Beretta 1301 Tactical",
 			.iconClip = { 135, 132, 55, 58 },
 		} },
@@ -116,81 +116,55 @@ std::string ItemManager::GetItemName(ItemIndex itemIndex) { return itemInfoMap.a
 
 Item* ItemManager::CreateItem(ItemIndex itemIndex, int amount) {
 
+	Item* product = nullptr;
+
 	switch (itemIndex) {
 
-	case ItemIndex::Pistol_M1911: {
+	case ItemIndex::Pistol_M1911:
 
-		Pistol* pistol = GameObject::Instantiate<Pistol>("Pistol");
-		pistol->SetFirearmItemID(itemIndex);
-		pistol->SetAmount(amount);
+		product = GameObject::Instantiate<Pistol>("Pistol");
+		break;
 
-		return pistol;
+	case ItemIndex::Shotgun_Beretta1301:
 
-	}
+		product = GameObject::Instantiate<Shotgun>("Shotgun");
+		break;
 
-	case ItemIndex::Shotgun_Beretta1301: {
+	case ItemIndex::Rifle_M4:
 
-		Shotgun* shotgun = GameObject::Instantiate<Shotgun>("Shotgun");
-		shotgun->SetFirearmItemID(itemIndex);
-		shotgun->SetAmount(amount);
+		product = GameObject::Instantiate<Rifle>("Rifle");
+		break;
 
-		return shotgun;
+	case ItemIndex::MedKit:
 
-	}
+		product = GameObject::Instantiate<Consumable>("Med Kit");
+		break;
 
-	case ItemIndex::Rifle_M4: {
+	case ItemIndex::Ammo_Slug:
 
-		Rifle* rifle = GameObject::Instantiate<Rifle>("Rifle");
-		rifle->SetFirearmItemID(itemIndex);
-		rifle->SetAmount(amount);
+		product = GameObject::Instantiate<Ammunition>("Slug");
+		break;
 
-		return rifle;
+	case ItemIndex::Ammo_9mm:
 
-	}
+		product = GameObject::Instantiate<Ammunition>("9mm Ammo");
+		break;
 
-	case ItemIndex::MedKit: {
+	case ItemIndex::Ammo_556:
 
-		Consumable* medkit = GameObject::Instantiate<Consumable>("Med Kit");
-		medkit->SetIndex(itemIndex);
-		medkit->health = 30.0f;
-		medkit->stamina = 7.0f;
-		medkit->SetAmount(amount);
-
-		return medkit;
+		product = GameObject::Instantiate<Ammunition>("5.56 Ammo");
+		break;
 
 	}
 
-	case ItemIndex::Ammo_Slug: {
+	if (product) {
 
-		Ammunition* ammo = GameObject::Instantiate<Ammunition>("Slug");
-		ammo->SetAmmunitionItemIndex(itemIndex);
-		ammo->SetAmount(amount);
-
-		return ammo;
+		product->SetIndex(itemIndex);
+		product->SetAmount(amount);
 
 	}
 
-	case ItemIndex::Ammo_9mm: {
-
-		Ammunition* ammo = GameObject::Instantiate<Ammunition>("9mm Ammo");
-		ammo->SetAmmunitionItemIndex(itemIndex);
-		ammo->SetAmount(amount);
-
-		return ammo;
-
-	}
-
-	case ItemIndex::Ammo_556: {
-
-		Ammunition* ammo = GameObject::Instantiate<Ammunition>("5.56 NATO Ammo");
-		ammo->SetAmmunitionItemIndex(itemIndex);
-		ammo->SetAmount(amount);
-
-		return ammo;
-
-	}
-
-	}
+	return product;
 
 }
 

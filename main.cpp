@@ -19,7 +19,11 @@ int main(int argc, char* args[]) {
 
 	}
 
+	std::cout << "Closing game..." << std::endl;
+
 	GameCore::Close();
+
+	std::cout << "Game Closed!" << std::endl;
 
 	return 0;
 

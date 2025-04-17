@@ -192,7 +192,7 @@ private:
 public:
 
 	Shop();
-
+	~Shop();
 	void BuyUpgrade(FirearmAttributeIndex attribute);
 	void SelectFirearm(Firearm* firearm);
 	void SelectItem(ItemIndex itemIndex);

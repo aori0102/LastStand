@@ -17,18 +17,18 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
-void Ammunition::SetAmmunitionItemIndex(ItemIndex initItemIndex) {
-
-	if (!ItemManager::Instance()->IsIndexOfType<Ammunition>(initItemIndex))
-		throw std::exception("Invalid Item ID for ammunition!");
-
-	SetIndex(initItemIndex);
-
-}
-
 void Ammunition::Equip() {}
 
 void Ammunition::Dequip() {}
+
+void Ammunition::SetIndex(ItemIndex initItemIndex) {
+
+	if (!ItemManager::Instance()->IsIndexOfType<Ammunition>(initItemIndex))
+		throw std::exception("Invalid index for type Ammunition.");
+
+	itemIndex = initItemIndex;
+
+}
 
 bool Ammunition::TryAddToStack(int amount) {
 

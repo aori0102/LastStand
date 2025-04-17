@@ -60,6 +60,7 @@ void HotBar::SelectSlot(HotBarSlotIndex slotIndex) {
 	else
 		currentSlotIndex = slotIndex;
 
+	currentItem = nullptr;
 	if (currentSlotIndex != HotBarSlotIndex::None)
 		currentItem = Inventory::Instance()->GetItem(hotBar.at(currentSlotIndex)->index);
 
@@ -97,7 +98,7 @@ void HotBar::LinkItemToSlot(ItemIndex itemIndex, HotBarSlotIndex slotIndex) {
 
 	auto slot = hotBar.at(slotIndex);
 
-	if (itemIndex == ItemIndex::None && slot->index!=ItemIndex::None) {
+	if (itemIndex == ItemIndex::None && slot->index != ItemIndex::None) {
 
 		if (currentSlotIndex == slotIndex)
 			Inventory::Instance()->GetItem(slot->index)->Dequip();
