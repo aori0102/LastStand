@@ -184,6 +184,8 @@ bool WaveManager::WaveInProgress() const { return waveInProgress; }
 
 int WaveManager::GetCurrentWave() const { return currentWave; }
 
+int WaveManager::GetSurvivedWave() const { return waveInProgress ? currentWave - 1 : currentWave; }
+
 int WaveManager::GetTotalZombie() const { return totalZombie; }
 
 int WaveManager::GetZombieLeft() const { return zombieLeft; }

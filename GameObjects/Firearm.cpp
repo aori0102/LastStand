@@ -206,7 +206,14 @@ bool Firearm::CanShoot() {
 
 	}
 
-	return currentStack > 0 && GameCore::Time() >= lastShootTick + 60.0f / firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Firerate);
+	if(GameCore::Time()<lastShootTick + 60.0f / firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::Firerate))
+		return false;
+
+	if (currentStack > 0)
+		return true;
+
+	Reload();
+	return false;
 
 }
 

@@ -6,9 +6,11 @@
 
 #pragma once
 
+#include <GameObject.h>
+
 class Player;
 
-class PlayerStatistic {
+class PlayerStatistic : public GameObject {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS

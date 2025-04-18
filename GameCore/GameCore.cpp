@@ -24,6 +24,7 @@
 #include <SDL_ttf.h>
 #include <SettingsUI.h>
 #include <Texture.h>
+#include <Tutorial.h>
 #include <UIEventManager.h>
 #include <Version.h>
 #include <WaveManager.h>
@@ -645,6 +646,8 @@ void GameCore::SetMasterVolume(float amount) {
 void GameCore::SetActionKeyBind(ActionIndex actionIndex, SDL_Keycode keycode) {
 
 	keyMappingDictionary[actionIndex] = keycode;
+
+	Tutorial::Instance()->UpdateActionBinding(actionIndex);
 
 }
 

@@ -70,6 +70,7 @@ private:
 	float lastGroanTick;
 	float groanDelay;
 	ZombieIndex zombieIndex;
+	Vector2 wanderTarget;
 	GameObject* healthBar;
 	ZombieAttribute* zombieAttribute;
 
@@ -80,6 +81,7 @@ private:
 private:
 
 	void InitializeComponents();
+	void FollowPlayer();
 
 public:
 

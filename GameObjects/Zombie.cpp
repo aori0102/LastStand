@@ -115,10 +115,40 @@ void Zombie::InitializeComponents() {
 
 }
 
-Zombie::Zombie() : GameObject("Zombie", Layer::Zombie) {
+void Zombie::FollowPlayer() {
+
+	Vector2 forward = (Player::Instance()->transform->position - transform->position).Normalize();
+
+	transform->Translate(
+		forward.Normalize() * GameCore::DeltaTime() * ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed
+	);
+
+	// Calculate rotation
+	GetComponent<Image>()->angle = Math::RadToDeg(forward.Angle());
+
+	// Play sound
+	if (GameCore::Time() >= lastGroanTick + groanDelay) {
+
+		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
+			static_cast<int>(MediaSFX::ZombieGroan1), static_cast<int>(MediaSFX::ZombieGroan4)
+		));
+		AudioManager::Instance()->PlayOneShot(
+			audioIndex, (transform->position - Player::Instance()->transform->position).Magnitude()
+		);
+
+		lastGroanTick = GameCore::Time();
+		groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
+
+	}
+
+}
+
+Zombie::Zombie() {
 
 	lastGroanTick = 0.0f;
 	groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
+
+	wanderTarget = Vector2::zero;
 
 	zombieIndex = ZombieIndex::Normal;
 
@@ -179,29 +209,7 @@ void Zombie::Update() {
 	if (!GameManager::Instance()->GameRunning())
 		return;
 
-	Vector2 forward = (Player::Instance()->transform->position - transform->position).Normalize();
-
-	transform->Translate(
-		forward * GameCore::DeltaTime() * ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed
-	);
-
-	// Calculate rotation
-	GetComponent<Image>()->angle = Math::RadToDeg(forward.Angle());
-
-	// Play sound
-	if (GameCore::Time() >= lastGroanTick + groanDelay) {
-
-		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
-			static_cast<int>(MediaSFX::ZombieGroan1), static_cast<int>(MediaSFX::ZombieGroan4)
-		));
-		AudioManager::Instance()->PlayOneShot(
-			audioIndex, (transform->position-Player::Instance()->transform->position).Magnitude()
-		);
-
-		lastGroanTick = GameCore::Time();
-		groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
-
-	}
+		FollowPlayer();
 
 }
 

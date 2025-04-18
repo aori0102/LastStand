@@ -8,10 +8,12 @@
 
 #include <unordered_map>
 
+#include <GameObject.h>
+
 class Item;
 enum class ItemIndex;
 
-class Inventory {
+class Inventory : public GameObject {
 
 	/// ----------------------------------
 	/// STRUCTURES AND CONSTANTS

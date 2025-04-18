@@ -86,6 +86,7 @@ public:
 	void ResetStat();
 	bool WaveInProgress() const;
 	int GetCurrentWave() const;
+	int GetSurvivedWave() const;
 	int GetTotalZombie() const;
 	int GetZombieLeft() const;
 	int GetTotalZombieKilled() const;

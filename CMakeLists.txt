@@ -8,7 +8,7 @@ cmake_policy(SET CMP0079 NEW)
 set(CMAKE_CXX_STANDARD 20)
 
 # Set project name and version
-project(LastStand VERSION 0.1.47)
+project(LastStand VERSION 0.1.53)
 
 # Link directories
 add_subdirectory(Lib)

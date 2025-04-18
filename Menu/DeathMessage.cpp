@@ -159,9 +159,8 @@ void DeathMessage::InitializeUI() {
 	Button* mainMenuButton_button = mainMenuButton->AddComponent<Button>();
 	mainMenuButton_button->backgroundColor = Color::TRANSPARENT;
 	mainMenuButton_button->OnClick = []() {
-		GameManager::Instance()->ResetGameData();
 		GameManager::Instance()->SwitchScene(SceneIndex::MainMenu);
-		GameManager::Instance()->UnfreezeGame();
+		GameManager::Instance()->FreezeGame();
 		return true;
 		};
 	mainMenuButton->transform->position = Math::SDLToC00(
@@ -182,7 +181,6 @@ void DeathMessage::InitializeUI() {
 	Button* retryButton_button = retryButton->AddComponent<Button>();
 	retryButton_button->backgroundColor = Color::TRANSPARENT;
 	retryButton_button->OnClick = []() {
-		GameManager::Instance()->ResetGameData();
 		GameManager::Instance()->SwitchScene(SceneIndex::InGame);
 		GameManager::Instance()->UnfreezeGame();
 		return true;
@@ -267,11 +265,12 @@ void DeathMessage::UpdateMessage() {
 	// Wave survived
 	GameObject* waveSurvivedValue = uiElementMap.at(UIElementIndex::WaveSurvivedValue);
 	waveSurvivedValue->GetComponent<Text>()->LoadText(
-		std::to_string(WaveManager::Instance()->GetCurrentWave()), Color::WHITE, STAT_LABEL_FONT_SIZE
+		std::to_string(WaveManager::Instance()->GetSurvivedWave()), Color::WHITE, STAT_LABEL_FONT_SIZE
 	);
 	waveSurvivedValue->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::WaveSurvivedValue), waveSurvivedValue->transform->scale
 	);
+	Align::MiddleVertically(uiElementMap.at(UIElementIndex::WaveSurvivedLabel)->transform, waveSurvivedValue->transform);
 
 	// Zombie killed
 	GameObject* zombieKilledValue = uiElementMap.at(UIElementIndex::ZombieKilledValue);
@@ -281,6 +280,7 @@ void DeathMessage::UpdateMessage() {
 	zombieKilledValue->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::ZombieKilledValue), zombieKilledValue->transform->scale
 	);
+	Align::MiddleVertically(uiElementMap.at(UIElementIndex::ZombieKilledLabel)->transform, zombieKilledValue->transform);
 
 	// Damage
 	GameObject* damageDealtValue = uiElementMap.at(UIElementIndex::DamageDealtValue);
@@ -290,6 +290,7 @@ void DeathMessage::UpdateMessage() {
 	damageDealtValue->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::DamageDealtValue), damageDealtValue->transform->scale
 	);
+	Align::MiddleVertically(uiElementMap.at(UIElementIndex::DamageDealtLabel)->transform, damageDealtValue->transform);
 
 	// Point
 	GameObject* pointValue = uiElementMap.at(UIElementIndex::PointsValue);
@@ -299,6 +300,7 @@ void DeathMessage::UpdateMessage() {
 	pointValue->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::PointsValue), pointValue->transform->scale
 	);
+	Align::MiddleVertically(uiElementMap.at(UIElementIndex::PointsLabel)->transform, pointValue->transform);
 
 }
 

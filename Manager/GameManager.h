@@ -42,6 +42,7 @@ enum class SceneIndex {
 	InGame,
 	InGamePaused,
 	GameOver,
+	Tutorial,
 
 };
 
@@ -65,7 +66,6 @@ private:
 	DataManager* dataManager;
 	PhysicsManager* physicsManager;
 	MediaManager* mediaManager;
-	Menu* menu;
 	UIEventManager* uiEventManager;
 	RenderManager* renderManager;
 	ItemManager* itemManager;
@@ -75,15 +75,6 @@ private:
 	GameObject* southBorder;
 	GameObject* westBorder;
 	GameObject* eastBorder;
-	Player* player;
-	PlayerStatistic* playerStatistic;
-	StatusBar* statusBar;
-	Shop* shop;
-	Inventory* inventory;
-	SettingsUI* settingsUI;
-	PauseMenu* pauseMenu;
-	HotBar* hotBar;
-	DeathMessage* deathMessage;
 
 	static GameManager* instance;
 

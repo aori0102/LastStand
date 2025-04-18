@@ -234,4 +234,11 @@ public:
 	static void Left(Transform* something, Transform* with);
 	static void Right(Transform* something, Transform* with);
 
+	static void MiddleVertically(Transform* something);
+	static void MiddleHorizontally(Transform* something);
+	static void Top(Transform* something);
+	static void Bottom(Transform* something);
+	static void Left(Transform* something);
+	static void Right(Transform* something);
+
 };

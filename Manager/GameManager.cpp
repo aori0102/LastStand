@@ -30,6 +30,7 @@
 #include <Shop.h>
 #include <StatusBar.h>
 #include <Texture.h>
+#include <Tutorial.h>
 #include <UIEventManager.h>
 #include <WaveManager.h>
 #include <Zombie.h>
@@ -47,8 +48,6 @@ GameManager* GameManager::instance = nullptr;
 void GameManager::InitializeObject() {
 
 	std::cout << "[GameManager] Initializing Game Objects..." << std::endl;
-
-	menu = GameObject::Instantiate<Menu>("Game Menu");
 
 	northBorder = GameObject::Instantiate("North border");
 	Transform* northBorder_transform = northBorder->GetComponent<Transform>();
@@ -89,31 +88,35 @@ void GameManager::InitializeObject() {
 		};
 	background->Disable();
 
-	///------------------
-	player = GameObject::Instantiate<Player>("Player", Layer::Player);
-	player->Disable();
+	GameObject::Instantiate<Menu>("Game Menu");
+	
+	GameObject::Instantiate<Player>("Player", Layer::Player);
+	Player::Instance()->Disable();
 	GameCore::LetCameraFocus(Player::Instance());
 
-	shop = GameObject::Instantiate<Shop>("Shop", Layer::GUI);
-	shop->Disable();
+	GameObject::Instantiate<Shop>("Shop", Layer::GUI);
+	Shop::Instance()->Disable();
 
-	hotBar = GameObject::Instantiate<HotBar>("Hot Bar");
+	GameObject::Instantiate<HotBar>("Hot Bar");
 
-	inventory = new Inventory;
+	GameObject::Instantiate<Inventory>("Inventory");
 
-	playerStatistic = new PlayerStatistic;
+	GameObject::Instantiate<PlayerStatistic>("Player Statistic");
 
-	statusBar = GameObject::Instantiate<StatusBar>("Status Bar", Layer::GUI);
-	statusBar->Disable();
+	GameObject::Instantiate<StatusBar>("Status Bar", Layer::GUI);
+	StatusBar::Instance()->Disable();
 
-	settingsUI = GameObject::Instantiate<SettingsUI>("Settings UI", Layer::Menu);
-	settingsUI->Disable();
+	GameObject::Instantiate<SettingsUI>("Settings UI", Layer::Menu);
+	SettingsUI::Instance()->Disable();
 
-	pauseMenu = GameObject::Instantiate<PauseMenu>("Pause menu", Layer::Menu);
-	pauseMenu->Disable();
+	GameObject::Instantiate<PauseMenu>("Pause menu", Layer::Menu);
+	PauseMenu::Instance()->Disable();
 
-	deathMessage = GameObject::Instantiate<DeathMessage>("Death Message", Layer::Menu);
-	deathMessage->Disable();
+	GameObject::Instantiate<DeathMessage>("Death Message", Layer::Menu);
+	DeathMessage::Instance()->Disable();
+
+	GameObject::Instantiate<Tutorial>("Tutorial", Layer::Menu);
+	Tutorial::Instance()->Disable();
 
 	std::cout << "[GameManager] Game Objects Initialized!" << std::endl;
 
@@ -127,8 +130,8 @@ void GameManager::EnableSceneObject() {
 
 		waveManager->Enable();
 
-		player->Enable();
-		statusBar->Enable();
+		Player::Instance()->Enable();
+		StatusBar::Instance()->Enable();
 		background->Enable();
 		northBorder->Enable();
 		southBorder->Enable();
@@ -142,33 +145,40 @@ void GameManager::EnableSceneObject() {
 
 		waveManager->Enable();
 
-		player->Enable();
-		statusBar->Enable();
+		Player::Instance()->Enable();
+		StatusBar::Instance()->Enable();
 		background->Enable();
 		northBorder->Enable();
 		southBorder->Enable();
 		westBorder->Enable();
 		eastBorder->Enable();
 
-		pauseMenu->Enable();
+		PauseMenu::Instance()->Enable();
 
 		break;
 
 	case SceneIndex::MainMenu:
 
-		menu->Enable();
+		Menu::Instance()->Enable();
 
 		break;
 
 	case SceneIndex::Settings:
 
-		settingsUI->Enable();
+		SettingsUI::Instance()->Enable();
 
 		break;
 
 	case SceneIndex::GameOver:
 
-		deathMessage->Enable();
+		background->Enable();
+		DeathMessage::Instance()->Enable();
+
+		break;
+
+	case SceneIndex::Tutorial:
+
+		Tutorial::Instance()->Enable();
 
 		break;
 
@@ -184,14 +194,14 @@ void GameManager::DisableSceneObject() {
 
 		waveManager->Disable();
 
-		player->Disable();
-		statusBar->Disable();
+		Player::Instance()->Disable();
+		StatusBar::Instance()->Disable();
 		background->Disable();
 		northBorder->Disable();
 		southBorder->Disable();
 		westBorder->Disable();
 		eastBorder->Disable();
-		shop->Disable();
+		Shop::Instance()->Disable();
 		HotBarUI::Instance()->Disable();
 
 		break;
@@ -200,33 +210,40 @@ void GameManager::DisableSceneObject() {
 
 		waveManager->Disable();
 
-		player->Disable();
-		statusBar->Disable();
+		Player::Instance()->Disable();
+		StatusBar::Instance()->Disable();
 		background->Disable();
 		northBorder->Disable();
 		southBorder->Disable();
 		westBorder->Disable();
 		eastBorder->Disable();
 
-		pauseMenu->Disable();
+		PauseMenu::Instance()->Disable();
 
 		break;
 
 	case SceneIndex::MainMenu:
 
-		menu->Disable();
+		Menu::Instance()->Disable();
 
 		break;
 
 	case SceneIndex::Settings:
 
-		settingsUI->Disable();
+		SettingsUI::Instance()->Disable();
 
 		break;
 
 	case SceneIndex::GameOver:
 
-		deathMessage->Disable();
+		background->Disable();
+		DeathMessage::Instance()->Disable();
+
+		break;
+
+	case SceneIndex::Tutorial:
+
+		Tutorial::Instance()->Disable();
 
 		break;
 
@@ -237,18 +254,18 @@ void GameManager::DisableSceneObject() {
 void GameManager::SaveGame() {
 
 	GameCore::SaveConfig();
-	playerStatistic->SaveData();
-	inventory->SaveInventory();
-	player->SaveData();
+	PlayerStatistic::Instance()->SaveData();
+	Inventory::Instance()->SaveInventory();
+	Player::Instance()->SaveData();
 
 }
 
 void GameManager::LoadGame() {
 
 	GameCore::LoadConfig();
-	playerStatistic->LoadData();
-	inventory->LoadInventory();
-	player->LoadData();
+	PlayerStatistic::Instance()->LoadData();
+	Inventory::Instance()->LoadInventory();
+	Player::Instance()->LoadData();
 
 }
 
@@ -303,34 +320,10 @@ GameManager::~GameManager() {
 	SaveGame();
 
 	background = nullptr;
-
 	northBorder = nullptr;
-
 	southBorder = nullptr;
-
 	westBorder = nullptr;
-
 	eastBorder = nullptr;
-
-	player = nullptr;
-
-	delete playerStatistic;
-	playerStatistic = nullptr;
-
-	statusBar = nullptr;
-
-	shop = nullptr;
-
-	delete inventory;
-	inventory = nullptr;
-
-	hotBar = nullptr;
-
-	settingsUI = nullptr;
-
-	pauseMenu = nullptr;
-
-	deathMessage = nullptr;
 
 	std::cout << "Flushing game objects...\n";
 	GameObject::DropNuke();
@@ -381,8 +374,10 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 		DeathMessage::Instance()->UpdateMessage();
 
-		SwitchScene(SceneIndex::GameOver);
+		ResetGameData();
+
 		FreezeGame();
+		SwitchScene(SceneIndex::GameOver);
 
 	} else if (gameObject->IsA<Zombie>()) {
 
@@ -400,6 +395,9 @@ void GameManager::ReportDead(GameObject* gameObject) {
 
 void GameManager::Update() {
 
+	if (GameCore::GetKeyState(SDLK_t).started)
+		SwitchScene(SceneIndex::Tutorial);
+		
 	// Freeze game
 	if (GameCore::GetKeyState(SDLK_ESCAPE).started
 		&& (currentScene == SceneIndex::InGamePaused || currentScene == SceneIndex::InGame)) {
@@ -459,12 +457,12 @@ void GameManager::ResetGameData() {
 
 	Firearm::ResetAttribute();
 	waveManager->ResetStat();
-	shop->ResetData();
+	Shop::Instance()->ResetData();
 	DataManager::Instance()->ResetPlayerData();
-	player->Reset();
-	playerStatistic->ResetStat();
-	hotBar->Reset();
-	inventory->ResetInventory();
+	Player::Instance()->Reset();
+	PlayerStatistic::Instance()->ResetStat();
+	HotBar::Instance()->Reset();
+	Inventory::Instance()->ResetInventory();
 
 }
 

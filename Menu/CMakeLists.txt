@@ -9,6 +9,7 @@ set(SOURCES
     "Menu.cpp"
     "SettingsUI.cpp"
     "SliderUIGroup.cpp"
+    "Tutorial.cpp"
 )
 
 # Add this directory as a static library
