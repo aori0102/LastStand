@@ -220,6 +220,17 @@ void Player::HandleStamina() {
 
 }
 
+void Player::HandleVisual() {
+
+	if (isHurtDisplay && GameCore::Time() >= lastHurtTick + HURT_VISUAL_DISPLAY_TIME) {
+
+		isHurtDisplay = false;
+		MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player)->SetColorMod(Color::WHITE);
+
+	}
+
+}
+
 void Player::InitializeAnimation() {
 
 	AnimationController* animController = AddComponent<AnimationController>();
@@ -375,11 +386,13 @@ void Player::InitializeData() {
 	isAiming = false;
 	isSprinting = false;
 	usingItem = false;
+	isHurtDisplay = false;
 	playerForwardAngle = Math::RadToDeg(Vector2::up.Angle());
 	currentMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 	targetMovementSpeed = DEFAULT_MOVEMENT_SPEED;
 	aimDeviation = STANDING_AIM_DEVIATION;
 	lastWalkSoundTick = 0.0f;
+	lastHurtTick = 0.0f;
 	itemIndex = ItemIndex::None;
 	forward = Vector2::zero;
 
@@ -410,6 +423,11 @@ void Player::InitializeComponents() {
 	Humanoid* humanoid = AddComponent<Humanoid>();
 	humanoid->OnDeath = [this]() {
 		GameManager::Instance()->ReportDead(this);
+		};
+	humanoid->OnDamaged = [this]() {
+		isHurtDisplay = true;
+		lastHurtTick = GameCore::Time();
+		MediaManager::Instance()->GetObjectSprite(MediaObject::Entity_Player)->SetColorMod(Color::RED);
 		};
 
 }
@@ -538,6 +556,7 @@ void Player::Update() {
 	if (!GameManager::Instance()->GameRunning())
 		return;
 
+	HandleVisual();
 	HandleMovement();
 	HandleFacing();
 	HandleActions();

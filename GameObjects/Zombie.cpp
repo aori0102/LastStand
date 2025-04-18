@@ -30,6 +30,7 @@ const float Zombie::HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const float Zombie::HEALTH_BAR_SCALE = 0.4f;
 const float Zombie::GROAN_SOUND_DELAY_MIN = 4.7f;
 const float Zombie::GROAN_SOUND_DELAY_MAX = 9.9f;
+const float Zombie::HURT_VISUAL_DISPLAY_TIME = 0.14f;
 const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRIBUTE_MAP = {
 	{ ZombieIndex::Normal, ZombieAttribute{
 		.movementSpeed = 60.0f,
@@ -73,10 +74,14 @@ void Zombie::InitializeComponents() {
 
 	Humanoid* humanoid = AddComponent<Humanoid>();
 	humanoid->SetHealth(zombieAttribute->health);
+	humanoid->SetMaxHealth(zombieAttribute->health);
 	humanoid->OnDeath = [this]() {
 		GameManager::Instance()->ReportDead(this);
 		};
 	humanoid->OnDamaged = [this]() {
+		displayHurt = true;
+		lastHurtTick = GameCore::Time();
+		GetComponent<Image>()->SetColorModulo(Color::RED);
 		MediaSFX audioIndex = static_cast<MediaSFX>(Random::Int(
 			static_cast<int>(MediaSFX::ZombieHurt1), static_cast<int>(MediaSFX::ZombieHurt6)
 		));
@@ -145,6 +150,7 @@ void Zombie::FollowPlayer() {
 
 Zombie::Zombie() {
 
+	displayHurt = false;
 	lastGroanTick = 0.0f;
 	groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
 
@@ -209,7 +215,14 @@ void Zombie::Update() {
 	if (!GameManager::Instance()->GameRunning())
 		return;
 
-		FollowPlayer();
+	FollowPlayer();
+
+	if (displayHurt && GameCore::Time() >= lastHurtTick + HURT_VISUAL_DISPLAY_TIME) {
+
+		displayHurt = false;
+		GetComponent<Image>()->SetColorModulo(Color::WHITE);
+
+	}
 
 }
 

@@ -89,7 +89,7 @@ void GameManager::InitializeObject() {
 	background->Disable();
 
 	GameObject::Instantiate<Menu>("Game Menu");
-	
+
 	GameObject::Instantiate<Player>("Player", Layer::Player);
 	Player::Instance()->Disable();
 	GameCore::LetCameraFocus(Player::Instance());
@@ -316,7 +316,7 @@ GameManager::GameManager() {
 }
 
 GameManager::~GameManager() {
-	
+
 	SaveGame();
 
 	background = nullptr;
@@ -397,7 +397,7 @@ void GameManager::Update() {
 
 	if (GameCore::GetKeyState(SDLK_t).started)
 		SwitchScene(SceneIndex::Tutorial);
-		
+
 	// Freeze game
 	if (GameCore::GetKeyState(SDLK_ESCAPE).started
 		&& (currentScene == SceneIndex::InGamePaused || currentScene == SceneIndex::InGame)) {
@@ -411,7 +411,6 @@ void GameManager::Update() {
 	}
 
 	// Update game object
-
 	GameObject::CleanUpDeleted();
 
 	GameObject::StartAll();

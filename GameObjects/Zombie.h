@@ -57,6 +57,7 @@ private:
 	static const float HEALTH_BAR_SCALE;
 	static const float GROAN_SOUND_DELAY_MIN;
 	static const float GROAN_SOUND_DELAY_MAX;
+	static const float HURT_VISUAL_DISPLAY_TIME;
 	static const std::string SPRITE_PATH;
 	static const std::unordered_map<ZombieIndex, ZombieAttribute> ZOMBIE_BASE_ATTRIBUTE_MAP;
 	static const std::unordered_map<ZombieIndex, SDL_Rect> ZOMBIE_SPRITE_CLIP_MAP;
@@ -69,6 +70,8 @@ private:
 
 	float lastGroanTick;
 	float groanDelay;
+	float lastHurtTick;
+	bool displayHurt;
 	ZombieIndex zombieIndex;
 	Vector2 wanderTarget;
 	GameObject* healthBar;

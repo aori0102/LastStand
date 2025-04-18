@@ -29,6 +29,7 @@ public:
 
 	std::function<void()> OnDeath;
 	std::function<void()> OnDamaged;
+	std::function<void()> OnHealed;
 
 	/// ----------------------------------
 	/// METHODS

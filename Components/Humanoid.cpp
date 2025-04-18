@@ -19,6 +19,7 @@ Humanoid::Humanoid(GameObject* initOwner) : GameComponent(initOwner) {
 
 	OnDeath = []() {};
 	OnDamaged = []() {};
+	OnHealed = []() {};
 
 }
 
@@ -59,6 +60,7 @@ void Humanoid::Damage(float amount) {
 void Humanoid::Heal(float amount) {
 
 	health += amount;
+	OnHealed();
 
 	if (health > maxHealth)
 		health = maxHealth;

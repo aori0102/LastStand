@@ -90,6 +90,7 @@ class Sprite : public Texture {
 public:
 
 	bool LoadImage(std::string path);
+	void SetColorMod(Color color);
 
 };
 
@@ -111,6 +112,7 @@ public:
 	float scale;
 	Color backgroundColor;
 	Color outlineColor;
+	Color colorModulo;
 	SDL_Rect clip;
 
 	ImageFill imageFill;
@@ -124,6 +126,7 @@ public:
 	Image(GameObject* initOwner);
 	void LinkSprite(Sprite* sprite, bool stretchWithTransform);
 	void Render();
+	void SetColorModulo(Color color);
 
 };
 

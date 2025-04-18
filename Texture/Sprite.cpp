@@ -47,3 +47,10 @@ bool Sprite::LoadImage(std::string path) {
 	return true;
 
 }
+
+void Sprite::SetColorMod(Color color) {
+
+	if (texture)
+		SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
+
+}

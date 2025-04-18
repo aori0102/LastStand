@@ -22,6 +22,7 @@ enum class Layer {
 	Player,
 	Zombie,
 	GUI,
+	Overlay,
 	Menu,
 
 };

@@ -46,6 +46,7 @@ private:
 	const float WALK_SOUND_DELAY = 0.6f;
 	const float AIM_SOUND_DELAY = 0.9f;
 	const float SPRINT_SOUND_DELAY = 0.35f;
+	const float HURT_VISUAL_DISPLAY_TIME = 0.14f;
 
 public:
 
@@ -60,11 +61,13 @@ private:
 	bool isMoving;
 	bool isAiming;
 	bool isSprinting;
+	bool isHurtDisplay;
 	float playerForwardAngle;
 	float currentMovementSpeed;
 	float targetMovementSpeed;
 	float aimDeviation;
 	float lastWalkSoundTick;
+	float lastHurtTick;
 	std::unordered_map<PlayerAttribute, float> playerAttributeMap;
 	ItemIndex itemIndex;
 	Vector2 forward;
@@ -88,6 +91,7 @@ private:
 	void HandleMovement();
 	void HandleFacing();
 	void HandleStamina();
+	void HandleVisual();
 	void InitializeAnimation();
 	void InitializeData();
 	void InitializeComponents();

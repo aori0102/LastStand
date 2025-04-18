@@ -72,6 +72,7 @@ void Image::Render() {
 
 		}
 
+		linkedSprite->SetColorMod(colorModulo);
 		// Render
 		GameCore::RenderCopy(
 			linkedSprite,
@@ -82,6 +83,7 @@ void Image::Render() {
 			&formatClip,
 			angle
 		);
+		linkedSprite->SetColorMod(Color::WHITE);
 
 	} else {
 
@@ -105,5 +107,11 @@ void Image::Render() {
 		GameCore::DrawRectangle(center, extents, showOnScreen, false, outlineColor, Owner()->GetLayer());
 
 	}
+
+}
+
+void Image::SetColorModulo(Color color) {
+
+	colorModulo = color;
 
 }

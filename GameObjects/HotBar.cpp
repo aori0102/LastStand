@@ -98,23 +98,25 @@ void HotBar::LinkItemToSlot(ItemIndex itemIndex, HotBarSlotIndex slotIndex) {
 
 	auto slot = hotBar.at(slotIndex);
 
-	if (itemIndex == ItemIndex::None && slot->index != ItemIndex::None) {
-
-		if (currentSlotIndex == slotIndex)
-			Inventory::Instance()->GetItem(slot->index)->Dequip();
-		slot->index = ItemIndex::None;
-		slot->previousCount = -1;
-		HotBarUI::Instance()->RemoveSlotItem(slotIndex);
-		return;
-
-	}
+	if (slot->index != ItemIndex::None)
+		Inventory::Instance()->GetItem(slot->index)->Dequip();
 
 	slot->index = itemIndex;
-	slot->previousCount = Inventory::Instance()->GetItemCount(itemIndex);
-	HotBarUI::Instance()->UpdateSlotItemVisual(slotIndex, itemIndex);
-	HotBarUI::Instance()->UpdateSlotItemCount(slotIndex, slot->previousCount);
-	if (slotIndex == currentSlotIndex)
-		Inventory::Instance()->GetItem(itemIndex)->Equip();
+
+	if (itemIndex == ItemIndex::None) {
+
+		slot->previousCount = -1;
+		HotBarUI::Instance()->RemoveSlotItem(slotIndex);
+
+	} else {
+
+		slot->previousCount = Inventory::Instance()->GetItemCount(itemIndex);
+		HotBarUI::Instance()->UpdateSlotItemVisual(slotIndex, itemIndex);
+		HotBarUI::Instance()->UpdateSlotItemCount(slotIndex, slot->previousCount);
+		if (slotIndex == currentSlotIndex)
+			Inventory::Instance()->GetItem(itemIndex)->Equip();
+
+	}
 
 }
 
