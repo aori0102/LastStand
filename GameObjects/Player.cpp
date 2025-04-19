@@ -150,11 +150,9 @@ void Player::HandleMovement() {
 	transform->Translate(input.Normalize() * currentMovementSpeed * GameCore::DeltaTime());
 
 	// Assign deviation
-	if (isMoving) {
-
+	if (isMoving)
 		aimDeviation = MOVING_AIM_DEVIATION;
-
-	} else
+	else
 		aimDeviation = STANDING_AIM_DEVIATION;
 
 	if (isAiming)
@@ -213,7 +211,7 @@ void Player::HandleStamina() {
 
 	Humanoid* humanoid = GetComponent<Humanoid>();
 
-	if (isSprinting)
+	if (isMoving && isSprinting)
 		humanoid->DrainStamina(STAMINA_DRAIN_RATE * GameCore::DeltaTime());
 	else
 		humanoid->GainStamina(STAMINA_RECOVERY_RATE * GameCore::DeltaTime());

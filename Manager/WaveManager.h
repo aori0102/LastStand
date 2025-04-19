@@ -72,7 +72,7 @@ private:
 private:
 
 	void EndWave();
-	void SpawnZombie(int amount, ZombieIndex zombieIndex);
+	void SpawnZombieHorde(int amount);
 
 public:
 

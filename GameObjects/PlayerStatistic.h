@@ -51,7 +51,7 @@ public:
 	void SaveData();
 	void LoadData();
 	void ResetStat();
-	bool IsMoneySufficient(int amount);
+	bool IsMoneySufficient(int amount) const;
 	bool TrySpendMoney(int amount);
 	bool TryConsumeSkillPoint(int amount);
 	int GetLevel() const;

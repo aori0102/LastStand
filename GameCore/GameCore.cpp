@@ -34,12 +34,8 @@
 /// ----------------------------------
 
 const float GameCore::CAMERA_ZOOM_SPEED = 14.0f;
-const float GameCore::CAMERA_FOLLOW_SPEED = 16.0f;
-const float GameCore::CAMERA_WOBBLE_AMPLITUDE = 7.0f;
-const float GameCore::CAMERA_NOISE_AMPLITUDE = 58.0f;
-const float GameCore::CAMERA_WOBBLE_BASE_FREQUENCY = 0.8f;
-const float GameCore::CAMERA_POSITIONAL_DISTORTION_FREQUENCY = 0.3f;
-const float GameCore::CAMERA_ROTATIONAL_DISTORTION_FREQUENCY = 0.2f;
+const float GameCore::CAMERA_FOLLOW_SPEED = 9.0f;
+const float GameCore::MAX_CAMERA_DISTANCE = 120.0f;
 
 const Vector2 GameCore::MAP_ZONE = Vector2(3840.0f, 3840.0f);
 
@@ -248,19 +244,10 @@ void GameCore::UpdateCamera() {
 		return;
 
 	// Get focus object component and update camera
-	//cameraPosition = cameraFocusObject->transform->position;
+	float cameraSpeed = CAMERA_FOLLOW_SPEED *
+		std::max(1.0f, (cameraPosition - cameraFocusObject->transform->position).Magnitude() / MAX_CAMERA_DISTANCE);
 
-	Vector2 noisePostionalFrequency(CAMERA_POSITIONAL_DISTORTION_FREQUENCY, CAMERA_POSITIONAL_DISTORTION_FREQUENCY);
-	Vector2 noiseRotationalFrequency(CAMERA_ROTATIONAL_DISTORTION_FREQUENCY, CAMERA_ROTATIONAL_DISTORTION_FREQUENCY);
-	Vector2 noise;
-	noise.x = Algorithm::PerlinNoise(noisePostionalFrequency * time) * CAMERA_NOISE_AMPLITUDE;
-	noise.y = Algorithm::PerlinNoise(noisePostionalFrequency * time) * CAMERA_NOISE_AMPLITUDE;
-	float angle = Algorithm::PerlinNoise(noiseRotationalFrequency * time) * Math::PI * 2.0f;
-	Vector2 direction = Vector2::right.Rotate(angle);
-	Vector2 wobble;
-	wobble.x = std::sinf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.x * direction.x;
-	wobble.y = std::cosf(CAMERA_WOBBLE_BASE_FREQUENCY * time) * CAMERA_WOBBLE_AMPLITUDE + 0.5f * noise.y * direction.y;
-	cameraPosition = Vector2::Lerp(cameraPosition, cameraFocusObject->transform->position + wobble, CAMERA_FOLLOW_SPEED);
+	cameraPosition = Vector2::Lerp(cameraPosition, cameraFocusObject->transform->position, deltaTime * cameraSpeed);
 	cameraPosition.x = Math::Clamp(
 		cameraPosition.x,
 		(windowResolution.x - MAP_ZONE.x) / 2.0f,
@@ -409,7 +396,6 @@ bool GameCore::InitializeSystem() {
 	try {
 
 		Random::Init();
-		Algorithm::PerlinInit();
 
 	} catch (const std::exception& e) {
 

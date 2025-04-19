@@ -69,7 +69,6 @@ public:
 	void UnregisterRigidBody(RigidBody* rigidBody);
 	void LateCollisionCall();
 	bool BoxCast(BoxCollider* collider, Vector2 movementVector, HitInfo* hitInfo = nullptr);
-	bool ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart = nullptr, Vector2* newEnd = nullptr);
 
 	static PhysicsManager* Instance();
 

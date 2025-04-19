@@ -373,49 +373,4 @@ bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitI
 
 }
 
-bool PhysicsManager::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart, Vector2* newEnd) {
-
-	// Liang-Barsky line clipping algo
-
-	// Define parameters
-	float minX = bound.Left();
-	float minY = bound.Bottom();
-	float maxX = bound.Right();
-	float maxY = bound.Top();
-	float t0 = 0.0f, t1 = 1.0f;
-	float dx = (end - start).x;
-	float dy = (end - start).y;
-	// Left, right, top, bottom respectively
-	float p[] = { -dx, dx, -dy, dy };
-	float q[] = { start.x - minX, maxX - start.x, start.y - minY, maxY - start.y };
-
-	for (int i = 0; i < 4; i++) {
-
-		// Parallel and outside
-		if (p[i] == 0 && q[i] < 0.0f)
-			return false;
-
-		float t = q[i] / p[i];
-		if (p[i] < 0.0f)
-			t0 = std::max(t0, t);
-		else if (p[i] > 0.0f)
-			t1 = std::min(t1, t);
-
-		// Fully outside
-		if (t0 > t1)
-			return false;
-
-	}
-
-	// Clip line
-	if (newStart)
-		*newStart = start + (end - start) * t0;
-
-	if (newEnd)
-		*newEnd = start + (end - start) * t1;
-
-	return t0 != 0.0f || t1 != 1.0f;
-
-}
-
 PhysicsManager* PhysicsManager::Instance() { return instance; }

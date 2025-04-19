@@ -195,25 +195,10 @@ public:
 class Algorithm {
 
 	/// ----------------------------------
-	/// FIELDS
-	/// ----------------------------------
-
-private:
-
-	static std::vector<int> perlinPermutationTable;
-
-	/// ----------------------------------
 	/// METHODS
 	/// ----------------------------------
 
-private:
-
-	static float PerlinGrad(int hash, Vector2 v);
-
 public:
-
-	static void PerlinInit();
-	static float PerlinNoise(Vector2 v);
 
 	template <typename T> static void Shuffle(std::vector<T>& array);
 		

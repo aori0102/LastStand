@@ -3,7 +3,6 @@
 
 # Set the sources. Ideally all the .cpp file inside the directory
 set(SOURCES
-    "Algorithm.cpp"
     "Align.cpp"
     "AnimationClip.cpp"
     "AnimationNode.cpp"

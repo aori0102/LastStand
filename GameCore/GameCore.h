@@ -56,11 +56,7 @@ private:
 
 	static const float CAMERA_ZOOM_SPEED;
 	static const float CAMERA_FOLLOW_SPEED;
-	static const float CAMERA_WOBBLE_AMPLITUDE;
-	static const float CAMERA_NOISE_AMPLITUDE;
-	static const float CAMERA_WOBBLE_BASE_FREQUENCY;
-	static const float CAMERA_POSITIONAL_DISTORTION_FREQUENCY;
-	static const float CAMERA_ROTATIONAL_DISTORTION_FREQUENCY;
+	static const float MAX_CAMERA_DISTANCE;
 	static const Vector2 MAP_ZONE;
 
 public:

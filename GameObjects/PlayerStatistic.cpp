@@ -93,14 +93,17 @@ void PlayerStatistic::SaveData() {
 }
 
 void PlayerStatistic::LoadData() {
+
 	PlayerSaveData* data = DataManager::Instance()->playerSaveData;
 
 	playerMoney = data->money;
 	playerSkillPoint = data->skillPoint;
+	Shop::Instance()->UpdateSkillPoint(playerSkillPoint);
 	playerLevel = data->level;
 	playerEXP = data->exp;
 	playerDamage = data->damage;
 	playerTotalEXP = data->accumulatedEXP;
+	playerEXPNeeded = std::powf(PLAYER_EXP_MULTIPLIER, playerLevel) * static_cast<float>(PLAYER_BASE_EXP);
 
 }
 
@@ -116,7 +119,7 @@ void PlayerStatistic::ResetStat() {
 
 }
 
-bool PlayerStatistic::IsMoneySufficient(int amount) {
+bool PlayerStatistic::IsMoneySufficient(int amount) const {
 
 	return playerMoney >= amount;
 

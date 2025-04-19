@@ -37,14 +37,18 @@ const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRI
 		.movementSpeed = 60.0f,
 		.health = 32.0f,
 		.damage = 6.0f,
+		.scale = 56.0f,
+		.mass = 60.0f,
 		.exp = 3,
 		.money = 13,
 		}
 	},
 	{ ZombieIndex::Lurker, ZombieAttribute{
-		.movementSpeed = 104.0f,
+		.movementSpeed = 134.0f,
 		.health = 21.0f,
 		.damage = 3.0f,
+		.scale = 42.0f,
+		.mass = 44.0f,
 		.exp = 7,
 		.money = 17,
 		}
@@ -53,6 +57,8 @@ const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRI
 		.movementSpeed = 30.0f,
 		.health = 148.0f,
 		.damage = 3.0f,
+		.scale = 88.0f,
+		.mass = 214.0f,
 		.exp = 9,
 		.money = 22,
 		}
@@ -76,16 +82,11 @@ void Zombie::InitializeData() {
 
 	wanderTarget = Vector2::zero;
 
-	zombieIndex = ZombieIndex::Normal;
+	zombieIndex = static_cast<ZombieIndex>(Random::Int(static_cast<int>(ZombieIndex::Normal),static_cast<int>(ZombieIndex::Tanker)));
 
 	// Attribute
-	zombieAttribute = new ZombieAttribute{
-		.movementSpeed = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed,
-		.health = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health,
-		.damage = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage,
-		.exp = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp,
-		.money = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).money,
-	};
+	zombieAttribute = new ZombieAttribute(ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex));
+
 	// Calculation of zombie's attribute uses the following formula
 	// y = bm(d * ln(x) + sqrt(m ^ x))
 	// Where
@@ -120,7 +121,7 @@ void Zombie::InitializeComponents() {
 
 	RigidBody* rigidBody = AddComponent<RigidBody>();
 	rigidBody->drag = 10.0f;
-	rigidBody->mass = 60.0f;
+	rigidBody->mass = zombieAttribute->mass;
 
 	BoxCollider* boxCollider = AddComponent<BoxCollider>();
 
@@ -147,9 +148,9 @@ void Zombie::InitializeComponents() {
 	image->showOnScreen = false;
 	image->clip = ZOMBIE_SPRITE_CLIP_MAP.at(zombieIndex);
 
-	transform->scale = Vector2(50.0f, 50.0f);
+	transform->scale = Vector2(zombieAttribute->scale, zombieAttribute->scale);
 
-	healthBar = GameObject::Instantiate("Health Bar", Layer::Zombie);
+	healthBar = GameObject::Instantiate("Zombie Health Bar", Layer::Zombie);
 	Image* healthBar_image = healthBar->AddComponent<Image>();
 	healthBar_image->LinkSprite(MediaManager::Instance()->GetObjectSprite(MediaObject::Misc_HealthBar), true);
 	healthBar_image->imageFill = ImageFill::Horizontal;
@@ -166,7 +167,7 @@ void Zombie::InitializeComponents() {
 		healthBar_image->fillAmount = humanoid->GetHealth() / humanoid->GetMaxHealth();
 		healthBar_image->Render();
 
-		boxCollider->Debug();
+		//boxCollider->Debug();
 
 		};
 
@@ -214,19 +215,6 @@ Zombie::~Zombie() {
 
 	delete zombieAttribute;
 	zombieAttribute = nullptr;
-
-}
-
-void Zombie::SetIndex(ZombieIndex initZombieIndex) {
-
-	zombieIndex = initZombieIndex;
-
-	zombieAttribute->movementSpeed = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed;
-	zombieAttribute->health = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health;
-	zombieAttribute->damage = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage;
-	zombieAttribute->exp = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp;
-
-	GetComponent<Image>()->clip = ZOMBIE_SPRITE_CLIP_MAP.at(zombieIndex);
 
 }
 

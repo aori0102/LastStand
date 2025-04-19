@@ -41,7 +41,7 @@ void WaveManager::EndWave() {
 
 }
 
-void WaveManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
+void WaveManager::SpawnZombieHorde(int amount) {
 
 	std::vector<Vector2> spawnPositionList = SPAWN_POSITION_LIST;
 	Algorithm::Shuffle(spawnPositionList);
@@ -49,7 +49,6 @@ void WaveManager::SpawnZombie(int amount, ZombieIndex zombieIndex) {
 	for (int i = 0; i < amount; i++) {
 
 		Zombie* zombie = GameObject::Instantiate<Zombie>("Zombie", Layer::Zombie);
-		zombie->SetIndex(zombieIndex);
 		zombie->transform->position = spawnPositionList[i];
 		zombieSet.insert(zombie);
 
@@ -122,12 +121,7 @@ void WaveManager::Update() {
 
 		lastSpawnTick = GameCore::Time();
 
-		SpawnZombie(
-			spawnAmount,
-			static_cast<ZombieIndex>(
-				Random::Int(static_cast<int>(ZombieIndex::Normal), static_cast<int>(ZombieIndex::Tanker))
-				)
-		);
+		SpawnZombieHorde(spawnAmount);
 
 	}
 

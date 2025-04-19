@@ -41,6 +41,8 @@ public:
 	float movementSpeed;
 	float health;
 	float damage;
+	float scale;
+	float mass;
 	int exp;
 	int money;
 
@@ -93,7 +95,6 @@ public:
 
 	Zombie();
 	~Zombie();
-	void SetIndex(ZombieIndex initZombieIndex);
 	void Update() override;
 	void OnCollisionEnter(BoxCollider* other) override;
 	int GetExp() const;
