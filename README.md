@@ -48,7 +48,7 @@ Ngưỡng điểm mong muốn : 10!
 ### 2. 🎮 Các tính năng của trò chơi (Gameplay Features):
 
 - Zombie và các đợt sóng
-  - Có 4 loại Zombie, mỗi loại có một tính chất riêng biệt (chạy nhanh hơn, nhiều HP hơn...)
+  - Có 3 loại Zombie, mỗi loại có một tính chất riêng biệt (chạy nhanh hơn, nhiều HP hơn...)
   - Mỗi đợt sóng sẽ sinh ra số lượng Zombie tăng dần và ngẫu nhiên, đảm bảo độ khó luôn tăng và mỗi màn chơi đều mới.
 
 - Vũ khí và vật phẩm
@@ -122,20 +122,26 @@ Ngưỡng điểm mong muốn : 10!
 15. [x] Pause/Resume
 16. [x] Status bar / lives (mạng/máu...)
 
-## 📑 Các code tham khảo:
-
-- [Perlin Noise - Tạo chuyển động ngẫu nhiên nhưng mượt mà](https://stackoverflow.com/questions/29711668/perlin-noise-generation)
+## 📑 Tham khảo và nguồn:
 
 ## 🤖 Sử dụng AI:
 
-- AI được sử dụng để tham khảo một số ý kiến (không bao gồm copy), giải thích Perlin Noise và một số thông tin về môi trường Windows (dùng để làm hệ
+- AI được sử dụng để tham khảo một số ý kiến và tra cứu một số hàm thuộc thư viện SDL (không bao gồm copy code), và một số thông tin về môi trường Windows (dùng để làm hệ
   thống lưu trữ)
 
-## 🖼️ Toàn bộ ảnh, UI trong game là tự vẽ
+## 🖼️🔊 Media (Ảnh, UI, âm thanh)
 
-- [Dự án Figma thiết kế giao diện](https://www.figma.com/design/0VbwXioXDyyf05gwKCZEYs/Figma-basics?node-id=1669-162202&t=rOPQRHmF7vg3ibWc-1)
+- UI được thiết kế bằng Figma
+- Các sprite trong game được vẽ bằng phần mềm Aseprite
+- Một số âm thanh được cắt chỉnh trước khi đưa vào sản phẩm (thông qua Audacity và Adobe Audition)
 
-## 🔗 Các nguồn lấy âm thanh
+## 🔗 Các nguồn media
+
+### Hình ảnh
+
+[Dự án Figma thiết kế giao diện](https://www.figma.com/design/0VbwXioXDyyf05gwKCZEYs/Figma-basics?node-id=1669-162202&t=rOPQRHmF7vg3ibWc-1)
+
+### Âm thanh
 
 https://pixabay.com/sound-effects/submachine-gun-79846/
 
@@ -154,3 +160,9 @@ https://pixabay.com/sound-effects/zombie-choking-44937/
 https://pixabay.com/sound-effects/free-zombie-moan-sounds-54824/
 
 https://pixabay.com/sound-effects/zombie-04-17457/
+
+https://pixabay.com/sound-effects/coin-drop-on-grass-20269/
+
+https://pixabay.com/sound-effects/wrong-47985/
+
+https://pixabay.com/sound-effects/40-pistol-various-foley-23163/
