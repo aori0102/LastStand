@@ -44,15 +44,18 @@ void DataManager::SavePlayerData() {
 	if (!file.is_open())
 		throw std::exception("Error saving data. File cannot be opened");
 
+	file << "MostDamage:" << playerSaveData->mostDamageDealt << std::endl;
+	file << "MostWave:" << playerSaveData->mostWaveSurvived << std::endl;
+	file << "MostZombie:" << playerSaveData->mostZombieKilled << std::endl;
 	file << "Level:" << playerSaveData->level << std::endl;
 	file << "EXP:" << playerSaveData->exp << std::endl;
 	file << "Money:" << playerSaveData->money << std::endl;
 	file << "SkillPoint:" << playerSaveData->skillPoint << std::endl;
 	file << "Health:" << playerSaveData->health << std::endl;
-	file << "Wave:" << playerSaveData->wave << std::endl;
+	file << "Wave:" << playerSaveData->waveSurvived << std::endl;
 	file << "Zombie:" << playerSaveData->zombieKilled << std::endl;
 	file << "AccumulatedEXP:" << playerSaveData->accumulatedEXP << std::endl;
-	file << "Damage:" << playerSaveData->damage << std::endl;
+	file << "Damage:" << playerSaveData->damageDealt << std::endl;
 
 	for (auto it = playerSaveData->storage.begin(); it != playerSaveData->storage.end(); it++)
 		file << "Item:" << static_cast<int>(it->first) << "|" << it->second << std::endl;
@@ -97,6 +100,12 @@ void DataManager::LoadPlayerData() {
 
 		if (line.find("Level") != std::string::npos)
 			playerSaveData->level = std::stoi(line.substr(line.find(':') + 1));
+		else if (line.find("MostWave") != std::string::npos)
+			playerSaveData->mostWaveSurvived = std::stoi(line.substr(line.find(':') + 1));
+		else if (line.find("MostZombie") != std::string::npos)
+			playerSaveData->mostZombieKilled = std::stoi(line.substr(line.find(':') + 1));
+		else if (line.find("MostDamage") != std::string::npos)
+			playerSaveData->mostDamageDealt = std::stof(line.substr(line.find(':') + 1));
 		else if (line.find("Money") != std::string::npos)
 			playerSaveData->money = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("AccumulatedEXP") != std::string::npos)
@@ -106,13 +115,13 @@ void DataManager::LoadPlayerData() {
 		else if (line.find("SkillPoint") != std::string::npos)
 			playerSaveData->skillPoint = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("Wave") != std::string::npos)
-			playerSaveData->wave = std::stoi(line.substr(line.find(':') + 1));
+			playerSaveData->waveSurvived = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("Health") != std::string::npos)
 			playerSaveData->health = std::stof(line.substr(line.find(':') + 1));
 		else if (line.find("Zombie") != std::string::npos)
 			playerSaveData->zombieKilled = std::stoi(line.substr(line.find(':') + 1));
 		else if (line.find("Damage") != std::string::npos)
-			playerSaveData->damage = std::stof(line.substr(line.find(':') + 1));
+			playerSaveData->damageDealt = std::stof(line.substr(line.find(':') + 1));
 		else if (line.find("Item") != std::string::npos)
 			playerSaveData->storage[
 				static_cast<ItemIndex>(std::stoi(line.substr(line.find(':') + 1, line.rfind('|') - line.find(':') - 1)))
@@ -147,11 +156,14 @@ void DataManager::InitializePlayerData() {
 	defaultPlayerSaveData.exp = 0;
 	defaultPlayerSaveData.money = 0;
 	defaultPlayerSaveData.skillPoint = 0;
-	defaultPlayerSaveData.wave = 0;
+	defaultPlayerSaveData.waveSurvived = 0;
+	defaultPlayerSaveData.mostWaveSurvived = 0;
 	defaultPlayerSaveData.accumulatedEXP = 0;
 	defaultPlayerSaveData.zombieKilled = 0;
+	defaultPlayerSaveData.mostZombieKilled = 0;
 	defaultPlayerSaveData.health = 100.0f;
-	defaultPlayerSaveData.damage = 0.0f;
+	defaultPlayerSaveData.damageDealt = 0.0f;
+	defaultPlayerSaveData.mostDamageDealt = 0.0f;
 	defaultPlayerSaveData.newSave = true;
 	defaultPlayerSaveData.storage = {};
 	for (int i = 0; i < static_cast<int>(SkillListIndex::Total); i++)
@@ -281,6 +293,11 @@ DataManager::~DataManager() {
 }
 
 void DataManager::ResetPlayerData() {
+
+	// Save highscore
+	defaultPlayerSaveData.mostDamageDealt = playerSaveData->mostDamageDealt;
+	defaultPlayerSaveData.mostZombieKilled = playerSaveData->mostZombieKilled;
+	defaultPlayerSaveData.mostWaveSurvived = playerSaveData->mostWaveSurvived;
 
 	*playerSaveData = defaultPlayerSaveData;
 

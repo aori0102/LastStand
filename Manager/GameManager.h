@@ -43,6 +43,7 @@ enum class SceneIndex {
 	InGamePaused,
 	GameOver,
 	Tutorial,
+	Statistic,
 
 };
 

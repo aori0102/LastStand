@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -6,6 +12,10 @@
 #include <Utils.h>
 #include <Version.h>
 class Menu : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -21,6 +31,7 @@ private:
 		Title,
 		VersionLabel,
 		TutorialButton,
+		StatisticButton,
 
 	};
 
@@ -36,6 +47,7 @@ private:
 		{ UIElementIndex::Title, Vector2(78.0f, 63.0f) },
 		{ UIElementIndex::VersionLabel, Vector2(-5.0f, 0.0f) },
 		{ UIElementIndex::TutorialButton, Vector2(419.0f, 432.0f) },
+		{ UIElementIndex::StatisticButton, Vector2(419.0f, 304.0f) },
 	};
 	const std::unordered_map<UIElementIndex, int> UI_FONT_SIZE_MAP = {
 		{ UIElementIndex::PlayLabel, 48 },
@@ -44,11 +56,19 @@ private:
 		{ UIElementIndex::VersionLabel, 20 },
 	};
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 
 	static Menu* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

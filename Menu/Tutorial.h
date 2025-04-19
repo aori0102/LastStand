@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -9,6 +15,10 @@
 enum class ActionIndex;
 
 class Tutorial : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -51,11 +61,19 @@ private:
 
 	static const std::unordered_map<ActionIndex, std::string> KEY_BIND_PLACEHOLDER_MAP;
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 
 	static Tutorial* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

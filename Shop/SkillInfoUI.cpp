@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <SkillInfoUI.h>
 
 #include <string>
@@ -6,6 +12,10 @@
 #include <Shop.h>
 #include <SkillList.h>
 #include <Texture.h>
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
 const float SkillInfoUI::BUTTON_COST_LABEL_OFFSET = -7.0f;
 const float SkillInfoUI::BUTTON_POINT_ICON_OFFSET = 13.0f;
@@ -19,6 +29,10 @@ const Vector2 SkillInfoUI::ICON_FRAME_POSITION = Vector2(170.0f, 219.0f);
 const Vector2 SkillInfoUI::BUTTON_FRAME_POSITION = Vector2(956.0f, 229.0f);
 const Vector2 SkillInfoUI::SKILL_DESCRIPTION_OFFSET = Vector2(0.0f, -31.0f);
 const Vector2 SkillInfoUI::SKILL_LABEL_OFFSET = Vector2(117.0f, -10.0f);
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void SkillInfoUI::UpdateSkillInfo(SkillInfo info) {
 

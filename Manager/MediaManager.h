@@ -74,7 +74,7 @@ enum class MediaUI {
 	Menu_Button_Selected,
 	MenuSetting_KeyBindingFrame,
 	MenuSetting_KeyBindingFrameSelected,
-	MenuSetting_ReturnButton,
+	Menu_ReturnButton,
 	MenuSetting_Slider,
 	MenuSetting_SliderButton,
 	MenuSetting_SliderButtonSelected,
@@ -93,6 +93,8 @@ enum class MediaUI {
 	Menu_DeathMessageButton,
 	Menu_TutorialButton,
 	Menu_TutorialButton_Selected,
+	Menu_StatisticButton,
+	Menu_StatisticButton_Selected,
 
 };
 
@@ -205,7 +207,7 @@ private:
 		{ MediaUI::Menu_Title, "Menu\\Title" },
 		{ MediaUI::MenuSetting_KeyBindingFrame, "MenuSetting\\KeyBindingFrame" },
 		{ MediaUI::MenuSetting_KeyBindingFrameSelected, "MenuSetting\\KeyBindingFrameSelected" },
-		{ MediaUI::MenuSetting_ReturnButton, "MenuSetting\\ReturnButton" },
+		{ MediaUI::Menu_ReturnButton, "MenuSetting\\ReturnButton" },
 		{ MediaUI::MenuSetting_Slider, "MenuSetting\\Slider" },
 		{ MediaUI::MenuSetting_SliderButton, "MenuSetting\\SliderButton" },
 		{ MediaUI::MenuSetting_SliderButtonSelected, "MenuSetting\\SliderButtonSelected" },
@@ -224,6 +226,8 @@ private:
 		{ MediaUI::Menu_DeathMessageFrame, "Menu\\DeathMessageFrame" },
 		{ MediaUI::Menu_TutorialButton, "Menu\\TutorialButton" },
 		{ MediaUI::Menu_TutorialButton_Selected, "Menu\\TutorialButtonSelected" },
+		{ MediaUI::Menu_StatisticButton, "Menu\\StatisticButton" },
+		{ MediaUI::Menu_StatisticButton_Selected, "Menu\\StatisticButtonSelected" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },

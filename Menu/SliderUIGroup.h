@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <string>
@@ -7,6 +13,10 @@
 
 class SliderUIGroup : public GameObject {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
 	static const int LABEL_FONT_SIZE;
@@ -15,6 +25,10 @@ private:
 	static const float VALUE_OFFSET;
 	static const std::string VALUE_SUFFIX;
 	static const Vector2 GROUP_SCALE;
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -28,6 +42,10 @@ public:
 
 	bool isSelected;
 	std::function<void(float)> OnValueUpdated;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <SliderUIGroup.h>
 
 #include <iomanip>
@@ -7,12 +13,20 @@
 #include <MediaManager.h>
 #include <Texture.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 const int SliderUIGroup::LABEL_FONT_SIZE = 20;
 const int SliderUIGroup::VALUE_FONT_SIZE = 16;
 const float SliderUIGroup::SLIDER_OFFSET = 189.0f;
 const float SliderUIGroup::VALUE_OFFSET = 500.0f;
 const std::string SliderUIGroup::VALUE_SUFFIX = "%";
 const Vector2 SliderUIGroup::GROUP_SCALE = Vector2(553.0f, 24.0f);
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void SliderUIGroup::InitializeUI() {
 

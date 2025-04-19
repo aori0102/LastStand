@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <SkillList.h>
 
 #include <exception>
@@ -9,8 +15,16 @@
 #include <Shop.h>
 #include <Texture.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 const float SkillList::SKILL_NODE_OFFSET = 87.0f;
 const float SkillList::SKILL_LIST_OFFSET = 104.0f;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 int SkillList::GetCurrentSkillCost() const { return selectedNode ? selectedNode->info.skillPoint : INT_MAX; }
 

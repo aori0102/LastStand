@@ -9,6 +9,7 @@ set(SOURCES
     "Menu.cpp"
     "SettingsUI.cpp"
     "SliderUIGroup.cpp"
+    "Statistic.cpp"
     "Tutorial.cpp"
 )
 

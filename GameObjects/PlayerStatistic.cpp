@@ -13,6 +13,7 @@
 #include <Humanoid.h>
 #include <Player.h>
 #include <Shop.h>
+#include <Statistic.h>
 #include <WaveManager.h>
 
 /// ----------------------------------
@@ -87,7 +88,7 @@ void PlayerStatistic::SaveData() {
 	playerSaveData->exp = playerEXP;
 	playerSaveData->level = playerLevel;
 	playerSaveData->skillPoint = playerSkillPoint;
-	playerSaveData->damage = playerDamage;
+	playerSaveData->damageDealt = playerDamage;
 	playerSaveData->accumulatedEXP = playerTotalEXP;
 
 }
@@ -101,13 +102,18 @@ void PlayerStatistic::LoadData() {
 	Shop::Instance()->UpdateSkillPoint(playerSkillPoint);
 	playerLevel = data->level;
 	playerEXP = data->exp;
-	playerDamage = data->damage;
+	playerDamage = data->damageDealt;
 	playerTotalEXP = data->accumulatedEXP;
 	playerEXPNeeded = std::powf(PLAYER_EXP_MULTIPLIER, playerLevel) * static_cast<float>(PLAYER_BASE_EXP);
 
 }
 
 void PlayerStatistic::ResetStat() {
+
+	// Save PB
+	PlayerSaveData* data = DataManager::Instance()->playerSaveData;
+	data->mostDamageDealt = std::max(data->mostDamageDealt, playerDamage);
+	Statistic::Instance()->UpdateDamage(data->mostDamageDealt);
 
 	playerEXP = 0;
 	playerMoney = 0;

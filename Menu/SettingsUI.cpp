@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <SettingsUI.h>
 
 #include <GameCore.h>
@@ -7,7 +13,15 @@
 #include <SliderUIGroup.h>
 #include <Texture.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 SettingsUI* SettingsUI::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void SettingsUI::InitializeUI() {
 
@@ -50,7 +64,7 @@ void SettingsUI::InitializeUI() {
 	GameObject* settingReturnButton = GameObject::Instantiate("Settings Return Button", Layer::Menu);
 	Image* settingReturnButton_image = settingReturnButton->AddComponent<Image>();
 	settingReturnButton_image->showOnScreen = true;
-	settingReturnButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::MenuSetting_ReturnButton), true);
+	settingReturnButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_ReturnButton), true);
 	Button* settingReturnButton_button = settingReturnButton->AddComponent<Button>();
 	settingReturnButton_button->backgroundColor = Color::TRANSPARENT;
 	settingReturnButton_button->OnClick = []() {

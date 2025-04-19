@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <string>
@@ -11,26 +17,35 @@ enum class SkillListIndex;
 enum class FirearmAttributeIndex;
 enum class PlayerAttribute;
 
-struct PlayerSaveData {
+class PlayerSaveData {
 
-	int level = 0;
-	int money = 0;
-	int exp = 0;
-	int accumulatedEXP = 0;
-	int skillPoint = 0;
-	int wave = 0;
-	int zombieKilled = 0;
-	float health = 0.0f;
-	float damage = 0.0f;
-	bool newSave = true;
-	std::unordered_map<ItemIndex, int> storage = {};
-	std::unordered_map<SkillListIndex, int> skillProgress = {};
-	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, int>> firearmUpgradeProgress = {};
-	std::unordered_map<PlayerAttribute, float> playerAttribute = {};
+public:
+	
+	int level;
+	int money;
+	int exp;
+	int accumulatedEXP;
+	int skillPoint;
+	int waveSurvived;
+	int mostWaveSurvived;
+	int zombieKilled;
+	int mostZombieKilled;
+	float health;
+	float damageDealt;
+	float mostDamageDealt;
+	bool newSave;
+	std::unordered_map<ItemIndex, int> storage;
+	std::unordered_map<SkillListIndex, int> skillProgress;
+	std::unordered_map<ItemIndex, std::unordered_map<FirearmAttributeIndex, int>> firearmUpgradeProgress;
+	std::unordered_map<PlayerAttribute, float> playerAttribute;
 
 };
 
 class PlayerConfig {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -42,17 +57,31 @@ private:
 	float musicVolume;
 	std::unordered_map<ActionIndex, SDL_Keycode> keyBindingMap;
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+private:
+
 	PlayerConfig();
 
 };
 
 class DataManager {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
 	const std::string GAME_DATA_FOLDER = "\\LastStand\\";
 	const std::string PLAYER_DATA_FILE = "player.txt";
 	const std::string CONFIG_DATA_FILE = "config.txt";
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -65,6 +94,10 @@ public:
 
 	PlayerSaveData* playerSaveData;
 	PlayerConfig* playerConfig;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

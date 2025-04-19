@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <GameObject.h>
@@ -7,11 +13,19 @@ enum class ActionIndex;
 
 class KeyBindSingleUIGroup : public GameObject {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
 	static const int LABEL_FONT_SIZE;
 	static const int KEY_FONT_SIZE;
 	static const float LABEL_OFFSET;
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -21,6 +35,10 @@ private:
 	GameObject* label;
 	GameObject* frame;
 	GameObject* keyLabel;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

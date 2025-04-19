@@ -16,6 +16,7 @@
 #include <GameManager.h>
 #include <PlayerStatistic.h>
 #include <MediaManager.h>
+#include <Statistic.h>
 #include <Texture.h>
 #include <Zombie.h>
 
@@ -36,7 +37,7 @@ void WaveManager::EndWave() {
 	PlayerStatistic::Instance()->AddMoney(BASE_WAVE_REWARD * std::powf(REWARD_MULTIPLIER, currentWave));
 
 	PlayerStatistic::Instance()->SaveData();
-	DataManager::Instance()->playerSaveData->wave = currentWave;
+	DataManager::Instance()->playerSaveData->waveSurvived = currentWave;
 	DataManager::Instance()->playerSaveData->zombieKilled = zombieKilledTotal;
 
 }
@@ -66,7 +67,7 @@ WaveManager::WaveManager() {
 	isActive = true;
 
 	waveInProgress = false;
-	currentWave = DataManager::Instance()->playerSaveData->wave;
+	currentWave = DataManager::Instance()->playerSaveData->waveSurvived;
 	totalZombie = 0;
 	zombieLeft = 0;
 	zombieToSpawn = 0;
@@ -159,6 +160,13 @@ void WaveManager::RemoveZombie(Zombie* zombie) {
 }
 
 void WaveManager::ResetStat() {
+
+	// Save PB
+	PlayerSaveData* data = DataManager::Instance()->playerSaveData;
+	data->mostWaveSurvived = std::max(data->mostWaveSurvived, GetSurvivedWave());
+	data->mostZombieKilled = std::max(data->mostZombieKilled, zombieKilledTotal);
+	Statistic::Instance()->UpdateWave(data->mostWaveSurvived);
+	Statistic::Instance()->UpdateZombie(data->mostZombieKilled);
 
 	waveInProgress = false;
 	zombieKilledThisWave = 0;

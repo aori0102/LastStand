@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Menu.h>
 
 #include <iostream>
@@ -11,7 +17,15 @@
 #include <SliderUIGroup.h>
 #include <Texture.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 Menu* Menu::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void Menu::InitializeMenu() {
 
@@ -208,6 +222,35 @@ void Menu::InitializeMenu() {
 		tutorialButton_image->Render();
 		};
 	uiElementMap[UIElementIndex::TutorialButton] = tutorialButton;
+
+	/// -------------
+	/// STATISTIC BUTTON
+	/// -------------
+	GameObject* statisticButton = GameObject::Instantiate("Menu Statistic Button", Layer::Menu);
+	Image* statisticButton_image = statisticButton->AddComponent<Image>();
+	statisticButton_image->showOnScreen = true;
+	statisticButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_StatisticButton), true);
+	Button* statisticButton_button = statisticButton->AddComponent<Button>();
+	statisticButton_button->backgroundColor = Color::TRANSPARENT;
+	statisticButton_button->OnClick = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
+		GameManager::Instance()->SwitchScene(SceneIndex::Statistic);
+		return true;
+		};
+	statisticButton_button->OnMouseEnter = [statisticButton_image]() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
+		statisticButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_StatisticButton_Selected), true);
+		};
+	statisticButton_button->OnMouseLeave = [statisticButton_image]() {
+		statisticButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_StatisticButton), true);
+		};
+	statisticButton->transform->position = Math::SDLToC00(
+		UI_POSITION_MAP.at(UIElementIndex::StatisticButton), statisticButton->transform->scale
+	);
+	statisticButton->Render = [statisticButton_image]() {
+		statisticButton_image->Render();
+		};
+	uiElementMap[UIElementIndex::StatisticButton] = statisticButton;
 
 }
 

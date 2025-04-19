@@ -29,6 +29,7 @@
 #include <RenderManager.h>
 #include <SettingsUI.h>
 #include <Shop.h>
+#include <Statistic.h>
 #include <StatusBar.h>
 #include <Texture.h>
 #include <Tutorial.h>
@@ -119,6 +120,9 @@ void GameManager::InitializeObject() {
 	GameObject::Instantiate<Tutorial>("Tutorial", Layer::Menu);
 	Tutorial::Instance()->Disable();
 
+	GameObject::Instantiate<Statistic>("Statistic", Layer::Menu);
+	Statistic::Instance()->Disable();
+
 	std::cout << "[GameManager] Game Objects Initialized!" << std::endl;
 
 }
@@ -180,6 +184,12 @@ void GameManager::EnableSceneObject() {
 	case SceneIndex::Tutorial:
 
 		Tutorial::Instance()->Enable();
+
+		break;
+
+	case SceneIndex::Statistic:
+
+		Statistic::Instance()->Enable();
 
 		break;
 
@@ -249,6 +259,12 @@ void GameManager::DisableSceneObject() {
 	case SceneIndex::Tutorial:
 
 		Tutorial::Instance()->Disable();
+
+		break;
+
+	case SceneIndex::Statistic:
+
+		Statistic::Instance()->Disable();
 
 		break;
 
@@ -398,9 +414,6 @@ void GameManager::ReportDead(GameObject* gameObject) {
 }
 
 void GameManager::Update() {
-
-	if (GameCore::GetKeyState(SDLK_t).started)
-		SwitchScene(SceneIndex::Tutorial);
 
 	// Freeze game
 	if (GameCore::GetKeyState(SDLK_ESCAPE).started

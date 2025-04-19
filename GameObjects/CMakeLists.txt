@@ -38,7 +38,7 @@ target_include_directories(GAME_OBJECTS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 target_include_directories(GAME_OBJECTS PUBLIC
     ${CMAKE_SOURCE_DIR}/UTILS
-    ${CMAKE_SOURCE_DIR}/COMPONENTS
+    ${CMAKE_SOURCE_DIR}/ECS
 )
 
 # Link libraries for this subdirectory use
