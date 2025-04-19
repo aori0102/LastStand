@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -6,6 +12,10 @@
 #include <Utils.h>
 #include <Version.h>
 class Menu : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -44,11 +54,19 @@ private:
 		{ UIElementIndex::VersionLabel, 20 },
 	};
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 
 	static Menu* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

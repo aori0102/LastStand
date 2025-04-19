@@ -1,7 +1,17 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <KeyBindUIGroup.h>
 
 #include <GameCore.h>
 #include <KeyBindSingleUIGroup.h>
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
 const int KeyBindUIGroup::MAX_COLUMN = 2;
 const Vector2 KeyBindUIGroup::FRAME_OFFSET = Vector2(250.0f, 68.0f);
@@ -37,6 +47,10 @@ const std::unordered_map<KeyBindUIGroup::UIElementIndex, ActionIndex> KeyBindUIG
 	{ KeyBindUIGroup::UIElementIndex::ToggleInventory, ActionIndex::ToggleInventory },
 	{ KeyBindUIGroup::UIElementIndex::ToggleShop, ActionIndex::ToggleShop },
 };
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void KeyBindUIGroup::Show() {
 

@@ -25,7 +25,7 @@ target_include_directories(TEXTURE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 target_include_directories(TEXTURE PUBLIC 
     ${CMAKE_SOURCE_DIR}/UTILS
-    ${CMAKE_SOURCE_DIR}/COMPONENTS
+    ${CMAKE_SOURCE_DIR}/ECS
     ${CMAKE_SOURCE_DIR}/MANAGER
 )
 

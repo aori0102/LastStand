@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <string>
@@ -42,6 +48,10 @@ struct SkillInfo {
 
 class SkillNode {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	friend class SkillList;
@@ -52,6 +62,10 @@ private:
 	SkillNodeUI* skillNodeUI;
 	SkillInfo info;
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
 public:
 
 	SkillNode();
@@ -61,10 +75,20 @@ public:
 
 class SkillList : public GameObject {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
 	static const float SKILL_NODE_OFFSET;
 	static const float SKILL_LIST_OFFSET;
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
 
 	friend class Shop;
 
@@ -75,6 +99,10 @@ private:
 	std::unordered_map<SkillListIndex, int> tempProgressMap;	// To check if the skill is acquired
 	
 	SkillNode* selectedNode;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

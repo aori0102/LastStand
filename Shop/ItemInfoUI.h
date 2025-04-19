@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <unordered_map>
@@ -7,6 +13,10 @@
 enum class ItemIndex;
 
 class ItemInfoUI : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -37,12 +47,20 @@ private:
 		{ UIElementIndex::ItemStackLabel, 20 },
 	};
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	int previousPlayerMoney;
 	bool canBuyItem;
 	std::unordered_map<UIElementIndex, GameObject*> uiElementMap;
 	ItemIndex currentItem;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

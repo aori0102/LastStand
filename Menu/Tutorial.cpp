@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <Tutorial.h>
 
 #include <GameCore.h>
@@ -5,6 +11,10 @@
 #include <MediaManager.h>
 #include <SDL.h>
 #include <Texture.h>
+
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
 
 const std::unordered_map<ActionIndex, std::string> Tutorial::KEY_BIND_PLACEHOLDER_MAP = {
 	{ ActionIndex::MoveUp, "<Key_W>" },
@@ -18,6 +28,10 @@ const std::unordered_map<ActionIndex, std::string> Tutorial::KEY_BIND_PLACEHOLDE
 };
 
 Tutorial* Tutorial::instance = nullptr;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void Tutorial::InitializeUI() {
 

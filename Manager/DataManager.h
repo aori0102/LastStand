@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <string>
@@ -32,6 +38,10 @@ struct PlayerSaveData {
 
 class PlayerConfig {
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	friend class GameCore;
@@ -42,17 +52,31 @@ private:
 	float musicVolume;
 	std::unordered_map<ActionIndex, SDL_Keycode> keyBindingMap;
 
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
+
+private:
+
 	PlayerConfig();
 
 };
 
 class DataManager {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
 	const std::string GAME_DATA_FOLDER = "\\LastStand\\";
 	const std::string PLAYER_DATA_FILE = "player.txt";
 	const std::string CONFIG_DATA_FILE = "config.txt";
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -65,6 +89,10 @@ public:
 
 	PlayerSaveData* playerSaveData;
 	PlayerConfig* playerConfig;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <ItemManager.h>
 
 #include <type_traits>
@@ -8,6 +14,10 @@ class Consumable;
 class Pistol;
 class Rifle;
 class Shotgun;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 template <class T>
 bool ItemManager::IsIndexOfType(ItemIndex itemIndex) {

@@ -1,12 +1,26 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #include <KeyBindSingleUIGroup.h>
 
 #include <GameCore.h>
 #include <MediaManager.h>
 #include <Texture.h>
 
+/// ----------------------------------
+/// STATIC FIELDS
+/// ----------------------------------
+
 const int KeyBindSingleUIGroup::LABEL_FONT_SIZE = 16;
 const int KeyBindSingleUIGroup::KEY_FONT_SIZE = 12;
 const float KeyBindSingleUIGroup::LABEL_OFFSET = -11.0f;
+
+/// ----------------------------------
+/// METHOD DEFINITIONS
+/// ----------------------------------
 
 void KeyBindSingleUIGroup::UpdateVisual(std::string keyString) {
 

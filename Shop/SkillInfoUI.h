@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <GameComponent.h>
@@ -6,6 +12,10 @@
 struct SkillInfo;
 
 class SkillInfoUI : public GameObject {
+
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
 
 private:
 
@@ -23,6 +33,12 @@ private:
 	static const Vector2 SKILL_LABEL_OFFSET;
 	static const Vector2 SKILL_DESCRIPTION_OFFSET;
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
+private:
+
 	friend class Shop;
 
 	GameObject* frame;
@@ -37,6 +53,10 @@ private:
 	GameObject* skillVisual;
 
 	bool showingSkill;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 

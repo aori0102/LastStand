@@ -1,3 +1,9 @@
+﻿/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+/// ---------------------------------------------------------------
+///						     AUTHORED: アオリ
+/// ---------------------------------------------------------------
+/// >>> >>> >>> >>> >>> >>> >>> ------- <<< <<< <<< <<< <<< <<< <<<
+
 #pragma once
 
 #include <vector>
@@ -9,6 +15,10 @@ enum class HotBarSlotIndex;
 enum class ItemIndex;
 
 class SlotUI {
+
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
 
 private:
 
@@ -24,6 +34,10 @@ private:
 
 class InventoryUI : public GameObject {
 
+	/// ----------------------------------
+	/// STRUCTURES AND CONSTANTS
+	/// ----------------------------------
+
 private:
 
 	const int MAX_COLUMN = 5;
@@ -37,6 +51,10 @@ private:
 	const Vector2 FIRST_INVENTORY_SLOT_POSITION = Vector2(416.0f, 285.0f);
 	const Vector2 FIRST_HOTBAR_SLOT_POSITION = Vector2(425.0f, 527.0f);
 
+	/// ----------------------------------
+	/// FIELDS
+	/// ----------------------------------
+
 private:
 
 	std::vector<std::vector<SlotUI*>> storageGrid;
@@ -46,6 +64,10 @@ private:
 	SlotUI* selectedSlotUI;
 
 	static InventoryUI* instance;
+
+	/// ----------------------------------
+	/// METHODS
+	/// ----------------------------------
 
 private:
 
