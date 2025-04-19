@@ -166,3 +166,7 @@ https://pixabay.com/sound-effects/coin-drop-on-grass-20269/
 https://pixabay.com/sound-effects/wrong-47985/
 
 https://pixabay.com/sound-effects/40-pistol-various-foley-23163/
+
+### Font chữ
+
+https://www.dafont.com/rimouski.font
