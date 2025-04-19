@@ -53,6 +53,7 @@ private:
 	static const int CURRENT_AMMO_LABEL_SIZE;
 	static const int RESERVE_AMMO_LABEL_SIZE;
 	static const float RESERVE_AMMO_LABEL_OFFSET;
+	static const float RELOAD_END_OFFSET;	// How long before the actual reload ends when the function OnReloadEnd is called
 	static const Vector2 AMMO_FRAME_POSTIION;
 	static const Vector2 AMMO_ICON_POSTIION; 
 
@@ -69,6 +70,7 @@ private:
 	// Logic handling
 	bool isReloading;
 	bool stopReload;
+	bool reloadEndCalled;
 	int previousCurrentAmmo;
 	float lastReloadTick;
 	float lastShootTick;
@@ -82,6 +84,9 @@ private:
 	GameObject* reloadLabel;
 
 protected:
+
+	std::function<void()> OnReloadStart;
+	std::function<void()> OnReloadEnd;
 
 	static std::unordered_map<ItemIndex, FirearmInfo> firearmInfoMap;
 
@@ -137,6 +142,7 @@ private:
 
 public:
 
+	Pistol();
 	bool TryUse() override;
 
 };
@@ -162,6 +168,7 @@ private:
 
 public:
 
+	Shotgun();
 	bool TryUse() override;
 
 };
@@ -178,6 +185,7 @@ private:
 
 public:
 
+	Rifle();
 	bool TryUse() override;
 
 };

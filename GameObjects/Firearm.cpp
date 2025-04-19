@@ -23,6 +23,7 @@
 const int Firearm::CURRENT_AMMO_LABEL_SIZE = 32;
 const int Firearm::RESERVE_AMMO_LABEL_SIZE = 14;
 const float Firearm::RESERVE_AMMO_LABEL_OFFSET = 0.0f;
+const float Firearm::RELOAD_END_OFFSET = 0.3f;
 const Vector2 Firearm::AMMO_FRAME_POSTIION = Vector2(1119.0f, 660.0f);
 const Vector2 Firearm::AMMO_ICON_POSTIION = Vector2(1130.0f, 676.0f);
 const std::unordered_map<ItemIndex, FirearmInfo> Firearm::BASE_FIREARM_INFO_MAP = {
@@ -75,12 +76,26 @@ std::unordered_map<ItemIndex, FirearmInfo> Firearm::firearmInfoMap = Firearm::BA
 
 void Firearm::HandleReloading() {
 
-	if (isReloading && GameCore::Time() >= lastReloadTick + firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::ReloadTime)) {
+	if (!isReloading)
+		return;
+
+	float reloadTime = firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::ReloadTime);
+
+	if (!reloadEndCalled && GameCore::Time() >= lastReloadTick + reloadTime - RELOAD_END_OFFSET) {
+
+		OnReloadEnd();
+		reloadEndCalled = true;
+		return;
+
+	}
+
+	if (GameCore::Time() >= lastReloadTick + reloadTime) {
 
 		int magazineCapacity = static_cast<int>(firearmInfoMap.at(GetIndex()).attributeMap.at(FirearmAttributeIndex::MagazineCapacity));
 
 		// Finish reloading
 		if (firearmInfoMap.at(GetIndex()).reloadType == ReloadType::PerAmmo) {
+			// Shotgun reload, one ammo a time
 
 			if (!Player::Instance()->TryConsumeAmmo(BASE_FIREARM_INFO_MAP.at(GetIndex()).ammunitionItemIndex)) {
 
@@ -97,8 +112,14 @@ void Firearm::HandleReloading() {
 				isReloading = false;
 				stopReload = false;
 
-			} else
+			} else {
+
+				// Continue to reload
+				OnReloadStart();
+				reloadEndCalled = false;
 				lastReloadTick = GameCore::Time();
+
+			}
 
 		} else {
 
@@ -230,7 +251,11 @@ Firearm::Firearm() {
 	lastShootTick = 0.0f;
 	isReloading = false;
 	stopReload = false;
+	reloadEndCalled = false;
 	previousCurrentAmmo = currentStack;
+
+	OnReloadStart = []() {};
+	OnReloadEnd = []() {};
 
 	InitializeUI();
 
@@ -264,6 +289,8 @@ void Firearm::Reload() {
 		return;
 
 	isReloading = true;
+	reloadEndCalled = false;
+	OnReloadStart();
 	lastReloadTick = GameCore::Time();
 
 }

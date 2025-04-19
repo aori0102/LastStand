@@ -25,6 +25,14 @@ const float Shotgun::PELLET_SPAN_DEGREE = 12.0f;
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+Shotgun::Shotgun() {
+
+	OnReloadStart = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::ShotgunReload);
+		};
+
+}
+
 void Shotgun::SetIndex(ItemIndex initItemIndex) {
 
 	if (!ItemManager::Instance()->IsIndexOfType<Shotgun>(initItemIndex))

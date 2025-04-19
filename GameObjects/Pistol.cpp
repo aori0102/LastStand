@@ -19,6 +19,18 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+Pistol::Pistol() {
+
+	OnReloadStart = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::PistolReloadStart);
+		};
+
+	OnReloadEnd = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::PistolReloadEnd);
+		};
+
+}
+
 void Pistol::SetIndex(ItemIndex initItemIndex) {
 
 	if (!ItemManager::Instance()->IsIndexOfType<Pistol>(initItemIndex))

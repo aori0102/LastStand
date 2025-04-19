@@ -124,6 +124,11 @@ enum class MediaSFX {
 	Clack,
 	Coin,
 	Invalid,
+	PistolReloadStart,
+	PistolReloadEnd,
+	RifleReloadStart,
+	RifleReloadEnd,
+	ShotgunReload,
 
 };
 
@@ -252,6 +257,11 @@ private:
 		{ MediaSFX::Clack, "Clack" },
 		{ MediaSFX::Coin, "Coin" },
 		{ MediaSFX::Invalid, "Invalid" },
+		{ MediaSFX::PistolReloadEnd, "PistolReloadEnd" },
+		{ MediaSFX::PistolReloadStart, "PistolReloadStart" },
+		{ MediaSFX::RifleReloadEnd, "RifleReloadEnd" },
+		{ MediaSFX::RifleReloadStart, "RifleReloadStart" },
+		{ MediaSFX::ShotgunReload, "ShotgunReload" },
 	};
 
 	/// ----------------------------------

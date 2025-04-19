@@ -19,6 +19,18 @@
 /// METHOD DEFINITIONS
 /// ----------------------------------
 
+Rifle::Rifle() {
+
+	OnReloadStart = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::RifleReloadStart);
+		};
+
+	OnReloadEnd = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::RifleReloadEnd);
+		};
+
+}
+
 void Rifle::SetIndex(ItemIndex initItemIndex) {
 
 	if (!ItemManager::Instance()->IsIndexOfType<Rifle>(initItemIndex))
