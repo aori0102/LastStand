@@ -20,6 +20,7 @@ private:
 		QuitLabel,
 		Title,
 		VersionLabel,
+		TutorialButton,
 
 	};
 
@@ -33,7 +34,8 @@ private:
 		{ UIElementIndex::SettingsButton, Vector2(138.0f, 411.0f) },
 		{ UIElementIndex::QuitButton, Vector2(138.0f, 538.0f) },
 		{ UIElementIndex::Title, Vector2(78.0f, 63.0f) },
-		{ UIElementIndex::VersionLabel, Vector2(1162.0f, 692.0f) },
+		{ UIElementIndex::VersionLabel, Vector2(-5.0f, 0.0f) },
+		{ UIElementIndex::TutorialButton, Vector2(419.0f, 432.0f) },
 	};
 	const std::unordered_map<UIElementIndex, int> UI_FONT_SIZE_MAP = {
 		{ UIElementIndex::PlayLabel, 48 },

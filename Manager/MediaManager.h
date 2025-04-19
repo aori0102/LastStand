@@ -91,6 +91,8 @@ enum class MediaUI {
 	Menu_PauseMenuButton,
 	Menu_DeathMessageFrame,
 	Menu_DeathMessageButton,
+	Menu_TutorialButton,
+	Menu_TutorialButton_Selected,
 
 };
 
@@ -215,6 +217,8 @@ private:
 		{ MediaUI::Menu_PauseMenuButton, "Menu\\PauseMenuButton" },
 		{ MediaUI::Menu_DeathMessageButton, "Menu\\DeathMessageButton" },
 		{ MediaUI::Menu_DeathMessageFrame, "Menu\\DeathMessageFrame" },
+		{ MediaUI::Menu_TutorialButton, "Menu\\TutorialButton" },
+		{ MediaUI::Menu_TutorialButton_Selected, "Menu\\TutorialButtonSelected" },
 	};
 	const std::unordered_map<MediaObject, std::string> MEDIA_OBJECT_PATH_MAP = {
 		{ MediaObject::Entity_Zombie, "Entity\\Zombie" },

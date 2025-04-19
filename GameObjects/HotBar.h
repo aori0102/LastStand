@@ -38,6 +38,10 @@ private:
 
 	static HotBar* instance;
 
+private:
+
+	void UnequipCurrent();
+
 public:
 
 	HotBar();

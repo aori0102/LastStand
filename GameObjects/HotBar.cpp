@@ -7,6 +7,12 @@
 
 HotBar* HotBar::instance = nullptr;
 
+void HotBar::UnequipCurrent() {
+
+	SelectSlot(HotBarSlotIndex::None);
+
+}
+
 HotBar::HotBar() {
 
 	if (instance)
@@ -29,6 +35,8 @@ HotBar::HotBar() {
 
 	hotBarUI = GameObject::Instantiate<HotBarUI>("Hot Bar UI", Layer::GUI);
 	hotBarUI->Disable();
+
+	OnDisabled = [this]() { UnequipCurrent(); };
 
 }
 

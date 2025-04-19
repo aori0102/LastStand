@@ -18,6 +18,7 @@
 #include <HotBar.h>
 #include <HotBarUI.h>
 #include <Inventory.h>
+#include <InventoryUI.h>
 #include <ItemManager.h>
 #include <MediaManager.h>
 #include <Menu.h>
@@ -132,12 +133,16 @@ void GameManager::EnableSceneObject() {
 
 		Player::Instance()->Enable();
 		StatusBar::Instance()->Enable();
+		HotBar::Instance()->Enable();
+		Inventory::Instance()->Enable();
+		HotBarUI::Instance()->Enable();
+		PlayerStatistic::Instance()->Enable();
+
 		background->Enable();
 		northBorder->Enable();
 		southBorder->Enable();
 		westBorder->Enable();
 		eastBorder->Enable();
-		HotBarUI::Instance()->Enable();
 
 		break;
 
@@ -146,12 +151,8 @@ void GameManager::EnableSceneObject() {
 		waveManager->Enable();
 
 		Player::Instance()->Enable();
-		StatusBar::Instance()->Enable();
+
 		background->Enable();
-		northBorder->Enable();
-		southBorder->Enable();
-		westBorder->Enable();
-		eastBorder->Enable();
 
 		PauseMenu::Instance()->Enable();
 
@@ -196,13 +197,17 @@ void GameManager::DisableSceneObject() {
 
 		Player::Instance()->Disable();
 		StatusBar::Instance()->Disable();
+		HotBar::Instance()->Disable();
+		Inventory::Instance()->Disable();
+		Shop::Instance()->Disable();
+		HotBarUI::Instance()->Disable();
+		InventoryUI::Instance()->Disable();
+
 		background->Disable();
 		northBorder->Disable();
 		southBorder->Disable();
 		westBorder->Disable();
 		eastBorder->Disable();
-		Shop::Instance()->Disable();
-		HotBarUI::Instance()->Disable();
 
 		break;
 
@@ -375,7 +380,6 @@ void GameManager::ReportDead(GameObject* gameObject) {
 		DeathMessage::Instance()->UpdateMessage();
 
 		ResetGameData();
-
 		FreezeGame();
 		SwitchScene(SceneIndex::GameOver);
 
@@ -384,7 +388,7 @@ void GameManager::ReportDead(GameObject* gameObject) {
 		Zombie* zombie = gameObject->As<Zombie>();
 
 		// Point, xp, money, etc
-		PlayerStatistic::Instance()->AddMoney(10);
+		PlayerStatistic::Instance()->AddMoney(zombie->GetMoney());
 		PlayerStatistic::Instance()->AddEXP(zombie->GetExp());
 
 		WaveManager::Instance()->RemoveZombie(zombie);

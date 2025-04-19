@@ -268,6 +268,20 @@ void StatusBar::InitializeUI() {
 
 }
 
+void StatusBar::Show() {
+
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Enable();
+
+}
+
+void StatusBar::Hide() {
+
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Disable();
+
+}
+
 StatusBar::StatusBar() {
 
 	if (instance)
@@ -285,6 +299,9 @@ StatusBar::StatusBar() {
 	previousPlayerMaxStamina = 0.0f;
 
 	InitializeUI();
+
+	OnEnabled = [this]() { Show(); };
+	OnDisabled = [this]() { Hide(); };
 
 }
 

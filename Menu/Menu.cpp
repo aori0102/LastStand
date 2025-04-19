@@ -15,9 +15,9 @@ Menu* Menu::instance = nullptr;
 
 void Menu::InitializeMenu() {
 
-	// -------------
-	// TITLE
-	// -------------
+	/// -------------
+	/// TITLE
+	/// -------------
 	GameObject* title = GameObject::Instantiate("Menu Title", Layer::Menu);
 	Image* title_image = title->AddComponent<Image>();
 	title_image->showOnScreen = true;
@@ -25,24 +25,21 @@ void Menu::InitializeMenu() {
 	title->transform->position = Math::SDLToC00(
 		UI_POSITION_MAP.at(UIElementIndex::Title), title->transform->scale
 	);
-	title->Render = [this, title_image]() {
-		if (IsActive())
-			title_image->Render();
+	title->Render = [title_image]() {
+		title_image->Render();
 		};
 	uiElementMap[UIElementIndex::Title] = title;
 
-	// -------------
-	// PLAY BUTTON
-	// -------------
+	/// -------------
+	/// PLAY BUTTON
+	/// -------------
 	GameObject* playButton = GameObject::Instantiate("Menu Play Button", Layer::Menu);
 	Image* playButton_image = playButton->AddComponent<Image>();
 	playButton_image->showOnScreen = true;
 	playButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 	Button* playButton_button = playButton->AddComponent<Button>();
 	playButton_button->backgroundColor = Color::TRANSPARENT;
-	playButton_button->OnClick = [this]() {
-		if (!IsActive())
-			return false;
+	playButton_button->OnClick = []() {
 		GameManager::Instance()->SwitchScene(SceneIndex::InGame);
 		GameManager::Instance()->UnfreezeGame();
 		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
@@ -56,17 +53,16 @@ void Menu::InitializeMenu() {
 		playButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 		};
 	playButton->transform->position = Math::SDLToC00(
-		UI_POSITION_MAP.at(UIElementIndex::PlayButton), playButton->transform->position
+		UI_POSITION_MAP.at(UIElementIndex::PlayButton), playButton->transform->scale
 	);
-	playButton->Render = [this, playButton_image]() {
-		if (IsActive())
-			playButton_image->Render();
+	playButton->Render = [playButton_image]() {
+		playButton_image->Render();
 		};
 	uiElementMap[UIElementIndex::PlayButton] = playButton;
 
-	// -------------
-	// PLAY LABEL
-	// -------------
+	/// -------------
+	/// PLAY LABEL
+	/// -------------
 	GameObject* playButtonLabel = GameObject::Instantiate("Menu Play Button Label", Layer::Menu);
 	Text* playButtonLabel_text = playButtonLabel->AddComponent<Text>();
 	playButtonLabel_text->showOnScreen = true;
@@ -74,24 +70,21 @@ void Menu::InitializeMenu() {
 		UI_TEXT_MAP.at(UIElementIndex::PlayLabel), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::PlayLabel)
 	);
 	playButtonLabel->transform->position = playButton->transform->position;
-	playButtonLabel->Render = [this, playButtonLabel_text]() {
-		if (IsActive())
-			playButtonLabel_text->Render();
+	playButtonLabel->Render = [playButtonLabel_text]() {
+		playButtonLabel_text->Render();
 		};
 	uiElementMap[UIElementIndex::PlayLabel] = playButtonLabel;
 
-	// -------------
-	// SETTINGS BUTTON
-	// -------------
+	/// -------------
+	/// SETTINGS BUTTON
+	/// -------------
 	GameObject* settingsButton = GameObject::Instantiate("Menu Settings Button", Layer::Menu);
 	Image* settingsButton_image = settingsButton->AddComponent<Image>();
 	settingsButton_image->showOnScreen = true;
 	settingsButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 	Button* settingsButton_button = settingsButton->AddComponent<Button>();
 	settingsButton_button->backgroundColor = Color::TRANSPARENT;
-	settingsButton_button->OnClick = [this]() {
-		if (!IsActive())
-			return false;
+	settingsButton_button->OnClick = []() {
 		GameManager::Instance()->SwitchScene(SceneIndex::Settings);
 		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
@@ -104,17 +97,16 @@ void Menu::InitializeMenu() {
 		settingsButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 		};
 	settingsButton->transform->position = Math::SDLToC00(
-		UI_POSITION_MAP.at(UIElementIndex::SettingsButton), settingsButton->transform->position
+		UI_POSITION_MAP.at(UIElementIndex::SettingsButton), settingsButton->transform->scale
 	);
-	settingsButton->Render = [this, settingsButton_image]() {
-		if (IsActive())
-			settingsButton_image->Render();
+	settingsButton->Render = [settingsButton_image]() {
+		settingsButton_image->Render();
 		};
 	uiElementMap[UIElementIndex::SettingsButton] = settingsButton;
 
-	// -------------
-	// SETTINGS LABEL
-	// -------------
+	/// -------------
+	/// SETTINGS LABEL
+	/// -------------
 	GameObject* settingsButtonLabel = GameObject::Instantiate("Menu Settings Button Label", Layer::Menu);
 	Text* settingsButtonLabel_text = settingsButtonLabel->AddComponent<Text>();
 	settingsButtonLabel_text->showOnScreen = true;
@@ -122,24 +114,21 @@ void Menu::InitializeMenu() {
 		UI_TEXT_MAP.at(UIElementIndex::SettingsLabel), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::SettingsLabel)
 	);
 	settingsButtonLabel->transform->position = settingsButton->transform->position;
-	settingsButtonLabel->Render = [this, settingsButtonLabel_text]() {
-		if (IsActive())
-			settingsButtonLabel_text->Render();
+	settingsButtonLabel->Render = [settingsButtonLabel_text]() {
+		settingsButtonLabel_text->Render();
 		};
 	uiElementMap[UIElementIndex::SettingsLabel] = settingsButtonLabel;
 
-	// -------------
-	// QUIT BUTTON
-	// -------------
+	/// -------------
+	/// QUIT BUTTON
+	/// -------------
 	GameObject* quitButton = GameObject::Instantiate("Menu Quit Button", Layer::Menu);
 	Image* quitButton_image = quitButton->AddComponent<Image>();
 	quitButton_image->showOnScreen = true;
 	quitButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 	Button* quitButton_button = quitButton->AddComponent<Button>();
 	quitButton_button->backgroundColor = Color::TRANSPARENT;
-	quitButton_button->OnClick = [this]() {
-		if (!IsActive())
-			return false;
+	quitButton_button->OnClick = []() {
 		GameCore::QuitGame();
 		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
 		return true;
@@ -152,17 +141,16 @@ void Menu::InitializeMenu() {
 		quitButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_Button), true);
 		};
 	quitButton->transform->position = Math::SDLToC00(
-		UI_POSITION_MAP.at(UIElementIndex::QuitButton), quitButton->transform->position
+		UI_POSITION_MAP.at(UIElementIndex::QuitButton), quitButton->transform->scale
 	);
-	quitButton->Render = [this, quitButton_image]() {
-		if (IsActive())
-			quitButton_image->Render();
+	quitButton->Render = [quitButton_image]() {
+		quitButton_image->Render();
 		};
 	uiElementMap[UIElementIndex::QuitButton] = quitButton;
 
-	// -------------
-	// QUIT LABEL
-	// -------------
+	/// -------------
+	/// QUIT LABEL
+	/// -------------
 	GameObject* quitButtonLabel = GameObject::Instantiate("Menu Quit Button Label", Layer::Menu);
 	Text* quitButtonLabel_text = quitButtonLabel->AddComponent<Text>();
 	quitButtonLabel_text->showOnScreen = true;
@@ -170,55 +158,70 @@ void Menu::InitializeMenu() {
 		UI_TEXT_MAP.at(UIElementIndex::QuitLabel), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::QuitLabel)
 	);
 	quitButtonLabel->transform->position = quitButton->transform->position;
-	quitButtonLabel->Render = [this, quitButtonLabel_text]() {
-		if (IsActive())
-			quitButtonLabel_text->Render();
+	quitButtonLabel->Render = [quitButtonLabel_text]() {
+		quitButtonLabel_text->Render();
 		};
 	uiElementMap[UIElementIndex::QuitLabel] = quitButtonLabel;
 
-	// -------------
-	// VERSION LABEL
-	// -------------
+	/// -------------
+	/// VERSION LABEL
+	/// -------------
 	GameObject* versionLabel = GameObject::Instantiate("Menu Version Label", Layer::Menu);
 	Text* versionLabel_text = versionLabel->AddComponent<Text>();
 	versionLabel_text->showOnScreen = true;
 	versionLabel_text->LoadText(
 		GameCore::GetVersionString(), Color::WHITE, UI_FONT_SIZE_MAP.at(UIElementIndex::VersionLabel)
 	);
-	versionLabel->transform->position = Math::SDLToC00(
-		UI_POSITION_MAP.at(UIElementIndex::VersionLabel), versionLabel->transform->scale
-	);
-	versionLabel->Render = [this, versionLabel_text]() {
-		if (IsActive())
-			versionLabel_text->Render();
+	Align::Right(versionLabel->transform);
+	Align::Bottom(versionLabel->transform);
+	versionLabel->transform->position += UI_POSITION_MAP.at(UIElementIndex::VersionLabel);
+	versionLabel->Render = [versionLabel_text]() {
+		versionLabel_text->Render();
 		};
 	uiElementMap[UIElementIndex::VersionLabel] = versionLabel;
+
+	/// -------------
+	/// TUTORIAL BUTTON
+	/// -------------
+	GameObject* tutorialButton = GameObject::Instantiate("Menu Tutorial Button", Layer::Menu);
+	Image* tutorialButton_image = tutorialButton->AddComponent<Image>();
+	tutorialButton_image->showOnScreen = true;
+	tutorialButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_TutorialButton), true);
+	Button* tutorialButton_button = tutorialButton->AddComponent<Button>();
+	tutorialButton_button->backgroundColor = Color::TRANSPARENT;
+	tutorialButton_button->OnClick = []() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Click);
+		GameManager::Instance()->SwitchScene(SceneIndex::Tutorial);
+		return true;
+		};
+	tutorialButton_button->OnMouseEnter = [tutorialButton_image]() {
+		AudioManager::Instance()->PlayOneShot(MediaSFX::Clack);
+		tutorialButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_TutorialButton_Selected), true);
+		};
+	tutorialButton_button->OnMouseLeave = [tutorialButton_image]() {
+		tutorialButton_image->LinkSprite(MediaManager::Instance()->GetUISprite(MediaUI::Menu_TutorialButton), true);
+		};
+	tutorialButton->transform->position = Math::SDLToC00(
+		UI_POSITION_MAP.at(UIElementIndex::TutorialButton), tutorialButton->transform->scale
+	);
+	tutorialButton->Render = [tutorialButton_image]() {
+		tutorialButton_image->Render();
+		};
+	uiElementMap[UIElementIndex::TutorialButton] = tutorialButton;
 
 }
 
 void Menu::Show() {
 
-	uiElementMap.at(UIElementIndex::PlayButton)->Enable();
-	uiElementMap.at(UIElementIndex::SettingsButton)->Enable();
-	uiElementMap.at(UIElementIndex::QuitButton)->Enable();
-	uiElementMap.at(UIElementIndex::PlayLabel)->Enable();
-	uiElementMap.at(UIElementIndex::QuitLabel)->Enable();
-	uiElementMap.at(UIElementIndex::SettingsLabel)->Enable();
-	uiElementMap.at(UIElementIndex::Title)->Enable();
-	uiElementMap.at(UIElementIndex::VersionLabel)->Enable();
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Enable();
 
 }
 
 void Menu::Hide() {
 
-	uiElementMap.at(UIElementIndex::PlayButton)->Disable();
-	uiElementMap.at(UIElementIndex::SettingsButton)->Disable();
-	uiElementMap.at(UIElementIndex::QuitButton)->Disable();
-	uiElementMap.at(UIElementIndex::PlayLabel)->Disable();
-	uiElementMap.at(UIElementIndex::QuitLabel)->Disable();
-	uiElementMap.at(UIElementIndex::SettingsLabel)->Disable();
-	uiElementMap.at(UIElementIndex::Title)->Disable();
-	uiElementMap.at(UIElementIndex::VersionLabel)->Disable();
+	for (auto it = uiElementMap.begin(); it != uiElementMap.end(); it++)
+		(it->second)->Disable();
 
 }
 

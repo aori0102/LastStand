@@ -30,6 +30,7 @@ public:
 	static const float HEALTH_MULTIPLIER;
 	static const float DAMAGE_MULTIPLIER;
 	static const float EXP_MULTIPLIER;
+	static const float MONEY_MULTIPLIER;
 
 	/// ----------------------------------
 	/// FIELDS
@@ -40,7 +41,8 @@ public:
 	float movementSpeed;
 	float health;
 	float damage;
-	float exp;
+	int exp;
+	int money;
 
 };
 
@@ -83,6 +85,7 @@ private:
 
 private:
 
+	void InitializeData();
 	void InitializeComponents();
 	void FollowPlayer();
 
@@ -93,6 +96,7 @@ public:
 	void SetIndex(ZombieIndex initZombieIndex);
 	void Update() override;
 	void OnCollisionEnter(BoxCollider* other) override;
-	float GetExp() const;
+	int GetExp() const;
+	int GetMoney() const;
 
 };

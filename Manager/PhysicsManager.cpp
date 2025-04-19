@@ -373,68 +373,9 @@ bool PhysicsManager::BoxCast(BoxCollider* collider, Vector2 movementVector, HitI
 
 }
 
-bool PhysicsManager::RayCast(Vector2 origin, Vector2 end, HitInfo* hitInfo) {
-
-	// Output clipped line
-	Vector2* newStart = new Vector2();
-	Vector2* newEnd = new Vector2();
-
-	// Flag
-	bool collided = false;
-
-	// The destination to the collision. Use
-	// to determine which collision comes first
-	float distanceToCollision = (end - origin).Magnitude();
-
-	// The contact point
-	Vector2 contactPoint;
-
-	for (BoxCollider* collider : boxColliderSet) {
-
-		// Get bound
-		Bound bound = collider->GetBound();
-
-		// Cast the ray to the rectangle
-		if (ClipLineRectangle(origin, end, bound, newStart, newEnd)) {
-
-			// Set flag to true
-			collided = true;
-
-			// Determine contact point
-			if (*newStart != origin)
-				contactPoint = *newStart;
-			else
-				contactPoint = *newEnd;
-
-			// Calculate distance and determine if this collision is accepted
-			float distance = (contactPoint - origin).Magnitude();
-			if (distance >= distanceToCollision)
-				continue;
-
-			// Finalize collision
-			if (hitInfo) {
-
-				hitInfo->thisCollider = nullptr;
-				hitInfo->otherCollider = collider;
-				hitInfo->contactPoint = contactPoint;
-
-			}
-
-		}
-
-	}
-
-	// Clean up
-	delete newStart;
-	newStart = nullptr;
-	delete newEnd;
-	newEnd = nullptr;
-
-	return collided;
-
-}
-
 bool PhysicsManager::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, Vector2* newStart, Vector2* newEnd) {
+
+	// Liang-Barsky line clipping algo
 
 	// Define parameters
 	float minX = bound.Left();
@@ -444,6 +385,7 @@ bool PhysicsManager::ClipLineRectangle(Vector2 start, Vector2 end, Bound bound, 
 	float t0 = 0.0f, t1 = 1.0f;
 	float dx = (end - start).x;
 	float dy = (end - start).y;
+	// Left, right, top, bottom respectively
 	float p[] = { -dx, dx, -dy, dy };
 	float q[] = { start.x - minX, maxX - start.x, start.y - minY, maxY - start.y };
 

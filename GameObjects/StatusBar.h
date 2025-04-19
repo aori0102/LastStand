@@ -112,6 +112,8 @@ private:
 private:
 
 	void InitializeUI();
+	void Show();
+	void Hide();
 
 public:
 

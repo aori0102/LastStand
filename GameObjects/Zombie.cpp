@@ -25,6 +25,7 @@
 const float ZombieAttribute::DAMAGE_MULTIPLIER = 1.03f;
 const float ZombieAttribute::HEALTH_MULTIPLIER = 1.07f;
 const float ZombieAttribute::EXP_MULTIPLIER = 1.01f;
+const float ZombieAttribute::MONEY_MULTIPLIER = 1.02f;
 const float Zombie::KNOCKBACK_FORCE = 50.0f;
 const float Zombie::HEALTH_BAR_VERTICAL_OFFSET = 50.0f;
 const float Zombie::HEALTH_BAR_SCALE = 0.4f;
@@ -36,21 +37,24 @@ const std::unordered_map<ZombieIndex, ZombieAttribute> Zombie::ZOMBIE_BASE_ATTRI
 		.movementSpeed = 60.0f,
 		.health = 32.0f,
 		.damage = 6.0f,
-		.exp = 3.0f
+		.exp = 3,
+		.money = 13,
 		}
 	},
 	{ ZombieIndex::Lurker, ZombieAttribute{
 		.movementSpeed = 104.0f,
 		.health = 21.0f,
 		.damage = 3.0f,
-		.exp = 7.0f
+		.exp = 7,
+		.money = 17,
 		}
 	},
 	{ ZombieIndex::Tanker, ZombieAttribute{
 		.movementSpeed = 30.0f,
 		.health = 148.0f,
 		.damage = 3.0f,
-		.exp = 9.0f
+		.exp = 9,
+		.money = 22,
 		}
 	},
 };
@@ -63,6 +67,54 @@ const std::unordered_map<ZombieIndex, SDL_Rect> Zombie::ZOMBIE_SPRITE_CLIP_MAP =
 /// ----------------------------------
 /// METHOD DEFINITIONS
 /// ----------------------------------
+
+void Zombie::InitializeData() {
+
+	displayHurt = false;
+	lastGroanTick = 0.0f;
+	groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
+
+	wanderTarget = Vector2::zero;
+
+	zombieIndex = ZombieIndex::Normal;
+
+	// Attribute
+	zombieAttribute = new ZombieAttribute{
+		.movementSpeed = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed,
+		.health = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health,
+		.damage = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage,
+		.exp = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp,
+		.money = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).money,
+	};
+	// Calculation of zombie's attribute uses the following formula
+	// y = bm(d * ln(x) + sqrt(m ^ x))
+	// Where
+	// b is the base attribute
+	// m is the attribute's multiplier
+	// d is the difficulty coefficient 
+	// x is the wave
+	zombieAttribute->health *= ZombieAttribute::HEALTH_MULTIPLIER
+		* (
+			WaveManager::Instance()->GetDifficulty() * std::logf(WaveManager::Instance()->GetCurrentWave()) +
+			std::sqrtf(std::powf(ZombieAttribute::HEALTH_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
+			);
+	zombieAttribute->damage *= ZombieAttribute::DAMAGE_MULTIPLIER
+		* (
+			WaveManager::Instance()->GetDifficulty() * std::logf(WaveManager::Instance()->GetCurrentWave()) +
+			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
+			);
+	zombieAttribute->exp = static_cast<int>(zombieAttribute->exp * ZombieAttribute::EXP_MULTIPLIER
+		* (
+			WaveManager::Instance()->GetDifficulty() * logf(WaveManager::Instance()->GetCurrentWave() +
+				sqrtf(powf(ZombieAttribute::EXP_MULTIPLIER, WaveManager::Instance()->GetCurrentWave())))
+			));
+	zombieAttribute->money = static_cast<int>(zombieAttribute->money * ZombieAttribute::MONEY_MULTIPLIER
+		* (
+			WaveManager::Instance()->GetDifficulty() * logf(WaveManager::Instance()->GetCurrentWave() +
+				sqrtf(powf(ZombieAttribute::MONEY_MULTIPLIER, WaveManager::Instance()->GetCurrentWave())))
+			));
+
+}
 
 void Zombie::InitializeComponents() {
 
@@ -150,39 +202,7 @@ void Zombie::FollowPlayer() {
 
 Zombie::Zombie() {
 
-	displayHurt = false;
-	lastGroanTick = 0.0f;
-	groanDelay = Random::Float(GROAN_SOUND_DELAY_MIN, GROAN_SOUND_DELAY_MAX);
-
-	wanderTarget = Vector2::zero;
-
-	zombieIndex = ZombieIndex::Normal;
-
-	// Attribute
-	zombieAttribute = new ZombieAttribute{
-		.movementSpeed = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).movementSpeed,
-		.health = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).health,
-		.damage = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).damage,
-		.exp = ZOMBIE_BASE_ATTRIBUTE_MAP.at(zombieIndex).exp
-	};
-	// Calculation of zombie's attribute uses the following formula
-	// y = bm(d * ln(x) + sqrt(m ^ x))
-	// Where
-	// b is the base attribute
-	// m is the attribute's multiplier
-	// d is the difficulty coefficient 
-	// x is the wave
-	zombieAttribute->health *= ZombieAttribute::HEALTH_MULTIPLIER
-		* (
-			WaveManager::Instance()->GetDifficulty() * std::logf(WaveManager::Instance()->GetCurrentWave()) +
-			std::sqrtf(std::powf(ZombieAttribute::HEALTH_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
-			);
-	zombieAttribute->damage *= ZombieAttribute::DAMAGE_MULTIPLIER
-		* (
-			WaveManager::Instance()->GetDifficulty() * std::logf(WaveManager::Instance()->GetCurrentWave()) +
-			std::sqrtf(std::powf(ZombieAttribute::DAMAGE_MULTIPLIER, WaveManager::Instance()->GetCurrentWave()))
-			);
-
+	InitializeData();
 	InitializeComponents();
 
 }
@@ -242,12 +262,6 @@ void Zombie::OnCollisionEnter(BoxCollider* other) {
 
 }
 
-float Zombie::GetExp() const {
+int Zombie::GetExp() const { return zombieAttribute->exp; }
 
-	return zombieAttribute->exp * ZombieAttribute::EXP_MULTIPLIER
-		* (
-			WaveManager::Instance()->GetDifficulty() * logf(WaveManager::Instance()->GetCurrentWave() +
-				sqrtf(powf(ZombieAttribute::EXP_MULTIPLIER, WaveManager::Instance()->GetCurrentWave())))
-			);
-
-}
+int Zombie::GetMoney() const { return zombieAttribute->money; }
